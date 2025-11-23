@@ -1,0 +1,190 @@
+{% extends "ana.html" %}
+{% load static %}
+
+{% block title %}Konum Bildirimi Başarılı - PetSafe Hub{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-lg border-0 text-center">
+                <div class="card-body p-5">
+                    <!-- Başarı İkonu -->
+                    <div class="success-icon mb-4">
+                        <i class="fas fa-check-circle text-success" style="font-size: 6rem;"></i>
+                    </div>
+
+                    <!-- Başlık -->
+                    <h2 class="mb-3 text-success">
+                        <i class="fas fa-map-marker-alt me-2"></i>
+                        Konum Bildirimi Başarılı!
+                    </h2>
+
+                    <!-- Mesaj -->
+                    <p class="lead mb-4">
+                        <strong>{{ hayvan.ad }}</strong> için konum bildirimi başarıyla gönderildi.
+                    </p>
+
+                    <div class="alert alert-info text-start">
+                        <h5 class="alert-heading">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Bilgilendirme
+                        </h5>
+                        <hr>
+                        <p class="mb-2">
+                            <i class="fas fa-envelope me-2"></i>
+                            Hayvanın sahibine e-posta ile bildirim gönderildi.
+                        </p>
+                        <p class="mb-2">
+                            <i class="fas fa-clock me-2"></i>
+                            Hayvan sahibi en kısa sürede sizinle iletişime geçecektir.
+                        </p>
+                        <p class="mb-0">
+                            <i class="fas fa-heart me-2 text-danger"></i>
+                            Yardımlarınız için teşekkür ederiz!
+                        </p>
+                    </div>
+
+                    <!-- Etiket Bilgisi -->
+                    <div class="card bg-light border-0 mt-4">
+                        <div class="card-body">
+                            <h6 class="text-muted mb-3">Etiket Bilgisi</h6>
+                            <p class="mb-1">
+                                <strong>Seri No:</strong> 
+                                <span class="badge bg-primary">{{ etiket.seri_numarasi }}</span>
+                            </p>
+                            <p class="mb-0">
+                                <strong>Hayvan:</strong> {{ hayvan.ad }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Animasyon -->
+                    <div class="mt-4">
+                        <div class="spinner-grow text-success me-2" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <div class="spinner-grow text-primary me-2" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <div class="spinner-grow text-success" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+
+                    <!-- Butonlar -->
+                    <div class="d-grid gap-2 mt-4">
+                        <a href="{% url 'etiket:qr_landing' tag_id=etiket.etiket_id %}" 
+                           class="btn btn-primary btn-lg">
+                            <i class="fas fa-arrow-left me-2"></i>
+                            Etiket Bilgilerine Dön
+                        </a>
+                        <a href="{% url 'anahtarlik:ev' %}" 
+                           class="btn btn-outline-secondary">
+                            <i class="fas fa-home me-2"></i>
+                            Ana Sayfaya Git
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ek Bilgi -->
+            <div class="card mt-4 border-0 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-question-circle me-2 text-info"></i>
+                        Ne Oldu?
+                    </h5>
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2"></i>
+                            Konum bildiriminiz kaydedildi
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2"></i>
+                            Hayvan sahibine e-posta gönderildi
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2"></i>
+                            Sistem bildirimi oluşturuldu
+                        </li>
+                        <li class="mb-0">
+                            <i class="fas fa-check text-success me-2"></i>
+                            Hayvan sahibi sizinle iletişime geçecek
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Sosyal Paylaşım -->
+            <div class="text-center mt-4">
+                <p class="text-muted mb-3">
+                    <i class="fas fa-share-alt me-2"></i>
+                    Bu güzel hareketi paylaşın
+                </p>
+                <div class="d-flex justify-content-center gap-2">
+                    <a href="#" class="btn btn-outline-primary btn-sm" target="_blank">
+                        <i class="fab fa-facebook-f me-1"></i> Facebook
+                    </a>
+                    <a href="#" class="btn btn-outline-info btn-sm" target="_blank">
+                        <i class="fab fa-twitter me-1"></i> Twitter
+                    </a>
+                    <a href="#" class="btn btn-outline-success btn-sm" target="_blank">
+                        <i class="fab fa-whatsapp me-1"></i> WhatsApp
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.success-icon {
+    animation: scaleIn 0.5s ease-out;
+}
+
+@keyframes scaleIn {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.card {
+    border-radius: 15px;
+    animation: fadeIn 0.8s ease-out;
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.btn {
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+</style>
+
+<script>
+// 5 saniye sonra otomatik yönlendirme (isteğe bağlı)
+// setTimeout(function() {
+//     window.location.href = "{% url 'etiket:qr_landing' tag_id=etiket.etiket_id %}";
+// }, 5000);
+</script>
+{% endblock %}
+

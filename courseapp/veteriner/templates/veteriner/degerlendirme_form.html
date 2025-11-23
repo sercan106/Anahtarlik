@@ -1,0 +1,95 @@
+{% extends 'ana.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}Değerlendirme Ekle - Veteriner Paneli{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header bg-warning text-dark">
+                    <h4 class="mb-0">
+                        <i class="fas fa-star me-2"></i>Yeni Değerlendirme Ekle
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger" role="alert">
+                                {{ form.non_field_errors }}
+                            </div>
+                        {% endif %}
+
+                        <div class="mb-4">
+                            <label for="{{ form.puan.id_for_label }}" class="form-label">
+                                Puan <span class="text-danger">*</span>
+                            </label>
+                            {{ form.puan }}
+                            {% if form.puan.errors %}
+                                <div class="text-danger small mt-1">{{ form.puan.errors }}</div>
+                            {% endif %}
+                            <small class="text-muted">Müşteri memnuniyetini 1-5 arası puanlayın</small>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="{{ form.yorum.id_for_label }}" class="form-label">
+                                Yorum
+                            </label>
+                            {{ form.yorum }}
+                            {% if form.yorum.errors %}
+                                <div class="text-danger small mt-1">{{ form.yorum.errors }}</div>
+                            {% endif %}
+                            <small class="text-muted">Müşterinin deneyimi hakkında yorum</small>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ form.musteri_adi.id_for_label }}" class="form-label">
+                                        Müşteri Adı <span class="text-danger">*</span>
+                                    </label>
+                                    {{ form.musteri_adi|add_class:"form-control" }}
+                                    {% if form.musteri_adi.errors %}
+                                        <div class="text-danger small mt-1">{{ form.musteri_adi.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ form.musteri_telefon.id_for_label }}" class="form-label">
+                                        Telefon
+                                    </label>
+                                    {{ form.musteri_telefon|add_class:"form-control" }}
+                                    {% if form.musteri_telefon.errors %}
+                                        <div class="text-danger small mt-1">{{ form.musteri_telefon.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="{% url 'veteriner:degerlendirme_listesi' %}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Geri Dön
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-save me-2"></i>Kaydet
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+
+
+
+

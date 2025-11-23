@@ -1,0 +1,55 @@
+{% extends 'ana.html' %}
+{% load static %}
+
+{% block baslik %}
+<title>PatiQuard - Evcil Hayvan Takip Sistemi</title>
+{% endblock baslik %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="hero-section text-center py-5">
+                <h1 class="display-4 fw-bold text-primary mb-4">
+                    <i class="fas fa-paw me-3"></i>PatiQuard
+                </h1>
+                <p class="lead mb-4">Evcil hayvanlarınızı güvenle takip edin</p>
+                <div class="d-flex justify-content-center gap-3">
+                    {% if user.is_authenticated %}
+                        {% if user.sahip %}
+                            <a href="{% url 'anahtarlik:kullanici_paneli' %}" class="btn btn-primary btn-lg">
+                                <i class="fas fa-tachometer-alt me-2"></i>Panelim
+                            </a>
+                            <a href="{% url 'anahtarlik:add_pet' %}" class="btn btn-outline-primary btn-lg">
+                                <i class="fas fa-plus me-2"></i>Pet Ekle
+                            </a>
+                        {% elif user.misafir_profili %}
+                            <a href="{% url 'guest_dashboard' %}" class="btn btn-primary btn-lg">
+                                <i class="fas fa-user-astronaut me-2"></i>Misafir Paneli
+                            </a>
+                            <a href="{% url 'guest_activate_tag' %}" class="btn btn-outline-success btn-lg">
+                                <i class="fas fa-tag me-2"></i>Künye Aktive Et
+                            </a>
+                        {% else %}
+                            <a href="{% url 'anahtarlik:kullanici_paneli' %}" class="btn btn-primary btn-lg">
+                                <i class="fas fa-tachometer-alt me-2"></i>Panelim
+                            </a>
+                        {% endif %}
+                    {% else %}
+                        <a href="{% url 'user_login' %}" class="btn btn-primary btn-lg">
+                            <i class="fas fa-sign-in-alt me-2"></i>Giriş Yap
+                        </a>
+                        <a href="{% url 'user_register' %}" class="btn btn-outline-primary btn-lg">
+                            <i class="fas fa-user-plus me-2"></i>İlk Kez Kayıt Ol
+                        </a>
+                        <a href="{% url 'künye_aktivasyon' %}" class="btn btn-outline-success btn-lg">
+                            <i class="fas fa-tag me-2"></i>Künye Aktive Et
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+

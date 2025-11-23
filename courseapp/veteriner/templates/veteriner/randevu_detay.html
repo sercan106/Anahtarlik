@@ -1,0 +1,289 @@
+{% extends 'ana.html' %}
+{% load static %}
+
+{% block title %}Randevu Detayı #{{ randevu.id }}{% endblock %}
+
+{% block css_dosyalar %}
+<style>
+    /* Lightweight, performant styling to match `ana.html` / `ev.html` palette */
+    :root {
+        --vet-surface: rgba(255,255,255,0.96);
+        --vet-border: rgba(16,24,40,0.04);
+        --vet-radius: 14px;
+        --vet-shadow: 0 8px 24px rgba(16,24,40,0.06);
+    }
+
+    .vet-card {
+        background: var(--vet-surface);
+        border: 1px solid var(--vet-border);
+        border-radius: var(--vet-radius);
+        box-shadow: var(--vet-shadow);
+        overflow: hidden;
+    }
+
+    .vet-card .card-header {
+        border-bottom: none;
+        padding: 0.9rem 1.25rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+    }
+
+    /* Map existing bootstrap bg-* classes to the project's gradients */
+    .vet-card .card-header.bg-primary { background: var(--primary-gradient); color: #fff; }
+    .vet-card .card-header.bg-success { background: var(--secondary-gradient); color: #fff; }
+    .vet-card .card-header.bg-warning { background: var(--accent-gradient); color: #1a1a1a; }
+    .vet-card .card-header.bg-info { background: var(--calm-gradient); color: #fff; }
+    .vet-card .card-header.bg-dark { background: linear-gradient(135deg,#2d3748 0%, #111827 100%); color: #fff; }
+
+    .vet-card .card-body { padding: 1rem 1.25rem; color: var(--text-primary); }
+
+    /* Status icon sizing and spacing */
+    .status-icon { font-size: 2.4rem; margin-bottom: 0.4rem; }
+
+    /* Make action buttons consistent with the design system */
+    .vet-actions .btn {
+        border-radius: 10px;
+        padding: 10px 14px;
+        font-weight: 600;
+        transition: transform 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .vet-actions .btn:active { transform: translateY(1px) }
+
+    /* Subtle fade-in for content blocks (cheap on GPU) */
+    @keyframes subtleFadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    .fade-in { animation: subtleFadeUp 380ms ease both; }
+
+    /* Small screens: stack nicely and give breathing room */
+    @media (max-width: 767.98px) {
+        .vet-card { border-radius: 12px; margin-left: 0.5rem; margin-right: 0.5rem; }
+        .status-icon { font-size: 2rem; }
+        .vet-actions .btn { width: 100%; }
+        .container-fluid { padding-left: 0.6rem; padding-right: 0.6rem; }
+    }
+
+</style>
+{% endblock css_dosyalar %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Başlık -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="mb-0"><i class="fas fa-calendar-check me-2"></i>Randevu Detayı #{{ randevu.id }}</h2>
+                    <p class="text-muted mb-0">{{ randevu.tarih|date:"d.m.Y" }} - {{ randevu.saat|time:"H:i" }}</p>
+                </div>
+                <div>
+                    <a href="{% url 'veteriner:randevu_yonetimi' %}" class="btn btn-outline-primary me-2">
+                        <i class="fas fa-arrow-left me-2"></i>Geri Dön
+                    </a>
+                    <a href="{% url 'veteriner:veteriner_paneli' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-home me-2"></i>Panel
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Sol Kolon - Randevu Bilgileri -->
+        <div class="col-lg-8">
+            <!-- Müşteri Bilgileri -->
+            <div class="card vet-card mb-4 fade-in">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-user me-2"></i>Müşteri Bilgileri</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Ad Soyad</label>
+                                <p class="mb-0">{{ randevu.musteri_adi }}</p>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Telefon</label>
+                                <p class="mb-0">
+                                    <a href="tel:{{ randevu.musteri_telefon }}" class="text-decoration-none">
+                                        <i class="fas fa-phone me-1"></i>{{ randevu.musteri_telefon }}
+                                    </a>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            {% if randevu.musteri_email %}
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">E-posta</label>
+                                <p class="mb-0">
+                                    <a href="mailto:{{ randevu.musteri_email }}" class="text-decoration-none">
+                                        <i class="fas fa-envelope me-1"></i>{{ randevu.musteri_email }}
+                                    </a>
+                                </p>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Hayvan Bilgileri -->
+            <div class="card vet-card mb-4 fade-in">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-paw me-2"></i>Hayvan Bilgileri</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Hayvan Adı</label>
+                                <p class="mb-0">{{ randevu.hayvan_adi }}</p>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Hayvan Türü</label>
+                                <p class="mb-0">{{ randevu.hayvan_turu }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            {% if randevu.hayvan_yasi %}
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Yaş</label>
+                                <p class="mb-0">{{ randevu.hayvan_yasi }}</p>
+                            </div>
+                            {% endif %}
+                            {% if randevu.hayvan_cinsiyet %}
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Cinsiyet</label>
+                                <p class="mb-0">{{ randevu.hayvan_cinsiyet }}</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sorun Açıklaması -->
+            {% if randevu.sorun_aciklamasi %}
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-warning text-white">
+                    <h5 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Sorun Açıklaması</h5>
+                </div>
+                <div class="card-body">
+                    <p class="mb-0">{{ randevu.sorun_aciklamasi|linebreaks }}</p>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Notlar -->
+            {% if randevu.notlar %}
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="fas fa-sticky-note me-2"></i>Notlar</h5>
+                </div>
+                <div class="card-body">
+                    <p class="mb-0">{{ randevu.notlar|linebreaks }}</p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Sağ Kolon - Durum ve İşlemler -->
+        <div class="col-lg-4">
+            <!-- Randevu Durumu -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Randevu Durumu</h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        {% if randevu.durum == 'BEKLIYOR' %}
+                            <div class="text-warning mb-2"><i class="fas fa-clock fa-3x"></i></div>
+                            <h4 class="text-warning">Bekleyen</h4>
+                        {% elif randevu.durum == 'ONAYLANDI' %}
+                            <div class="text-success mb-2"><i class="fas fa-check-circle fa-3x"></i></div>
+                            <h4 class="text-success">Onaylanan</h4>
+                        {% elif randevu.durum == 'TAMAMLANDI' %}
+                            <div class="text-info mb-2"><i class="fas fa-check-double fa-3x"></i></div>
+                            <h4 class="text-info">Tamamlanan</h4>
+                        {% elif randevu.durum == 'IPTAL' %}
+                            <div class="text-danger mb-2"><i class="fas fa-times-circle fa-3x"></i></div>
+                            <h4 class="text-danger">İptal</h4>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Randevu Tarihi</label>
+                        <p class="mb-0">{{ randevu.tarih|date:"d.m.Y" }}</p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Randevu Saati</label>
+                        <p class="mb-0">{{ randevu.saat|time:"H:i" }}</p>
+                    </div>
+                    {% if randevu.fiyat %}
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Fiyat</label>
+                        <p class="mb-0"><strong>{{ randevu.fiyat }}₺</strong></p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Durum Güncelleme -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0"><i class="fas fa-edit me-2"></i>Durum Güncelle</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="durum" class="form-label">Yeni Durum</label>
+                            <select name="durum" id="durum" class="form-select">
+                                <option value="BEKLIYOR" {% if randevu.durum == 'BEKLIYOR' %}selected{% endif %}>Bekleyen</option>
+                                <option value="ONAYLANDI" {% if randevu.durum == 'ONAYLANDI' %}selected{% endif %}>Onaylanan</option>
+                                <option value="TAMAMLANDI" {% if randevu.durum == 'TAMAMLANDI' %}selected{% endif %}>Tamamlanan</option>
+                                <option value="IPTAL" {% if randevu.durum == 'IPTAL' %}selected{% endif %}>İptal</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="fiyat" class="form-label">Fiyat (₺)</label>
+                            <input type="number" name="fiyat" id="fiyat" class="form-control" value="{{ randevu.fiyat|default:'' }}" step="0.01" min="0">
+                        </div>
+                        <div class="mb-3">
+                            <label for="notlar" class="form-label">Notlar</label>
+                            <textarea name="notlar" id="notlar" class="form-control" rows="3">{{ randevu.notlar }}</textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-save me-2"></i>Güncelle
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Hızlı İşlemler -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0"><i class="fas fa-bolt me-2"></i>Hızlı İşlemler</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="tel:{{ randevu.musteri_telefon }}" class="btn btn-outline-success">
+                            <i class="fas fa-phone me-2"></i>Ara
+                        </a>
+                        {% if randevu.musteri_email %}
+                        <a href="mailto:{{ randevu.musteri_email }}" class="btn btn-outline-primary">
+                            <i class="fas fa-envelope me-2"></i>E-posta Gönder
+                        </a>
+                        {% endif %}
+                        <button type="button" class="btn btn-outline-info" onclick="window.print()">
+                            <i class="fas fa-print me-2"></i>Yazdır
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

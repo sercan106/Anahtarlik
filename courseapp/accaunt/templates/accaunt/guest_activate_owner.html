@@ -1,0 +1,729 @@
+{% extends 'ana.html' %}
+{% load static %}
+
+{% block baslik %}<title>Etiket Aktivasyonu · Adım 3 · PetSafe Hub</title>{% endblock baslik %}
+
+{% block css_dosyalar %}
+<link href="https://unpkg.com/aos@next/dist/aos.css" rel="stylesheet">
+<style>
+    /* ========== ETIKET AKTIVASYON PAGE STYLES ========== */
+    
+    .activation-container {
+        min-height: calc(100vh - 200px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 80px 20px 40px;
+        position: relative;
+    }
+    
+    .activation-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: var(--border-radius-lg);
+        box-shadow: var(--shadow-hover);
+        padding: 3rem;
+        width: 100%;
+        position: relative;
+        overflow: hidden;
+        animation: fadeInUp 0.6s ease-out;
+        margin: 0 auto;
+    }
+    
+    .activation-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+        background: var(--primary-gradient);
+    }
+    
+    .step-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--primary-gradient);
+        color: white;
+        padding: 8px 20px;
+        border-radius: 50px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 15px rgba(91, 155, 213, 0.3);
+    }
+    
+    .activation-card h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 1rem;
+        line-height: 1.2;
+        background: var(--primary-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .activation-card .intro-text {
+        color: var(--text-secondary);
+        font-size: 1.05rem;
+        line-height: 1.7;
+        margin-bottom: 2rem;
+    }
+    
+    .form-group-modern {
+        margin-bottom: 1.75rem;
+    }
+    
+    .form-label-modern {
+        display: block;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 0.75rem;
+        font-size: 0.95rem;
+    }
+    
+    .form-label-modern .required {
+        color: var(--danger-color);
+        margin-left: 3px;
+    }
+    
+    .form-control-modern,
+    .form-select-modern,
+    .form-textarea-modern {
+        width: 100%;
+        padding: 14px 18px;
+        border: 2px solid rgba(91, 155, 213, 0.2);
+        border-radius: var(--border-radius-sm);
+        font-size: 1rem;
+        transition: var(--transition-smooth);
+        background: white;
+        color: var(--text-primary);
+        font-family: inherit;
+    }
+    
+    .form-textarea-modern {
+        min-height: 100px;
+        resize: vertical;
+    }
+    
+    .form-control-modern:focus,
+    .form-select-modern:focus,
+    .form-textarea-modern:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 4px rgba(91, 155, 213, 0.1);
+        background: white;
+    }
+    
+    .form-control-modern::placeholder {
+        color: var(--text-muted);
+    }
+    
+    .form-select-modern:disabled {
+        background: #f8f9fa;
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+    
+    .form-help-text {
+        display: block;
+        margin-top: 0.5rem;
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        line-height: 1.5;
+    }
+    
+    .form-error {
+        display: block;
+        margin-top: 0.5rem;
+        font-size: 0.875rem;
+        color: var(--danger-color);
+        font-weight: 500;
+    }
+    
+    .btn-continue {
+        padding: 16px 32px;
+        background: linear-gradient(135deg, #6FCF97 0%, #70C1B3 100%);
+        color: white;
+        border: none;
+        border-radius: var(--border-radius-sm);
+        font-size: 1rem;
+        font-weight: 600;
+        transition: var(--transition-smooth);
+        box-shadow: 0 6px 20px rgba(111, 207, 151, 0.3);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+    
+    .btn-continue:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(111, 207, 151, 0.4);
+        color: white;
+        text-decoration: none;
+    }
+    
+    .btn-continue:active {
+        transform: translateY(0);
+    }
+    
+    .btn-back {
+        padding: 14px 28px;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        color: var(--text-primary);
+        border: 2px solid rgba(91, 155, 213, 0.2);
+        border-radius: var(--border-radius-sm);
+        font-size: 0.95rem;
+        font-weight: 600;
+        transition: var(--transition-smooth);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        text-decoration: none;
+    }
+    
+    .btn-back:hover {
+        background: white;
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+        transform: translateY(-2px);
+        text-decoration: none;
+    }
+    
+    .form-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 2.5rem;
+        gap: 1rem;
+    }
+    
+    /* Alert Messages - Modern Style */
+    .alert-modern {
+        padding: 1rem 1.25rem;
+        border-radius: var(--border-radius-sm);
+        margin-bottom: 1.5rem;
+        border: none;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .alert-modern.alert-success {
+        background: linear-gradient(135deg, rgba(111, 207, 151, 0.15) 0%, rgba(111, 207, 151, 0.1) 100%);
+        color: #047857;
+        border-left: 4px solid var(--success-color);
+    }
+    
+    .alert-modern.alert-error,
+    .alert-modern.alert-danger {
+        background: linear-gradient(135deg, rgba(235, 87, 87, 0.15) 0%, rgba(235, 87, 87, 0.1) 100%);
+        color: #b91c1c;
+        border-left: 4px solid var(--danger-color);
+    }
+    
+    .alert-modern.alert-info {
+        background: linear-gradient(135deg, rgba(91, 155, 213, 0.15) 0%, rgba(91, 155, 213, 0.1) 100%);
+        color: #1e40af;
+        border-left: 4px solid var(--primary-color);
+    }
+    
+    .alert-modern.alert-warning {
+        background: linear-gradient(135deg, rgba(242, 201, 76, 0.15) 0%, rgba(242, 201, 76, 0.1) 100%);
+        color: #92400e;
+        border-left: 4px solid var(--warning-color);
+    }
+    
+    .alert-modern i {
+        font-size: 1.1rem;
+    }
+    
+    /* Animations */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .activation-container {
+            padding: 60px 15px 30px;
+        }
+        
+        .activation-card {
+            padding: 2rem 1.5rem;
+            border-radius: var(--border-radius);
+        }
+        
+        .activation-card h1 {
+            font-size: 1.75rem;
+        }
+        
+        .activation-card .intro-text {
+            font-size: 1rem;
+        }
+        
+        .form-control-modern,
+        .form-select-modern,
+        .form-textarea-modern {
+            padding: 12px 16px;
+        }
+        
+        .form-actions {
+            flex-direction: column;
+        }
+        
+        .btn-continue,
+        .btn-back {
+            width: 100%;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .activation-container {
+            padding: 50px 12px 25px;
+        }
+        
+        .activation-card {
+            padding: 1.75rem 1.25rem;
+        }
+        
+        .activation-card h1 {
+            font-size: 1.5rem;
+        }
+        
+        .step-badge {
+            font-size: 0.8rem;
+            padding: 6px 16px;
+        }
+        
+        .form-control-modern,
+        .form-select-modern,
+        .form-textarea-modern {
+            padding: 12px 14px;
+            font-size: 0.95rem;
+        }
+    }
+</style>
+{% endblock css_dosyalar %}
+
+{% block icerik %}
+<div class="activation-container">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-8 col-lg-6 col-xl-5" data-aos="fade-up">
+                <div class="activation-card">
+                    <span class="step-badge">
+                        <i class="fas fa-check-circle"></i>
+                        Adım 3 / 3
+                    </span>
+                    
+                    <h1>Adres ve İletişim Bilgileri</h1>
+                    <p class="intro-text">
+                        Etiketi profilinize bağlamak için adres ve iletişim bilgilerinizi tamamlayın. Bu bilgiler güvenli bir şekilde saklanacaktır.
+                    </p>
+
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert-modern alert-{{ message.tags }}" role="alert">
+                                {% if message.tags == 'error' or message.tags == 'danger' %}
+                                    <i class="fas fa-exclamation-circle"></i>
+                                {% elif message.tags == 'success' %}
+                                    <i class="fas fa-check-circle"></i>
+                                {% elif message.tags == 'warning' %}
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                {% else %}
+                                    <i class="fas fa-info-circle"></i>
+                                {% endif %}
+                                <span>{{ message }}</span>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="form-group-modern">
+                                    <label for="{{ form.ad.id_for_label }}" class="form-label-modern">
+                                        Ad
+                                        <span class="required">*</span>
+                                    </label>
+                                    <input type="text" 
+                                           name="{{ form.ad.name }}" 
+                                           id="{{ form.ad.id_for_label }}" 
+                                           class="form-control-modern"
+                                           value="{{ form.ad.value|default:'' }}"
+                                           required>
+                                    {% for error in form.ad.errors %}
+                                        <span class="form-error">
+                                            <i class="fas fa-exclamation-circle"></i>
+                                            {{ error }}
+                                        </span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group-modern">
+                                    <label for="{{ form.soyad.id_for_label }}" class="form-label-modern">
+                                        Soyad
+                                        <span class="required">*</span>
+                                    </label>
+                                    <input type="text" 
+                                           name="{{ form.soyad.name }}" 
+                                           id="{{ form.soyad.id_for_label }}" 
+                                           class="form-control-modern"
+                                           value="{{ form.soyad.value|default:'' }}"
+                                           required>
+                                    {% for error in form.soyad.errors %}
+                                        <span class="form-error">
+                                            <i class="fas fa-exclamation-circle"></i>
+                                            {{ error }}
+                                        </span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="form-group-modern">
+                                    <label for="{{ form.telefon.id_for_label }}" class="form-label-modern">
+                                        Cep Telefonu
+                                        <span class="required">*</span>
+                                    </label>
+                                    <input type="tel" 
+                                           name="{{ form.telefon.name }}" 
+                                           id="{{ form.telefon.id_for_label }}" 
+                                           class="form-control-modern"
+                                           value="{{ form.telefon.value|default:'' }}"
+                                           placeholder="5XX XXX XX XX"
+                                           required>
+                                    {% for error in form.telefon.errors %}
+                                        <span class="form-error">
+                                            <i class="fas fa-exclamation-circle"></i>
+                                            {{ error }}
+                                        </span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group-modern">
+                                    <label for="{{ form.yedek_telefon.id_for_label }}" class="form-label-modern">
+                                        Yedek Telefon
+                                    </label>
+                                    <input type="tel" 
+                                           name="{{ form.yedek_telefon.name }}" 
+                                           id="{{ form.yedek_telefon.id_for_label }}" 
+                                           class="form-control-modern"
+                                           value="{{ form.yedek_telefon.value|default:'' }}"
+                                           placeholder="5XX XXX XX XX (Opsiyonel)">
+                                    {% for error in form.yedek_telefon.errors %}
+                                        <span class="form-error">
+                                            <i class="fas fa-exclamation-circle"></i>
+                                            {{ error }}
+                                        </span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="form-group-modern">
+                                    <label for="{{ form.il.id_for_label }}" class="form-label-modern">
+                                        İl
+                                        <span class="required">*</span>
+                                    </label>
+                                    <select name="{{ form.il.name }}" 
+                                            id="{{ form.il.id_for_label }}" 
+                                            class="form-select-modern"
+                                            required>
+                                        <option value="">Seçiniz</option>
+                                        {% for choice in form.il.field.queryset %}
+                                            <option value="{{ choice.id }}" {% if form.il.value == choice.id %}selected{% endif %}>
+                                                {{ choice.ad }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                    {% for error in form.il.errors %}
+                                        <span class="form-error">
+                                            <i class="fas fa-exclamation-circle"></i>
+                                            {{ error }}
+                                        </span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group-modern">
+                                    <label for="{{ form.ilce.id_for_label }}" class="form-label-modern">
+                                        İlçe
+                                        <span class="required">*</span>
+                                    </label>
+                                    <select name="{{ form.ilce.name }}" 
+                                            id="{{ form.ilce.id_for_label }}" 
+                                            class="form-select-modern"
+                                            required
+                                            disabled>
+                                        <option value="">Önce il seçiniz</option>
+                                    </select>
+                                    {% for error in form.ilce.errors %}
+                                        <span class="form-error">
+                                            <i class="fas fa-exclamation-circle"></i>
+                                            {{ error }}
+                                        </span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="form-group-modern">
+                                    <label for="{{ form.mahalle.id_for_label }}" class="form-label-modern">
+                                        Mahalle
+                                    </label>
+                                    <select name="{{ form.mahalle.name }}" 
+                                            id="{{ form.mahalle.id_for_label }}" 
+                                            class="form-select-modern"
+                                            disabled>
+                                        <option value="">Önce ilçe seçiniz</option>
+                                    </select>
+                                    {% for error in form.mahalle.errors %}
+                                        <span class="form-error">
+                                            <i class="fas fa-exclamation-circle"></i>
+                                            {{ error }}
+                                        </span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group-modern">
+                                    <label for="{{ form.mahalle_diger.id_for_label }}" class="form-label-modern">
+                                        Mahalle (Manuel)
+                                    </label>
+                                    <input type="text" 
+                                           name="{{ form.mahalle_diger.name }}" 
+                                           id="{{ form.mahalle_diger.id_for_label }}" 
+                                           class="form-control-modern"
+                                           value="{{ form.mahalle_diger.value|default:'' }}"
+                                           placeholder="Mahalle listede yoksa yazınız">
+                                    <span class="form-help-text">
+                                        <i class="fas fa-info-circle"></i>
+                                        Mahalle listede yoksa buraya yazabilirsiniz.
+                                    </span>
+                                    {% for error in form.mahalle_diger.errors %}
+                                        <span class="form-error">
+                                            <i class="fas fa-exclamation-circle"></i>
+                                            {{ error }}
+                                        </span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group-modern">
+                            <label for="{{ form.adres.id_for_label }}" class="form-label-modern">
+                                Detaylı Adres
+                                <span class="required">*</span>
+                            </label>
+                            <textarea name="{{ form.adres.name }}" 
+                                      id="{{ form.adres.id_for_label }}" 
+                                      class="form-textarea-modern"
+                                      rows="4"
+                                      placeholder="Sokak, cadde, bina no, daire no vb."
+                                      required>{{ form.adres.value|default:'' }}</textarea>
+                            {% for error in form.adres.errors %}
+                                <span class="form-error">
+                                    <i class="fas fa-exclamation-circle"></i>
+                                    {{ error }}
+                                </span>
+                            {% endfor %}
+                        </div>
+
+                        {% if form.non_field_errors %}
+                            <div class="alert-modern alert-danger">
+                                <i class="fas fa-exclamation-circle"></i>
+                                <div>
+                                    {% for error in form.non_field_errors %}
+                                        {{ error }}{% if not forloop.last %}<br>{% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        <div class="form-actions">
+                            <a href="{% url 'guest_activate_pet' %}" class="btn-back">
+                                <i class="fas fa-arrow-left"></i>
+                                Geri
+                            </a>
+                            <button type="submit" class="btn-continue">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Etiketi Aktifleştir</span>
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <p class="text-center text-muted mt-4 mb-0" style="font-size: 0.9rem;">
+                        <i class="fas fa-info-circle"></i>
+                        Tamamladıktan sonra otomatik olarak sahip paneline yönlendirileceksiniz.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock icerik %}
+
+{% block js_dosyalar %}
+<script>
+    // Initialize AOS animations
+    if (typeof AOS !== 'undefined') {
+        AOS.init({
+            duration: 800,
+            once: true,
+            easing: 'ease-out-cubic',
+            offset: 50
+        });
+    }
+    
+    // Dynamic district and neighborhood loading
+    document.addEventListener('DOMContentLoaded', function() {
+        const ilField = document.getElementById('id_il');
+        const ilceField = document.getElementById('id_ilce');
+        const mahalleField = document.getElementById('id_mahalle');
+
+        const initialIlce = ilceField ? ilceField.value : null;
+        const initialMahalle = mahalleField ? mahalleField.value : null;
+
+        async function loadDistricts(ilId, selectedId) {
+            if (!ilceField) return;
+            ilceField.innerHTML = '<option value="">Yükleniyor...</option>';
+            ilceField.disabled = true;
+            if (mahalleField) {
+                mahalleField.innerHTML = '<option value="">Önce ilçe seçiniz</option>';
+                mahalleField.disabled = true;
+            }
+
+            if (!ilId) {
+                ilceField.innerHTML = '<option value="">Önce il seçiniz</option>';
+                ilceField.disabled = true;
+                return;
+            }
+
+            try {
+                const resp = await fetch('/api/districts/?il_id=' + ilId, {
+                    method: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    credentials: 'same-origin'
+                });
+                if (!resp.ok) throw new Error('İlçeler alınamadı');
+                const data = await resp.json();
+                ilceField.innerHTML = '<option value="">Seçiniz</option>';
+                (data || []).forEach(function(item) {
+                    const opt = document.createElement('option');
+                    opt.value = item.id;
+                    opt.textContent = item.ad;
+                    if (selectedId && String(selectedId) === String(item.id)) {
+                        opt.selected = true;
+                    }
+                    ilceField.appendChild(opt);
+                });
+            } catch (err) {
+                console.error('İlçe listesi alınırken hata:', err);
+                ilceField.innerHTML = '<option value="">İlçeler yüklenemedi</option>';
+            } finally {
+                ilceField.disabled = false;
+            }
+        }
+
+        async function loadNeighborhoods(ilceId, selectedId) {
+            if (!mahalleField) return;
+            mahalleField.innerHTML = '<option value="">Yükleniyor...</option>';
+            mahalleField.disabled = true;
+            
+            if (!ilceId) {
+                mahalleField.innerHTML = '<option value="">Önce ilçe seçiniz</option>';
+                mahalleField.disabled = true;
+                return;
+            }
+
+            try {
+                const resp = await fetch('{% url "anahtarlik:get_mahalleler" %}?ilce_id=' + ilceId, {
+                    method: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    credentials: 'same-origin'
+                });
+                if (!resp.ok) throw new Error('Mahalleler alınamadı');
+                const data = await resp.json();
+                mahalleField.innerHTML = '<option value="">Seçiniz</option>';
+                (data || []).forEach(function(item) {
+                    const opt = document.createElement('option');
+                    opt.value = item.id;
+                    opt.textContent = item.ad;
+                    if (selectedId && String(selectedId) === String(item.id)) {
+                        opt.selected = true;
+                    }
+                    mahalleField.appendChild(opt);
+                });
+            } catch (err) {
+                console.error('Mahalle listesi alınırken hata:', err);
+                mahalleField.innerHTML = '<option value="">Mahalleler yüklenemedi</option>';
+            } finally {
+                mahalleField.disabled = false;
+            }
+        }
+
+        if (ilField) {
+            ilField.addEventListener('change', function() {
+                loadDistricts(this.value).then(function() {
+                    if (mahalleField) {
+                        mahalleField.innerHTML = '<option value="">Önce ilçe seçiniz</option>';
+                        mahalleField.disabled = true;
+                    }
+                });
+            });
+
+            if (ilField.value) {
+                loadDistricts(ilField.value, initialIlce).then(function() {
+                    if (initialIlce && mahalleField) {
+                        loadNeighborhoods(initialIlce, initialMahalle);
+                    }
+                });
+            }
+        }
+
+        if (ilceField) {
+            ilceField.addEventListener('change', function() {
+                loadNeighborhoods(this.value);
+            });
+
+            if (ilceField.value && !ilceField.disabled) {
+                loadNeighborhoods(ilceField.value, initialMahalle);
+            }
+        }
+    });
+</script>
+{% endblock js_dosyalar %}

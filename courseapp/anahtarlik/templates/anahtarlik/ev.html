@@ -1,0 +1,1888 @@
+{% extends 'ana.html' %}
+{% load static %}
+{% block baslik %}<title>PetSafe Hub - Evcil Hayvan Güvenliği ve Bakımı</title>{% endblock baslik %}
+
+{% block css_dosyalar %}
+<link href="https://unpkg.com/aos@next/dist/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+<style>
+    /* ========== MODERN INDEX PAGE STYLES ========== */
+
+    :root {
+        --primary-gradient: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
+        --secondary-gradient: linear-gradient(135deg, #FF8C42 0%, #6FCF97 100%);
+        --dark-gradient: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+        --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.1);
+        --shadow-hover: 0 30px 80px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Prevent horizontal overflow */
+    body {
+        overflow-x: hidden;
+        max-width: 100vw;
+    }
+
+
+    /* Prevent overflow in all sections */
+    section {
+        overflow-x: hidden;
+        max-width: 100%;
+        width: 100%;
+    }
+
+    /* 🎨 HERO SECTION - MODERN DYNAMIC SLIDE SYSTEM */
+    .hero-section {
+        position: relative;
+        min-height: 90vh;
+        width: 100%;
+        max-width: 100vw;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        color: white;
+        text-align: left;
+        overflow: visible;
+        padding: 120px 0 80px;
+        z-index: 1;
+    }
+
+    @keyframes heroGradient {
+        0% {
+            background-position: 0% 50%;
+        }
+
+        50% {
+            background-position: 100% 50%;
+        }
+
+        100% {
+            background-position: 0% 50%;
+        }
+    }
+
+    @keyframes float {
+
+        0%,
+        100% {
+            transform: translateY(0px);
+        }
+
+        50% {
+            transform: translateY(-30px);
+        }
+    }
+
+    .hero-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background:
+            radial-gradient(circle at 20% 30%, rgba(91, 155, 213, 0.08) 0%, transparent 50%),
+            radial-gradient(circle at 80% 70%, rgba(112, 193, 179, 0.06) 0%, transparent 50%);
+        z-index: 1;
+        pointer-events: none;
+    }
+
+    .hero-section::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 120px;
+        background: linear-gradient(to top, rgba(247, 249, 252, 0.2), transparent);
+        z-index: 2;
+        pointer-events: none;
+    }
+
+    /* Slide Container */
+    .hero-slides-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+        overflow: hidden;
+    }
+
+    /* Individual Slide */
+    .hero-slide {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        transition: opacity 1s ease-in-out;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        z-index: 2;
+        padding: 0;
+    }
+
+    /* Desktop'ta iki kolonlu modern layout */
+    @media (min-width: 992px) {
+        .hero-slide {
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+    }
+
+    .hero-slide.active {
+        opacity: 1;
+        z-index: 3;
+    }
+
+    /* Slide Background */
+    .slide-background {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        z-index: 0;
+    }
+
+    /* Mobil görsel - sadece mobilde görünür */
+    .slide-background-mobile {
+        display: none;
+    }
+
+    @media (max-width: 991px) {
+        .slide-background-desktop {
+            display: none;
+        }
+
+        .slide-background-mobile {
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center bottom;
+            background-repeat: no-repeat;
+            z-index: 0;
+        }
+    }
+
+    .slide-background::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg,
+                rgba(91, 155, 213, 0.4) 0%,
+                rgba(112, 193, 179, 0.35) 100%);
+        z-index: 1;
+    }
+
+    .slide-background-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 2;
+        opacity: 0.3;
+    }
+
+    /* Slide Content - Modern Two Column Layout */
+    .slide-content {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        max-width: 1400px;
+        padding: 0 40px;
+        margin: 0 auto;
+    }
+
+    /* Desktop'ta iki kolonlu yapı */
+    @media (min-width: 992px) {
+        .slide-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+            padding: 0 80px;
+            max-width: 1600px;
+        }
+
+        .slide-content-left {
+            grid-column: 1;
+        }
+
+        .slide-content-right {
+            grid-column: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            height: 100%;
+        }
+    }
+
+    /* Mobilde tek kolon */
+    @media (max-width: 991px) {
+        .slide-content {
+            padding: 0 20px 40px !important;
+            display: block;
+            margin-top: auto !important;
+        }
+
+        .slide-content-left {
+            width: 100%;
+        }
+
+        .slide-content-right {
+            display: none;
+        }
+
+        .hero-content-wrapper {
+            text-align: center;
+        }
+    }
+
+    .slide-content .container {
+        position: relative;
+        z-index: 4;
+        text-align: left;
+        width: 100%;
+    }
+
+    @media (min-width: 992px) {
+        .slide-content .container {
+            padding: 0;
+            max-width: 100%;
+        }
+    }
+
+    /* Sol kolon içerik alanı */
+    .hero-content-wrapper {
+        position: relative;
+        z-index: 5;
+    }
+
+    .hero-section .container {
+        position: relative;
+        z-index: 4;
+        text-align: left;
+    }
+
+    .hero-section h1 {
+        font-size: clamp(2.5rem, 6vw, 5.5rem);
+        font-weight: 700;
+        margin-bottom: 2rem;
+        color: #ffffff;
+        text-shadow:
+            0 2px 8px rgba(0, 0, 0, 0.3),
+            0 4px 16px rgba(0, 0, 0, 0.2);
+        letter-spacing: -2px;
+        line-height: 1.1;
+        text-align: left;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    }
+
+    /* Modern serif tarzı başlık için */
+    @media (min-width: 992px) {
+        .hero-section h1 {
+            font-size: 5.5rem;
+            font-weight: 600;
+            letter-spacing: -3px;
+            line-height: 1.05;
+            margin-bottom: 2.5rem;
+        }
+    }
+
+    .hero-section p {
+        font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+        margin-bottom: 3rem;
+        color: rgba(255, 255, 255, 0.92);
+        text-shadow:
+            0 2px 8px rgba(0, 0, 0, 0.4);
+        font-weight: 300;
+        line-height: 1.8;
+        max-width: 600px;
+        margin-left: 0;
+        margin-right: auto;
+        text-align: left;
+        letter-spacing: 0.5px;
+    }
+
+    @media (min-width: 992px) {
+        .hero-section p {
+            font-size: 1.4rem;
+            font-weight: 300;
+            line-height: 1.9;
+            letter-spacing: 1px;
+            margin-bottom: 3.5rem;
+        }
+    }
+
+    /* Vurgulu Modern Butonlar - Minimalist Tasarım */
+    .hero-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        justify-content: flex-start;
+        align-items: center;
+        margin-left: 0;
+    }
+
+    /* Desktop'ta daha şık görünüm */
+    @media (min-width: 992px) {
+        .hero-buttons {
+            gap: 1rem;
+        }
+    }
+
+    /* Sağ kolon dekoratif alan */
+    .hero-decorative-area {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        min-height: 500px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    @media (max-width: 991px) {
+        .hero-decorative-area {
+            display: none;
+        }
+    }
+
+    /* Dekoratif elemanlar için stil */
+    .hero-decorative-element {
+        position: absolute;
+        opacity: 0.12;
+        z-index: 1;
+        user-select: none;
+        pointer-events: none;
+        filter: blur(0.5px);
+    }
+
+    @media (min-width: 1400px) {
+        .hero-decorative-element {
+            font-size: 18rem !important;
+        }
+    }
+
+    .btn-primary {
+        background: rgba(0, 0, 0, 0.75);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        padding: 16px 40px;
+        border-radius: 8px;
+        color: white;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 500;
+        font-size: 1rem;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        position: relative;
+        overflow: hidden;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+    }
+
+    @media (min-width: 992px) {
+        .btn-primary {
+            padding: 18px 45px;
+            font-size: 0.9rem;
+            border-radius: 6px;
+        }
+    }
+
+    .btn-primary::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.1);
+        opacity: 0;
+        transition: opacity 0.4s ease;
+    }
+
+    .btn-primary:hover::before {
+        opacity: 1;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow:
+            0 8px 24px rgba(0, 0, 0, 0.3),
+            0 4px 12px rgba(0, 0, 0, 0.2);
+        color: white;
+        text-decoration: none;
+        background: rgba(0, 0, 0, 0.85);
+        border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .btn-primary i {
+        font-size: 1.1rem;
+        transition: transform 0.3s ease;
+        position: relative;
+        z-index: 1;
+        margin-right: 8px;
+    }
+
+    .btn-primary:hover i {
+        transform: scale(1.1);
+    }
+
+    .btn-primary span {
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Statistics Section */
+    .stats-section {
+        background: var(--primary-gradient);
+        color: white;
+        padding: 120px 0 80px;
+        margin-top: 0;
+        position: relative;
+        z-index: 20;
+        border-radius: 0;
+        box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Hero Action Buttons - Statistics Section Üstünde */
+    .hero-action-buttons {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 3rem;
+        margin-top: -60px;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        z-index: 25;
+        width: 100%;
+    }
+
+    .hero-action-btn {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        padding: 14px 28px;
+        border-radius: 12px;
+        color: #5B9BD5;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .hero-action-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        background: white;
+        color: #5B9BD5;
+        text-decoration: none;
+        border-color: rgba(255, 255, 255, 0.5);
+    }
+
+    .hero-action-btn i {
+        font-size: 1.1rem;
+        transition: transform 0.3s ease;
+    }
+
+    .hero-action-btn:hover i {
+        transform: scale(1.1);
+    }
+
+    .hero-action-btn span {
+        position: relative;
+    }
+
+    .stat-card {
+        text-align: center;
+        padding: 2rem;
+        animation: fadeInUp 0.6s ease-out;
+    }
+
+    .stat-number {
+        font-size: 3.5rem;
+        font-weight: 800;
+        margin-bottom: 0.5rem;
+        background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .stat-label {
+        font-size: 1.2rem;
+        opacity: 0.9;
+        font-weight: 500;
+    }
+
+    /* Services Section */
+    .services-section {
+        padding: 100px 0;
+        background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    }
+
+    .section-title {
+        text-align: center;
+        margin-bottom: 4rem;
+    }
+
+    .section-title h2 {
+        font-size: 3rem;
+        font-weight: 800;
+        margin-bottom: 1rem;
+        background: var(--primary-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .section-title p {
+        font-size: 1.2rem;
+        color: #666;
+        max-width: 700px;
+        margin: 0 auto;
+    }
+
+    .service-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2.5rem;
+        height: 100%;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .service-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 5px;
+        background: var(--primary-gradient);
+        transform: scaleX(0);
+        transition: transform 0.4s ease;
+    }
+
+    .service-card:hover {
+        transform: translateY(-10px);
+        box-shadow: var(--shadow-hover);
+    }
+
+    .service-card:hover::before {
+        transform: scaleX(1);
+    }
+
+    .service-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 20px;
+        background: var(--primary-gradient);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        font-size: 2.5rem;
+        color: white;
+        transition: all 0.3s ease;
+    }
+
+    .service-card:hover .service-icon {
+        transform: scale(1.1) rotate(5deg);
+    }
+
+    .service-card h4 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        color: #2c3e50;
+        text-align: center;
+    }
+
+    .service-card p {
+        color: #666;
+        text-align: center;
+        margin-bottom: 1.5rem;
+        line-height: 1.7;
+    }
+
+    .service-btn {
+        display: block;
+        text-align: center;
+        padding: 0.8rem 2rem;
+        background: var(--primary-gradient);
+        color: white;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        width: fit-content;
+        margin: 0 auto;
+    }
+
+    .service-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(91, 155, 213, 0.3);
+        color: white;
+    }
+
+    /* QR Künye Nasıl Çalışır Section */
+    .how-qr-works-section {
+        padding: 100px 0;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    }
+
+    .qr-info-card {
+        background: white;
+        padding: 3rem;
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+        height: 100%;
+    }
+
+    .qr-info-icon {
+        width: 100px;
+        height: 100px;
+        border-radius: 25px;
+        background: var(--primary-gradient);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 2rem;
+        font-size: 3rem;
+        color: white;
+        box-shadow: 0 10px 30px rgba(91, 155, 213, 0.3);
+    }
+
+    .qr-info-card h3 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 1.5rem;
+        text-align: center;
+    }
+
+    .qr-info-card p {
+        color: #666;
+        line-height: 1.8;
+        margin-bottom: 2rem;
+        text-align: center;
+        font-size: 1.1rem;
+    }
+
+    .qr-benefits {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .benefit-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        background: rgba(91, 155, 213, 0.05);
+        border-radius: 12px;
+        transition: all 0.3s ease;
+    }
+
+    .benefit-item:hover {
+        background: rgba(91, 155, 213, 0.1);
+        transform: translateX(5px);
+    }
+
+    .benefit-item i {
+        color: #5B9BD5;
+        font-size: 1.5rem;
+    }
+
+    .benefit-item span {
+        font-weight: 600;
+        color: #2c3e50;
+        font-size: 1.05rem;
+    }
+
+    .qr-steps {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .step-item {
+        display: flex;
+        gap: 1.5rem;
+        align-items: flex-start;
+        padding: 1.5rem;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    .step-item::before {
+        content: '';
+        position: absolute;
+        left: 50px;
+        top: 70px;
+        width: 3px;
+        height: calc(100% + 2rem);
+        background: linear-gradient(180deg, #5B9BD5 0%, #70C1B3 100%);
+        opacity: 0.3;
+    }
+
+    @media (max-width: 991px) {
+        .step-item::before {
+            display: none;
+        }
+    }
+
+    .step-item:last-child::before {
+        display: none;
+    }
+
+    .step-item:hover {
+        transform: translateX(10px);
+        box-shadow: 0 8px 30px rgba(91, 155, 213, 0.15);
+    }
+
+    .step-number {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: var(--primary-gradient);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: white;
+        flex-shrink: 0;
+        box-shadow: 0 5px 15px rgba(91, 155, 213, 0.3);
+        position: relative;
+        z-index: 1;
+    }
+
+    .step-content {
+        flex: 1;
+    }
+
+    .step-content h4 {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 0.5rem;
+    }
+
+    .step-content p {
+        color: #666;
+        line-height: 1.7;
+        margin: 0;
+    }
+
+    @media (max-width: 991px) {
+        .how-qr-works-section {
+            padding: 60px 0;
+        }
+
+        .qr-info-card {
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .qr-info-icon {
+            width: 80px;
+            height: 80px;
+            font-size: 2.5rem;
+        }
+
+        .qr-info-card h3 {
+            font-size: 1.6rem;
+        }
+
+        .step-item {
+            padding: 1.25rem;
+        }
+
+        .step-number {
+            width: 50px;
+            height: 50px;
+            font-size: 1.5rem;
+        }
+
+        .step-content h4 {
+            font-size: 1.2rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .how-qr-works-section {
+            padding: 40px 0;
+        }
+
+        .qr-info-card {
+            padding: 1.25rem;
+        }
+
+        .benefit-item {
+            padding: 0.75rem;
+        }
+
+        .benefit-item span {
+            font-size: 0.9rem;
+        }
+
+        .step-item {
+            padding: 1rem;
+            gap: 1rem;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            font-size: 1.2rem;
+        }
+
+        .step-content h4 {
+            font-size: 1rem;
+        }
+
+        .step-content p {
+            font-size: 0.85rem;
+        }
+    }
+
+    /* Featured Products Section */
+    .featured-section {
+        padding: 100px 0;
+        background: white;
+    }
+
+    /* Horizontal Scroll Container */
+    .products-scroll-container {
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding: 20px 0 40px;
+        margin: 0;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(91, 155, 213, 0.3) transparent;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .products-scroll-container::-webkit-scrollbar {
+        height: 8px;
+    }
+
+    .products-scroll-container::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.05);
+        border-radius: 10px;
+    }
+
+    .products-scroll-container::-webkit-scrollbar-thumb {
+        background: rgba(91, 155, 213, 0.3);
+        border-radius: 10px;
+    }
+
+    .products-scroll-container::-webkit-scrollbar-thumb:hover {
+        background: rgba(91, 155, 213, 0.5);
+    }
+
+    .products-scroll-wrapper {
+        display: flex;
+        gap: 1.5rem;
+        padding: 0 15px;
+        min-width: max-content;
+        max-width: 100%;
+    }
+
+    .product-card {
+        background: white;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        text-decoration: none;
+        color: inherit;
+        min-width: 280px;
+        max-width: 280px;
+        flex-shrink: 0;
+    }
+
+    .product-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 40px rgba(91, 155, 213, 0.15);
+        border-color: rgba(91, 155, 213, 0.2);
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .product-image {
+        width: 100%;
+        height: 220px;
+        object-fit: cover;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        transition: transform 0.3s ease;
+    }
+
+    .product-card:hover .product-image {
+        transform: scale(1.05);
+    }
+
+    .product-body {
+        padding: 1.25rem;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .product-title {
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+        color: #2c3e50;
+        line-height: 1.4;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .product-price {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #5B9BD5;
+        margin-top: auto;
+        margin-bottom: 0.75rem;
+    }
+
+    .product-btn {
+        padding: 0.65rem 1.25rem;
+        background: var(--primary-gradient);
+        color: white;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-decoration: none;
+        text-align: center;
+        transition: all 0.3s ease;
+        display: inline-block;
+        width: 100%;
+    }
+
+    .product-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(91, 155, 213, 0.3);
+        color: white;
+        text-decoration: none;
+    }
+
+    /* Mobile optimizations for product cards */
+    @media (max-width: 768px) {
+        .products-scroll-container {
+            margin: 0;
+            padding: 15px 0 30px;
+        }
+
+        .products-scroll-wrapper {
+            padding: 0 15px;
+            gap: 1rem;
+        }
+
+        .product-card {
+            border-radius: 12px;
+            min-width: 240px;
+            max-width: 240px;
+        }
+
+        .product-image {
+            height: 180px;
+        }
+
+        .product-body {
+            padding: 1rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .products-scroll-container {
+            margin: 0;
+            padding: 10px 0 25px;
+        }
+
+        .products-scroll-wrapper {
+            padding: 0 10px;
+            gap: 0.75rem;
+        }
+
+        .product-card {
+            min-width: 200px;
+            max-width: 200px;
+        }
+
+        .product-image {
+            height: 160px;
+        }
+
+        .product-title {
+            font-size: 0.9rem;
+        }
+
+        .product-price {
+            font-size: 1rem;
+        }
+
+        .product-btn {
+            padding: 0.55rem 1rem;
+            font-size: 0.85rem;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .featured-section {
+            padding: 60px 0;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .hero-action-buttons {
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            margin-top: -30px;
+        }
+
+        .hero-action-btn {
+            padding: 10px 20px;
+            font-size: 0.8rem;
+            min-width: 130px;
+        }
+
+        .stats-section {
+            padding: 100px 0 60px;
+        }
+
+        .hero-section h1,
+        .hero-content-wrapper h1,
+        .slide-content h1 {
+            font-size: 1.5rem !important;
+        }
+
+        .hero-section p,
+        .hero-content-wrapper p,
+        .slide-content p {
+            font-size: 0.85rem !important;
+        }
+
+        .slide-content {
+            padding: 0 15px 25px !important;
+            margin-top: auto !important;
+        }
+    }
+
+    /* CTA Section */
+    .cta-section {
+        padding: 100px 0;
+        background: var(--dark-gradient);
+        color: white;
+        text-align: center;
+    }
+
+    .cta-title {
+        font-size: 3rem;
+        font-weight: 800;
+        margin-bottom: 1.5rem;
+    }
+
+    .cta-description {
+        font-size: 1.3rem;
+        margin-bottom: 2.5rem;
+        opacity: 0.9;
+    }
+
+    .cta-btn {
+        padding: 1.2rem 3rem;
+        background: var(--secondary-gradient);
+        color: white;
+        border-radius: 50px;
+        font-weight: 700;
+        font-size: 1.2rem;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s ease;
+        box-shadow: 0 15px 40px rgba(255, 140, 66, 0.3);
+    }
+
+    .cta-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 20px 50px rgba(255, 140, 66, 0.4);
+        color: white;
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Responsive */
+    /* 📱 RESPONSIVE DESIGN */
+    @media (max-width: 991px) {
+        .hero-section {
+            min-height: 95vh;
+            padding: 20px 20px 40px;
+            justify-content: flex-end;
+            text-align: center;
+            display: flex;
+            align-items: flex-end;
+            overflow: visible;
+        }
+
+        .hero-slide {
+            justify-content: flex-end;
+            padding-left: 0;
+            align-items: flex-end;
+            overflow: visible;
+        }
+
+        .slide-content {
+            padding: 0 20px 40px !important;
+            margin-top: auto !important;
+            overflow: visible;
+        }
+
+        .hero-content-wrapper {
+            max-width: 100%;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.35);
+            backdrop-filter: blur(8px);
+            padding: 20px 15px 25px;
+            border-radius: 20px;
+            overflow: visible;
+            margin-bottom: 20px;
+        }
+
+        .hero-section h1,
+        .hero-content-wrapper h1,
+        .slide-content h1 {
+            font-size: 1.8rem !important;
+            margin-bottom: 0.8rem !important;
+            text-align: center;
+            line-height: 1.2;
+            letter-spacing: -0.5px;
+        }
+
+        .hero-section p,
+        .hero-content-wrapper p,
+        .slide-content p {
+            font-size: 0.95rem !important;
+            margin-bottom: 1.5rem !important;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+            line-height: 1.5;
+            max-width: 100%;
+            padding: 0;
+            opacity: 0.95;
+        }
+
+        .slide-content .container,
+        .hero-section .container {
+            text-align: center;
+        }
+
+        .btn-primary {
+            padding: 14px 24px;
+            font-size: 0.85rem;
+            width: auto;
+            min-width: 140px;
+            max-width: calc(50% - 4px);
+            justify-content: center;
+            min-height: 44px;
+            display: inline-flex;
+            margin: 0 2px;
+        }
+
+        .hero-buttons {
+            flex-direction: row;
+            gap: 8px;
+            justify-content: center;
+            width: 100%;
+            max-width: 100%;
+            flex-wrap: wrap;
+            margin-top: 0;
+            padding-top: 0;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .hero-section {
+            min-height: 85vh;
+            padding: 90px 15px 50px;
+            justify-content: flex-end;
+            text-align: center;
+            align-items: flex-end;
+            overflow: visible;
+        }
+
+        .hero-slide {
+            justify-content: flex-end;
+            padding-left: 0;
+            align-items: flex-end;
+            overflow: visible;
+        }
+
+        .slide-content {
+            padding: 80px 15px 40px !important;
+            overflow: visible;
+        }
+
+        .hero-content-wrapper {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            padding: 18px 12px 22px;
+            border-radius: 18px;
+            overflow: visible;
+            margin-bottom: 15px;
+        }
+
+        .slide-content .container,
+        .hero-section .container {
+            text-align: center;
+        }
+
+        .hero-section h1,
+        .hero-content-wrapper h1,
+        .slide-content h1 {
+            font-size: 1.6rem !important;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6), 0 1px 4px rgba(0, 0, 0, 0.8);
+            margin-bottom: 0.7rem !important;
+            letter-spacing: -0.5px;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .hero-section p,
+        .hero-content-wrapper p,
+        .slide-content p {
+            font-size: 0.9rem !important;
+            margin-bottom: 1.3rem !important;
+            padding: 0;
+            text-align: center;
+            margin-left: auto;
+            margin-right: auto;
+            max-width: 100%;
+            line-height: 1.5;
+            opacity: 0.95;
+        }
+
+        .slide-content {
+            padding: 0 15px 30px !important;
+            margin-top: auto !important;
+        }
+
+        .btn-primary {
+            padding: 12px 18px;
+            font-size: 0.75rem;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+            width: auto;
+            min-width: 120px;
+            max-width: calc(50% - 4px);
+            min-height: 44px;
+            display: inline-flex;
+            margin: 0 2px;
+        }
+
+        .btn-primary i {
+            font-size: 0.85rem;
+            margin-right: 4px;
+        }
+
+        .hero-buttons {
+            flex-direction: row;
+            gap: 6px;
+            justify-content: center;
+            width: 100%;
+            max-width: 100%;
+            flex-wrap: wrap;
+            margin-top: 0;
+            padding-top: 0;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+        }
+
+        .section-title h2 {
+            font-size: 2rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .hero-section {
+            min-height: 80vh;
+            padding: 80px 12px 45px;
+        }
+
+        .slide-content {
+            padding: 0 12px 30px;
+        }
+
+        .hero-content-wrapper {
+            padding: 16px 10px 20px;
+            border-radius: 16px;
+            margin-bottom: 10px;
+        }
+
+        .hero-section h1 {
+            font-size: 1.5rem;
+            margin-bottom: 0.6rem;
+        }
+
+        .hero-section p {
+            font-size: 0.85rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .btn-primary {
+            padding: 10px 16px;
+            font-size: 0.7rem;
+            min-width: 110px;
+            max-width: calc(50% - 3px);
+            min-height: 42px;
+        }
+
+        .btn-primary i {
+            font-size: 0.8rem;
+            margin-right: 3px;
+        }
+
+        .hero-buttons {
+            gap: 6px;
+        }
+    }
+
+    @media (max-width: 400px) {
+        .hero-section {
+            min-height: 75vh;
+            padding: 70px 10px 40px;
+        }
+
+        .hero-content-wrapper {
+            padding: 14px 8px 18px;
+        }
+
+        .hero-section h1 {
+            font-size: 1.3rem;
+        }
+
+        .hero-section p {
+            font-size: 0.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .btn-primary {
+            padding: 9px 14px;
+            font-size: 0.65rem;
+            min-width: 100px;
+            min-height: 40px;
+        }
+    }
+</style>
+{% endblock css_dosyalar %}
+
+{% block content %}
+<!-- 🌟 Hero Section -->
+<section class="hero-section">
+    <div class="hero-slides-container">
+        <!-- Slide 0: Varsayılan (Sabit İçerik) -->
+        <div class="hero-slide active" data-slide="0">
+            <div class="slide-background slide-background-desktop"
+                style="background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 50%, #6FCF97 100%); animation: heroGradient 15s ease infinite; background-size: 200% 200%;">
+            </div>
+            <div class="slide-background slide-background-mobile"
+                style="background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 50%, #6FCF97 100%); animation: heroGradient 15s ease infinite; background-size: 200% 200%;">
+            </div>
+            <div class="slide-content">
+                <!-- Sol Kolon: Metin ve Butonlar -->
+                <div class="slide-content-left">
+                    <div class="hero-content-wrapper">
+                        <h1 class="animate__animated animate__fadeInDown">PetSafe Hub'a Hoş Geldiniz</h1>
+                        <p class="animate__animated animate__fadeIn animate__delay-1s">Evcil hayvanlarınızı yenilikçi
+                            kimlik çözümleri ile koruyun</p>
+                    </div>
+                </div>
+                <!-- Sağ Kolon: Dekoratif Alan (PC'de görünür) -->
+                <div class="slide-content-right">
+                    <div class="hero-decorative-area">
+                        <div class="hero-decorative-element"
+                            style="font-size: 15rem; color: rgba(255,255,255,0.08); transform: rotate(-15deg); top: 10%; right: 10%;">
+                            🐾
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- HeroSlide'lardan Gelen Dinamik Slide'lar -->
+        {% for slide in hero_slides %}
+        <div class="hero-slide" data-slide="{{ forloop.counter }}">
+            <!-- Masaüstü Görsel -->
+            <div class="slide-background slide-background-desktop" {% if slide.arka_plan_resim %}
+                style="background-image: url('{{ slide.arka_plan_resim.url }}'); {% if slide.arka_plan_renk %}background-color: transparent;{% endif %}"
+                {% else %} style="background: {{ slide.arka_plan_renk }};" {% endif %}>
+                {% if slide.arka_plan_resim and slide.arka_plan_renk %}
+                <div class="slide-background-overlay"
+                    style="background: {{ slide.arka_plan_renk }}; mix-blend-mode: overlay;"></div>
+                {% endif %}
+            </div>
+            <!-- Mobil Görsel -->
+            <div class="slide-background slide-background-mobile" {% if slide.arka_plan_resim_mobil %}
+                style="background-image: url('{{ slide.arka_plan_resim_mobil.url }}'); {% if slide.arka_plan_renk %}background-color: transparent;{% endif %}"
+                {% elif slide.arka_plan_resim %}
+                style="background-image: url('{{ slide.arka_plan_resim.url }}'); {% if slide.arka_plan_renk %}background-color: transparent;{% endif %}"
+                {% else %} style="background: {{ slide.arka_plan_renk }};" {% endif %}>
+                {% if slide.arka_plan_resim_mobil and slide.arka_plan_renk %}
+                <div class="slide-background-overlay"
+                    style="background: {{ slide.arka_plan_renk }}; mix-blend-mode: overlay;"></div>
+                {% elif slide.arka_plan_resim and slide.arka_plan_renk %}
+                <div class="slide-background-overlay"
+                    style="background: {{ slide.arka_plan_renk }}; mix-blend-mode: overlay;"></div>
+                {% endif %}
+            </div>
+            <div class="slide-content">
+                <!-- Sol Kolon: Metin ve Butonlar -->
+                <div class="slide-content-left">
+                    <div class="hero-content-wrapper">
+                        <h1>{{ slide.baslik }}</h1>
+                        <p>{{ slide.aciklama }}</p>
+                    </div>
+                </div>
+                <!-- Sağ Kolon: Dekoratif Alan (PC'de görünür) -->
+                <div class="slide-content-right">
+                    <div class="hero-decorative-area">
+                        <div class="hero-decorative-element"
+                            style="font-size: 15rem; color: rgba(255,255,255,0.08); transform: rotate(-15deg); top: 10%; right: 10%;">
+                            🐾
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Statistics Section -->
+<section class="stats-section">
+    <div class="container">
+        <!-- Hero Action Buttons - Sol üst (Desktop), Ortalı (Mobil) -->
+        <div class="hero-action-buttons">
+            <a href="{% url 'etiket:lookup' %}" class="hero-action-btn">
+                <i class="fas fa-search"></i>
+                <span>Hayvan Bulundu</span>
+            </a>
+            {% if user.is_authenticated %}
+            {% if user.sahip %}
+            <a href="{% url 'anahtarlik:add_pet' %}" class="hero-action-btn">
+                <i class="fas fa-tag"></i>
+                <span>Etiket Aktive Et</span>
+            </a>
+            {% elif user.misafir_profili %}
+            <a href="{% url 'guest_activate_tag' %}" class="hero-action-btn">
+                <i class="fas fa-tag"></i>
+                <span>Etiket Aktive Et</span>
+            </a>
+            {% endif %}
+            {% else %}
+            <a href="{% url 'künye_aktivasyon' %}" class="hero-action-btn">
+                <i class="fas fa-tag"></i>
+                <span>Etiket Aktive Et</span>
+            </a>
+            {% endif %}
+        </div>
+
+        <div class="row g-4">
+            <div class="col-6 col-md-3">
+                <div class="stat-card">
+                    <div class="stat-number">{{ toplam_evcil_hayvan|default:"0" }}</div>
+                    <div class="stat-label">Kayıtlı Evcil Hayvan</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-card">
+                    <div class="stat-number">{{ toplam_urun|default:"0" }}</div>
+                    <div class="stat-label">Ürün Çeşidi</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-card">
+                    <div class="stat-number">{{ toplam_ilan|default:"0" }}</div>
+                    <div class="stat-label">Aktif İlan</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-card">
+                    <div class="stat-number">7/24</div>
+                    <div class="stat-label">Destek Hizmeti</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Services Section -->
+<section id="hizmetler" class="services-section">
+    <div class="container">
+        <div class="section-title">
+            <h2>{{ ayarlar.hizmetler_baslik|default:"Hizmetlerimiz" }}</h2>
+            <p>{{ ayarlar.hizmetler_aciklama|default:"Evcil dostlarınız için en iyi dijital kimlik ve sağlık takip çözümleri" }}</p>
+        </div>
+
+        {% if hizmet_kartlari %}
+        <div class="row g-4">
+            {% for kart in hizmet_kartlari %}
+            <div class="col-12 col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="{{ kart.animasyon_gecikmesi }}">
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="{{ kart.ikon }}"></i>
+                    </div>
+                    <h4>{{ kart.baslik }}</h4>
+                    <p>{{ kart.aciklama }}</p>
+                    {% if "qr" in kart.baslik|lower or "qrcode" in kart.ikon|lower or "etiket" in kart.baslik|lower %}
+                    <a href="{% url 'anahtarlik:qr_kunye_nasil_calisir' %}" class="service-btn">
+                        <i class="fas fa-info-circle me-2"></i>Nasıl Çalışır?
+                    </a>
+                    {% elif kart.buton_url %}
+                    <a href="{{ kart.buton_url }}" class="service-btn">
+                        {{ kart.buton_metin|default:"Keşfet" }}
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+
+            <!-- İlan ve Sahiplendirme Kartı -->
+            <div class="col-12 col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="400">
+                <div class="service-card">
+                    <div class="service-icon"><i class="fas fa-heart"></i></div>
+                    <h4>İlan ve Sahiplendirme</h4>
+                    <p>Yeni bir aile üyesi arıyorsanız veya sevimli dostlarınız için yuva arıyorsanız ilanlarımızı
+                        inceleyin.</p>
+                    <a href="{% url 'ilan:ilan_listesi' %}" class="service-btn">İlanları Gör</a>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <!-- Fallback Services -->
+        <div class="row g-4">
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="service-card">
+                    <div class="service-icon"><i class="fas fa-qrcode"></i></div>
+                    <h4>QR Künye Sistemi</h4>
+                    <p>Kayıp evcil hayvanınızı bulmak için teknolojik çözüm.</p>
+                    <a href="{% url 'anahtarlik:qr_kunye_nasil_calisir' %}" class="service-btn">Nasıl Çalışır?</a>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="service-card">
+                    <div class="service-icon"><i class="fas fa-calendar-check"></i></div>
+                    <h4>Veteriner Randevu</h4>
+                    <p>Online randevu sistemi ile veteriner bulun.</p>
+                    <a href="{% url 'veteriner:veteriner_paneli' %}" class="service-btn">Randevu Al</a>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="service-card">
+                    <div class="service-icon"><i class="fas fa-shopping-cart"></i></div>
+                    <h4>Pet Mağaza</h4>
+                    <p>Evcil hayvanlarınız için kaliteli ürünler.</p>
+                    <a href="{% url 'shop:shop_home' %}" class="service-btn">Alışveriş Yap</a>
+                </div>
+            </div>
+            <!-- İlan ve Sahiplendirme Kartı -->
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="service-card">
+                    <div class="service-icon"><i class="fas fa-heart"></i></div>
+                    <h4>İlan ve Sahiplendirme</h4>
+                    <p>Yeni bir aile üyesi arıyorsanız veya sevimli dostlarınız için yuva arıyorsanız ilanlarımızı
+                        inceleyin.</p>
+                    <a href="{% url 'ilan:ilan_listesi' %}" class="service-btn">İlanları Gör</a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- QR Künye Nasıl Çalışır Section -->
+<section id="how-qr-works-section" class="how-qr-works-section">
+    <div class="container">
+        <div class="section-title">
+            <h2>QR Künye Nasıl Çalışır?</h2>
+            <p>Evcil hayvanınızın güvenliği için teknolojik çözüm</p>
+        </div>
+
+        <div class="row g-4 align-items-center mb-5">
+            <div class="col-lg-6" data-aos="fade-right">
+                <div class="qr-info-card">
+                    <div class="qr-info-icon">
+                        <i class="fas fa-qrcode"></i>
+                    </div>
+                    <h3>QR Künye Nedir?</h3>
+                    <p>QR künye, evcil hayvanınızın boynuna takılan özel bir kimlik etiketidir. Üzerinde bulunan QR kod,
+                        akıllı telefonla okutulduğunda hayvanınızın profil bilgilerine ve sahibine hızlıca ulaşılmasını
+                        sağlar.</p>
+                    <div class="qr-benefits">
+                        <div class="benefit-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>7/24 Erişilebilir Bilgiler</span>
+                        </div>
+                        <div class="benefit-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Anında İletişim</span>
+                        </div>
+                        <div class="benefit-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Güvenli ve Hızlı</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6" data-aos="fade-left">
+                <div class="qr-steps">
+                    <div class="step-item">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h4>Künyeyi Satın Al</h4>
+                            <p>Size uygun QR künye ürününü seçin ve satın alın.</p>
+                        </div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h4>Hesabınıza Aktifleştirin</h4>
+                            <p>Künyeyi hesabınıza kaydedin ve evcil hayvanınızın bilgilerini ekleyin.</p>
+                        </div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h4>Hayvanınıza Takın</h4>
+                            <p>Künyeyi hayvanınızın boynuna takın ve güvenliğini sağlayın.</p>
+                        </div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <h4>Kaybolursa Hemen Bulunur</h4>
+                            <p>Birisi QR kodu okuttuğunda size anında bildirim gelir ve hayvanınız bulunur.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-5" data-aos="fade-up">
+            <a href="{% url 'anahtarlik:qr_kunye_nasil_calisir' %}" class="cta-btn">
+                <i class="fas fa-info-circle me-2"></i>Detaylı Bilgi Al
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Products Section - Tüm Etiket Ürünleri (Horizontal Scroll) -->
+{% if one_cikan_etiketler %}
+<section class="featured-section">
+    <div class="container">
+        <div class="section-title">
+            <h2>QR Künyeler</h2>
+            <p>Evcil hayvanınızın güvenliği için tüm QR künye ürünlerimiz</p>
+        </div>
+
+        <!-- Horizontal Scroll Container -->
+        <div class="products-scroll-container">
+            <div class="products-scroll-wrapper">
+                {% for urun in one_cikan_etiketler %}
+                <div class="product-card" data-aos="fade-up" data-aos-delay="{{ forloop.counter0|add:1 }}00">
+                    {% if urun.etiket_kategori and urun.etiket_kategori.ilk_fotograf %}
+                    <img src="{{ urun.etiket_kategori.ilk_fotograf.fotograf.url }}" alt="{{ urun.ad }}"
+                        class="product-image">
+                    {% elif urun.resimler.first %}
+                    <img src="{{ urun.resimler.first.resim.url }}" alt="{{ urun.ad }}" class="product-image">
+                    {% else %}
+                    <div class="product-image"
+                        style="display: flex; align-items: center; justify-content: center; background: var(--primary-gradient); color: white;">
+                        <i class="fas fa-qrcode fa-3x"></i>
+                    </div>
+                    {% endif %}
+                    <div class="product-body">
+                        <h5 class="product-title">{{ urun.ad|truncatewords:6 }}</h5>
+                        <div class="product-price">₺{{ urun.kullanici_fiyati|floatformat:2 }}</div>
+                        <a href="{% url 'shop:urun_detay' urun.id %}" class="product-btn">İncele</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="text-center mt-5" data-aos="fade-up" data-aos-delay="400">
+            <a href="{% url 'shop:etiket_list' %}" class="cta-btn">
+                <i class="fas fa-tag me-2"></i>Tüm Künyeleri Gör
+            </a>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+
+
+<!-- CTA Section -->
+<section class="cta-section">
+    <div class="container">
+        <h2 class="cta-title">Evcil Hayvanınızı Şimdi Koruyun!</h2>
+        <p class="cta-description">Yenilikçi QR etiketlerimiz ve mikroçip hizmetlerimizle evcil hayvanınızın güvenliğini
+            garantileyin.</p>
+        <a href="{% url 'shop:shop_home' %}" class="cta-btn">
+            <i class="fas fa-shopping-cart me-2"></i>Hemen Satın Al
+        </a>
+    </div>
+</section>
+
+<!-- Back to Top Button -->
+<a href="#" class="back-to-top">
+    <i class="fas fa-arrow-up"></i>
+</a>
+
+{% endblock %}
+
+{% block js_dosyalar %}
+<script>
+    // Hero Section Slide System
+    (function () {
+        const slides = document.querySelectorAll('.hero-slide');
+        if (slides.length <= 1) return; // Tek slide varsa geçiş yok
+
+        let currentSlide = 0;
+        const slideInterval = {{ ayarlar.slide_gecis_suresi|default: 5000
+    }};
+
+    function showSlide(index) {
+        // Tüm slide'ları pasif yap
+        slides.forEach((slide, i) => {
+            slide.classList.remove('active');
+        });
+
+        // Aktif slide'ı göster
+        if (slides[index]) {
+            slides[index].classList.add('active');
+        }
+    }
+
+    function nextSlide() {
+        currentSlide = (currentSlide + 1) % slides.length;
+        showSlide(currentSlide);
+    }
+
+    // İlk slide'ı göster (index 0 zaten active class'ı ile başlıyor)
+    // Otomatik geçişi başlat
+    if (slides.length > 1) {
+        setInterval(nextSlide, slideInterval);
+    }
+    }) ();
+
+    // Back to top button
+    const backToTopButton = document.querySelector('.back-to-top');
+
+    window.addEventListener('scroll', function () {
+        if (window.pageYOffset > 300) {
+            backToTopButton.classList.add('show');
+        } else {
+            backToTopButton.classList.remove('show');
+        }
+    });
+
+    backToTopButton.addEventListener('click', function (e) {
+        e.preventDefault();
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    });
+
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            const href = this.getAttribute('href');
+            if (href === '#') return;
+
+            const targetElement = document.querySelector(href);
+            if (targetElement) {
+                e.preventDefault();
+                const headerOffset = 100;
+                const elementPosition = targetElement.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+
+    // Initialize AOS animations
+    if (typeof AOS !== 'undefined') {
+        AOS.init({
+            duration: 1000,
+            once: true,
+            easing: 'ease-out-cubic',
+            offset: 50
+        });
+    }
+</script>
+{% endblock js_dosyalar %}

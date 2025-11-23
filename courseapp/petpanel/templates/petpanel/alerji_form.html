@@ -1,0 +1,21 @@
+{% extends "ana.html" %}
+{% block baslik %}{{ pet.ad }} - Alerji {{ is_edit|yesno:"Düzenle,Ekle" }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h3>{{ pet.ad }} için Alerji {{ is_edit|yesno:"Düzenle,Ekle" }}</h3>
+
+    <form method="POST">
+        {% csrf_token %}
+        <div class="card mb-3">
+            <div class="card-body">
+                {{ form.as_p }}
+            </div>
+            <div class="card-footer text-end">
+                <a href="{% url 'anahtarlik:pet_detail' pet.id %}" class="btn btn-secondary">İptal</a>
+                <button type="submit" class="btn btn-primary">Kaydet</button>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

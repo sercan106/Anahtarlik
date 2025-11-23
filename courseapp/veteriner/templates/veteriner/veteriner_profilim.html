@@ -1,0 +1,448 @@
+{% extends 'ana.html' %}
+{% load static %}
+
+{% block title %}Profilim - Veteriner{% endblock %}
+
+{% block css_dosyalar %}
+<style>
+    :root {
+        --vet-primary: #5B9BD5;
+        --vet-secondary: #70C1B3;
+        --vet-accent: #FF8C42;
+        --vet-success: #6FCF97;
+        --vet-info: #9B9ECE;
+        --vet-warning: #F2C94C;
+    }
+
+    /* Modern Glassmorphism Cards */
+    .vet-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 28px;
+        box-shadow: 0 15px 45px rgba(91, 155, 213, 0.12);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        overflow: hidden;
+    }
+
+    .vet-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 55px rgba(91, 155, 213, 0.18);
+    }
+
+    /* Card Headers */
+    .vet-header-primary {
+        background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
+        color: white;
+        padding: 1.5rem;
+        border-radius: 28px 28px 0 0;
+    }
+
+    .vet-header-success {
+        background: linear-gradient(135deg, #6FCF97 0%, #70C1B3 100%);
+        color: white;
+        padding: 1.5rem;
+        border-radius: 28px 28px 0 0;
+    }
+
+    .vet-header-info {
+        background: linear-gradient(135deg, #9B9ECE 0%, #70C1B3 100%);
+        color: white;
+        padding: 1.5rem;
+        border-radius: 28px 28px 0 0;
+    }
+
+    /* Stat Cards */
+    .stat-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(91, 155, 213, 0.15);
+        border-radius: 24px;
+        padding: 2rem;
+        text-align: center;
+        transition: all 0.3s ease;
+        box-shadow: 0 10px 30px rgba(91, 155, 213, 0.1);
+    }
+
+    .stat-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 40px rgba(91, 155, 213, 0.2);
+    }
+
+    .stat-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        background: linear-gradient(135deg, var(--vet-primary) 0%, var(--vet-secondary) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--vet-primary) 0%, var(--vet-secondary) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    /* Progress Bar */
+    .capacity-progress {
+        height: 30px;
+        border-radius: 15px;
+        background: rgba(91, 155, 213, 0.1);
+        overflow: hidden;
+    }
+
+    .capacity-progress .progress-bar {
+        border-radius: 15px;
+        background: linear-gradient(135deg, var(--vet-success) 0%, var(--vet-secondary) 100%);
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Buttons */
+    .btn-vet-primary {
+        background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
+        border: none;
+        border-radius: 15px;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 20px rgba(91, 155, 213, 0.25);
+    }
+
+    .btn-vet-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 30px rgba(91, 155, 213, 0.35);
+        color: white;
+    }
+
+    /* Info Boxes */
+    .info-item {
+        background: linear-gradient(135deg, rgba(91, 155, 213, 0.05) 0%, rgba(112, 193, 179, 0.05) 100%);
+        border-left: 4px solid var(--vet-primary);
+        padding: 1rem;
+        border-radius: 12px;
+        margin-bottom: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .info-item:hover {
+        transform: translateX(5px);
+        background: linear-gradient(135deg, rgba(91, 155, 213, 0.1) 0%, rgba(112, 193, 179, 0.1) 100%);
+    }
+
+    /* Badge Modern */
+    .badge-modern {
+        border-radius: 12px;
+        padding: 0.5rem 1rem;
+        font-weight: 600;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-5">
+                <h2 class="fw-bold" style="color: var(--vet-primary);">
+                    <i class="fas fa-user-md me-2"></i>Veteriner Profilim
+                </h2>
+                <a href="{% url 'veteriner:profil_duzenle' %}" class="btn-vet-primary">
+                    <i class="fas fa-edit me-2"></i>Profili Düzenle
+                </a>
+            </div>
+
+            <!-- Kişisel Bilgiler -->
+            <div class="row mb-4">
+                <div class="col-lg-8 mb-4">
+                    <div class="vet-card">
+                        <div class="vet-header-primary">
+                            <h5 class="mb-0 fw-bold"><i class="fas fa-id-card me-2"></i>Kişisel Bilgiler</h5>
+                        </div>
+                        <div class="p-4">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="info-item">
+                                        <p class="mb-0"><strong><i class="fas fa-user me-2"></i>Ad:</strong> {{ vet.ad }}</p>
+                                    </div>
+                                    <div class="info-item">
+                                        <p class="mb-0"><strong><i class="fas fa-envelope me-2"></i>E-posta:</strong> {{ vet.email|default:"Belirtilmemiş" }}</p>
+                                    </div>
+                                    <div class="info-item">
+                                        <p class="mb-0"><strong><i class="fas fa-phone me-2"></i>Telefon:</strong> {{ vet.telefon|default:"Belirtilmemiş" }}</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info-item">
+                                        <p class="mb-0"><strong><i class="fas fa-map-marker-alt me-2"></i>Konum:</strong> {{ vet.il.ad }}, {{ vet.ilce.ad }}</p>
+                                    </div>
+                                    <div class="info-item">
+                                        <p class="mb-0"><strong><i class="fas fa-calendar me-2"></i>Üyelik Tarihi:</strong> {{ vet.olusturulma|date:"d.m.Y" }}</p>
+                                    </div>
+                                    <div class="info-item">
+                                        <p class="mb-0"><strong><i class="fas fa-toggle-on me-2"></i>Durum:</strong>
+                                            {% if vet.aktif %}
+                                                <span class="badge badge-modern" style="background: linear-gradient(135deg, var(--vet-success) 0%, var(--vet-secondary) 100%); color: white;">Aktif</span>
+                                            {% else %}
+                                                <span class="badge badge-modern bg-danger">Pasif</span>
+                                            {% endif %}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {% if vet.adres_detay %}
+                            <div class="info-item mt-3">
+                                <p class="mb-0"><strong><i class="fas fa-home me-2"></i>Adres:</strong><br>{{ vet.adres_detay }}</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Kapasite Kartı -->
+                <div class="col-lg-4 mb-4">
+                    <div class="vet-card">
+                        <div class="vet-header-info">
+                            <h5 class="mb-0 fw-bold"><i class="fas fa-users me-2"></i>Kapasite Durumu</h5>
+                        </div>
+                        <div class="p-4 text-center">
+                            <h2 class="mb-4 fw-bold" style="color: var(--vet-primary);">{{ danisman_sahip_sayisi }} / {{ dinamik_kapasite }}</h2>
+                            <div class="capacity-progress mb-4">
+                                <div class="progress-bar
+                                    {% if kapasite_yuzdesi >= 100 %}bg-danger
+                                    {% elif kapasite_yuzdesi >= 80 %}bg-warning
+                                    {% else %}bg-success{% endif %}"
+                                    role="progressbar"
+                                    style="width: {{ kapasite_yuzdesi }}%;"
+                                    aria-valuenow="{{ kapasite_yuzdesi }}"
+                                    aria-valuemin="0"
+                                    aria-valuemax="100">
+                                    %{{ kapasite_yuzdesi|floatformat:0 }}
+                                </div>
+                            </div>
+                            <h5>
+                                {% if kapasite_durumu == "Dolu" %}
+                                    <span class="badge badge-modern bg-danger">🔴 Dolu</span>
+                                {% elif kapasite_durumu == "Doluya Yakın" %}
+                                    <span class="badge badge-modern bg-warning">🟡 Doluya Yakın</span>
+                                {% elif kapasite_durumu == "Orta" %}
+                                    <span class="badge badge-modern" style="background: linear-gradient(135deg, var(--vet-success) 0%, var(--vet-secondary) 100%); color: white;">🟢 Orta</span>
+                                {% else %}
+                                    <span class="badge badge-modern" style="background: linear-gradient(135deg, var(--vet-info) 0%, var(--vet-secondary) 100%); color: white;">⚪ Boş</span>
+                                {% endif %}
+                            </h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- İstatistikler -->
+            <div class="row mb-4">
+                <div class="col-md-3 mb-4">
+                    <div class="stat-card">
+                        <i class="fas fa-tags stat-icon"></i>
+                        <div class="stat-number">{{ vet.tahsis_sayisi }}</div>
+                        <p class="text-muted mb-3">Tahsis Edilen Künye</p>
+                        <a href="{% url 'veteriner:tahsis_listesi' %}" class="btn btn-sm btn-vet-primary">Görüntüle</a>
+                    </div>
+                </div>
+
+                <div class="col-md-3 mb-4">
+                    <div class="stat-card">
+                        <i class="fas fa-chart-line stat-icon"></i>
+                        <div class="stat-number">{{ vet.satis_sayisi }}</div>
+                        <p class="text-muted mb-3">Satılan Künye</p>
+                        <a href="{% url 'veteriner:satis_listesi' %}" class="btn btn-sm btn-vet-primary">Görüntüle</a>
+                    </div>
+                </div>
+
+                <div class="col-md-3 mb-4">
+                    <div class="stat-card">
+                        <i class="fas fa-calendar-check stat-icon"></i>
+                        <div class="stat-number">{{ bekleyen_randevu }}</div>
+                        <p class="text-muted mb-3">Bekleyen Randevu</p>
+                        <a href="{% url 'veteriner:randevu_yonetimi' %}" class="btn btn-sm btn-vet-primary">Görüntüle</a>
+                    </div>
+                </div>
+
+                <div class="col-md-3 mb-4">
+                    <div class="stat-card">
+                        <i class="fas fa-star stat-icon" style="background: linear-gradient(135deg, #F2C94C 0%, #FF8C42 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;"></i>
+                        <div class="stat-number" style="background: linear-gradient(135deg, #F2C94C 0%, #FF8C42 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">{{ vet.ortalama_puan|floatformat:1 }}</div>
+                        <p class="text-muted mb-0">Ortalama Puan</p>
+                        <small class="text-muted">{{ vet.degerlendirme_sayisi }} değerlendirme</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hizmet Bilgileri -->
+            <div class="row mb-4">
+                <div class="col-lg-6 mb-4">
+                    <div class="vet-card">
+                        <div class="vet-header-primary">
+                            <h5 class="mb-0 fw-bold"><i class="fas fa-briefcase-medical me-2"></i>Hizmet Bilgileri</h5>
+                        </div>
+                        <div class="p-4">
+                            {% if vet.uzmanlik_alanlari %}
+                                <p><strong><i class="fas fa-graduation-cap me-2 text-secondary"></i>Uzmanlık Alanları:</strong><br>{{ vet.uzmanlik_alanlari }}</p>
+                            {% endif %}
+                            
+                            <div class="row mt-3">
+                                <div class="col-6">
+                                    <p><strong><i class="fas fa-ambulance me-2"></i>Acil Hizmet:</strong> 
+                                        {% if vet.acil_hizmet %}
+                                            <span class="badge bg-success">Evet</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">Hayır</span>
+                                        {% endif %}
+                                    </p>
+                                </div>
+                                <div class="col-6">
+                                    <p><strong><i class="fas fa-home me-2"></i>Evde Hizmet:</strong> 
+                                        {% if vet.evde_hizmet %}
+                                            <span class="badge bg-success">Evet</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">Hayır</span>
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <p class="mb-0"><strong><i class="fas fa-calendar-alt me-2 text-secondary"></i>Hizmetler:</strong> {{ hizmet_sayisi }} adet</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Web Sayfası ve Sosyal Medya -->
+                <div class="col-lg-6 mb-4">
+                    <div class="vet-card">
+                        <div class="vet-header-info">
+                            <h5 class="mb-0 fw-bold"><i class="fas fa-globe me-2"></i>Web & Sosyal Medya</h5>
+                        </div>
+                        <div class="p-4">
+                            {% if vet.website %}
+                                <p><strong><i class="fas fa-link me-2"></i>Web Sitesi:</strong> <a href="{{ vet.website }}" target="_blank">{{ vet.website }}</a></p>
+                            {% endif %}
+                            
+                            <div class="d-flex gap-2 mb-3">
+                                {% if vet.instagram %}
+                                    <a href="https://instagram.com/{{ vet.instagram }}" target="_blank" class="btn btn-sm btn-outline-danger">
+                                        <i class="fab fa-instagram"></i>
+                                    </a>
+                                {% endif %}
+                                {% if vet.facebook %}
+                                    <a href="https://facebook.com/{{ vet.facebook }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                        <i class="fab fa-facebook"></i>
+                                    </a>
+                                {% endif %}
+                                {% if vet.twitter %}
+                                    <a href="https://twitter.com/{{ vet.twitter }}" target="_blank" class="btn btn-sm btn-outline-info">
+                                        <i class="fab fa-twitter"></i>
+                                    </a>
+                                {% endif %}
+                                {% if vet.youtube %}
+                                    <a href="https://youtube.com/@{{ vet.youtube }}" target="_blank" class="btn btn-sm btn-outline-danger">
+                                        <i class="fab fa-youtube"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+
+                            {% if vet.web_aktif and vet.web_slug %}
+                                <a href="{% url 'veteriner:web_sayfasi_gorunum' vet.web_slug %}" target="_blank" class="btn btn-vet-primary w-100">
+                                    <i class="fas fa-external-link-alt me-2"></i>Kişisel Web Sayfamı Görüntüle
+                                </a>
+                            {% else %}
+                                <a href="{% url 'veteriner:web_sayfasi_duzenle' %}" class="btn btn-vet-primary w-100" style="background: linear-gradient(135deg, rgba(91, 155, 213, 0.8) 0%, rgba(112, 193, 179, 0.8) 100%);">
+                                    <i class="fas fa-plus-circle me-2"></i>Web Sayfası Oluştur
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Son Değerlendirmeler -->
+            {% if son_degerlendirmeler %}
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="vet-card">
+                        <div class="vet-header-primary" style="background: linear-gradient(135deg, #F2C94C 0%, #FF8C42 100%);">
+                            <h5 class="mb-0 fw-bold"><i class="fas fa-comments me-2"></i>Son Değerlendirmeler</h5>
+                        </div>
+                        <div class="p-4">
+                            {% for deg in son_degerlendirmeler %}
+                            <div class="border-bottom pb-3 mb-3">
+                                <div class="d-flex justify-content-between">
+                                    <strong>{{ deg.kullanici.get_full_name|default:deg.kullanici.username }}</strong>
+                                    <span class="text-warning">
+                                        {% for i in "12345"|slice:":"|make_list %}
+                                            {% if forloop.counter <= deg.puan %}
+                                                <i class="fas fa-star"></i>
+                                            {% else %}
+                                                <i class="far fa-star"></i>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </span>
+                                </div>
+                                <p class="text-muted small mb-0">{{ deg.yorum }}</p>
+                                <small class="text-muted">{{ deg.olusturulma_tarihi|date:"d.m.Y" }}</small>
+                            </div>
+                            {% endfor %}
+                            <a href="{% url 'veteriner:degerlendirme_listesi' %}" class="btn btn-sm btn-vet-primary">
+                                Tüm Değerlendirmeleri Gör
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Hızlı Aksiyonlar -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="vet-card">
+                        <div class="vet-header-success">
+                            <h5 class="mb-0 fw-bold"><i class="fas fa-bolt me-2"></i>Hızlı İşlemler</h5>
+                        </div>
+                        <div class="p-4">
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <a href="{% url 'veteriner:randevu_yonetimi' %}" class="btn btn-vet-primary w-100">
+                                        <i class="fas fa-calendar me-2"></i>Randevular
+                                    </a>
+                                </div>
+                                <div class="col-md-4">
+                                    <a href="{% url 'veteriner:siparis_listesi' %}" class="btn btn-vet-primary w-100">
+                                        <i class="fas fa-boxes me-2"></i>Siparişler
+                                        {% if bekleyen_siparis > 0 %}
+                                            <span class="badge bg-danger ms-1">{{ bekleyen_siparis }}</span>
+                                        {% endif %}
+                                    </a>
+                                </div>
+                                <div class="col-md-4">
+                                    <a href="{% url 'veteriner:web_sayfasi_duzenle' %}" class="btn btn-vet-primary w-100">
+                                        <i class="fas fa-globe me-2"></i>Web Sayfam
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+

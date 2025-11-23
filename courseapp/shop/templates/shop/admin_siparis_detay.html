@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sipariş Detayı - Admin Panel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+    body {
+        background: #f5f5f5 !important;
+    }
+
+    .admin-container {
+        max-width: 1200px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+
+    .admin-header {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .admin-header h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #333;
+        margin: 0 0 20px 0;
+    }
+
+    .back-btn {
+        background: #6c757d;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        text-decoration: none;
+        display: inline-block;
+        margin-bottom: 20px;
+        transition: all 0.3s ease;
+    }
+
+    .back-btn:hover {
+        background: #5a6268;
+        color: white;
+        text-decoration: none;
+    }
+
+    .order-info-card {
+        background: white;
+        padding: 25px;
+        border-radius: 15px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .order-info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+    }
+
+    .info-section h3 {
+        color: #333;
+        font-size: 1.2rem;
+        margin-bottom: 15px;
+        border-bottom: 2px solid #007bff;
+        padding-bottom: 8px;
+    }
+
+    .info-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        padding: 8px 0;
+        border-bottom: 1px solid #eee;
+    }
+
+    .info-label {
+        font-weight: 600;
+        color: #666;
+    }
+
+    .info-value {
+        color: #333;
+    }
+
+    .status-badge {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .status-badge.bekliyor {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .status-badge.odendi {
+        background: #d1ecf1;
+        color: #0c5460;
+    }
+
+    .status-badge.hazirlaniyor {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .status-badge.kargoda {
+        background: #cce5ff;
+        color: #004085;
+    }
+
+    .status-badge.teslim_edildi {
+        background: #d1f2eb;
+        color: #0f5132;
+    }
+
+    .status-badge.iptal {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    .status-badge.iade {
+        background: #f5c6cb;
+        color: #721c24;
+    }
+
+    .products-table {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+    }
+
+    .table {
+        margin: 0;
+        border-collapse: collapse;
+    }
+
+    .table th {
+        background: #f8f9fa;
+        padding: 15px;
+        font-weight: 600;
+        color: #333;
+        border-bottom: 2px solid #dee2e6;
+    }
+
+    .table td {
+        padding: 15px;
+        border-bottom: 1px solid #dee2e6;
+        vertical-align: middle;
+    }
+
+    .product-image {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+
+    .product-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .product-details h5 {
+        margin: 0 0 5px 0;
+        color: #333;
+        font-size: 1rem;
+    }
+
+    .product-details p {
+        margin: 0;
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    .timeline {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .timeline-item {
+        position: relative;
+        padding-left: 30px;
+        margin-bottom: 20px;
+    }
+
+    .timeline-item:not(:last-child)::before {
+        content: '';
+        position: absolute;
+        left: 8px;
+        top: 25px;
+        bottom: -20px;
+        width: 2px;
+        background: #dee2e6;
+    }
+
+    .timeline-dot {
+        position: absolute;
+        left: 0;
+        top: 5px;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: #007bff;
+        border: 3px solid white;
+        box-shadow: 0 0 0 2px #007bff;
+    }
+
+    .timeline-content h6 {
+        margin: 0 0 5px 0;
+        color: #333;
+        font-size: 1rem;
+    }
+
+    .timeline-content p {
+        margin: 0;
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    .timeline-date {
+        color: #999;
+        font-size: 0.8rem;
+    }
+
+    .total-section {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+        margin-top: 20px;
+    }
+
+    .total-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        padding: 5px 0;
+    }
+
+    .total-row.final {
+        border-top: 2px solid #007bff;
+        padding-top: 15px;
+        margin-top: 15px;
+        font-weight: 700;
+        font-size: 1.1rem;
+        color: #333;
+    }
+
+    .badge {
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    .badge.bg-primary {
+        background: #007bff;
+        color: white;
+    }
+
+    .badge.bg-success {
+        background: #28a745;
+        color: white;
+    }
+
+    .badge.bg-warning {
+        background: #ffc107;
+        color: #212529;
+    }
+
+    .badge.bg-info {
+        background: #17a2b8;
+        color: white;
+    }
+
+    .badge.bg-secondary {
+        background: #6c757d;
+        color: white;
+    }
+
+    .badge.bg-danger {
+        background: #dc3545;
+        color: white;
+    }
+    </style>
+</head>
+<body>
+<div class="admin-container">
+    <div class="admin-header">
+        <a href="{% url 'shop:admin_siparis_yonet' %}" class="back-btn">
+            ← Sipariş Yönetimine Dön
+        </a>
+        <h1>Sipariş Detayı #{{ siparis.id }}</h1>
+    </div>
+
+    <!-- Sipariş Bilgileri -->
+    <div class="order-info-card">
+        <div class="order-info-grid">
+            <!-- Müşteri Bilgileri -->
+            <div class="info-section">
+                <h3>👤 Müşteri Bilgileri</h3>
+                {% if siparis.kullanici %}
+                    <div class="info-item">
+                        <span class="info-label">Ad Soyad:</span>
+                        <span class="info-value">{{ siparis.kullanici.get_full_name|default:siparis.kullanici.username }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Email:</span>
+                        <span class="info-value">{{ siparis.kullanici.email }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Kullanıcı Tipi:</span>
+                        <span class="info-value">
+                            {% if siparis.kullanici.sahip %}
+                                <span class="badge bg-primary">QR Sahibi</span>
+                            {% elif siparis.kullanici.veteriner_profili %}
+                                <span class="badge bg-success">Veteriner</span>
+                            {% elif siparis.kullanici.petshop_profili %}
+                                <span class="badge bg-warning">Petshop</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Normal</span>
+                            {% endif %}
+                        </span>
+                    </div>
+                {% else %}
+                    <div class="info-item">
+                        <span class="info-label">Ad Soyad:</span>
+                        <span class="info-value">{{ siparis.misafir_ad_soyad }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Email:</span>
+                        <span class="info-value">{{ siparis.misafir_email }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Telefon:</span>
+                        <span class="info-value">{{ siparis.misafir_telefon }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Kullanıcı Tipi:</span>
+                        <span class="info-value"><span class="badge bg-info">Misafir</span></span>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Sipariş Bilgileri -->
+            <div class="info-section">
+                <h3>📦 Sipariş Bilgileri</h3>
+                <div class="info-item">
+                    <span class="info-label">Sipariş No:</span>
+                    <span class="info-value">#{{ siparis.id }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Tarih:</span>
+                    <span class="info-value">{{ siparis.olusturulma_tarihi|date:"d.m.Y H:i" }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Durum:</span>
+                    <span class="info-value">
+                        <span class="status-badge {{ siparis.durum }}">
+                            {% if siparis.durum == 'bekliyor' %}Bekliyor
+                            {% elif siparis.durum == 'odendi' %}Ödendi
+                            {% elif siparis.durum == 'hazirlaniyor' %}Hazırlanıyor
+                            {% elif siparis.durum == 'kargoda' %}Kargoda
+                            {% elif siparis.durum == 'teslim_edildi' %}Teslim Edildi
+                            {% elif siparis.durum == 'iptal' %}İptal
+                            {% elif siparis.durum == 'iade' %}İade
+                            {% endif %}
+                        </span>
+                    </span>
+                </div>
+                {% if siparis.kargo_firma %}
+                <div class="info-item">
+                    <span class="info-label">Kargo Firması:</span>
+                    <span class="info-value">{{ siparis.kargo_firma.ad }}</span>
+                </div>
+                {% endif %}
+                {% if siparis.kargo_takip_no %}
+                <div class="info-item">
+                    <span class="info-label">Kargo Takip No:</span>
+                    <span class="info-value">{{ siparis.kargo_takip_no }}</span>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Adres Bilgileri -->
+            <div class="info-section">
+                <h3>📍 Teslimat Adresi</h3>
+                {% if siparis.adres %}
+                    <div class="info-item">
+                        <span class="info-label">Adres:</span>
+                        <span class="info-value" style="white-space: pre-line;">{{ siparis.adres }}</span>
+                    </div>
+                {% else %}
+                    <div class="info-item">
+                        <span class="info-label">Adres:</span>
+                        <span class="info-value" style="color: #999;">Adres bilgisi kaydedilmemiş</span>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Ürünler -->
+    <div class="products-table">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Ürün</th>
+                    <th>Ürün Tipi</th>
+                    <th>Miktar</th>
+                    <th>Birim Fiyat</th>
+                    <th>Toplam</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in siparis_items %}
+                <tr>
+                    <td>
+                        <div class="product-info">
+                            {% if item.urun.urun_tipi == 'etiket' %}
+                                {# Etiket ürünleri için kategori resmini kullan #}
+                                {% with kategori_resmi=item.urun.etiket_kategori.ilk_fotograf %}
+                                    {% if kategori_resmi and kategori_resmi.fotograf %}
+                                        <img src="{{ kategori_resmi.fotograf.url }}" alt="{{ item.urun.ad }}" class="product-image">
+                                    {% else %}
+                                        <div class="product-image" style="background: #f8f9fa; display: flex; align-items: center; justify-content: center; color: #999;">
+                                            🏷️
+                                        </div>
+                                    {% endif %}
+                                {% endwith %}
+                            {% else %}
+                                {# Normal ürünler için ürün resimlerini kullan #}
+                                {% if item.urun.resimler.first %}
+                                    <img src="{{ item.urun.resimler.first.resim.url }}" alt="{{ item.urun.ad }}" class="product-image">
+                                {% else %}
+                                    <div class="product-image" style="background: #f8f9fa; display: flex; align-items: center; justify-content: center; color: #999;">
+                                        📦
+                                    </div>
+                                {% endif %}
+                            {% endif %}
+                            <div class="product-details">
+                                <h5>{{ item.urun.ad }}</h5>
+                                <p>{{ item.urun.kisa_aciklama|default:"" }}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        {% if item.urun.urun_tipi == 'etiket' %}
+                            <span class="badge bg-info">🏷️ QR Etiket</span>
+                        {% else %}
+                            <span class="badge bg-warning">🐾 Pet Ürün</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ item.miktar }}</td>
+                    <td>₺{{ item.fiyat|floatformat:2 }}</td>
+                    <td><strong>₺{{ item.get_total|floatformat:2 }}</strong></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Toplam -->
+    <div class="order-info-card">
+        <div class="total-section">
+            <div class="total-row">
+                <span>Ara Toplam:</span>
+                <span>₺{{ siparis.toplam_fiyat|floatformat:2 }}</span>
+            </div>
+            <div class="total-row final">
+                <span>Toplam:</span>
+                <span>₺{{ siparis.toplam_fiyat|floatformat:2 }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Oluşturulan Etiketler -->
+    {% if etiketler %}
+    <div class="order-info-card">
+        <h3>🏷️ Oluşturulan Etiketler ({{ etiketler|length }} adet)</h3>
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Seri No</th>
+                        <th>Kanal</th>
+                        <th>Kategori</th>
+                        <th>Durum</th>
+                        <th>Müşteri</th>
+                        <th>Adres</th>
+                        <th>Oluşturulma</th>
+                        <th>İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for etiket in etiketler %}
+                    <tr>
+                        <td>
+                            <strong>{{ etiket.seri_numarasi }}</strong>
+                            <br><small class="text-muted">ID: {{ etiket.etiket_id|truncatechars:8 }}</small>
+                        </td>
+                        <td>
+                            {% if etiket.kanal == 'ONLINE' %}
+                                <span class="badge bg-info">🌐 Online</span>
+                            {% elif etiket.kanal == 'VET' %}
+                                <span class="badge bg-success">🏥 Veteriner</span>
+                            {% elif etiket.kanal == 'SHOP' %}
+                                <span class="badge bg-warning">🏪 Petshop</span>
+                            {% else %}
+                                <span class="badge bg-secondary">{{ etiket.kanal }}</span>
+                            {% endif %}
+                            {% if etiket.satici_veteriner %}
+                                <br><small class="text-muted">Vet: {{ etiket.satici_veteriner.isim }}</small>
+                            {% elif etiket.satici_petshop %}
+                                <br><small class="text-muted">Shop: {{ etiket.satici_petshop.isim }}</small>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {{ etiket.kategori.ad|default:"-" }}
+                            {% if etiket.kategori %}
+                                <br><small class="text-muted">{{ etiket.kategori.aciklama|truncatechars:30 }}</small>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if etiket.aktif %}
+                                <span class="badge bg-success">✅ Aktif</span>
+                                {% if etiket.first_activated_at %}
+                                    <br><small class="text-muted">Aktif: {{ etiket.first_activated_at|date:"d.m.Y" }}</small>
+                                {% endif %}
+                            {% else %}
+                                <span class="badge bg-secondary">⏸️ Pasif</span>
+                            {% endif %}
+                            {% if etiket.kilitli %}
+                                <br><span class="badge bg-danger">🔒 Kilitli</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <strong>{{ etiket.musteri_adi|default:"-" }}</strong>
+                            {% if etiket.musteri_telefon %}
+                                <br><small class="text-muted">📞 {{ etiket.musteri_telefon }}</small>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <small class="text-muted">{{ etiket.adres_kullanici|truncatechars:50|default:"-" }}</small>
+                        </td>
+                        <td>
+                            {{ etiket.olusturulma_tarihi|date:"d.m.Y" }}
+                            <br><small class="text-muted">{{ etiket.olusturulma_tarihi|date:"H:i" }}</small>
+                        </td>
+                            <td>
+                                <div class="btn-group-vertical" role="group">
+                                    {% if etiket.qr_kod_url %}
+                                    <a href="{{ etiket.qr_kod_url }}" target="_blank" class="btn btn-sm btn-primary mb-1">
+                                        <i class="fas fa-qrcode"></i> QR Kod
+                                    </a>
+                                    {% endif %}
+                                    <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#etiketModal{{ etiket.id }}">
+                                        <i class="fas fa-info-circle"></i> Detay
+                                    </button>
+                                </div>
+                                
+                                <!-- QR Kod Resmi Önizleme -->
+                                {% if etiket.qr_kod_url %}
+                                <div class="mt-2">
+                                    <div id="qrcode-preview-{{ etiket.id }}" style="width: 80px; height: 80px; border: 1px solid #ddd; border-radius: 5px; background: white; display: inline-block;"></div>
+                                    <br><small class="text-muted">QR Önizleme</small>
+                                </div>
+                                {% endif %}
+                            </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- QR Kod Basım Önizleme -->
+    {% if etiketler %}
+    <div class="order-info-card">
+        <h3>🖨️ QR Kod Basım Önizleme</h3>
+        <div class="row">
+            {% for etiket in etiketler %}
+            <div class="col-md-4 col-lg-3 mb-4">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h6 class="card-title">{{ etiket.seri_numarasi }}</h6>
+                        <div id="qrcode-print-{{ etiket.id }}" style="width: 150px; height: 150px; margin: 0 auto; border: 1px solid #ddd; border-radius: 5px; background: white;"></div>
+                        <p class="mt-2 mb-1"><strong>{{ etiket.kategori.ad|default:"-" }}</strong></p>
+                        <p class="mb-1"><small class="text-muted">{{ etiket.musteri_adi|default:"-" }}</small></p>
+                        <p class="mb-0"><small class="text-muted">{{ etiket.kanal }}</small></p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Durum Geçmişi -->
+    {% if durum_gecmisi %}
+    <div class="timeline">
+        <h3>📋 Sipariş Durum Geçmişi</h3>
+        {% for durum in durum_gecmisi %}
+        <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+                <h6>
+                    <span class="status-badge {{ durum.durum }}">
+                        {% if durum.durum == 'bekliyor' %}Bekliyor
+                        {% elif durum.durum == 'odendi' %}Ödendi
+                        {% elif durum.durum == 'hazirlaniyor' %}Hazırlanıyor
+                        {% elif durum.durum == 'kargoda' %}Kargoda
+                        {% elif durum.durum == 'teslim_edildi' %}Teslim Edildi
+                        {% elif durum.durum == 'iptal' %}İptal
+                        {% elif durum.durum == 'iade' %}İade
+                        {% endif %}
+                    </span>
+                </h6>
+                {% if durum.aciklama %}
+                <p>{{ durum.aciklama }}</p>
+                {% endif %}
+                {% if durum.kargo_takip_no %}
+                <p><strong>Kargo Takip No:</strong> {{ durum.kargo_takip_no }}</p>
+                {% endif %}
+                <div class="timeline-date">{{ durum.olusturulma_tarihi|date:"d.m.Y H:i" }}</div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Etiket Detay Modalları -->
+    {% for etiket in etiketler %}
+    <div class="modal fade" id="etiketModal{{ etiket.id }}" tabindex="-1" aria-labelledby="etiketModalLabel{{ etiket.id }}" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="etiketModalLabel{{ etiket.id }}">
+                        🏷️ Etiket Detayları - {{ etiket.seri_numarasi }}
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>📋 Temel Bilgiler</h6>
+                            <table class="table table-sm">
+                                <tr>
+                                    <td><strong>Seri No:</strong></td>
+                                    <td>{{ etiket.seri_numarasi }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Etiket ID:</strong></td>
+                                    <td><code>{{ etiket.etiket_id }}</code></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Kanal:</strong></td>
+                                    <td>
+                                        {% if etiket.kanal == 'ONLINE' %}
+                                            <span class="badge bg-info">🌐 Online</span>
+                                        {% elif etiket.kanal == 'VET' %}
+                                            <span class="badge bg-success">🏥 Veteriner</span>
+                                        {% elif etiket.kanal == 'SHOP' %}
+                                            <span class="badge bg-warning">🏪 Petshop</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">{{ etiket.kanal }}</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Kategori:</strong></td>
+                                    <td>{{ etiket.kategori.ad|default:"-" }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Durum:</strong></td>
+                                    <td>
+                                        {% if etiket.aktif %}
+                                            <span class="badge bg-success">✅ Aktif</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">⏸️ Pasif</span>
+                                        {% endif %}
+                                        {% if etiket.kilitli %}
+                                            <span class="badge bg-danger">🔒 Kilitli</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>👤 Müşteri Bilgileri</h6>
+                            <table class="table table-sm">
+                                <tr>
+                                    <td><strong>Ad Soyad:</strong></td>
+                                    <td>{{ etiket.musteri_adi|default:"-" }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Telefon:</strong></td>
+                                    <td>{{ etiket.musteri_telefon|default:"-" }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Adres:</strong></td>
+                                    <td>{{ etiket.adres_kullanici|default:"-" }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    {% if etiket.satici_veteriner or etiket.satici_petshop %}
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <h6>🏪 Satış Bilgileri</h6>
+                            <table class="table table-sm">
+                                {% if etiket.satici_veteriner %}
+                                <tr>
+                                    <td><strong>Satış Veteriner:</strong></td>
+                                    <td>{{ etiket.satici_veteriner.isim }}</td>
+                                </tr>
+                                {% endif %}
+                                {% if etiket.satici_petshop %}
+                                <tr>
+                                    <td><strong>Satış Petshop:</strong></td>
+                                    <td>{{ etiket.satici_petshop.isim }}</td>
+                                </tr>
+                                {% endif %}
+                                {% if etiket.satis_tarihi %}
+                                <tr>
+                                    <td><strong>Satış Tarihi:</strong></td>
+                                    <td>{{ etiket.satis_tarihi|date:"d.m.Y H:i" }}</td>
+                                </tr>
+                                {% endif %}
+                            </table>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <h6>📅 Zaman Bilgileri</h6>
+                            <table class="table table-sm">
+                                <tr>
+                                    <td><strong>Oluşturulma:</strong></td>
+                                    <td>{{ etiket.olusturulma_tarihi|date:"d.m.Y H:i" }}</td>
+                                </tr>
+                                {% if etiket.tahsis_tarihi %}
+                                <tr>
+                                    <td><strong>Tahsis Tarihi:</strong></td>
+                                    <td>{{ etiket.tahsis_tarihi|date:"d.m.Y H:i" }}</td>
+                                </tr>
+                                {% endif %}
+                                {% if etiket.first_activated_at %}
+                                <tr>
+                                    <td><strong>İlk Aktivasyon:</strong></td>
+                                    <td>{{ etiket.first_activated_at|date:"d.m.Y H:i" }}</td>
+                                </tr>
+                                {% endif %}
+                                {% if etiket.aktivasyon_sayisi > 0 %}
+                                <tr>
+                                    <td><strong>Aktivasyon Sayısı:</strong></td>
+                                    <td><span class="badge bg-info">{{ etiket.aktivasyon_sayisi }}</span></td>
+                                </tr>
+                                {% endif %}
+                            </table>
+                        </div>
+                    </div>
+                    
+                    {% if etiket.qr_kod_url %}
+                    <div class="row mt-3">
+                        <div class="col-12 text-center">
+                            <h6>🔗 QR Kod</h6>
+                            <a href="{{ etiket.qr_kod_url }}" target="_blank" class="btn btn-primary">
+                                <i class="fas fa-qrcode"></i> QR Kodunu Görüntüle
+                            </a>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // QR kod indirme fonksiyonu
+    function downloadQRCode(qrUrl, filename) {
+        // QR kod API'sini kullan
+        const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(qrUrl)}`;
+        
+        // Yeni bir img elementi oluştur ve yükle
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        
+        img.onload = function() {
+            // Canvas oluştur ve resmi çiz
+            const canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0);
+            
+            // Canvas'ı PNG olarak indir
+            canvas.toBlob(function(blob) {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename || 'qr_code.png';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            });
+        };
+        
+        img.onerror = function() {
+            alert('QR kod indirme başarısız oldu');
+        };
+        
+        img.src = qrApiUrl;
+    }
+    
+    // Sayfa yüklendiğinde QR kodları oluştur
+    document.addEventListener('DOMContentLoaded', function() {
+        // Her etiket için QR kod oluştur
+        {% for etiket in etiketler %}
+            {% if etiket.qr_kod_url %}
+            (function() {
+                const qrUrl = "{{ etiket.qr_kod_url }}";
+                const etiketId = {{ etiket.id }};
+                const seriNo = "{{ etiket.seri_numarasi }}";
+                
+                // Küçük QR kod (tablo içinde)
+                const qrContainer = document.getElementById('qrcode-preview-{{ etiket.id }}');
+                if (qrContainer && qrUrl) {
+                    const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=${encodeURIComponent(qrUrl)}`;
+                    const img = document.createElement('img');
+                    img.src = qrApiUrl;
+                    img.alt = 'QR Kod';
+                    img.style.width = '80px';
+                    img.style.height = '80px';
+                    img.style.cursor = 'pointer';
+                    img.title = 'QR Kod\'u indirmek için tıklayın';
+                    img.onclick = function() {
+                        downloadQRCode(qrUrl, `qr_${seriNo}.png`);
+                    };
+                    qrContainer.innerHTML = '';
+                    qrContainer.appendChild(img);
+                }
+                
+                // Büyük QR kod (basım önizleme)
+                const qrPrintContainer = document.getElementById('qrcode-print-{{ etiket.id }}');
+                if (qrPrintContainer && qrUrl) {
+                    const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(qrUrl)}`;
+                    const img = document.createElement('img');
+                    img.src = qrApiUrl;
+                    img.alt = 'QR Kod';
+                    img.style.width = '100%';
+                    img.style.maxWidth = '200px';
+                    img.style.height = 'auto';
+                    img.style.cursor = 'pointer';
+                    img.title = 'QR Kod\'u indirmek için tıklayın';
+                    img.onclick = function() {
+                        downloadQRCode(qrUrl, `qr_${seriNo}.png`);
+                    };
+                    qrPrintContainer.innerHTML = '';
+                    qrPrintContainer.appendChild(img);
+                    
+                    // İndirme butonu ekle
+                    const downloadBtn = document.createElement('button');
+                    downloadBtn.className = 'btn btn-sm btn-primary mt-2';
+                    downloadBtn.innerHTML = '<i class="fas fa-download"></i> PNG İndir';
+                    downloadBtn.onclick = function(e) {
+                        e.preventDefault();
+                        downloadQRCode(qrUrl, `qr_${seriNo}.png`);
+                    };
+                    qrPrintContainer.parentElement.appendChild(downloadBtn);
+                }
+            })();
+            {% endif %}
+        {% endfor %}
+    });
+</script>
+</body>
+</html>

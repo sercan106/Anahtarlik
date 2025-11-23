@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: DejaVu Sans, sans-serif; }
+    </style>
+</head>
+<body>
+    <h2>{{ hayvan.ad }} - Evcil Hayvan Bilgi Raporu</h2>
+    <p><strong>Tür:</strong> {{ hayvan.tur.ad }}</p>
+    <p><strong>Cins:</strong> {{ hayvan.cins }}</p>
+    <p><strong>Doğum Tarihi:</strong> {{ hayvan.dogum_tarihi }}</p>
+    <p><strong>Beslenme:</strong> {{ hayvan.beslenme_bilgisi }}</p>
+    <p><strong>Genel Not:</strong> {{ hayvan.genel_notlar }}</p>
+    <hr>
+    <p><strong>Sahip:</strong> {{ hayvan.sahip.ad }} {{ hayvan.sahip.soyad }}</p>
+</body>
+</html>

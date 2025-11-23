@@ -1,0 +1,672 @@
+{% extends 'ana.html' %}
+{% load static %}
+
+{% block title %}Randevu Yönetimi - Veteriner Paneli{% endblock %}
+
+{% block css_dosyalar %}
+<style>
+    body {
+        background: #f5f5f5 !important;
+    }
+
+    /* Hero Section - Ana.html temasına uygun */
+    .vet-hero {
+        background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 50%, #9B9ECE 100%);
+        padding: 60px 0 80px;
+        text-align: center;
+        color: white;
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 40px;
+    }
+
+    .vet-hero h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 15px;
+    }
+
+    .vet-hero p {
+        font-size: 1.1rem;
+        opacity: 0.9;
+    }
+
+    .vet-hero::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 50px;
+        background: #f5f5f5;
+        clip-path: polygon(0 50%, 100% 0, 100% 100%, 0 100%);
+    }
+
+    /* Main Content Container */
+    .main-content {
+        max-width: 1400px;
+        margin: -60px auto 60px;
+        padding: 0 20px;
+        position: relative;
+        z-index: 10;
+    }
+
+    /* İstatistik Kartları - Shop stiline göre */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 25px;
+        margin-bottom: 40px;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+        border: none;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
+    }
+
+    .stat-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+        margin: 0 auto 15px;
+    }
+
+    .stat-icon { background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%); color: white; }
+
+    .stat-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #333;
+        margin: 10px 0;
+    }
+
+    .stat-label {
+        font-size: 0.9rem;
+        color: #666;
+        font-weight: 500;
+    }
+
+    /* Filtre Kartı */
+    .filter-card {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        margin-bottom: 30px;
+    }
+
+    .filter-card .form-label {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 8px;
+    }
+
+    .filter-card .form-control,
+    .filter-card .form-select {
+        border-radius: 10px;
+        border: 2px solid #e5e7eb;
+        padding: 10px 15px;
+        transition: all 0.3s ease;
+    }
+
+    .filter-card .form-control:focus,
+    .filter-card .form-select:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(255, 107, 157, 0.1);
+    }
+
+    /* Randevu Kartları */
+    .randevu-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 25px;
+        margin-bottom: 40px;
+    }
+
+    .randevu-card {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    .randevu-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .randevu-header {
+        padding: 20px;
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 50%, var(--accent-color) 100%);
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .randevu-id {
+        font-size: 1.2rem;
+        font-weight: 700;
+    }
+
+    .randevu-badge {
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    .badge-bekliyor { background: #f59e0b; color: white; }
+    .badge-onaylandi { background: #10b981; color: white; }
+    .badge-tamamlandi { background: var(--accent-color); color: white; }
+    .badge-iptal { background: #6b7280; color: white; }
+
+    .randevu-body {
+        padding: 25px;
+    }
+
+    .randevu-info-row {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 15px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .randevu-info-row:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+
+    .randevu-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 15px;
+        flex-shrink: 0;
+    }
+
+    .randevu-icon.user { background: rgba(91, 155, 213, 0.1); color: #5B9BD5; }
+    .randevu-icon.pet { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+    .randevu-icon.calendar { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+    .randevu-icon.money { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+
+    .randevu-info-content {
+        flex: 1;
+    }
+
+    .randevu-info-label {
+        font-size: 0.85rem;
+        color: #666;
+        margin-bottom: 3px;
+    }
+
+    .randevu-info-value {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #333;
+    }
+
+    .randevu-info-sub {
+        font-size: 0.85rem;
+        color: #999;
+        margin-top: 2px;
+    }
+
+    .randevu-footer {
+        padding: 15px 25px;
+        background: #f9fafb;
+        display: flex;
+        gap: 10px;
+    }
+
+    .btn-action {
+        flex: 1;
+        padding: 10px 20px;
+        border-radius: 10px;
+        font-weight: 600;
+        border: none;
+        transition: all 0.3s ease;
+        text-align: center;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .btn-action:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-view {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+        color: white;
+    }
+
+    .btn-approve {
+        background: #10b981;
+        color: white;
+    }
+
+    .btn-complete {
+        background: #3b82f6;
+        color: white;
+    }
+
+    .btn-cancel {
+        background: #ef4444;
+        color: white;
+    }
+
+    /* Pagination - Shop stiline göre */
+    .pagination-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 40px;
+    }
+
+    .pagination {
+        display: flex;
+        gap: 10px;
+    }
+
+    .pagination a,
+    .pagination span {
+        padding: 12px 18px;
+        border-radius: 10px;
+        text-decoration: none;
+        color: #4b5563;
+        background: white;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        transition: all 0.2s ease;
+        font-weight: 500;
+    }
+
+    .pagination a:hover {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    .pagination .active {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+        color: white;
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 80px 20px;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .empty-icon {
+        font-size: 5rem;
+        opacity: 0.3;
+        color: #9ca3af;
+        margin-bottom: 30px;
+    }
+
+    .empty-state h3 {
+        color: #6b7280;
+        margin-bottom: 15px;
+        font-size: 1.5rem;
+    }
+
+    .empty-state p {
+        color: #9ca3af;
+        margin-bottom: 25px;
+    }
+
+    /* Buttons */
+    .btn-primary-gradient {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 10px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary-gradient:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        color: white;
+    }
+
+    .btn-back {
+        background: white;
+        color: var(--primary-color);
+        border: 2px solid var(--primary-color);
+        padding: 10px 25px;
+        border-radius: 10px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-back:hover {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+        color: white;
+        transform: translateY(-2px);
+        border-color: transparent;
+    }
+
+    /* Dropdown Menu */
+    .dropdown-menu {
+        border-radius: 10px;
+        border: none;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        padding: 10px;
+    }
+
+    .dropdown-item {
+        border-radius: 8px;
+        padding: 10px 15px;
+        transition: all 0.2s ease;
+    }
+
+    .dropdown-item:hover {
+        background: #f3f4f6;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .vet-hero h1 {
+            font-size: 2rem;
+        }
+
+        .stats-grid {
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .randevu-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .filter-card {
+            padding: 20px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="vet-hero">
+    <div class="container">
+        <h1><i class="fas fa-calendar-check me-3"></i>Randevu Yönetimi</h1>
+        <p>Randevularınızı kolayca yönetin ve takip edin</p>
+    </div>
+</section>
+
+<!-- Main Content -->
+<div class="main-content">
+    <!-- Back Button -->
+    <div class="mb-4">
+        <a href="{% url 'veteriner:veteriner_paneli' %}" class="btn-back">
+            <i class="fas fa-arrow-left"></i>
+            Panele Dön
+        </a>
+    </div>
+
+    <!-- İstatistik Kartları -->
+    <div class="stats-grid">
+        <div class="stat-card text-center">
+            <div class="stat-icon">
+                <i class="fas fa-calendar-check"></i>
+            </div>
+            <div class="stat-value">{{ toplam_randevu }}</div>
+            <div class="stat-label">Toplam Randevu</div>
+        </div>
+        <div class="stat-card text-center">
+            <div class="stat-icon">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-value">{{ bekleyen_randevu }}</div>
+            <div class="stat-label">Bekleyen</div>
+        </div>
+        <div class="stat-card text-center">
+            <div class="stat-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-value">{{ onaylanan_randevu }}</div>
+            <div class="stat-label">Onaylanan</div>
+        </div>
+        <div class="stat-card text-center">
+            <div class="stat-icon">
+                <i class="fas fa-check-double"></i>
+            </div>
+            <div class="stat-value">{{ tamamlanan_randevu }}</div>
+            <div class="stat-label">Tamamlanan</div>
+        </div>
+        <div class="stat-card text-center">
+            <div class="stat-icon">
+                <i class="fas fa-times-circle"></i>
+            </div>
+            <div class="stat-value">{{ iptal_randevu }}</div>
+            <div class="stat-label">İptal</div>
+        </div>
+    </div>
+
+    <!-- Filtreleme -->
+    <div class="filter-card">
+        <form method="GET" class="row g-3">
+            <div class="col-md-3">
+                <label for="durum" class="form-label"><i class="fas fa-filter me-2"></i>Durum</label>
+                <select name="durum" id="durum" class="form-select">
+                    <option value="">Tümü</option>
+                    <option value="BEKLIYOR" {% if durum == 'BEKLIYOR' %}selected{% endif %}>Bekleyen</option>
+                    <option value="ONAYLANDI" {% if durum == 'ONAYLANDI' %}selected{% endif %}>Onaylanan</option>
+                    <option value="TAMAMLANDI" {% if durum == 'TAMAMLANDI' %}selected{% endif %}>Tamamlanan</option>
+                    <option value="IPTAL" {% if durum == 'IPTAL' %}selected{% endif %}>İptal</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label for="tarih_baslangic" class="form-label"><i class="fas fa-calendar-day me-2"></i>Başlangıç</label>
+                <input type="date" name="tarih_baslangic" id="tarih_baslangic" class="form-control" value="{{ tarih_baslangic }}">
+            </div>
+            <div class="col-md-2">
+                <label for="tarih_bitis" class="form-label"><i class="fas fa-calendar-day me-2"></i>Bitiş</label>
+                <input type="date" name="tarih_bitis" id="tarih_bitis" class="form-control" value="{{ tarih_bitis }}">
+            </div>
+            <div class="col-md-3">
+                <label for="arama" class="form-label"><i class="fas fa-search me-2"></i>Arama</label>
+                <input type="text" name="arama" id="arama" class="form-control" placeholder="Müşteri, hayvan adı..." value="{{ arama }}">
+            </div>
+            <div class="col-md-2 d-flex align-items-end gap-2">
+                <button type="submit" class="btn btn-primary-gradient flex-1">
+                    <i class="fas fa-search"></i> Filtrele
+                </button>
+                <a href="{% url 'veteriner:randevu_yonetimi' %}" class="btn btn-outline-secondary">
+                    <i class="fas fa-times"></i>
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Randevu Listesi -->
+    {% if page_obj %}
+        <div class="randevu-grid">
+            {% for randevu in page_obj %}
+            <div class="randevu-card">
+                <div class="randevu-header">
+                    <div class="randevu-id">#{{ randevu.id }}</div>
+                    <div class="randevu-badge
+                        {% if randevu.durum == 'BEKLIYOR' %}badge-bekliyor
+                        {% elif randevu.durum == 'ONAYLANDI' %}badge-onaylandi
+                        {% elif randevu.durum == 'TAMAMLANDI' %}badge-tamamlandi
+                        {% elif randevu.durum == 'IPTAL' %}badge-iptal
+                        {% endif %}">
+                        {% if randevu.durum == 'BEKLIYOR' %}Bekleyen
+                        {% elif randevu.durum == 'ONAYLANDI' %}Onaylanan
+                        {% elif randevu.durum == 'TAMAMLANDI' %}Tamamlanan
+                        {% elif randevu.durum == 'IPTAL' %}İptal
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="randevu-body">
+                    <div class="randevu-info-row">
+                        <div class="randevu-icon user">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="randevu-info-content">
+                            <div class="randevu-info-label">Müşteri</div>
+                            <div class="randevu-info-value">{{ randevu.musteri_adi }}</div>
+                            <div class="randevu-info-sub">{{ randevu.musteri_telefon }}</div>
+                            {% if randevu.musteri_email %}
+                            <div class="randevu-info-sub">{{ randevu.musteri_email }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="randevu-info-row">
+                        <div class="randevu-icon pet">
+                            <i class="fas fa-paw"></i>
+                        </div>
+                        <div class="randevu-info-content">
+                            <div class="randevu-info-label">Evcil Hayvan</div>
+                            <div class="randevu-info-value">{{ randevu.hayvan_adi }}</div>
+                            <div class="randevu-info-sub">{{ randevu.hayvan_turu }}</div>
+                        </div>
+                    </div>
+
+                    <div class="randevu-info-row">
+                        <div class="randevu-icon calendar">
+                            <i class="fas fa-calendar"></i>
+                        </div>
+                        <div class="randevu-info-content">
+                            <div class="randevu-info-label">Tarih & Saat</div>
+                            <div class="randevu-info-value">{{ randevu.tarih|date:"d.m.Y" }}</div>
+                            <div class="randevu-info-sub">{{ randevu.saat|time:"H:i" }}</div>
+                        </div>
+                    </div>
+
+                    {% if randevu.fiyat %}
+                    <div class="randevu-info-row">
+                        <div class="randevu-icon money">
+                            <i class="fas fa-lira-sign"></i>
+                        </div>
+                        <div class="randevu-info-content">
+                            <div class="randevu-info-label">Fiyat</div>
+                            <div class="randevu-info-value">{{ randevu.fiyat }} ₺</div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="randevu-footer">
+                    <a href="{% url 'veteriner:randevu_detay' randevu.id %}" class="btn-action btn-view">
+                        <i class="fas fa-eye"></i> Detay
+                    </a>
+
+                    <div class="dropdown flex-1">
+                        <button class="btn-action btn-view w-100" type="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-cog"></i> İşlemler
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <form method="POST" action="{% url 'veteriner:randevu_durum_guncelle' randevu.id %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="durum" value="ONAYLANDI">
+                                    <button type="submit" class="dropdown-item text-success">
+                                        <i class="fas fa-check me-2"></i>Onayla
+                                    </button>
+                                </form>
+                            </li>
+                            <li>
+                                <form method="POST" action="{% url 'veteriner:randevu_durum_guncelle' randevu.id %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="durum" value="TAMAMLANDI">
+                                    <button type="submit" class="dropdown-item text-info">
+                                        <i class="fas fa-check-double me-2"></i>Tamamla
+                                    </button>
+                                </form>
+                            </li>
+                            <li>
+                                <form method="POST" action="{% url 'veteriner:randevu_durum_guncelle' randevu.id %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="durum" value="IPTAL">
+                                    <button type="submit" class="dropdown-item text-danger">
+                                        <i class="fas fa-times me-2"></i>İptal Et
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if page_obj.has_other_pages %}
+        <div class="pagination-container">
+            <div class="pagination">
+                {% if page_obj.has_previous %}
+                    <a href="?page=1{% if durum %}&durum={{ durum }}{% endif %}{% if tarih_baslangic %}&tarih_baslangic={{ tarih_baslangic }}{% endif %}{% if tarih_bitis %}&tarih_bitis={{ tarih_bitis }}{% endif %}{% if arama %}&arama={{ arama }}{% endif %}">
+                        <i class="fas fa-angle-double-left"></i> İlk
+                    </a>
+                    <a href="?page={{ page_obj.previous_page_number }}{% if durum %}&durum={{ durum }}{% endif %}{% if tarih_baslangic %}&tarih_baslangic={{ tarih_baslangic }}{% endif %}{% if tarih_bitis %}&tarih_bitis={{ tarih_bitis }}{% endif %}{% if arama %}&arama={{ arama }}{% endif %}">
+                        <i class="fas fa-angle-left"></i> Önceki
+                    </a>
+                {% endif %}
+
+                <span class="active">
+                    {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+                </span>
+
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}{% if durum %}&durum={{ durum }}{% endif %}{% if tarih_baslangic %}&tarih_baslangic={{ tarih_baslangic }}{% endif %}{% if tarih_bitis %}&tarih_bitis={{ tarih_bitis }}{% endif %}{% if arama %}&arama={{ arama }}{% endif %}">
+                        Sonraki <i class="fas fa-angle-right"></i>
+                    </a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}{% if durum %}&durum={{ durum }}{% endif %}{% if tarih_baslangic %}&tarih_baslangic={{ tarih_baslangic }}{% endif %}{% if tarih_bitis %}&tarih_bitis={{ tarih_bitis }}{% endif %}{% if arama %}&arama={{ arama }}{% endif %}">
+                        Son <i class="fas fa-angle-double-right"></i>
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">
+                <i class="fas fa-calendar-times"></i>
+            </div>
+            <h3>Randevu Bulunamadı</h3>
+            <p>Filtreleme kriterlerinize uygun randevu bulunmuyor.</p>
+            <a href="{% url 'veteriner:randevu_yonetimi' %}" class="btn-primary-gradient">
+                <i class="fas fa-redo me-2"></i>Filtreleri Temizle
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

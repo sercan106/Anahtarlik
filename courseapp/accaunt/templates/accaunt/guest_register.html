@@ -1,0 +1,275 @@
+{% extends 'ana.html' %}
+{% load static %}
+
+{% block baslik %}<title>İlan Vermek İçin Kayıt Ol</title>{% endblock baslik %}
+
+{% block css_dosyalar %}
+<style>
+    /* Align with `ana.html` design tokens (use CSS vars defined in ana.html) */
+    .register-wrapper {
+        background: linear-gradient(135deg, rgba(235,244,250,1) 0%, rgba(232,245,242,1) 25%, rgba(255,248,240,1) 50%);
+        min-height: calc(100vh - 160px);
+        padding: 3rem 0;
+    }
+
+    /* Info column: darkened glass gradient similar to navbar/footer accents */
+    .register-info-card {
+        /* use primary gradient to keep palette consistent; darker overlay for contrast */
+        background: linear-gradient(135deg, rgba(91,155,213,0.95) 0%, rgba(112,193,179,0.95) 100%);
+        color: var(--text-light);
+        border-radius: var(--border-radius);
+        padding: 2.5rem;
+        height: 100%;
+        box-shadow: 0 20px 45px rgba(15, 23, 42, 0.12);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .register-info-card .badge {
+        background: rgba(255,255,255,0.06);
+        color: rgba(255,255,255,0.9);
+        padding: 0.4rem 0.8rem;
+        border-radius: 999px;
+        font-size: 0.85rem;
+        letter-spacing: 0.04rem;
+    }
+
+    .register-info-card h1 { font-size: 2rem; font-weight: 700; margin-top: 1rem; margin-bottom: 0.6rem; }
+    .register-info-card p { color: rgba(255,255,255,0.85); margin-bottom: 1rem; }
+
+    .register-steps { margin: 1.5rem 0; padding-left: 0; list-style: none; }
+    .register-steps li { display:flex; gap:0.9rem; margin-bottom:1rem; align-items:flex-start }
+    .register-steps li span { display:inline-flex; width:36px; height:36px; border-radius:10px; background: rgba(255,255,255,0.08); color: var(--text-light); align-items:center; justify-content:center; font-weight:700 }
+
+    /* Card (form) uses glass look and shadows from ana.html */
+    .register-card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border: 1px solid var(--glass-border);
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-soft);
+        padding: 2.5rem;
+        transition: var(--transition-gentle);
+    }
+
+    .register-card h2 { font-size:1.6rem; font-weight:700; color:var(--text-primary); }
+    .register-card .lead { color:var(--text-secondary); margin-bottom:1rem }
+
+    .form-label { font-weight:600; color:var(--text-primary); }
+
+    .form-control {
+        border-radius: var(--border-radius-sm);
+        padding: 0.75rem 1rem;
+        border: 1px solid rgba(255,255,255,0.12);
+        background: rgba(255,255,255,0.85);
+        transition: var(--transition-gentle);
+    }
+    .form-control:focus { border-color: var(--primary-color); box-shadow: 0 0 0 .18rem rgba(91,155,213,0.12); background: rgba(255,255,255,0.95) }
+
+    .verification-box { background: rgba(255,255,255,0.9); border-radius:12px; font-size:1.5rem; font-weight:700; letter-spacing:0.35rem; color:var(--dark-color); padding:0.9rem 1.2rem; min-width:130px; text-align:center }
+
+    .btn-register {
+        background: var(--primary-gradient);
+        border: none;
+        border-radius: 14px;
+        padding: 0.9rem 1rem;
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--text-light);
+        transition: transform .22s ease, box-shadow .22s ease;
+        box-shadow: 0 8px 24px rgba(91,155,213,0.14);
+    }
+    .btn-register:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover) }
+
+    .form-error { font-size:0.875rem; color: var(--danger-color); margin-top:0.35rem }
+
+    .terms-text { color: var(--text-secondary); }
+    .terms-text a { color: var(--primary-color); text-decoration: underline }
+
+    /* Reduced-motion and low-power adjustments */
+    @media (prefers-reduced-motion: reduce) {
+        .register-card, .register-info-card, .btn-register { transition-duration: 0.01ms !important; }
+        .register-card { backdrop-filter: none; -webkit-backdrop-filter: none }
+    }
+
+    @media (max-width: 991.98px) {
+        .register-card, .register-info-card { padding: 1.5rem; }
+        .register-wrapper { padding: 2rem 0 }
+    }
+
+    @media (max-width: 576px) {
+        /* stack info card on top instead of hiding it to avoid content loss */
+        .register-info-card { display: block; order: -1; margin-bottom: 1rem; }
+        .register-card { margin-top: 0.5rem; }
+        .btn-register { width: 100%; }
+        .register-wrapper { padding: 1.5rem 0 }
+        .register-info-card h1 { font-size: 1.5rem }
+        .register-info-card p { font-size: 0.95rem }
+    }
+</style>
+{% endblock css_dosyalar %}
+
+{% block icerik %}
+<div class="register-wrapper py-5">
+    <div class="container">
+        <div class="row g-4 justify-content-center align-items-stretch">
+            <div class="col-xl-4 col-lg-5">
+                <div class="register-info-card">
+                    <span class="badge">Adım 1 / 3</span>
+                    <h1>İlan vermek için hızlı kayıt</h1>
+                    <p>Bir dakikadan kısa sürede hesabınızı oluşturun, evcil dostunuzun profilini ekleyin ve ilanınızı yayınlayın.</p>
+                    
+                    <ul class="register-steps">
+                        <li>
+                            <span>1</span>
+                            <div>
+                                <strong>Hesabını oluştur</strong>
+                                <p>İlgili bilgileri doldur ve doğrulama kodunu gir.</p>
+                            </div>
+                        </li>
+                        <li>
+                            <span>2</span>
+                            <div>
+                                <strong>Hayvan profili ekle</strong>
+                                <p>Fotoğraflar, sağlık durumu ve konum gibi detayları paylaş.</p>
+                            </div>
+                        </li>
+                        <li>
+                            <span>3</span>
+                            <div>
+                                <strong>İlanını yayınla</strong>
+                                <p>İlan başlığını ve açıklamanı belirleyip yayına al.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-xl-6 col-lg-6">
+                <div class="register-card">
+                    <h2>Hızlı kayıt formu</h2>
+                    <p class="lead">İlan vermek ve başvuruları yönetmek için hesabını şimdi oluştur.</p>
+
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }}" role="alert">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger" role="alert">
+                            {% for error in form.non_field_errors %}{{ error }}{% if not forloop.last %}<br>{% endif %}{% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+
+                        <div class="mb-3">
+                            <label for="{{ form.ad_soyad.id_for_label }}" class="form-label">Ad Soyad <span class="text-danger">*</span></label>
+                            {{ form.ad_soyad }}
+                            {% for error in form.ad_soyad.errors %}
+                                <div class="form-error">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.email.id_for_label }}" class="form-label">E-posta Adresi <span class="text-danger">*</span></label>
+                            {{ form.email }}
+                            {% for error in form.email.errors %}
+                                <div class="form-error">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.username.id_for_label }}" class="form-label">Kullanıcı Adı <span class="text-danger">*</span></label>
+                            {{ form.username }}
+                            <div class="form-text">Giriş yaparken kullanacağınız benzersiz adı belirleyin. Türkçe karakter ve rakam kullanabilirsiniz, boşluk bırakmayın.</div>
+                            {% for error in form.username.errors %}
+                                <div class="form-error">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.telefon.id_for_label }}" class="form-label">Cep Telefonu <span class="text-danger">*</span></label>
+                            {{ form.telefon }}
+                            <div class="form-text">Telefon numaranı başında sıfır olmadan gir.</div>
+                            {% for error in form.telefon.errors %}
+                                <div class="form-error">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.sifre.id_for_label }}" class="form-label">Parola <span class="text-danger">*</span></label>
+                            {{ form.sifre }}
+                            <div class="form-text">Parolanız en az 8 karakter olmalı ve harf ile rakam içermelidir.</div>
+                            {% for error in form.sifre.errors %}
+                                <div class="form-error">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.sifre_tekrar.id_for_label }}" class="form-label">Parola (Tekrar) <span class="text-danger">*</span></label>
+                            {{ form.sifre_tekrar }}
+                            {% for error in form.sifre_tekrar.errors %}
+                                <div class="form-error">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">Doğrulama Kodu <span class="text-danger">*</span></label>
+                            <div class="d-flex align-items-center gap-3 flex-wrap">
+                                <div class="verification-box">{{ verification_code }}</div>
+                                <a class="btn btn-outline-secondary btn-sm" href="{% url 'guest_register' %}?refresh=1">
+                                    <i class="fas fa-sync-alt me-1"></i> Kodu yenile
+                                </a>
+                            </div>
+                            <div class="mt-3">
+                                {{ form.dogrulama_kodu }}
+                            </div>
+                            {% for error in form.dogrulama_kodu.errors %}
+                                <div class="form-error">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="form-check mb-4">
+                            {{ form.uyelik_sozlesmesi }}
+                            <label class="form-check-label terms-text" for="{{ form.uyelik_sozlesmesi.id_for_label }}">
+                                Üyelik sözleşmesini <a href="#">okudum, onaylıyorum.</a>
+                            </label>
+                            {% for error in form.uyelik_sozlesmesi.errors %}
+                                <div class="form-error">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <button type="submit" class="btn btn-register w-100">Kayıt Ol ve Devam Et</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock icerik %}
+
+{% block extra_js %}
+<script>
+// Performance helper: respect reduced-motion and device capability
+(function(){
+    try{
+        var prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        var cores = navigator.hardwareConcurrency || 4;
+        if (prefersReduced) document.documentElement.classList.add('reduced-motion');
+        if (cores && cores < 2) document.documentElement.classList.add('low-power');
+
+        // disable heavy backdrop on low-power or small screens
+        if (document.documentElement.classList.contains('low-power') || window.innerWidth < 520) {
+            document.querySelectorAll('.register-card, .register-info-card').forEach(function(el){
+                el.style.backdropFilter = 'none';
+                el.style.webkitBackdropFilter = 'none';
+            });
+        }
+    }catch(e){ console.warn('perf helper fail', e); }
+})();
+</script>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends 'ana.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h4>{{ is_edit|yesno:"Ameliyat Kaydını Düzenle,Yeni Ameliyat Kaydı" }}</h4>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Kaydet</button>
+        <a href="{% url 'anahtarlik:pet_detail' pet.id %}" class="btn btn-secondary">İptal</a>
+    </form>
+</div>
+{% endblock %}

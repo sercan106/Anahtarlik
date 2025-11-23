@@ -1,0 +1,492 @@
+{% extends "ana.html" %}
+{% load static %}
+
+{% block title %}Etiket Sorgulama - PetSafe Hub{% endblock %}
+
+{% block content %}
+<div class="container mt-5" style="padding-top: 40px; padding-bottom: 60px;">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <!-- Ana Kart -->
+            <div class="lookup-card" data-aos="fade-up" data-aos-duration="600">
+                <div class="lookup-header">
+                    <div class="icon-circle">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h3 class="mb-2">Etiket Sorgulama</h3>
+                    <p class="mb-0">Evcil hayvan bilgilerine ulaşabilirsiniz</p>
+                </div>
+
+                <div class="lookup-body">
+                    <div class="info-banner">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <span>Etiket seri numarasını girerek hayvan bilgilerine ulaşabilirsiniz.</span>
+                    </div>
+
+                    <form method="post" class="lookup-form needs-validation" novalidate>
+                        {% csrf_token %}
+
+                        <div class="form-group-custom">
+                            <label for="{{ form.seri_numarasi.id_for_label }}" class="label-custom">
+                                <i class="fas fa-tag me-2"></i>
+                                Etiket (Künye) Numarası
+                            </label>
+
+                            <input
+                                type="text"
+                                name="{{ form.seri_numarasi.name }}"
+                                id="{{ form.seri_numarasi.id_for_label }}"
+                                class="input-custom {% if form.seri_numarasi.errors %}is-invalid{% endif %}"
+                                placeholder="Örn: ABC1234"
+                                value="{{ form.seri_numarasi.value|default:'' }}"
+                                required
+                                autofocus
+                            >
+
+                            {% if form.seri_numarasi.errors %}
+                                <div class="error-message">
+                                    {% for error in form.seri_numarasi.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+
+                            <small class="help-text">
+                                <i class="fas fa-lightbulb me-1"></i>
+                                Seri numarası 7 karakterden oluşur ve etikette büyük harflerle yer alır.
+                            </small>
+                        </div>
+
+                        {% if form.non_field_errors %}
+                            <div class="error-banner">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                {% for error in form.non_field_errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <div class="button-group">
+                            <button type="submit" class="btn-lookup">
+                                <i class="fas fa-search me-2"></i>
+                                Sorgula
+                            </button>
+                            <a href="{% url 'anahtarlik:ev' %}" class="btn-back">
+                                <i class="fas fa-arrow-left me-2"></i>
+                                Ana Sayfaya Dön
+                            </a>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="lookup-footer">
+                    <i class="fas fa-shield-alt me-2"></i>
+                    <span>Güvenli ve hızlı sorgulama sistemi</span>
+                </div>
+            </div>
+
+            <!-- Yardım Bölümü -->
+            <div class="faq-card" data-aos="fade-up" data-aos-delay="200">
+                <h5 class="faq-title">
+                    <i class="fas fa-question-circle me-2"></i>
+                    Sık Sorulan Sorular
+                </h5>
+                <div class="accordion custom-accordion" id="faqAccordion">
+                    <div class="accordion-item-custom">
+                        <h2 class="accordion-header" id="headingOne">
+                            <button class="accordion-button-custom collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne">
+                                <i class="fas fa-chevron-right me-2 accordion-icon"></i>
+                                Etiket seri numarasını nerede bulabilirim?
+                            </button>
+                        </h2>
+                        <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body-custom">
+                                Etiket seri numarası, etiketin üzerinde veya QR kodun altında yer alır. Genellikle "KNY-" ile başlayan bir kod şeklindedir.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item-custom">
+                        <h2 class="accordion-header" id="headingTwo">
+                            <button class="accordion-button-custom collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo">
+                                <i class="fas fa-chevron-right me-2 accordion-icon"></i>
+                                Etiketim çalışmıyor, ne yapmalıyım?
+                            </button>
+                        </h2>
+                        <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body-custom">
+                                Etiketiniz çalışmıyorsa, önce seri numarasını kontrol edin. Sorun devam ederse, lütfen destek ekibimizle iletişime geçin.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item-custom">
+                        <h2 class="accordion-header" id="headingThree">
+                            <button class="accordion-button-custom collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree">
+                                <i class="fas fa-chevron-right me-2 accordion-icon"></i>
+                                QR kod okutamıyorum?
+                            </button>
+                        </h2>
+                        <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body-custom">
+                                QR kod okumazsa, yukarıdaki forma etiket seri numarasını manuel olarak girebilirsiniz.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Ana Tema Renkleri */
+    :root {
+        --primary-color: #5B9BD5;
+        --secondary-color: #70C1B3;
+        --accent-color: #FF8C42;
+        --success-color: #6FCF97;
+        --text-primary: #2d3436;
+        --text-secondary: #636e72;
+        --text-muted: #b2bec3;
+        --border-radius: 20px;
+        --shadow-soft: 0 10px 30px rgba(91, 155, 213, 0.15);
+        --shadow-hover: 0 15px 40px rgba(91, 155, 213, 0.25);
+        --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Ana Kart */
+    .lookup-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-soft);
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        transition: var(--transition-smooth);
+    }
+
+    .lookup-card:hover {
+        box-shadow: var(--shadow-hover);
+        transform: translateY(-5px);
+    }
+
+    /* Header */
+    .lookup-header {
+        background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
+        color: white;
+        text-align: center;
+        padding: 30px 25px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .lookup-header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        animation: rotate 20s linear infinite;
+    }
+
+    @keyframes rotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    .icon-circle {
+        width: 60px;
+        height: 60px;
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 15px;
+        font-size: 1.5rem;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        transition: var(--transition-smooth);
+    }
+
+    .lookup-card:hover .icon-circle {
+        transform: scale(1.1) rotate(10deg);
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
+    }
+
+    .lookup-header h3 {
+        font-size: 1.4rem;
+        font-weight: 700;
+        margin-bottom: 8px;
+        position: relative;
+        z-index: 2;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .lookup-header p {
+        font-size: 0.9rem;
+        opacity: 0.95;
+        position: relative;
+        z-index: 2;
+    }
+
+    /* Body */
+    .lookup-body {
+        padding: 30px 25px;
+    }
+
+    .info-banner {
+        background: linear-gradient(135deg, rgba(91, 155, 213, 0.1) 0%, rgba(112, 193, 179, 0.1) 100%);
+        border-left: 4px solid var(--primary-color);
+        padding: 12px 16px;
+        border-radius: 12px;
+        margin-bottom: 25px;
+        color: var(--text-primary);
+        font-size: 0.85rem;
+        backdrop-filter: blur(10px);
+    }
+
+    /* Form */
+    .form-group-custom {
+        margin-bottom: 25px;
+    }
+
+    .label-custom {
+        color: var(--text-primary);
+        font-weight: 600;
+        margin-bottom: 10px;
+        display: block;
+        font-size: 0.85rem;
+    }
+
+    .input-custom {
+        width: 100%;
+        padding: 12px 18px;
+        border: 2px solid rgba(91, 155, 213, 0.2);
+        border-radius: 15px;
+        font-size: 0.9rem;
+        transition: var(--transition-smooth);
+        background: rgba(255, 255, 255, 0.9);
+        color: var(--text-primary);
+    }
+
+    .input-custom:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 4px rgba(91, 155, 213, 0.1);
+        background: white;
+        transform: translateY(-2px);
+    }
+
+    .input-custom.is-invalid {
+        border-color: #EB5757;
+    }
+
+    .help-text {
+        display: block;
+        margin-top: 6px;
+        color: var(--text-muted);
+        font-size: 0.75rem;
+    }
+
+    .error-message {
+        color: #EB5757;
+        font-size: 0.8rem;
+        margin-top: 6px;
+    }
+
+    .error-banner {
+        background: rgba(235, 87, 87, 0.1);
+        border-left: 4px solid #EB5757;
+        padding: 12px 16px;
+        border-radius: 12px;
+        margin-bottom: 18px;
+        color: #EB5757;
+        font-size: 0.85rem;
+    }
+
+    /* Buttons */
+    .button-group {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .btn-lookup {
+        background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: var(--transition-smooth);
+        box-shadow: 0 8px 25px rgba(91, 155, 213, 0.3);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-lookup::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        transition: left 0.6s;
+    }
+
+    .btn-lookup:hover::before {
+        left: 100%;
+    }
+
+    .btn-lookup:hover {
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 12px 35px rgba(91, 155, 213, 0.4);
+    }
+
+    .btn-back {
+        background: rgba(91, 155, 213, 0.1);
+        color: var(--primary-color);
+        border: 2px solid rgba(91, 155, 213, 0.2);
+        padding: 10px 25px;
+        border-radius: 50px;
+        font-weight: 500;
+        font-size: 0.85rem;
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+        transition: var(--transition-smooth);
+    }
+
+    .btn-back:hover {
+        background: rgba(91, 155, 213, 0.15);
+        border-color: var(--primary-color);
+        transform: translateY(-2px);
+        color: var(--primary-color);
+        text-decoration: none;
+    }
+
+    /* Footer */
+    .lookup-footer {
+        background: linear-gradient(135deg, rgba(91, 155, 213, 0.05) 0%, rgba(112, 193, 179, 0.05) 100%);
+        padding: 16px 25px;
+        text-align: center;
+        color: var(--text-secondary);
+        font-size: 0.8rem;
+        border-top: 1px solid rgba(91, 155, 213, 0.1);
+    }
+
+    /* FAQ Card */
+    .faq-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-soft);
+        padding: 25px;
+        margin-top: 25px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .faq-title {
+        color: var(--text-primary);
+        font-weight: 700;
+        font-size: 1.1rem;
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid rgba(91, 155, 213, 0.2);
+        background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .accordion-item-custom {
+        border: none;
+        margin-bottom: 10px;
+    }
+
+    .accordion-button-custom {
+        background: rgba(91, 155, 213, 0.05);
+        border: 2px solid rgba(91, 155, 213, 0.1);
+        border-radius: 12px !important;
+        padding: 12px 16px;
+        font-weight: 500;
+        font-size: 0.85rem;
+        color: var(--text-primary);
+        cursor: pointer;
+        width: 100%;
+        text-align: left;
+        transition: var(--transition-smooth);
+        position: relative;
+    }
+
+    .accordion-button-custom:hover {
+        background: rgba(91, 155, 213, 0.1);
+        border-color: var(--primary-color);
+        transform: translateX(5px);
+    }
+
+    .accordion-button-custom:not(.collapsed) {
+        background: linear-gradient(135deg, rgba(91, 155, 213, 0.15) 0%, rgba(112, 193, 179, 0.15) 100%);
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+    }
+
+    .accordion-button-custom:not(.collapsed) .accordion-icon {
+        transform: rotate(90deg);
+    }
+
+    .accordion-icon {
+        transition: transform 0.3s ease;
+        font-size: 0.7rem;
+    }
+
+    .accordion-body-custom {
+        padding: 16px;
+        color: var(--text-secondary);
+        font-size: 0.85rem;
+        line-height: 1.6;
+        background: rgba(91, 155, 213, 0.02);
+        border-radius: 0 0 12px 12px;
+        margin-top: 6px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .lookup-header {
+            padding: 25px 20px;
+        }
+
+        .lookup-body {
+            padding: 25px 20px;
+        }
+
+        .icon-circle {
+            width: 50px;
+            height: 50px;
+            font-size: 1.3rem;
+        }
+
+        .lookup-header h3 {
+            font-size: 1.2rem;
+        }
+
+        .lookup-header p {
+            font-size: 0.85rem;
+        }
+
+        .faq-card {
+            padding: 20px 18px;
+        }
+
+        .faq-title {
+            font-size: 1rem;
+        }
+    }
+</style>
+{% endblock %}

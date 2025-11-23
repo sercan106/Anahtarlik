@@ -1,0 +1,356 @@
+{% extends "ana.html" %}
+{% load static %}
+
+{% block title %}Profil Düzenle - PetShop - PetSafe Hub{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0"><i class="fas fa-user-edit me-2"></i>PetShop Profili Düzenle</h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <strong><i class="fas fa-info-circle me-1"></i> Bilgilendirme:</strong> Temel profil bilgilerinizi buradan güncelleyebilirsiniz. Web sayfanızı düzenlemek için <a href="{% url 'petshop:web_sayfasi_duzenle' %}" class="alert-link">buraya tıklayın</a>.
+                    </div>
+
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <form method="post" id="profilForm">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.ad.id_for_label }}" class="form-label">
+                                    <strong>İşletme Adı <span class="text-danger">*</span></strong>
+                                </label>
+                                {{ form.ad }}
+                                {% if form.ad.errors %}
+                                    <div class="text-danger small">{{ form.ad.errors|first }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.telefon.id_for_label }}" class="form-label">
+                                    <strong>Telefon</strong>
+                                </label>
+                                {{ form.telefon }}
+                                {% if form.telefon.errors %}
+                                    <div class="text-danger small">{{ form.telefon.errors|first }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.email.id_for_label }}" class="form-label">
+                                <strong>E-posta</strong>
+                            </label>
+                            {{ form.email }}
+                            {% if form.email.errors %}
+                                <div class="text-danger small">{{ form.email.errors|first }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="id_il" class="form-label">
+                                    <strong>İl <span class="text-danger">*</span></strong>
+                                </label>
+                                <select class="form-control" id="id_il" name="il" required>
+                                    <option value="">İl Seçiniz</option>
+                                    {% for il in iller %}
+                                        <option value="{{ il.id }}" {% if petshop.il and petshop.il.id == il.id %}selected{% endif %}>
+                                            {{ il.ad }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                                {% if form.il.errors %}
+                                    <div class="text-danger small">{{ form.il.errors|first }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="id_ilce" class="form-label">
+                                    <strong>İlçe <span class="text-danger">*</span></strong>
+                                </label>
+                                <select class="form-control" id="id_ilce" name="ilce" required>
+                                    <option value="">İlçe Seçiniz</option>
+                                    {% for ilce in ilceler %}
+                                        <option value="{{ ilce.id }}" {% if petshop.ilce and petshop.ilce.id == ilce.id %}selected{% endif %}>
+                                            {{ ilce.ad }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                                {% if form.ilce.errors %}
+                                    <div class="text-danger small">{{ form.ilce.errors|first }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="id_mahalle" class="form-label">
+                                    <strong>Mahalle</strong>
+                                </label>
+                                <select class="form-control" id="id_mahalle" name="mahalle">
+                                    <option value="">Mahalle Seçiniz</option>
+                                    {% if petshop.mahalle %}
+                                        <option value="{{ petshop.mahalle.id }}" selected>{{ petshop.mahalle.ad }}</option>
+                                    {% endif %}
+                                </select>
+                                {% if form.mahalle.errors %}
+                                    <div class="text-danger small">{{ form.mahalle.errors|first }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="id_mahalle_diger" class="form-label">
+                                    <strong>Mahalle (Manuel)</strong>
+                                </label>
+                                <input type="text" class="form-control" id="id_mahalle_diger" name="mahalle_diger"
+                                       value="{{ petshop.mahalle_diger|default:'' }}"
+                                       placeholder="Mahalle listede yoksa buraya yazınız">
+                                <small class="text-muted">Mahalle listede yoksa manuel girebilirsiniz</small>
+                                {% if form.mahalle_diger.errors %}
+                                    <div class="text-danger small">{{ form.mahalle_diger.errors|first }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.adres_detay.id_for_label }}" class="form-label">
+                                <strong>Adres Detayı <span class="text-danger">*</span></strong>
+                            </label>
+                            {{ form.adres_detay }}
+                            {% if form.adres_detay.errors %}
+                                <div class="text-danger small">{{ form.adres_detay.errors|first }}</div>
+                            {% endif %}
+                        </div>
+
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {{ form.non_field_errors }}
+                            </div>
+                        {% endif %}
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-between mt-4">
+                            <a href="{% url 'petshop:petshop_paneli' %}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-1"></i> Geri Dön
+                            </a>
+                            <button type="submit" class="btn btn-success px-5">
+                                <i class="fas fa-save me-1"></i> Kaydet
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// İl-İlçe-Mahalle dinamik yükleme
+(function() {
+    'use strict';
+
+    // Sayfa yüklendiğinde çalıştır
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+
+    function init() {
+        console.log('🔧 PetShop profil düzenleme - İl-İlçe-Mahalle dinamik yükleme başlatılıyor...');
+
+        const ilField = document.getElementById('id_il');
+        const ilceField = document.getElementById('id_ilce');
+        const mahalleField = document.getElementById('id_mahalle');
+
+        if (!ilField || !ilceField || !mahalleField) {
+            console.warn('⚠️ İl, İlçe veya Mahalle field bulunamadı');
+            return;
+        }
+
+        console.log('✅ İl, İlçe ve Mahalle field bulundu');
+        
+        // Seçili ilçe ve mahalle'yi sakla (edit modunda)
+        const initialIlceId = ilceField.value;
+        const initialMahalleId = mahalleField.value;
+        console.log('📝 Başlangıç ilçe ID:', initialIlceId);
+        console.log('📝 Başlangıç mahalle ID:', initialMahalleId);
+
+        // İl değiştiğinde ilçe listesini güncelle
+        ilField.addEventListener('change', function() {
+            const ilId = this.value;
+            console.log('🔄 İl değişti:', ilId);
+
+            // İlçe ve mahalle alanını temizle
+            ilceField.innerHTML = '<option value="">İlçe Seçiniz</option>';
+            mahalleField.innerHTML = '<option value="">Önce ilçe seçiniz</option>';
+
+            if (!ilId) {
+                console.log('❌ İl seçilmedi');
+                return;
+            }
+            
+            // Loading göster
+            ilceField.disabled = true;
+            const loadingOption = document.createElement('option');
+            loadingOption.value = '';
+            loadingOption.textContent = 'Yükleniyor...';
+            ilceField.appendChild(loadingOption);
+            
+            console.log('📡 API isteği gönderiliyor:', '/api/districts/?il_id=' + ilId);
+            
+            // Fetch API ile ilçe listesini getir
+            fetch('/api/districts/?il_id=' + ilId)
+                .then(function(response) {
+                    if (!response.ok) {
+                        throw new Error('HTTP error! status: ' + response.status);
+                    }
+                    return response.json();
+                })
+                .then(function(data) {
+                    console.log('✅ API yanıtı:', data);
+                    
+                    // İlçe alanını temizle
+                    ilceField.innerHTML = '<option value="">İlçe Seçiniz</option>';
+                    
+                    // İlçeleri ekle
+                    if (Array.isArray(data) && data.length > 0) {
+                        data.forEach(function(district) {
+                            const option = document.createElement('option');
+                            option.value = district.id;
+                            option.textContent = district.ad;
+                            
+                            // Edit modunda önceden seçili olan ilçeyi seç
+                            if (initialIlceId && district.id == initialIlceId) {
+                                option.selected = true;
+                            }
+                            
+                            ilceField.appendChild(option);
+                        });
+                        console.log('✅ ' + data.length + ' ilçe yüklendi');
+                    } else {
+                        console.warn('⚠️ İlçe bulunamadı');
+                        const noDataOption = document.createElement('option');
+                        noDataOption.value = '';
+                        noDataOption.textContent = 'İlçe bulunamadı';
+                        ilceField.appendChild(noDataOption);
+                    }
+                    
+                    // Enable field
+                    ilceField.disabled = false;
+                })
+                .catch(function(error) {
+                    console.error('❌ İlçe listesi yüklenirken hata:', error);
+                    
+                    ilceField.innerHTML = '<option value="">Hata: İlçeler yüklenemedi</option>';
+                    ilceField.disabled = false;
+                });
+        });
+
+        // İlçe değiştiğinde mahalle listesini güncelle
+        ilceField.addEventListener('change', function() {
+            const ilceId = this.value;
+            console.log('🔄 İlçe değişti:', ilceId);
+
+            // Mahalle alanını temizle
+            mahalleField.innerHTML = '<option value="">Mahalle Seçiniz</option>';
+
+            if (!ilceId) {
+                console.log('❌ İlçe seçilmedi');
+                return;
+            }
+
+            // Loading göster
+            mahalleField.disabled = true;
+            const loadingOption = document.createElement('option');
+            loadingOption.value = '';
+            loadingOption.textContent = 'Yükleniyor...';
+            mahalleField.appendChild(loadingOption);
+
+            console.log('📡 API isteği gönderiliyor:', '/ajax/get-mahalleler/?ilce_id=' + ilceId);
+
+            // Fetch API ile mahalle listesini getir
+            fetch('/ajax/get-mahalleler/?ilce_id=' + ilceId)
+                .then(function(response) {
+                    if (!response.ok) {
+                        throw new Error('HTTP error! status: ' + response.status);
+                    }
+                    return response.json();
+                })
+                .then(function(data) {
+                    console.log('✅ API yanıtı:', data);
+
+                    // Mahalle alanını temizle
+                    mahalleField.innerHTML = '<option value="">Mahalle Seçiniz</option>';
+
+                    // Mahalleleri ekle
+                    if (Array.isArray(data) && data.length > 0) {
+                        data.forEach(function(mahalle) {
+                            const option = document.createElement('option');
+                            option.value = mahalle.id;
+                            option.textContent = mahalle.ad;
+
+                            // Edit modunda önceden seçili olan mahalle'yi seç
+                            if (initialMahalleId && mahalle.id == initialMahalleId) {
+                                option.selected = true;
+                            }
+
+                            mahalleField.appendChild(option);
+                        });
+                        console.log('✅ ' + data.length + ' mahalle yüklendi');
+                    } else {
+                        console.warn('⚠️ Mahalle bulunamadı');
+                        const noDataOption = document.createElement('option');
+                        noDataOption.value = '';
+                        noDataOption.textContent = 'Mahalle bulunamadı';
+                        mahalleField.appendChild(noDataOption);
+                    }
+
+                    // Enable field
+                    mahalleField.disabled = false;
+                })
+                .catch(function(error) {
+                    console.error('❌ Mahalle listesi yüklenirken hata:', error);
+
+                    mahalleField.innerHTML = '<option value="">Hata: Mahalleler yüklenemedi</option>';
+                    mahalleField.disabled = false;
+                });
+        });
+
+        // Sayfa ilk yüklendiğinde, eğer il seçili ise ilçe listesini yükle
+        if (ilField.value) {
+            console.log('🔄 İlk yükleme - İl seçili:', ilField.value);
+            // Küçük bir gecikme ile tetikle (DOM'un tamamen hazır olması için)
+            setTimeout(function() {
+                const event = new Event('change');
+                ilField.dispatchEvent(event);
+
+                // Eğer ilçe de seçiliyse, mahalle listesini yükle
+                if (ilceField.value) {
+                    setTimeout(function() {
+                        const ilceEvent = new Event('change');
+                        ilceField.dispatchEvent(ilceEvent);
+                    }, 200);
+                }
+            }, 100);
+        }
+
+        console.log('✅ PetShop profil düzenleme - İl-İlçe-Mahalle dinamik yükleme hazır');
+    }
+})();
+</script>
+{% endblock %}
+

@@ -1,0 +1,1175 @@
+{% extends 'ana.html' %}
+{% load static %}
+
+{% block title %}Sepetim - PetSafe Hub{% endblock %}
+
+{% block css_dosyalar %}
+<style>
+    body {
+        background: #f5f5f5 !important;
+    }
+
+    .cart-container {
+        max-width: 1200px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+
+    .cart-header {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .cart-header h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #333;
+        margin: 0;
+    }
+
+    .cart-content {
+        display: grid;
+        grid-template-columns: 1fr 400px;
+        gap: 30px;
+    }
+
+    .cart-items {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .cart-item {
+        display: grid;
+        grid-template-columns: 120px 1fr auto;
+        gap: 20px;
+        padding: 20px;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        margin-bottom: 15px;
+        background: #fafafa;
+        transition: all 0.3s ease;
+    }
+
+    .cart-item:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px);
+    }
+
+    .item-image {
+        width: 120px;
+        height: 120px;
+        border-radius: 10px;
+        object-fit: cover;
+        background: #f9fafb;
+    }
+
+    .item-details {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .item-name {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 10px;
+    }
+
+    .item-price {
+        font-size: 1.1rem;
+        color: #10b981;
+        font-weight: 600;
+    }
+    
+    /* Bayi fiyat gösterimi */
+    .price-container {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+    
+    .price-label {
+        font-size: 0.85rem;
+        color: #666;
+        font-weight: 500;
+    }
+    
+    .price-value {
+        font-size: 1.1rem;
+        font-weight: 700;
+    }
+    
+    .bayi-price {
+        color: #ff6b6b;
+        background: #fff5f5;
+        padding: 4px 8px;
+        border-radius: 6px;
+        border-left: 3px solid #ff6b6b;
+    }
+    
+    .normal-price {
+        color: #10b981;
+    }
+    
+    .discounted-price {
+        color: #dc2626;
+        text-decoration: line-through;
+        font-size: 0.95rem;
+        opacity: 0.8;
+    }
+
+    .item-actions {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: 15px;
+    }
+
+    .quantity-control {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        background: white;
+        padding: 5px 10px;
+        border-radius: 8px;
+        border: 2px solid #e5e7eb;
+    }
+
+    .quantity-control button {
+        background: #2C5F8D;
+        color: white;
+        border: none;
+        font-size: 1rem;
+        cursor: pointer;
+        padding: 5px 12px;
+        border-radius: 6px;
+        transition: all 0.3s ease;
+        font-weight: 600;
+    }
+
+    .quantity-control button:hover {
+        background: #5568d3;
+        transform: scale(1.1);
+    }
+
+    .quantity-control input {
+        width: 60px;
+        text-align: center;
+        border: none;
+        background: transparent;
+        font-weight: 600;
+        font-size: 1rem;
+    }
+
+    .remove-btn {
+        background: #ef4444;
+        color: white;
+        border: none;
+        padding: 8px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .remove-btn:hover {
+        background: #dc2626;
+    }
+
+    .cart-summary {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        height: fit-content;
+        position: sticky;
+        top: 100px;
+    }
+
+    .summary-header {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 25px;
+        padding-bottom: 20px;
+        border-bottom: 2px solid #e5e7eb;
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15px;
+        font-size: 1.1rem;
+    }
+
+    .summary-label {
+        color: #666;
+    }
+
+    .summary-value {
+        font-weight: 600;
+        color: #333;
+    }
+
+    .summary-total {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 2px solid #e5e7eb;
+        font-size: 1.3rem;
+        font-weight: 700;
+    }
+
+    .total-price {
+        color: #10b981;
+        font-size: 1.5rem;
+    }
+
+    .checkout-btn {
+        width: 100%;
+        background: linear-gradient(135deg, #2C5F8D 0%, #5B9BD5 100%);
+        color: white;
+        border: none;
+        padding: 18px;
+        border-radius: 12px;
+        font-size: 1.2rem;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 25px;
+        transition: all 0.3s ease;
+    }
+
+    .checkout-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .continue-shopping {
+        color: #2C5F8D;
+        text-decoration: none;
+        font-weight: 600;
+        display: inline-block;
+        margin-top: 20px;
+    }
+
+    .continue-shopping:hover {
+        text-decoration: underline;
+    }
+
+    .empty-cart {
+        text-align: center;
+        padding: 80px 20px;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .empty-cart-icon {
+        font-size: 5rem;
+        color: #d1d5db;
+        margin-bottom: 20px;
+    }
+
+    .empty-cart h2 {
+        font-size: 1.8rem;
+        color: #333;
+        margin-bottom: 15px;
+    }
+
+    .empty-cart p {
+        color: #666;
+        margin-bottom: 30px;
+    }
+
+    .empty-cart .btn {
+        background: linear-gradient(135deg, #2C5F8D 0%, #5B9BD5 100%);
+        color: white;
+        padding: 15px 40px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: 600;
+        display: inline-block;
+    }
+
+    @media (max-width: 968px) {
+        .cart-content {
+            grid-template-columns: 1fr;
+        }
+
+        .cart-summary {
+            position: static;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .cart-container {
+            margin: 20px auto;
+            padding: 0 15px;
+        }
+
+        .cart-header {
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .cart-header h1 {
+            font-size: 1.5rem;
+        }
+
+        .cart-items {
+            padding: 20px;
+        }
+
+        .cart-item {
+            grid-template-columns: 100px 1fr;
+            gap: 12px;
+            padding: 15px;
+        }
+
+        .item-image {
+            width: 100px;
+            height: 100px;
+        }
+
+        .item-name {
+            font-size: 1rem;
+            margin-bottom: 8px;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .item-price {
+            font-size: 0.95rem;
+        }
+
+        .price-container {
+            gap: 2px;
+        }
+
+        .price-label {
+            font-size: 0.75rem;
+        }
+
+        .price-value {
+            font-size: 0.95rem;
+        }
+
+        .item-actions {
+            grid-column: 1 / -1;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .quantity-control {
+            flex-direction: row;
+            padding: 4px 8px;
+        }
+
+        .quantity-control input {
+            width: 45px;
+            font-size: 0.9rem;
+        }
+
+        .quantity-control button {
+            padding: 4px 10px;
+            font-size: 0.9rem;
+        }
+
+        .remove-btn {
+            padding: 6px 15px;
+            font-size: 0.85rem;
+            white-space: nowrap;
+        }
+
+        .cart-summary {
+            padding: 20px;
+        }
+
+        .summary-header {
+            font-size: 1.25rem;
+            margin-bottom: 20px;
+        }
+
+        .summary-row {
+            font-size: 1rem;
+            margin-bottom: 12px;
+        }
+
+        .summary-total {
+            font-size: 1.15rem;
+            margin-top: 15px;
+            padding-top: 15px;
+        }
+
+        .total-price {
+            font-size: 1.3rem;
+        }
+
+        .checkout-btn {
+            padding: 15px;
+            font-size: 1.1rem;
+        }
+    }
+
+    @media (max-width: 640px) {
+        .cart-container {
+            margin: 15px auto;
+            padding: 0 12px;
+        }
+
+        .cart-header {
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 12px;
+        }
+
+        .cart-header h1 {
+            font-size: 1.3rem;
+        }
+
+        .cart-items {
+            padding: 15px;
+            border-radius: 12px;
+        }
+
+        .cart-item {
+            grid-template-columns: 80px 1fr;
+            gap: 10px;
+            padding: 12px;
+            margin-bottom: 12px;
+            border-radius: 10px;
+        }
+
+        .item-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+        }
+
+        .item-name {
+            font-size: 0.95rem;
+            margin-bottom: 6px;
+            line-height: 1.4;
+        }
+
+        .item-price {
+            font-size: 0.9rem;
+        }
+
+        .price-label {
+            font-size: 0.7rem;
+        }
+
+        .price-value {
+            font-size: 0.9rem;
+        }
+
+        .bayi-price {
+            padding: 3px 6px;
+            font-size: 0.85rem;
+        }
+
+        .item-actions {
+            grid-column: 1 / -1;
+            flex-direction: column;
+            gap: 10px;
+            align-items: stretch;
+            margin-top: 12px;
+        }
+
+        .item-actions > div {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .item-actions > div:first-child {
+            font-size: 0.85rem !important;
+        }
+
+        .item-actions .item-subtotal {
+            font-size: 1rem !important;
+        }
+
+        /* Inline stilleri override et */
+        .item-actions > div[style*="display: flex"] {
+            display: flex !important;
+            flex-wrap: wrap !important;
+            gap: 8px !important;
+        }
+
+        .item-actions > div[style*="flex-direction: column"] {
+            flex-direction: column !important;
+            gap: 5px !important;
+            width: 100%;
+        }
+
+        .quantity-control {
+            padding: 3px 6px;
+            flex: 1;
+            max-width: 120px;
+        }
+
+        .quantity-control input {
+            width: 40px;
+            font-size: 0.85rem;
+        }
+
+        .quantity-control button {
+            padding: 3px 8px;
+            font-size: 0.85rem;
+        }
+
+        .remove-btn {
+            padding: 8px 12px;
+            font-size: 0.8rem;
+            width: 100%;
+            text-align: center;
+        }
+
+        .cart-summary {
+            padding: 15px;
+            border-radius: 12px;
+        }
+
+        .summary-header {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            padding-bottom: 12px;
+        }
+
+        .summary-row {
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        .summary-total {
+            font-size: 1.05rem;
+            margin-top: 12px;
+            padding-top: 12px;
+        }
+
+        .total-price {
+            font-size: 1.2rem;
+        }
+
+        .checkout-btn {
+            padding: 12px;
+            font-size: 1rem;
+            margin-top: 20px;
+        }
+
+        .continue-shopping {
+            font-size: 0.9rem;
+            margin-top: 15px;
+            text-align: center;
+            display: block;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .cart-container {
+            padding: 0 10px;
+        }
+
+        .cart-header {
+            padding: 12px;
+        }
+
+        .cart-header h1 {
+            font-size: 1.2rem;
+        }
+
+        .cart-items {
+            padding: 12px;
+        }
+
+        .cart-item {
+            grid-template-columns: 70px 1fr;
+            gap: 8px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .item-image {
+            width: 70px;
+            height: 70px;
+        }
+
+        .item-name {
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .item-price {
+            font-size: 0.85rem;
+        }
+
+        .price-label {
+            font-size: 0.65rem;
+        }
+
+        .price-value {
+            font-size: 0.85rem;
+        }
+
+        .item-actions {
+            margin-top: 10px;
+            gap: 8px;
+        }
+
+        .item-actions > div {
+            gap: 6px !important;
+        }
+
+        .item-actions .item-subtotal {
+            font-size: 0.9rem !important;
+        }
+
+        .item-actions > div[style*="font-size"] {
+            font-size: 0.8rem !important;
+        }
+
+        .quantity-control {
+            max-width: 100px;
+        }
+
+        .quantity-control input {
+            width: 35px;
+            font-size: 0.8rem;
+        }
+
+        .quantity-control button {
+            padding: 2px 6px;
+            font-size: 0.8rem;
+        }
+
+        .cart-summary {
+            padding: 12px;
+        }
+
+        .summary-header {
+            font-size: 1rem;
+        }
+
+        .summary-row {
+            font-size: 0.85rem;
+        }
+
+        .summary-total {
+            font-size: 1rem;
+        }
+
+        .total-price {
+            font-size: 1.1rem;
+        }
+
+        .checkout-btn {
+            padding: 10px;
+            font-size: 0.95rem;
+        }
+
+        .item-actions > div[style*="display: flex"] {
+            min-width: 0;
+            max-width: 100%;
+        }
+
+        .item-actions span {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+    }
+
+    /* Overflow koruması */
+    @media (max-width: 768px) {
+        body {
+            overflow-x: hidden;
+        }
+
+        .cart-container {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+        .cart-content {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+        .cart-items {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+        .cart-item {
+            max-width: 100%;
+            overflow: hidden;
+            word-wrap: break-word;
+        }
+
+        .item-details {
+            min-width: 0;
+            overflow: hidden;
+        }
+
+        .price-container {
+            max-width: 100%;
+            word-wrap: break-word;
+        }
+
+        /* Inline stilleri override et - tüm ekran boyutları için */
+        .item-actions span[style*="font-size"] {
+            font-size: 0.85rem !important;
+        }
+
+        .item-actions > div[style*="display: flex"][style*="align-items"] {
+            flex-wrap: wrap !important;
+            gap: 6px !important;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="cart-container">
+    <div class="cart-header">
+        <h1>🛒 Sepetim</h1>
+    </div>
+
+    {% if sepet_items %}
+    <div class="cart-content">
+        <!-- Cart Items -->
+        <div class="cart-items">
+            {% for item in sepet_items %}
+            <div class="cart-item" data-item-id="{{ item.id }}">
+                {% if item.urun.urun_tipi == 'etiket' and item.urun.etiket_kategori and item.urun.etiket_kategori.ilk_fotograf %}
+                    <!-- Etiket ürünleri için kategori fotoğrafı -->
+                    <img src="{{ item.urun.etiket_kategori.ilk_fotograf.fotograf.url }}" alt="{{ item.urun.ad }}" class="item-image">
+                {% else %}
+                    <!-- Normal ürünler için ürün fotoğrafı -->
+                    <img src="{% if item.urun.resimler.first and item.urun.resimler.first.resim %}{{ item.urun.resimler.first.resim.url }}{% else %}{% static 'images/default-product.jpg' %}{% endif %}"
+                         alt="{{ item.urun.ad }}" class="item-image">
+                {% endif %}
+
+                <div class="item-details">
+                    <div class="item-name">{{ item.urun.ad }}</div>
+                    <div class="item-price">
+                        {% if user_type == 'petshop' or user_type == 'veteriner' %}
+                            <!-- Bayi fiyatı göster -->
+                            {% if item.urun.petshop_veteriner_fiyat_aktif and item.urun.petshop_veteriner_fiyat %}
+                                <div class="price-container">
+                                    <div class="price-label">Bayi Fiyatı:</div>
+                                    <div class="price-value bayi-price">₺{{ item.birim_fiyat|floatformat:2 }}</div>
+                                    {% if item.urun.petshop_veteriner_indirimli_fiyat and item.urun.petshop_veteriner_indirimli_fiyat != item.urun.petshop_veteriner_fiyat %}
+                                        <div class="price-value discounted-price">₺{{ item.urun.petshop_veteriner_indirimli_fiyat|floatformat:2 }}</div>
+                                    {% endif %}
+                                </div>
+                            {% else %}
+                                <div class="price-container">
+                                    <div class="price-label">Normal Fiyat:</div>
+                                    <div class="price-value normal-price">₺{{ item.birim_fiyat|floatformat:2 }}</div>
+                                </div>
+                            {% endif %}
+                        {% else %}
+                            <!-- Normal müşteri fiyatı -->
+                            <div class="price-container">
+                                <div class="price-label">Birim Fiyat:</div>
+                                <div class="price-value normal-price">₺{{ item.birim_fiyat|floatformat:2 }}</div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="item-actions">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span style="font-size: 0.9rem; color: #666;">Adet:</span>
+                        <div class="quantity-control">
+                            <button type="button" onclick="decreaseQuantity({{ item.id }})">-</button>
+                            <input type="number" id="qty-{{ item.id }}" value="{{ item.miktar }}" min="1" onchange="updateQuantity({{ item.id }})">
+                            <button type="button" onclick="increaseQuantity({{ item.id }})">+</button>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 5px;">
+                        <div style="font-size: 0.85rem; color: #666;">Toplam:</div>
+                        <div style="font-size: 1.2rem; font-weight: 700; color: #10b981;" class="item-subtotal" id="subtotal-{{ item.id }}">₺{{ item.subtotal|floatformat:2 }}</div>
+                    </div>
+
+                    <button type="button" class="remove-btn" onclick="removeItem({{ item.id }})">🗑️ Kaldır</button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Cart Summary -->
+        <div class="cart-summary">
+            <div class="summary-header">Sipariş Özeti</div>
+            
+            <div class="summary-row">
+                <span class="summary-label">Toplam Ürün:</span>
+                <span class="summary-value">{{ sepet_adet }} adet</span>
+            </div>
+            
+            <div class="summary-row">
+                <span class="summary-label">Ara Toplam:</span>
+                <span class="summary-value">₺{{ sepet_toplam|floatformat:2 }}</span>
+            </div>
+            
+            <div class="summary-row">
+                <span class="summary-label">Kargo:</span>
+                <span class="summary-value" id="kargo-ucreti">
+                    {% if kargo_bilgisi.cargo_cost == 0 %}
+                        Ücretsiz
+                    {% else %}
+                        ₺{{ kargo_bilgisi.cargo_cost|floatformat:2 }}
+                    {% endif %}
+                </span>
+            </div>
+            
+            <div class="summary-total">
+                <span>Toplam:</span>
+                <span class="total-price" id="toplam-fiyat">₺{{ kargo_bilgisi.total|floatformat:2 }}</span>
+            </div>
+
+            <a href="{% url 'shop:checkout' %}" class="checkout-btn" style="text-decoration: none; display: block;" onclick="return checkMinQuantity()">
+                💳 Ödemeye Geç
+            </a>
+
+            <a href="{% url 'shop:shop_home' %}" class="continue-shopping">
+                ← Alışverişe Devam Et
+            </a>
+        </div>
+    </div>
+    {% else %}
+    <div class="empty-cart">
+        <div class="empty-cart-icon">🛒</div>
+        <h2>Sepetiniz Boş</h2>
+        <p>Sepetinize henüz ürün eklemediniz.</p>
+        <a href="{% url 'shop:shop_home' %}" class="btn">Alışverişe Başla</a>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+// Debug mode - tüm hataları yakala
+window.addEventListener('error', function(e) {
+    console.error('Global Error:', e.error);
+    console.error('JavaScript Hatası: ' + e.message);
+});
+
+function increaseQuantity(itemId) {
+    console.log('increaseQuantity called with itemId:', itemId);
+
+    try {
+        const input = document.getElementById('qty-' + itemId);
+        console.log('Input element:', input);
+
+        if (!input) {
+            console.error('Input bulunamadı! ID: qty-' + itemId);
+            return;
+        }
+        input.value = parseInt(input.value) + 1;
+        console.log('New quantity:', input.value);
+
+        updateQuantity(itemId);
+    } catch(e) {
+        console.error('increaseQuantity Error: ' + e.message);
+        console.error('increaseQuantity Exception:', e);
+    }
+}
+
+function decreaseQuantity(itemId) {
+    try {
+        const input = document.getElementById('qty-' + itemId);
+        if (!input) {
+            console.error('Input bulunamadı! ID: qty-' + itemId);
+            return;
+        }
+        if (parseInt(input.value) > 1) {
+            input.value = parseInt(input.value) - 1;
+            updateQuantity(itemId);
+        }
+    } catch(e) {
+        console.error('decreaseQuantity Error: ' + e.message);
+    }
+}
+
+function updateQuantity(itemId) {
+    try {
+        const input = document.getElementById('qty-' + itemId);
+        if (!input) {
+            console.error('Input bulunamadı! ID: qty-' + itemId);
+            return;
+        }
+
+        const quantity = input.value;
+        console.log('updateQuantity called - itemId:', itemId, 'quantity:', quantity);
+
+        // Loading göster
+        input.disabled = true;
+
+        const url = '{% url "shop:sepet_guncelle" 0 %}'.replace('0', itemId);
+        console.log('Fetching URL:', url);
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: 'miktar=' + quantity
+        })
+        .then(response => {
+            console.log('Response status:', response.status);
+            return response.json();
+        })
+        .then(data => {
+            console.log('Backend Response:', data);
+
+            if (data.success) {
+                // Item subtotal'ı güncelle - UNIQUE ID ile direkt seçim
+                const subtotalElement = document.getElementById('subtotal-' + itemId);
+                console.log('Looking for subtotal element with ID: subtotal-' + itemId);
+                console.log('Subtotal Element Found:', subtotalElement);
+                console.log('Item Subtotal Value from backend:', data.item_subtotal);
+
+                if (subtotalElement) {
+                    const newValue = '₺' + parseFloat(data.item_subtotal).toFixed(2);
+                    console.log('Setting subtotal to:', newValue);
+                    console.log('Old value was:', subtotalElement.textContent);
+                    subtotalElement.textContent = newValue;
+                    console.log('New value is:', subtotalElement.textContent);
+
+                    // Force repaint
+                    subtotalElement.style.display = 'none';
+                    subtotalElement.offsetHeight; // trigger reflow
+                    subtotalElement.style.display = '';
+
+                    console.log('✅ Subtotal updated successfully!');
+                } else {
+                    console.error('❌ Subtotal element NOT found! ID: subtotal-' + itemId);
+                    // Fallback: Try with querySelector
+                    const cartItem = document.querySelector('[data-item-id="' + itemId + '"]');
+                    if (cartItem) {
+                        const fallbackSubtotal = cartItem.querySelector('.item-subtotal');
+                        if (fallbackSubtotal) {
+                            fallbackSubtotal.textContent = '₺' + parseFloat(data.item_subtotal).toFixed(2);
+                            console.log('✅ Updated using fallback method');
+                        }
+                    }
+                }
+
+                // Ara toplamı güncelle
+                const summaryRows = document.querySelectorAll('.summary-row');
+                summaryRows.forEach(row => {
+                    const label = row.querySelector('.summary-label');
+                    if (label && label.textContent.includes('Ara Toplam')) {
+                        const value = row.querySelector('.summary-value');
+                        if (value) {
+                            value.textContent = '₺' + parseFloat(data.toplam).toFixed(2);
+                        }
+                    }
+                });
+
+                // Kargo ücretini anlık güncelle
+                updateCargoCostAnlik(data.toplam);
+
+                // Toplam fiyatı güncelle
+                const totalPriceElement = document.querySelector('.total-price');
+                if (totalPriceElement) {
+                    totalPriceElement.textContent = '₺' + parseFloat(data.toplam).toFixed(2);
+                }
+
+                // Toplam ürün sayısını güncelle
+                summaryRows.forEach(row => {
+                    const label = row.querySelector('.summary-label');
+                    if (label && label.textContent.includes('Toplam Ürün')) {
+                        const value = row.querySelector('.summary-value');
+                        if (value) {
+                            value.textContent = data.toplam_adet + ' adet';
+                        }
+                    }
+                });
+            } else {
+                console.error('Ürün güncellenirken bir hata oluştu.');
+            }
+        })
+        .catch(error => {
+            console.error('Fetch Error:', error);
+            console.error('Ürün güncellenirken bir hata oluştu: ' + error.message);
+        })
+        .finally(() => {
+            input.disabled = false;
+        });
+    } catch(e) {
+        console.error('updateQuantity Error: ' + e.message);
+        console.error('updateQuantity Exception:', e);
+    }
+}
+
+function removeItem(itemId) {
+    // Onay mesajı
+    if (!confirm('Bu ürünü sepetinizden çıkarmak istediğinize emin misiniz?')) {
+        return;
+    }
+    
+    // Ürün kartını bul
+    const cartItem = document.querySelector(`[data-item-id="${itemId}"]`);
+    if (!cartItem) return;
+    
+    // Kartı yumuşak bir şekilde gizle
+    cartItem.style.transition = 'all 0.3s ease';
+    cartItem.style.opacity = '0';
+    cartItem.style.transform = 'translateX(-100%)';
+    
+    // AJAX ile silme işlemi
+    fetch('{% url "shop:sepet_kalemi_sil" 0 %}'.replace('0', itemId), {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': '{{ csrf_token }}',
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Animasyon bitince kartı DOM'dan kaldır
+            setTimeout(() => {
+                cartItem.remove();
+                
+                // Sepet boşsa sayfayı yenile
+                const remainingItems = document.querySelectorAll('.cart-item');
+                if (remainingItems.length === 0) {
+                    location.reload();
+                } else {
+                    // Sepeti yeniden yükle (toplamı güncellemek için)
+                    location.reload();
+                }
+            }, 300);
+        } else {
+            // Hata durumunda geri al
+            cartItem.style.opacity = '1';
+            cartItem.style.transform = 'translateX(0)';
+            console.error('Ürün silinirken bir hata oluştu.');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        // Hata durumunda geri al
+        cartItem.style.opacity = '1';
+        cartItem.style.transform = 'translateX(0)';
+        console.error('Ürün silinirken bir hata oluştu.');
+    });
+}
+
+function checkMinQuantity() {
+    // BAYİLER (Petshop/Veteriner) için minimum 5 adet etiket ürünü kontrolü
+    const userType = '{{ user_type }}';
+
+    console.log('checkMinQuantity called');
+    console.log('User Type:', userType);
+
+    // Bayi değilse kontrol yapma
+    if (userType !== 'petshop' && userType !== 'veteriner') {
+        console.log('✅ User is not a dealer (petshop/veteriner), skipping minimum quantity check');
+        return true;
+    }
+
+    console.log('⚠️ User is a dealer, checking minimum quantity for etiket products...');
+
+    // Etiket ürünlerinin toplam miktarını kontrol et
+    let etiketToplamAdet = 0;
+    const cartItems = document.querySelectorAll('.cart-item');
+
+    cartItems.forEach(item => {
+        const itemName = item.querySelector('.item-name').textContent;
+        const quantityInput = item.querySelector('input[type="number"]');
+        const quantity = parseInt(quantityInput.value) || 0;
+
+        // Etiket ürünü kontrolü (ürün adında "künye" veya "etiket" geçiyorsa)
+        if (itemName.toLowerCase().includes('künye') || itemName.toLowerCase().includes('etiket')) {
+            etiketToplamAdet += quantity;
+            console.log(`Found etiket product: ${itemName}, quantity: ${quantity}`);
+        }
+    });
+
+    console.log('Total etiket products:', etiketToplamAdet);
+
+    if (etiketToplamAdet > 0 && etiketToplamAdet < 5) {
+        alert(`Bayiler için etiket ürünlerinde minimum 5 adet sipariş şartı bulunmaktadır.\nSepetinizde şu anda ${etiketToplamAdet} adet etiket ürünü bulunmaktadır.`);
+        console.log('❌ Minimum quantity not met!');
+        return false;
+    }
+
+    console.log('✅ Minimum quantity check passed!');
+    return true;
+}
+
+// Anlık kargo ücreti güncelleme fonksiyonu
+function updateCargoCostAnlik(cartTotal) {
+    fetch('/shop/ajax/calculate-cargo/')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Kargo ücretini güncelle
+                const kargoUcretiElement = document.getElementById('kargo-ucreti');
+                if (kargoUcretiElement) {
+                    if (data.kargo_secenekleri && data.kargo_secenekleri.length > 0) {
+                        // Varsayılan kargo firması (en üstteki)
+                        const defaultCargo = data.kargo_secenekleri[0];
+                        if (defaultCargo.ucretsiz) {
+                            kargoUcretiElement.textContent = 'Ücretsiz';
+                        } else {
+                            kargoUcretiElement.textContent = '₺' + defaultCargo.ucret.toFixed(2);
+                        }
+                        
+                        // Toplam fiyatı güncelle
+                        const toplamFiyatElement = document.getElementById('toplam-fiyat');
+                        if (toplamFiyatElement) {
+                            const totalPrice = cartTotal + defaultCargo.ucret;
+                            toplamFiyatElement.textContent = '₺' + totalPrice.toFixed(2);
+                        }
+                    }
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Kargo ücreti güncellenirken hata:', error);
+            // Fallback: Statik kargo hesaplama
+            const kargoUcretiElement = document.getElementById('kargo-ucreti');
+            if (kargoUcretiElement) {
+                // Basit kargo hesaplama (200₺ üzeri ücretsiz)
+                if (cartTotal >= 200) {
+                    kargoUcretiElement.textContent = 'Ücretsiz';
+                    const toplamFiyatElement = document.getElementById('toplam-fiyat');
+                    if (toplamFiyatElement) {
+                        toplamFiyatElement.textContent = '₺' + cartTotal.toFixed(2);
+                    }
+                } else {
+                    kargoUcretiElement.textContent = '₺15.00';
+                    const toplamFiyatElement = document.getElementById('toplam-fiyat');
+                    if (toplamFiyatElement) {
+                        toplamFiyatElement.textContent = '₺' + (cartTotal + 15).toFixed(2);
+                    }
+                }
+            }
+        });
+}
+</script>
+{% endblock %}

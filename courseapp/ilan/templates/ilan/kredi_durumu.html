@@ -1,0 +1,311 @@
+{% extends 'ana.html' %}
+{% load static %}
+
+{% block baslik %}Kredi Durumum - PetSafe Hub{% endblock %}
+
+{% block css_dosyalar %}
+<style>
+    :root {
+        --kredi-primary: #5B9BD5;
+        --kredi-secondary: #70C1B3;
+        --kredi-accent: #FF8C42;
+        --kredi-success: #6FCF97;
+    }
+
+    .kredi-header {
+        background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
+        color: white;
+        padding: 3rem 0;
+        margin-bottom: 2rem;
+        border-radius: 0 0 40px 40px;
+    }
+
+    .kredi-kart {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 28px;
+        box-shadow: 0 15px 45px rgba(91, 155, 213, 0.12);
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .kredi-kart:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 55px rgba(91, 155, 213, 0.18);
+    }
+
+    .bakiye-gosterge {
+        background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
+        color: white;
+        border-radius: 28px;
+        padding: 2.5rem;
+        text-align: center;
+        margin-bottom: 2rem;
+        box-shadow: 0 15px 45px rgba(91, 155, 213, 0.25);
+        transition: all 0.3s ease;
+    }
+
+    .bakiye-gosterge:hover {
+        transform: scale(1.02);
+        box-shadow: 0 20px 55px rgba(91, 155, 213, 0.35);
+    }
+
+    .bakiye-miktar {
+        font-size: 3.5rem;
+        font-weight: 800;
+        margin-bottom: 0.5rem;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .hareket-item {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(247, 249, 252, 0.9) 100%);
+        border-radius: 20px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        border-left: 5px solid var(--kredi-primary);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 5px 15px rgba(91, 155, 213, 0.08);
+    }
+
+    .hareket-item:hover {
+        transform: translateX(8px) translateY(-2px);
+        box-shadow: 0 10px 25px rgba(91, 155, 213, 0.15);
+        border-left-color: var(--kredi-secondary);
+    }
+
+    .hareket-miktar {
+        font-size: 1.3rem;
+        font-weight: 700;
+    }
+
+    .hareket-miktar.positive {
+        color: var(--kredi-success);
+    }
+
+    .hareket-miktar.negative {
+        color: var(--kredi-accent);
+    }
+    
+    .hareket-aciklama {
+        color: #4a5568;
+        font-size: 0.9rem;
+    }
+    
+    .hareket-tarih {
+        color: #718096;
+        font-size: 0.8rem;
+    }
+    
+    .bos-hareket {
+        text-align: center;
+        padding: 3rem 2rem;
+        color: #718096;
+    }
+    
+    .bos-hareket i {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+    }
+    
+    .kredi-satin-al {
+        background: linear-gradient(135deg, #FF8C42 0%, #F2C94C 100%);
+        color: white;
+        border: none;
+        border-radius: 20px;
+        padding: 1.2rem 2.5rem;
+        font-weight: 700;
+        font-size: 1.1rem;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 10px 30px rgba(255, 140, 66, 0.3);
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .kredi-satin-al:hover {
+        color: white;
+        text-decoration: none;
+        transform: translateY(-5px) scale(1.02);
+        box-shadow: 0 15px 40px rgba(255, 140, 66, 0.4);
+    }
+
+    .istatistik-kart {
+        background: linear-gradient(135deg, rgba(91, 155, 213, 0.08) 0%, rgba(112, 193, 179, 0.08) 100%);
+        border: 1px solid rgba(91, 155, 213, 0.15);
+        border-radius: 20px;
+        padding: 1.5rem;
+        text-align: center;
+        margin-bottom: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .istatistik-kart:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(91, 155, 213, 0.15);
+    }
+
+    .istatistik-sayi {
+        font-size: 2.5rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, var(--kredi-primary) 0%, var(--kredi-secondary) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0.5rem;
+    }
+    
+    .istatistik-label {
+        color: #4a5568;
+        font-size: 0.9rem;
+    }
+</style>
+{% endblock %}
+
+{% block icerik %}
+<!-- Header -->
+<div class="kredi-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1 class="mb-3">
+                    <i class="fas fa-coins me-2"></i>
+                    Kredi Durumum
+                </h1>
+                <p class="mb-0">Kredi bakiyenizi ve hareketlerinizi görüntüleyin</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <!-- Sol Kolon - Bakiye ve İstatistikler -->
+        <div class="col-lg-4">
+            <!-- Mevcut Bakiye -->
+            <div class="bakiye-gosterge">
+                <div class="bakiye-miktar">{{ mevcut_bakiye }}</div>
+                <h5 class="mb-0">Mevcut Kredi</h5>
+            </div>
+
+            <!-- İstatistikler -->
+            <div class="kredi-kart mb-4">
+                <div class="p-4">
+                    <h5 class="mb-3">
+                        <i class="fas fa-chart-bar me-2"></i>
+                        İstatistikler
+                    </h5>
+                    
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="istatistik-kart">
+                                <div class="istatistik-sayi">{{ hareketler|length }}</div>
+                                <div class="istatistik-label">Toplam Hareket</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="istatistik-kart">
+                                <div class="istatistik-sayi">
+                                    {% for hareket in hareketler %}
+                                        {% if hareket.miktar < 0 %}{{ forloop.counter0 }}{% endif %}
+                                    {% endfor %}
+                                </div>
+                                <div class="istatistik-label">Harcama</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kredi Satın Al -->
+            <div class="kredi-kart">
+                <div class="p-4 text-center">
+                    <h5 class="mb-3">
+                        <i class="fas fa-shopping-cart me-2"></i>
+                        Kredi Satın Al
+                    </h5>
+                    <p class="text-muted mb-3">Daha fazla kredi ile daha çok ilan verebilirsiniz</p>
+                    <a href="{% url 'ilan:kredi_satin_al' %}" class="kredi-satin-al">
+                        <i class="fas fa-plus me-2"></i>
+                        Kredi Satın Al
+                    </a>
+                    <small class="d-block mt-2 text-muted">
+                        <i class="fas fa-credit-card me-1"></i>
+                        Güvenli ödeme sistemi ile kredi satın alabilirsiniz
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sağ Kolon - Hareket Geçmişi -->
+        <div class="col-lg-8">
+            <div class="kredi-kart">
+                <div class="p-4">
+                    <h5 class="mb-4">
+                        <i class="fas fa-history me-2"></i>
+                        Kredi Hareketleri
+                    </h5>
+
+                    {% if hareketler %}
+                        {% for hareket in hareketler %}
+                        <div class="hareket-item">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div class="flex-grow-1">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="fas 
+                                            {% if hareket.hareket_turu == 'BAKIYE_EKLEME' %}fa-plus-circle text-success
+                                            {% elif hareket.hareket_turu == 'PROFIL_OLUSTURMA' %}fa-paw text-primary
+                                            {% elif hareket.hareket_turu == 'ILAN_VERME' %}fa-bullhorn text-info
+                                            {% elif hareket.hareket_turu == 'ONEMLI_ILAN' %}fa-star text-warning
+                                            {% else %}fa-circle text-secondary{% endif %} 
+                                            me-2"></i>
+                                        <span class="fw-bold">{{ hareket.get_hareket_turu_display }}</span>
+                                    </div>
+                                    <div class="hareket-aciklama">{{ hareket.aciklama }}</div>
+                                    <div class="hareket-tarih">
+                                        <i class="fas fa-clock me-1"></i>
+                                        {{ hareket.tarih|date:"d.m.Y H:i" }}
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <div class="hareket-miktar {% if hareket.miktar > 0 %}positive{% else %}negative{% endif %}">
+                                        {% if hareket.miktar > 0 %}+{% endif %}{{ hareket.miktar }} Kredi
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="bos-hareket">
+                            <i class="fas fa-coins"></i>
+                            <h5>Henüz kredi hareketiniz yok</h5>
+                            <p>İlan vererek veya profil oluşturarak kredi harcamaya başlayabilirsiniz.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js_dosyalar %}
+<script>
+    // Sayfa yüklendiğinde animasyonlar
+    document.addEventListener('DOMContentLoaded', function() {
+        // Hareket öğelerini sırayla göster
+        const hareketItems = document.querySelectorAll('.hareket-item');
+        hareketItems.forEach((item, index) => {
+            item.style.opacity = '0';
+            item.style.transform = 'translateX(-20px)';
+            
+            setTimeout(() => {
+                item.style.transition = 'all 0.5s ease';
+                item.style.opacity = '1';
+                item.style.transform = 'translateX(0)';
+            }, index * 100);
+        });
+    });
+</script>
+{% endblock %}

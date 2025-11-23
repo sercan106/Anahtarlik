@@ -1,0 +1,518 @@
+{% extends 'ana.html' %}
+{% load static %}
+
+{% block title %}Ödeme - PetSafe Hub{% endblock %}
+
+{% block css_dosyalar %}
+<style>
+    body {
+        background: #f5f5f5 !important;
+    }
+
+    .checkout-container {
+        max-width: 1200px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+
+    .checkout-header {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .checkout-header h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #333;
+        margin: 0;
+    }
+
+    .checkout-content {
+        display: grid;
+        grid-template-columns: 1fr 400px;
+        gap: 30px;
+    }
+
+    .checkout-section {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+    }
+
+    .section-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #e5e7eb;
+    }
+
+    .address-card {
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 15px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .address-card:hover {
+        border-color: #2C5F8D;
+        background: #f9fafb;
+    }
+
+    .address-card.selected {
+        border-color: #2C5F8D;
+        background: #EBF4FA;
+    }
+
+    .address-card input[type="radio"] {
+        margin-right: 10px;
+    }
+
+    .address-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .address-title {
+        font-weight: 600;
+        color: #333;
+    }
+
+    .address-type {
+        background: #2C5F8D;
+        color: white;
+        padding: 4px 12px;
+        border-radius: 15px;
+        font-size: 0.85rem;
+    }
+
+    .address-details {
+        color: #666;
+        line-height: 1.6;
+    }
+
+    .add-address-btn {
+        background: #f9fafb;
+        border: 2px dashed #e5e7eb;
+        color: #2C5F8D;
+        padding: 20px;
+        border-radius: 12px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: block;
+    }
+
+    .add-address-btn:hover {
+        border-color: #2C5F8D;
+        background: #EBF4FA;
+    }
+
+    .order-summary {
+        position: sticky;
+        top: 100px;
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15px;
+        font-size: 1.1rem;
+    }
+
+    .summary-label {
+        color: #666;
+    }
+
+    .summary-value {
+        font-weight: 600;
+        color: #333;
+    }
+
+    .summary-total {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 2px solid #e5e7eb;
+        font-size: 1.3rem;
+        font-weight: 700;
+    }
+
+    .total-price {
+        color: #10b981;
+        font-size: 1.5rem;
+    }
+
+    .checkout-btn {
+        width: 100%;
+        background: linear-gradient(135deg, #2C5F8D 0%, #5B9BD5 100%);
+        color: white;
+        border: none;
+        padding: 18px;
+        border-radius: 12px;
+        font-size: 1.2rem;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 25px;
+        transition: all 0.3s ease;
+    }
+
+    .checkout-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+    }
+    
+    /* Misafir checkout form stilleri */
+    .guest-address-form {
+        margin-top: 20px;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #333;
+    }
+    
+    .form-group input,
+    .form-group textarea {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e1e5e9;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.3s ease;
+    }
+    
+    .form-group input:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+
+    .checkout-btn:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        transform: none;
+    }
+    
+    /* Kargo Seçimi Stilleri */
+    .kargo-option {
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        margin-bottom: 15px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .kargo-option:hover {
+        border-color: #2C5F8D;
+        background: #f9fafb;
+    }
+    
+    .kargo-option input[type="radio"] {
+        display: none;
+    }
+    
+    .kargo-option input[type="radio"]:checked + .kargo-label {
+        background: #EBF4FA;
+    }
+    
+    .kargo-option:has(input[type="radio"]:checked) {
+        border-color: #2C5F8D;
+        background: #EBF4FA;
+    }
+    
+    .kargo-label {
+        display: block;
+        padding: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .kargo-info {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .kargo-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .kargo-fiyat {
+        font-weight: 700;
+        font-size: 1.1rem;
+        padding: 6px 12px;
+        border-radius: 20px;
+    }
+    
+    .kargo-fiyat.free {
+        background: #d4edda;
+        color: #155724;
+    }
+    
+    .kargo-fiyat.paid {
+        background: #cce5ff;
+        color: #004085;
+    }
+    
+    .kargo-details {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+    
+    .kargo-sure {
+        color: #666;
+        font-size: 0.9rem;
+    }
+    
+    .kargo-limit {
+        color: #28a745;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    @media (max-width: 968px) {
+        .checkout-content {
+            grid-template-columns: 1fr;
+        }
+
+        .order-summary {
+            position: static;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="checkout-container">
+    <div class="checkout-header">
+        <h1>💳 Ödeme</h1>
+    </div>
+
+    {% if sepet_items %}
+    <form method="POST" action="{% url 'shop:siparis_olustur' %}">
+        {% csrf_token %}
+        
+        <div class="checkout-content">
+            <!-- Sol Taraf - Adres Bilgileri -->
+            <div>
+                <div class="checkout-section">
+                    <h2 class="section-title">📍 Teslimat Adresi</h2>
+                    
+                    {% if guest_checkout %}
+                        <!-- Misafir kullanıcı için adres formu -->
+                        <div class="guest-address-form">
+                            <div class="form-group">
+                                <label for="ad_soyad">Ad Soyad *</label>
+                                <input type="text" id="ad_soyad" name="ad_soyad" required class="form-control">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="telefon">Telefon *</label>
+                                <input type="tel" id="telefon" name="telefon" required class="form-control">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="email">Email *</label>
+                                <input type="email" id="email" name="email" required class="form-control">
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="il">İl *</label>
+                                    <input type="text" id="il" name="il" required class="form-control">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="ilce">İlçe *</label>
+                                    <input type="text" id="ilce" name="ilce" required class="form-control">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="mahalle">Mahalle</label>
+                                <input type="text" id="mahalle" name="mahalle" class="form-control">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="cadde_sokak">Cadde/Sokak</label>
+                                <input type="text" id="cadde_sokak" name="cadde_sokak" class="form-control">
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="bina_no">Bina No</label>
+                                    <input type="text" id="bina_no" name="bina_no" class="form-control">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="daire_no">Daire No</label>
+                                    <input type="text" id="daire_no" name="daire_no" class="form-control">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="adres_notu">Adres Notu</label>
+                                <textarea id="adres_notu" name="adres_notu" class="form-control" rows="3"></textarea>
+                            </div>
+                        </div>
+                    {% elif adresler %}
+                        {% for adres in adresler %}
+                        <div class="address-card {% if adres.id == secili_adres.id %}selected{% endif %}">
+                            <input type="radio" name="adres_id" value="{{ adres.id }}" id="adres_{{ adres.id }}" {% if adres.id == secili_adres.id %}checked{% endif %}>
+                            <label for="adres_{{ adres.id }}" style="cursor: pointer; width: 100%;">
+                                <div class="address-header">
+                                    <span class="address-title">{{ adres.baslik }}</span>
+                                    <span class="address-type">{{ adres.get_adres_tipi_display }}</span>
+                                </div>
+                                <div class="address-details">
+                                    <strong>{{ adres.ad_soyad }}</strong><br>
+                                    {{ adres.telefon }}<br>
+                                    {{ adres.il }}, {{ adres.ilce }}<br>
+                                    {% if adres.mahalle %}{{ adres.mahalle }}{% elif adres.mahalle_diger %}{{ adres.mahalle_diger }}{% endif %}
+                                    {% if adres.adres_satiri %}{{ adres.adres_satiri }}<br>{% endif %}
+                                    {% if adres.posta_kodu %}Posta Kodu: {{ adres.posta_kodu }}<br>{% endif %}
+                                    {% if adres.adres_tarifi %}
+                                    <br><small><i class="fas fa-info-circle"></i> {{ adres.adres_tarifi }}</small>
+                                    {% endif %}
+                                </div>
+                            </label>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p style="color: #666; margin-bottom: 20px;">Henüz adres eklemediniz.</p>
+                    {% endif %}
+                    
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'shop:adres_ekle' %}?redirect_to=checkout" class="add-address-btn">
+                            <i class="fas fa-plus me-2"></i>Yeni Adres Ekle
+                        </a>
+                    {% else %}
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Misafir kullanıcı olarak alışveriş yapıyorsunuz. Adres bilgilerinizi aşağıdaki formda girebilirsiniz.
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Kargo Bilgisi (Sadece Bilgilendirme) -->
+                {% if secili_kargo_firmasi %}
+                <div class="checkout-section">
+                    <h2 class="section-title">🚚 Kargo Bilgisi</h2>
+                    <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #007bff;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <strong>{{ secili_kargo_firmasi.ad }}</strong>
+                            <span style="color: #28a745; font-weight: bold;">
+                                {% if kargo_ucreti == 0 %}
+                                    Ücretsiz
+                                {% else %}
+                                    ₺{{ kargo_ucreti|floatformat:2 }}
+                                {% endif %}
+                            </span>
+                        </div>
+                        <small style="color: #666;">
+                            <i class="fas fa-clock"></i> Tahmini teslimat süresi: {{ secili_kargo_firmasi.tahmini_sure_gun }} gün
+                            {% if secili_kargo_firmasi.ucretsiz_kargo_limiti and kargo_ucreti > 0 %}
+                                <br><i class="fas fa-gift"></i> ₺{{ secili_kargo_firmasi.ucretsiz_kargo_limiti|floatformat:0 }} üzeri siparişlerde ücretsiz kargo
+                            {% endif %}
+                        </small>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Sağ Taraf - Sipariş Özeti -->
+            <div class="order-summary">
+                <div class="checkout-section">
+                    <h2 class="section-title">📋 Sipariş Özeti</h2>
+                    
+                    <div class="summary-row">
+                        <span class="summary-label">Toplam Ürün:</span>
+                        <span class="summary-value">{{ sepet_adet }} adet</span>
+                    </div>
+                    
+                    <div class="summary-row">
+                        <span class="summary-label">Ara Toplam:</span>
+                        <span class="summary-value">₺{{ sepet_toplam|floatformat:2 }}</span>
+                    </div>
+                    
+                    <div class="summary-row">
+                        <span class="summary-label">Kargo:</span>
+                        <span class="summary-value" id="kargo-ucreti">
+                            {% if kargo_ucreti == 0 %}
+                                Ücretsiz
+                            {% else %}
+                                ₺{{ kargo_ucreti|floatformat:2 }}
+                            {% endif %}
+                        </span>
+                    </div>
+                    
+                    <div class="summary-total">
+                        <span>Toplam:</span>
+                        <span class="total-price" id="toplam-fiyat">₺{{ toplam_fiyat|floatformat:2 }}</span>
+                    </div>
+
+                    <button type="submit" class="checkout-btn" {% if user.is_authenticated and not adresler.exists %}disabled{% endif %}>
+                        💳 Siparişi Tamamla
+                    </button>
+
+                    <a href="{% url 'shop:sepet_goster' %}" style="display: block; text-align: center; margin-top: 15px; color: #2C5F8D;">
+                        ← Sepete Dön
+                    </a>
+                </div>
+            </div>
+        </div>
+    </form>
+    {% else %}
+    <div class="checkout-section" style="text-align: center; padding: 60px 20px;">
+        <i class="fas fa-shopping-cart" style="font-size: 4rem; color: #d1d5db; margin-bottom: 20px;"></i>
+        <h2 style="color: #333; margin-bottom: 15px;">Sepetiniz Boş</h2>
+        <p style="color: #666; margin-bottom: 30px;">Ödeme yapmak için sepetinize ürün ekleyin.</p>
+        <a href="{% url 'shop:shop_home' %}" class="checkout-btn" style="text-decoration: none; display: inline-block; width: auto; padding: 15px 40px;">
+            Alışverişe Başla
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+// Adres kartı seçimi
+document.querySelectorAll('.address-card').forEach(card => {
+    card.addEventListener('click', function() {
+        document.querySelectorAll('.address-card').forEach(c => c.classList.remove('selected'));
+        this.classList.add('selected');
+        this.querySelector('input[type="radio"]').checked = true;
+    });
+});
+</script>
+{% endblock %}
+
+

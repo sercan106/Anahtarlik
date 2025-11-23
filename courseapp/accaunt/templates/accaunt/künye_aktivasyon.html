@@ -1,0 +1,346 @@
+{% extends 'ana.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block baslik %}
+<title>PatiQuard - Künye Aktivasyonu</title>
+{% endblock baslik %}
+
+{% block css_dosyalar %}
+<style>
+    .register-container {
+        background: #ffffff;
+        border-radius: 15px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        padding: 2rem;
+        margin-top: 2rem;
+        margin-bottom: 4rem;
+        max-width: 600px;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+    .register-header {
+        text-align: center;
+        color: #1a252f;
+        margin-bottom: 1.5rem;
+    }
+    .register-header h2 {
+        font-weight: bold;
+        font-size: 1.8rem;
+    }
+    .register-header p {
+        color: #6c757d;
+        font-size: 1rem;
+    }
+    .progress-bar {
+        background-color: #28a745;
+        transition: width 0.5s ease-in-out;
+    }
+    .form-group {
+        margin-bottom: 1.5rem;
+        position: relative;
+    }
+    .form-control {
+        border-radius: 10px;
+        border: 1px solid #ced4da;
+        padding: 0.75rem;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .form-control:focus {
+        border-color: #28a745;
+        box-shadow: 0 0 8px rgba(40, 167, 69, 0.3);
+    }
+    .form-label {
+        color: #1a252f;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+    }
+    .btn-submit {
+        background-color: #28a745;
+        color: #fff;
+        border: none;
+        padding: 0.75rem 2rem;
+        border-radius: 25px;
+        font-weight: bold;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+        width: 100%;
+    }
+    .btn-submit:hover {
+        background-color: #218838;
+        transform: scale(1.05);
+    }
+    .alert {
+        border-radius: 10px;
+        background-color: #fff3cd;
+        border: none;
+        color: #856404;
+        animation: slideIn 0.5s ease;
+    }
+    @keyframes slideIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .step-icon {
+        color: #28a745;
+        margin-right: 0.5rem;
+    }
+    .form-textarea {
+        resize: vertical;
+        min-height: 100px;
+    }
+    .info-box {
+        background-color: #e7f3ff;
+        border: 1px solid #b8daff;
+        border-radius: 10px;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    .info-box .info-icon {
+        color: #0066cc;
+        margin-right: 0.5rem;
+    }
+    @media (max-width: 576px) {
+        .register-container {
+            padding: 1.5rem;
+            margin: 1rem;
+        }
+        .register-header h2 {
+            font-size: 1.5rem;
+        }
+        .register-header p {
+            font-size: 0.9rem;
+        }
+        .btn-submit {
+            padding: 0.6rem 1.5rem;
+        }
+    }
+</style>
+{% endblock css_dosyalar %}
+
+{% block content %}
+<div class="container d-flex justify-content-center">
+    <div class="register-container" data-aos="fade-up" data-aos-duration="800">
+        <div class="register-header">
+            <h2>
+                {% if step == 1 %}
+                    <i class="fas fa-tag step-icon"></i> Künye Kontrolü
+                {% elif step == 2 %}
+                    <i class="fas fa-phone step-icon"></i> Telefon Kontrolü
+                {% else %}
+                    <i class="fas fa-paw step-icon"></i> Hayvan Bilgileri
+                {% endif %}
+            </h2>
+            <p>Künye Aktivasyonu - Adım {{ step }} / 3</p>
+        </div>
+
+        <div class="progress mb-4" data-aos="fade-right" data-aos-delay="200">
+            <div class="progress-bar" role="progressbar" style="width: {{ step|add:"0" }}0%;" 
+                 aria-valuenow="{{ step|add:"0" }}0" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+
+        {% if step == 2 %}
+        <div class="info-box">
+            <p class="mb-0">
+                <i class="fas fa-info-circle info-icon"></i>
+                <strong>Bilgi:</strong> Bu telefon numarası ile daha önce kayıt olmuş olmanız gerekiyor. 
+                Eğer telefon numarası zaten kayıtlı ise, lütfen giriş yapıp "Yeni Evcil Hayvan Ekle" seçeneğini kullanın.
+            </p>
+        </div>
+        {% endif %}
+
+        {% for message in messages %}
+            <div class="alert alert-warning" role="alert" data-aos="fade-up" data-aos-delay="300">
+                {{ message }}
+            </div>
+        {% endfor %}
+
+        <form method="POST" enctype="multipart/form-data" data-aos="fade-up" data-aos-delay="400">
+            {% csrf_token %}
+            
+            {% if step == 1 %}
+                {% if show_choice %}
+                    <!-- Seçenek Gösterimi (Etiket geçerli, kullanıcı seçim yapacak) -->
+                    <div class="form-group text-center mb-4">
+                        <p class="mb-3"><strong>Künye numarası doğrulandı! Nasıl devam etmek istersiniz?</strong></p>
+                        <input type="hidden" name="seri_numarasi" value="{{ seri_numarasi|default:form.seri_numarasi.value|default:'' }}">
+                        <div class="d-flex gap-3 justify-content-center flex-wrap">
+                            <button type="submit" name="kayit_tipi" value="yeni_kayit" class="btn btn-success btn-lg px-4">
+                                <i class="fas fa-user-plus me-2"></i>Yeni Kayıt Ol
+                            </button>
+                            <button type="submit" name="kayit_tipi" value="mevcut_hesap" class="btn btn-primary btn-lg px-4">
+                                <i class="fas fa-user-check me-2"></i>Mevcut Hesabıma Ekle
+                            </button>
+                        </div>
+                        <small class="text-muted d-block mt-3">
+                            <i class="fas fa-info-circle me-1"></i>
+                            <strong>Yeni Kayıt:</strong> Yeni bir hesap oluşturarak künyenizi aktive edin ve kullanıcı bilgilerinizle sisteme giriş yapın<br>
+                            <strong>Mevcut Hesap:</strong> Zaten kayıtlıysanız, hesabınıza giriş yaparak künyenizi ekleyin
+                        </small>
+                    </div>
+                {% else %}
+                    <!-- Künye Numarası Girişi -->
+                    <div class="form-group">
+                        <label for="{{ form.seri_numarasi.id_for_label }}" class="form-label">{{ form.seri_numarasi.label }}</label>
+                        {{ form.seri_numarasi|add_class:"form-control" }}
+                        {% if form.seri_numarasi.errors %}
+                            <small class="text-danger">{{ form.seri_numarasi.errors }}</small>
+                        {% endif %}
+                    </div>
+                {% endif %}
+                
+            {% elif step == 2 %}
+                <!-- Telefon Numarası -->
+                <div class="form-group">
+                    <label for="telefon" class="form-label">Telefon Numarası</label>
+                    <input type="text" 
+                           name="telefon" 
+                           id="telefon"
+                           class="form-control" 
+                           placeholder="5XX XXX XX XX"
+                           pattern="[0-9]{10,11}"
+                           required>
+                    <small class="text-muted">Daha önce kayıt olduğunuz telefon numarasını girin</small>
+                </div>
+                
+            {% else %}
+                <!-- Hayvan Bilgileri Formu -->
+                {% for field in form %}
+                    <div class="form-group">
+                        <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                        {% if field.name == 'saglik_notu' or field.name == 'beslenme_notu' or field.name == 'genel_not' or field.name == 'davranis_notu' %}
+                            {{ field|add_class:"form-control form-textarea" }}
+                        {% else %}
+                            {{ field|add_class:"form-control" }}
+                        {% endif %}
+                        {% if field.errors %}
+                            <small class="text-danger">{{ field.errors }}</small>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            {% endif %}
+            
+            {% if not show_choice %}
+            <button type="submit" class="btn-submit">
+                {% if step == 3 %}Künyeyi Aktive Et{% else %}Devam Et{% endif %}
+            </button>
+            {% endif %}
+        </form>
+        
+        <div class="text-center mt-3">
+            {% if step == 2 %}
+                <p class="text-muted small mb-2">Alternatif seçenekler:</p>
+                <div class="d-flex gap-2 justify-content-center flex-wrap">
+                    <a href="{% url 'user_login' %}" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-sign-in-alt me-1"></i>Giriş Yap
+                    </a>
+                    <a href="{% url 'user_register' %}" class="btn btn-outline-success btn-sm">
+                        <i class="fas fa-user-plus me-1"></i>İlk Kez Kayıt Ol
+                    </a>
+                </div>
+            {% else %}
+                <a href="{% url 'user_login' %}" class="text-decoration-none">
+                    <i class="fas fa-arrow-left me-1"></i>Giriş Sayfasına Dön
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block js_dosyalar %}
+<script>
+    // Form alanlarına odaklanma animasyonu
+    document.querySelectorAll('.form-control').forEach(input => {
+        input.addEventListener('focus', function() {
+            this.parentElement.classList.add('focused');
+        });
+        input.addEventListener('blur', function() {
+            this.parentElement.classList.remove('focused');
+        });
+    });
+
+    // Adım 3 için: Tür değiştikçe ırk listesini getir
+    document.addEventListener('DOMContentLoaded', function() {
+        const tur = document.getElementById('id_tur');
+        const irk = document.getElementById('id_irk');
+        
+        if (tur && irk) {
+            const loadBreeds = async function(turId) {
+                // Önce "yükleniyor" mesajı göster
+                irk.innerHTML = '<option value="">Yükleniyor...</option>';
+                irk.disabled = true;
+                
+                if (!turId) {
+                    irk.innerHTML = '<option value="">Önce tür seçiniz</option>';
+                    irk.disabled = false;
+                    return;
+                }
+                
+                try {
+                    const resp = await fetch('{% url "breeds_for_species" %}?tur_id=' + turId);
+                    const data = await resp.json();
+                    
+                    // Irk listesini temizle
+                    irk.innerHTML = '<option value="">Irk Seçiniz</option>';
+                    
+                    // Irk'ları ekle
+                    (data.breeds || []).forEach(function(item){
+                        const opt = document.createElement('option');
+                        opt.value = item.id;
+                        opt.textContent = item.ad;
+                        irk.appendChild(opt);
+                    });
+                    
+                    irk.disabled = false;
+                } catch (e) { 
+                    console.error('Hata:', e);
+                    irk.innerHTML = '<option value="">Hata oluştu</option>';
+                    irk.disabled = false;
+                }
+            };
+
+            // Tür değiştiğinde ırk'ları yükle
+            tur.addEventListener('change', function(){
+                loadBreeds(this.value);
+            });
+
+            // Sayfa ilk açıldığında tür seçili ise ilgili ırkları yükle
+            if (tur.value) {
+                loadBreeds(tur.value);
+            }
+        }
+    });
+
+    // Fotoğraf önizleme
+    document.addEventListener('DOMContentLoaded', function() {
+        const resimInput = document.getElementById('id_resim');
+        if (resimInput) {
+            resimInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        // Mevcut önizleme varsa kaldır
+                        const existingPreview = document.getElementById('image-preview');
+                        if (existingPreview) {
+                            existingPreview.remove();
+                        }
+                        
+                        // Yeni önizleme oluştur
+                        const preview = document.createElement('div');
+                        preview.id = 'image-preview';
+                        preview.innerHTML = `
+                            <div class="mt-3 text-center">
+                                <img src="${e.target.result}" class="img-thumbnail" style="max-width: 200px; max-height: 200px;">
+                                <p class="small text-muted mt-2">Fotoğraf Önizlemesi</p>
+                            </div>
+                        `;
+                        resimInput.parentNode.appendChild(preview);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+    });
+</script>
+{% endblock js_dosyalar %}

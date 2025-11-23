@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stok Uyarısı</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .email-container {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            border-bottom: 3px solid #ffc107;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ffc107;
+            margin-bottom: 10px;
+        }
+        .warning-icon {
+            font-size: 48px;
+            color: #ffc107;
+            margin-bottom: 15px;
+        }
+        .product-info {
+            background: #fff3cd;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #ffc107;
+        }
+        .stock-level {
+            font-size: 18px;
+            font-weight: bold;
+            color: #856404;
+            margin: 10px 0;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            color: #666;
+            font-size: 14px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #ffc107;
+            color: #212529;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        .btn:hover {
+            background: #e0a800;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            <div class="logo">🐾 PetSafe Hub</div>
+            <div class="warning-icon">⚠️</div>
+            <h1>Stok Uyarısı</h1>
+            <p>Ürün stokları azaldı!</p>
+        </div>
+
+        <div class="product-info">
+            <h3>📦 Stok Uyarısı - {{ urun.ad }}</h3>
+            <div class="stock-level">
+                Kalan Stok: {{ urun.stok }} adet
+            </div>
+            <p><strong>Ürün Kodu:</strong> {{ urun.id }}</p>
+            <p><strong>Ürün Tipi:</strong> 
+                {% if urun.urun_tipi == 'etiket' %}
+                    🏷️ Etiket Ürünü
+                {% else %}
+                    📦 Normal Ürün
+                {% endif %}
+            </p>
+            <p><strong>Fiyat:</strong> ₺{{ urun.fiyat|floatformat:2 }}</p>
+            {% if urun.indirimli_fiyat %}
+            <p><strong>İndirimli Fiyat:</strong> ₺{{ urun.indirimli_fiyat|floatformat:2 }}</p>
+            {% endif %}
+        </div>
+
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <h3>📊 Stok Durumu</h3>
+            <p><strong>Mevcut Stok:</strong> {{ urun.stok }} adet</p>
+            <p><strong>Minimum Stok Seviyesi:</strong> {{ min_stok_seviyesi|default:"5" }} adet</p>
+            <p><strong>Uyarı Seviyesi:</strong> {{ uyari_seviyesi|default:"10" }} adet</p>
+            
+            {% if urun.stok <= 0 %}
+            <p style="color: #dc3545; font-weight: bold;">🚨 STOK TÜKENDİ!</p>
+            {% elif urun.stok <= min_stok_seviyesi %}
+            <p style="color: #dc3545; font-weight: bold;">⚠️ Kritik stok seviyesi!</p>
+            {% else %}
+            <p style="color: #ffc107; font-weight: bold;">⚠️ Stok azalıyor!</p>
+            {% endif %}
+        </div>
+
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="{{ site_url }}{% url 'shop:urun_detay' urun.id %}" class="btn">
+                Ürünü Görüntüle
+            </a>
+        </div>
+
+        <div class="footer">
+            <p>Bu uyarı otomatik olarak gönderilmiştir.</p>
+            <p>Stok yenileme işlemini gerçekleştirmeyi unutmayın.</p>
+            <p>PetSafe Hub - Evcil Hayvan Dostu Alışveriş</p>
+            <p>📧 {{ contact_email }} | 🌐 {{ site_url }}</p>
+        </div>
+    </div>
+</body>
+</html>
+

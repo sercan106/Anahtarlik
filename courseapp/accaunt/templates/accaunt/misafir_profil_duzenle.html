@@ -1,0 +1,97 @@
+{% extends "ana.html" %}
+{% load static %}
+
+{% block title %}Profil Düzenle - Misafir - PetSafe Hub{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-info text-white">
+                    <h4 class="mb-0"><i class="fas fa-user-edit me-2"></i>Misafir Profili Düzenle</h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <strong><i class="fas fa-info-circle me-1"></i> Bilgilendirme:</strong> Temel profil bilgilerinizi buradan güncelleyebilirsiniz.
+                    </div>
+
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <form method="post" id="profilForm">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.ad_soyad.id_for_label }}" class="form-label">
+                                <strong>Ad Soyad <span class="text-danger">*</span></strong>
+                            </label>
+                            {{ form.ad_soyad }}
+                            {% if form.ad_soyad.errors %}
+                                <div class="text-danger small">{{ form.ad_soyad.errors|first }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.telefon.id_for_label }}" class="form-label">
+                                <strong>Telefon <span class="text-danger">*</span></strong>
+                            </label>
+                            {{ form.telefon }}
+                            <small class="form-text text-muted">Başında 0 olmadan giriniz (örn: 5551234567)</small>
+                            {% if form.telefon.errors %}
+                                <div class="text-danger small">{{ form.telefon.errors|first }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">
+                                <strong>E-posta</strong>
+                            </label>
+                            <input type="email" class="form-control" value="{{ profil.kullanici.email }}" disabled>
+                            <small class="form-text text-muted">E-posta adresiniz değiştirilemez</small>
+                        </div>
+
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {{ form.non_field_errors }}
+                            </div>
+                        {% endif %}
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-between mt-4">
+                            <a href="{% url 'guest_dashboard' %}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-1"></i> Geri Dön
+                            </a>
+                            <button type="submit" class="btn btn-info px-5">
+                                <i class="fas fa-save me-1"></i> Kaydet
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

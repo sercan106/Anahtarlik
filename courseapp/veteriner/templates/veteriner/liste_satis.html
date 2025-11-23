@@ -1,0 +1,172 @@
+{% extends "ana.html" %}
+{% load static %}
+
+{% block title %}Tüm Satışlar - PetSafe Hub{% endblock %}
+
+{% block css_dosyalar %}
+<style>
+    :root {
+        --list-primary: #5B9BD5;
+        --list-secondary: #70C1B3;
+        --list-success: #6FCF97;
+    }
+
+    .list-container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .list-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 28px;
+        box-shadow: 0 15px 45px rgba(91, 155, 213, 0.12);
+        overflow: hidden;
+    }
+
+    .list-header {
+        background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
+        color: white;
+        padding: 2rem;
+        text-align: center;
+    }
+
+    .list-header h4 {
+        font-weight: 800;
+        font-size: 1.75rem;
+        margin: 0;
+    }
+
+    .table-container {
+        padding: 2rem;
+    }
+
+    .modern-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 0.75rem;
+    }
+
+    .modern-table thead th {
+        background: linear-gradient(135deg, rgba(91, 155, 213, 0.1) 0%, rgba(112, 193, 179, 0.1) 100%);
+        color: var(--list-primary);
+        font-weight: 700;
+        padding: 1rem 1.5rem;
+        text-align: left;
+        border: none;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .modern-table thead th:first-child {
+        border-radius: 15px 0 0 15px;
+    }
+
+    .modern-table thead th:last-child {
+        border-radius: 0 15px 15px 0;
+    }
+
+    .modern-table tbody tr {
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 15px;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(91, 155, 213, 0.08);
+    }
+
+    .modern-table tbody tr:hover {
+        transform: translateX(5px);
+        box-shadow: 0 5px 15px rgba(91, 155, 213, 0.15);
+    }
+
+    .modern-table tbody td {
+        padding: 1.25rem 1.5rem;
+        border: none;
+        vertical-align: middle;
+    }
+
+    .modern-table tbody tr td:first-child {
+        border-radius: 15px 0 0 15px;
+        font-weight: 600;
+        color: var(--list-primary);
+    }
+
+    .modern-table tbody tr td:last-child {
+        border-radius: 0 15px 15px 0;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
+    }
+
+    .empty-state i {
+        font-size: 4rem;
+        color: var(--list-secondary);
+        opacity: 0.5;
+        margin-bottom: 1rem;
+    }
+
+    @media (max-width: 768px) {
+        .list-container { margin: 1rem auto; }
+        .list-header h4 { font-size: 1.4rem; }
+        .table-container { padding: 1rem; overflow-x: auto; }
+        .modern-table { border-spacing: 0 0.5rem; }
+        .modern-table thead th,
+        .modern-table tbody td {
+            padding: 0.75rem 1rem;
+            font-size: 0.85rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="list-container">
+    <div class="list-card">
+        <div class="list-header">
+            <h4><i class="fas fa-chart-line me-2"></i>Tüm Satışlar (Aktifleştirilmiş Etiketler)</h4>
+        </div>
+
+        <div class="table-container">
+            {% if page_obj %}
+            <div class="table-responsive">
+                <table class="modern-table">
+                    <thead>
+                        <tr>
+                            <th><i class="fas fa-barcode me-2"></i>Seri No</th>
+                            <th><i class="fas fa-calendar-plus me-2"></i>İlk Aktivasyon</th>
+                            <th><i class="fas fa-clock me-2"></i>Son Aktifleşme</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for e in page_obj %}
+                        <tr>
+                            <td>{{ e.seri_numarasi }}</td>
+                            <td>{{ e.first_activated_at|date:"d.m.Y H:i" }}</td>
+                            <td>{{ e.aktiflestirme_tarihi|date:"d.m.Y H:i" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <i class="fas fa-inbox"></i>
+                <h5 class="text-muted">Kayıt yok</h5>
+                <p class="text-muted">Henüz aktifleştirilmiş etiket bulunmuyor.</p>
+            </div>
+            {% endif %}
+
+            {% if page_obj.has_other_pages %}
+            <div class="mt-4">
+                {% include "partials/pagination.html" with page_obj=page_obj %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

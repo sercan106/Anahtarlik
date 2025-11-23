@@ -1,0 +1,388 @@
+{% extends 'ana.html' %}
+{% load static %}
+
+{% block title %}Siparişlerim - PetSafe Hub{% endblock %}
+
+{% block css_dosyalar %}
+<style>
+    body {
+        background: #f5f5f5 !important;
+    }
+
+    .orders-container {
+        max-width: 1200px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+
+    .orders-header {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .orders-header h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #333;
+        margin: 0;
+    }
+
+    .order-card {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .order-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .order-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #f1f3f4;
+    }
+
+    .order-number {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #667eea;
+    }
+
+    .order-date {
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    .order-status {
+        display: inline-block;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    .order-status.bekliyor {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .order-status.odendi {
+        background: #d1ecf1;
+        color: #0c5460;
+    }
+
+    .order-status.gonderildi,
+    .order-status.kargoda {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .order-status.hazirlaniyor {
+        background: #fff5d1;
+        color: #b7791f;
+    }
+
+    .order-status.teslim_edildi {
+        background: #bbf7d0;
+        color: #166534;
+    }
+
+    .order-status.iptal {
+        background: #fecaca;
+        color: #b91c1c;
+    }
+
+    .order-status.iade {
+        background: #ede9fe;
+        color: #5b21b6;
+    }
+
+    .order-items {
+        margin-bottom: 20px;
+    }
+
+    .order-item {
+        display: flex;
+        align-items: center;
+        padding: 15px;
+        border: 1px solid #f1f3f4;
+        border-radius: 10px;
+        margin-bottom: 10px;
+    }
+
+    .item-image {
+        width: 60px;
+        height: 60px;
+        margin-right: 15px;
+    }
+
+    .item-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+
+    .item-details {
+        flex: 1;
+    }
+
+    .item-name {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 5px;
+    }
+
+    .item-meta {
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    .item-price {
+        font-weight: 600;
+        color: #10b981;
+        font-size: 1.1rem;
+    }
+
+    .order-summary {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 15px;
+    }
+
+    .order-total {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #333;
+    }
+    
+    .price-amount {
+        color: #28a745 !important;
+        font-weight: 700;
+    }
+
+    .order-actions {
+        display: flex;
+        gap: 10px;
+    }
+
+    .btn {
+        padding: 8px 16px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        color: white;
+        text-decoration: none;
+    }
+
+    .btn-secondary {
+        background: #6c757d;
+        color: white;
+    }
+
+    .btn-secondary:hover {
+        background: #5a6268;
+        color: white;
+        text-decoration: none;
+    }
+
+    .empty-orders {
+        text-align: center;
+        padding: 60px 20px;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .empty-orders h3 {
+        color: #666;
+        margin-bottom: 20px;
+    }
+
+    .empty-orders p {
+        color: #999;
+        margin-bottom: 30px;
+    }
+
+    .back-btn {
+        display: inline-block;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 12px 24px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .back-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        color: white;
+        text-decoration: none;
+    }
+
+    @media (max-width: 768px) {
+        .order-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .order-item {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .item-image {
+            margin-right: 0;
+            margin-bottom: 10px;
+        }
+
+        .order-actions {
+            flex-direction: column;
+        }
+    }
+
+    /* ========== MOBILE RESPONSIVE STYLES ========== */
+    @media (max-width: 991px) {
+        .order-grid { grid-template-columns: 1fr !important; }
+    }
+
+    @media (max-width: 768px) {
+        .order-card { padding: 1.25rem; }
+        .order-header { flex-direction: column; gap: 10px; text-align: left; }
+        .order-number { font-size: 1rem !important; }
+        .order-status-badge { font-size: 0.85rem; }
+        .order-item { grid-template-columns: 70px 1fr; gap: 12px; }
+        .order-item-image { width: 70px; height: 70px; }
+    }
+
+    @media (max-width: 576px) {
+        .order-card { padding: 1rem; }
+        .order-number { font-size: 0.9rem !important; }
+        .order-total { font-size: 1.1rem !important; }
+        .order-actions .btn { width: 100%; margin-bottom: 8px; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="orders-container">
+    <div class="orders-header">
+        <h1>📦 Siparişlerim</h1>
+    </div>
+
+    {% if siparisler %}
+        {% for siparis in siparisler %}
+        <div class="order-card">
+            <div class="order-header">
+                <div>
+                    <div class="order-number">Sipariş #{{ siparis.id }}</div>
+                    <div class="order-date">{{ siparis.olusturulma_tarihi|date:"d.m.Y H:i" }}</div>
+                </div>
+                <div class="order-status {{ siparis.durum }}">
+                    {% if siparis.durum == 'bekliyor' %}
+                        Bekliyor
+                    {% elif siparis.durum == 'odendi' %}
+                        Ödendi
+                    {% elif siparis.durum == 'hazirlaniyor' %}
+                        Hazırlanıyor
+                    {% elif siparis.durum == 'kargoda' or siparis.durum == 'gonderildi' %}
+                        Kargoda
+                    {% elif siparis.durum == 'teslim_edildi' %}
+                        Teslim Edildi
+                    {% elif siparis.durum == 'iptal' %}
+                        İptal Edildi
+                    {% elif siparis.durum == 'iade' %}
+                        İade Edildi
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="order-items">
+                {% for item in siparis.kalemler.all %}
+                <div class="order-item">
+                    <div class="item-image">
+                        {% if item.urun.urun_tipi == 'etiket' %}
+                            {# Etiket ürünleri için kategori resmini kullan #}
+                            {% with kategori_resmi=item.urun.etiket_kategori.ilk_fotograf %}
+                                {% if kategori_resmi and kategori_resmi.fotograf %}
+                                    <img src="{{ kategori_resmi.fotograf.url }}" alt="{{ item.urun.ad }}" onerror="this.src='{% static 'images/default-product.jpg' %}'">
+                                {% else %}
+                                    <img src="{% static 'images/default-product.jpg' %}" alt="{{ item.urun.ad }}">
+                                {% endif %}
+                            {% endwith %}
+                        {% else %}
+                            {# Normal ürünler için ürün resimlerini kullan #}
+                            {% with ilk_resim=item.urun.resimler.first %}
+                                {% if ilk_resim and ilk_resim.resim %}
+                                    <img src="{{ ilk_resim.resim.url }}" alt="{{ item.urun.ad }}" onerror="this.src='{% static 'images/default-product.jpg' %}'">
+                                {% else %}
+                                    <img src="{% static 'images/default-product.jpg' %}" alt="{{ item.urun.ad }}">
+                                {% endif %}
+                            {% endwith %}
+                        {% endif %}
+                    </div>
+                    <div class="item-details">
+                        <div class="item-name">{{ item.urun.ad }}</div>
+                        <div class="item-meta">Adet: {{ item.miktar }} | Birim Fiyat: <span class="price-amount">₺{{ item.fiyat }}</span></div>
+                    </div>
+                    <div class="item-price"><span class="price-amount">₺{{ item.toplam_fiyat|floatformat:2 }}</span></div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="order-summary">
+                <div class="order-total">Toplam: <span class="price-amount">₺{{ siparis.toplam_fiyat|floatformat:2 }}</span></div>
+                <div class="order-actions">
+                    <a href="{% url 'shop:siparis_detay' siparis.id %}" class="btn btn-primary">
+                        📋 Detayları Gör
+                    </a>
+                    {% if siparis.durum == 'kargoda' or siparis.durum == 'teslim_edildi' %}
+                        <a href="{% url 'shop:kargo_takip' siparis.id %}" class="btn btn-secondary">
+                            📦 Kargo Takip
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="empty-orders">
+            <h3>📦 Henüz siparişiniz yok</h3>
+            <p>İlk siparişinizi vermek için mağazamızı keşfedin!</p>
+            <a href="{% url 'shop:shop_home' %}" class="back-btn">
+                🛍️ Alışverişe Başla
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

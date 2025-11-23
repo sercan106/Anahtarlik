@@ -1,0 +1,1010 @@
+{% extends 'ana.html' %}
+{% load static %}
+
+{% block baslik %}{{ ilan.baslik }} - PetSafe Hub{% endblock %}
+
+{% block css_dosyalar %}
+<style>
+    :root {
+        --detail-primary: #5B9BD5;
+        --detail-secondary: #70C1B3;
+        --detail-accent: #FF8C42;
+        --detail-success: #6FCF97;
+        --detail-warning: #F2C94C;
+        --detail-danger: #EB5757;
+    }
+
+    /* Ana Header */
+    .ilan-header {
+        background: linear-gradient(135deg, var(--detail-primary) 0%, var(--detail-secondary) 100%);
+        color: white;
+        padding: 1.5rem 0;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 30px rgba(91, 155, 213, 0.15);
+    }
+
+    .breadcrumb {
+        background: transparent;
+        padding: 0;
+        margin: 0;
+    }
+
+    .breadcrumb-item a {
+        color: white;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .breadcrumb-item a:hover {
+        color: rgba(255, 255, 255, 0.9);
+        text-decoration: underline;
+    }
+
+    .breadcrumb-item.active {
+        color: rgba(255, 255, 255, 0.85);
+        font-weight: 600;
+    }
+
+    /* Ana İçerik */
+    .main-content {
+        background: linear-gradient(135deg, rgba(91, 155, 213, 0.03) 0%, rgba(112, 193, 179, 0.03) 100%);
+        min-height: 100vh;
+        padding-bottom: 3rem;
+    }
+
+    .ilan-container {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 28px;
+        box-shadow: 0 15px 45px rgba(91, 155, 213, 0.12);
+        margin: 0 0 2rem 0;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .ilan-container:hover {
+        box-shadow: 0 20px 55px rgba(91, 155, 213, 0.18);
+    }
+    
+    /* Resim Galerisi */
+    .image-gallery {
+        position: relative;
+        background: linear-gradient(135deg, rgba(91, 155, 213, 0.05) 0%, rgba(112, 193, 179, 0.05) 100%);
+    }
+
+    .main-image {
+        width: 100%;
+        height: auto;
+        max-height: 600px;
+        min-height: 400px;
+        object-fit: contain;
+        cursor: pointer;
+        background: transparent;
+        display: block;
+        transition: opacity 0.4s ease-in-out, transform 0.3s ease;
+        will-change: transform;
+    }
+
+    .main-image:hover {
+        transform: scale(1.02);
+    }
+
+    .image-nav {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: linear-gradient(135deg, var(--detail-primary) 0%, var(--detail-secondary) 100%);
+        color: white;
+        border: none;
+        width: 55px;
+        height: 55px;
+        border-radius: 50%;
+        font-size: 1.3rem;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        opacity: 0.9;
+        will-change: transform, box-shadow;
+        box-shadow: 0 5px 15px rgba(91, 155, 213, 0.3);
+    }
+
+    .image-nav:hover {
+        transform: translateY(-50%) scale(1.1);
+        opacity: 1;
+        box-shadow: 0 8px 25px rgba(91, 155, 213, 0.4);
+    }
+
+    .image-nav:active {
+        transform: translateY(-50%) scale(0.95);
+    }
+
+    .image-nav.prev {
+        left: 20px;
+    }
+
+    .image-nav.next {
+        right: 20px;
+    }
+
+    .image-thumbnails {
+        display: flex;
+        gap: 12px;
+        padding: 1.25rem;
+        background: rgba(255, 255, 255, 0.5);
+        border-top: 1px solid rgba(91, 155, 213, 0.1);
+        overflow-x: auto;
+        overflow-y: hidden;
+        scrollbar-width: thin;
+        scrollbar-color: var(--detail-primary) rgba(91, 155, 213, 0.1);
+    }
+
+    .image-thumbnails::-webkit-scrollbar {
+        height: 8px;
+    }
+
+    .image-thumbnails::-webkit-scrollbar-track {
+        background: rgba(91, 155, 213, 0.1);
+        border-radius: 10px;
+    }
+
+    .image-thumbnails::-webkit-scrollbar-thumb {
+        background: linear-gradient(90deg, var(--detail-primary) 0%, var(--detail-secondary) 100%);
+        border-radius: 10px;
+    }
+
+    .image-thumbnails::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(90deg, var(--detail-secondary) 0%, var(--detail-primary) 100%);
+    }
+
+    .thumbnail {
+        width: 85px;
+        height: 85px;
+        object-fit: cover;
+        border-radius: 15px;
+        cursor: pointer;
+        border: 3px solid transparent;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        opacity: 0.7;
+        will-change: transform, border-color, opacity;
+    }
+
+    .thumbnail:hover {
+        border-color: var(--detail-primary);
+        transform: translateY(-3px) scale(1.05);
+        opacity: 1;
+        box-shadow: 0 8px 20px rgba(91, 155, 213, 0.25);
+    }
+
+    .thumbnail.active {
+        border-color: var(--detail-primary);
+        transform: scale(1.05);
+        opacity: 1;
+        box-shadow: 0 5px 15px rgba(91, 155, 213, 0.3);
+    }
+    
+    /* İlan Bilgileri */
+    .ilan-info {
+        padding: 2.5rem;
+    }
+
+    .ilan-title {
+        font-size: 2rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, var(--detail-primary) 0%, var(--detail-secondary) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 1.5rem;
+        letter-spacing: -0.5px;
+    }
+
+    .ilan-price {
+        font-size: 1.75rem;
+        font-weight: 800;
+        color: white;
+        margin-bottom: 1.5rem;
+        display: inline-block;
+        padding: 0.75rem 2rem;
+        border-radius: 20px;
+        background: linear-gradient(135deg, var(--detail-accent) 0%, var(--detail-warning) 100%);
+        box-shadow: 0 8px 20px rgba(255, 140, 66, 0.3);
+        transition: all 0.3s ease;
+    }
+
+    .ilan-price:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 30px rgba(255, 140, 66, 0.4);
+    }
+
+    .info-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 0.5rem;
+        margin: 1.5rem 0;
+    }
+
+    .info-table td {
+        padding: 1rem 1.25rem;
+        background: linear-gradient(135deg, rgba(91, 155, 213, 0.03) 0%, rgba(112, 193, 179, 0.03) 100%);
+        vertical-align: middle;
+    }
+
+    .info-table tr:hover td {
+        background: linear-gradient(135deg, rgba(91, 155, 213, 0.08) 0%, rgba(112, 193, 179, 0.08) 100%);
+    }
+
+    .info-table td:first-child {
+        font-weight: 700;
+        color: var(--detail-primary);
+        width: 35%;
+        border-radius: 12px 0 0 12px;
+        border-left: 3px solid var(--detail-primary);
+    }
+
+    .info-table td:last-child {
+        color: #333;
+        font-weight: 500;
+        border-radius: 0 12px 12px 0;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 0.5rem 1.25rem;
+        border-radius: 15px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        background: linear-gradient(135deg, var(--detail-primary) 0%, var(--detail-secondary) 100%);
+        color: white;
+        box-shadow: 0 4px 12px rgba(91, 155, 213, 0.2);
+    }
+
+    .status-negotiable {
+        background: linear-gradient(135deg, var(--detail-primary) 0%, var(--detail-secondary) 100%);
+    }
+
+    .status-available {
+        background: linear-gradient(135deg, var(--detail-success) 0%, var(--detail-secondary) 100%);
+    }
+    
+    /* Satıcı Bilgileri */
+    .seller-info {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 28px;
+        padding: 2rem;
+        margin: 0;
+        box-shadow: 0 15px 45px rgba(91, 155, 213, 0.12);
+        transition: all 0.3s ease;
+    }
+
+    .seller-info:hover {
+        box-shadow: 0 20px 55px rgba(91, 155, 213, 0.18);
+    }
+
+    .seller-name {
+        font-size: 1.4rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, var(--detail-primary) 0%, var(--detail-secondary) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0.75rem;
+    }
+
+    .seller-stats {
+        display: flex;
+        gap: 10px;
+        margin: 1.5rem 0;
+        flex-wrap: wrap;
+    }
+
+    .stat-box {
+        background: linear-gradient(135deg, rgba(91, 155, 213, 0.08) 0%, rgba(112, 193, 179, 0.08) 100%);
+        padding: 1rem 1.25rem;
+        border-radius: 18px;
+        text-align: center;
+        border: 2px solid rgba(91, 155, 213, 0.15);
+        flex: 1;
+        min-width: 80px;
+        transition: all 0.3s ease;
+    }
+
+    .stat-box:hover {
+        background: linear-gradient(135deg, rgba(91, 155, 213, 0.12) 0%, rgba(112, 193, 179, 0.12) 100%);
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(91, 155, 213, 0.15);
+    }
+
+    .stat-number {
+        font-size: 1.5rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, var(--detail-accent) 0%, var(--detail-warning) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .stat-label {
+        font-size: 0.75rem;
+        color: var(--detail-primary);
+        margin-top: 0.25rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .contact-buttons {
+        display: flex;
+        gap: 12px;
+        margin-top: 1.5rem;
+    }
+
+    .whatsapp-btn {
+        background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
+        color: white;
+        border: none;
+        padding: 1rem 1.5rem;
+        border-radius: 18px;
+        font-weight: 700;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        flex: 1;
+        justify-content: center;
+        box-shadow: 0 8px 20px rgba(37, 211, 102, 0.3);
+    }
+
+    .whatsapp-btn:hover {
+        background: linear-gradient(135deg, #128c7e 0%, #25d366 100%);
+        color: white;
+        text-decoration: none;
+        transform: translateY(-5px);
+        box-shadow: 0 12px 30px rgba(37, 211, 102, 0.4);
+    }
+
+    .phone-btn {
+        background: linear-gradient(135deg, var(--detail-primary) 0%, var(--detail-secondary) 100%);
+        color: white;
+        border: none;
+        padding: 1rem 1.5rem;
+        border-radius: 18px;
+        font-weight: 700;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        flex: 1;
+        justify-content: center;
+        box-shadow: 0 8px 20px rgba(91, 155, 213, 0.3);
+    }
+
+    .phone-btn:hover {
+        background: linear-gradient(135deg, var(--detail-secondary) 0%, var(--detail-primary) 100%);
+        color: white;
+        text-decoration: none;
+        transform: translateY(-5px);
+        box-shadow: 0 12px 30px rgba(91, 155, 213, 0.4);
+    }
+
+    /* Açıklama */
+    .description {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 28px;
+        box-shadow: 0 15px 45px rgba(91, 155, 213, 0.12);
+        padding: 2.5rem;
+        margin: 2rem 0;
+        transition: all 0.3s ease;
+    }
+
+    .description:hover {
+        box-shadow: 0 20px 55px rgba(91, 155, 213, 0.18);
+    }
+
+    .description h4 {
+        font-size: 1.5rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, var(--detail-primary) 0%, var(--detail-secondary) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 1.5rem;
+    }
+
+    .description p {
+        line-height: 1.8;
+        color: #555;
+        margin-bottom: 1rem;
+        font-size: 1.05rem;
+    }
+
+    /* Benzer İlanlar */
+    .similar-ads {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 28px;
+        box-shadow: 0 15px 45px rgba(91, 155, 213, 0.12);
+        padding: 2.5rem;
+        margin: 2rem 0;
+        transition: all 0.3s ease;
+    }
+
+    .similar-ads:hover {
+        box-shadow: 0 20px 55px rgba(91, 155, 213, 0.18);
+    }
+
+    .similar-ads h4 {
+        font-size: 1.5rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, var(--detail-primary) 0%, var(--detail-secondary) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 2rem;
+    }
+
+    .similar-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(91, 155, 213, 0.1);
+        border-radius: 20px;
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        text-decoration: none;
+        color: inherit;
+        display: block;
+        box-shadow: 0 8px 20px rgba(91, 155, 213, 0.08);
+    }
+
+    .similar-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 40px rgba(91, 155, 213, 0.2);
+        color: inherit;
+        text-decoration: none;
+        border-color: var(--detail-primary);
+    }
+
+    .similar-image {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+        transition: transform 0.4s ease;
+    }
+
+    .similar-card:hover .similar-image {
+        transform: scale(1.1);
+    }
+
+    .similar-info {
+        padding: 1.25rem;
+    }
+
+    .similar-title {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--detail-primary);
+        margin-bottom: 0.75rem;
+        line-height: 1.4;
+    }
+
+    .similar-location {
+        font-size: 0.85rem;
+        color: #666;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .similar-location::before {
+        content: '📍';
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .ilan-header {
+            padding: 1rem 0;
+            margin-bottom: 1.5rem;
+        }
+
+        .main-content {
+            padding-bottom: 2rem;
+        }
+
+        .ilan-container {
+            border-radius: 20px;
+            margin-bottom: 1.5rem;
+        }
+
+        .ilan-info {
+            padding: 1.5rem;
+        }
+
+        .ilan-title {
+            font-size: 1.5rem;
+        }
+
+        .ilan-price {
+            font-size: 1.4rem;
+            padding: 0.6rem 1.5rem;
+        }
+
+        .ilan-price:hover {
+            transform: translateY(-2px);
+        }
+
+        .main-image {
+            min-height: 250px;
+            max-height: 400px;
+        }
+
+        .thumbnail {
+            width: 70px;
+            height: 70px;
+            border-radius: 12px;
+        }
+
+        .image-nav {
+            width: 45px;
+            height: 45px;
+            font-size: 1.1rem;
+        }
+
+        .image-nav.prev {
+            left: 10px;
+        }
+
+        .image-nav.next {
+            right: 10px;
+        }
+
+        .info-table td {
+            padding: 0.75rem 1rem;
+            font-size: 0.9rem;
+        }
+
+        .info-table td:first-child {
+            width: 40%;
+        }
+
+        .seller-info {
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            border-radius: 20px;
+        }
+
+        .seller-name {
+            font-size: 1.2rem;
+        }
+
+        .contact-buttons {
+            flex-direction: column;
+        }
+
+        .whatsapp-btn,
+        .phone-btn {
+            padding: 0.9rem 1.25rem;
+        }
+
+        .seller-stats {
+            gap: 8px;
+        }
+
+        .stat-box {
+            padding: 0.75rem 1rem;
+            border-radius: 15px;
+        }
+
+        .stat-number {
+            font-size: 1.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+        }
+
+        .description,
+        .similar-ads {
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 20px;
+        }
+
+        .description h4,
+        .similar-ads h4 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .description p {
+            font-size: 0.95rem;
+        }
+
+        .similar-image {
+            height: 150px;
+        }
+
+        .similar-info {
+            padding: 1rem;
+        }
+
+        .similar-title {
+            font-size: 0.9rem;
+        }
+
+        .similar-location {
+            font-size: 0.8rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block icerik %}
+<div class="main-content">
+    <!-- Header -->
+    <div class="ilan-header">
+        <div class="container">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'anahtarlik:ev' %}">Anasayfa</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'ilan:ilan_listesi' %}">İlanlar</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'ilan:ilan_listesi' %}?tur={{ ilan.hayvan_profili.tur.id }}">{{ ilan.hayvan_profili.tur.ad }}</a></li>
+                    <li class="breadcrumb-item active">{{ ilan.baslik }}</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <!-- Sol Kolon - Resimler ve Bilgiler -->
+            <div class="col-lg-8">
+                <!-- Resim Galerisi -->
+                <div class="ilan-container">
+                    <div class="image-gallery">
+                        {% with hayvan_resimleri=ilan.hayvan_profili.resimler.all profil_fotografi=ilan.hayvan_profili.profil_fotografi %}
+                        {% if profil_fotografi or hayvan_resimleri.exists %}
+                            <!-- İlk resmi ana resim olarak göster (Öncelik: Profil fotoğrafı) -->
+                            {% if profil_fotografi %}
+                                <img src="{{ profil_fotografi.url }}" 
+                                     alt="{{ ilan.baslik }}" 
+                                     class="main-image" 
+                                     id="main-image">
+                            {% elif hayvan_resimleri.exists %}
+                                {% with first_image=hayvan_resimleri|first %}
+                                <img src="{{ first_image.resim.url }}" 
+                                     alt="{{ ilan.baslik }}" 
+                                     class="main-image" 
+                                     id="main-image">
+                                {% endwith %}
+                            {% endif %}
+                            
+                            {% if hayvan_resimleri.exists %}
+                                <!-- Sadece hayvan resimleri varsa navigasyon butonları göster -->
+                                {% if hayvan_resimleri|length > 1 or profil_fotografi %}
+                                    <button class="image-nav prev" onclick="previousImage()">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </button>
+                                    <button class="image-nav next" onclick="nextImage()">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </button>
+                                {% endif %}
+                            {% endif %}
+                            
+                            <!-- Thumbnails: Profil fotoğrafı + Hayvan resimleri -->
+                            <div class="image-thumbnails">
+                                {% if profil_fotografi %}
+                                    <img src="{{ profil_fotografi.url }}" 
+                                         alt="Profil Fotoğrafı" 
+                                         class="thumbnail active"
+                                         onclick="changeImage('{{ profil_fotografi.url }}')">
+                                {% endif %}
+                                {% for hayvan_resmi in hayvan_resimleri %}
+                                    <img src="{{ hayvan_resmi.resim.url }}" 
+                                         alt="Resim {{ forloop.counter }}" 
+                                         class="thumbnail {% if not profil_fotografi and forloop.first %}active{% endif %}"
+                                         onclick="changeImage('{{ hayvan_resmi.resim.url }}')">
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <!-- Varsayılan resim -->
+                            <img src="{% static 'images/default-pet.jpg' %}" 
+                                 alt="Varsayılan" 
+                                 class="main-image" 
+                                 id="main-image">
+                        {% endif %}
+                        {% endwith %}
+                    </div>
+                </div>
+
+                <!-- İlan Bilgileri -->
+                <div class="ilan-container">
+                    <div class="ilan-info">
+                        <h1 class="ilan-title">{{ ilan.baslik }}</h1>
+                        
+                        {% if ilan.fiyat %}
+                            <div class="ilan-price">{{ ilan.fiyat|floatformat:0 }} TL</div>
+                        {% else %}
+                            <div class="ilan-price">Görüşülür</div>
+                        {% endif %}
+                        
+                        <table class="info-table">
+                            <tr>
+                                <td>Türü:</td>
+                                <td>{{ ilan.hayvan_profili.tur.ad }}</td>
+                            </tr>
+                            <tr>
+                                <td>Cinsi:</td>
+                                <td>{{ ilan.hayvan_profili.irk.ad }}</td>
+                            </tr>
+                            <tr>
+                                <td>İlan No:</td>
+                                <td>{{ ilan.id }}</td>
+                            </tr>
+                            <tr>
+                                <td>İlan Tarihi:</td>
+                                <td>{{ ilan.olusturulma_tarihi|date:"d F Y" }}</td>
+                            </tr>
+                            <tr>
+                                <td>Yaş:</td>
+                                <td>{{ ilan.hayvan_profili.yas_hesapla }}</td>
+                            </tr>
+                            <tr>
+                                <td>Cinsiyet:</td>
+                                <td>{{ ilan.hayvan_profili.get_cinsiyet_display }}</td>
+                            </tr>
+                            <tr>
+                                <td>Durum:</td>
+                                <td>
+                                    <span class="status-badge status-negotiable">Görüşülür</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Aşı:</td>
+                                <td>
+                                    {% if ilan.hayvan_profili.asi_durumu %}
+                                        <span class="badge" style="background: linear-gradient(135deg, var(--detail-success) 0%, var(--detail-secondary) 100%); color: white; padding: 0.4rem 0.9rem; border-radius: 12px; font-weight: 600;">✓ Var</span>
+                                    {% else %}
+                                        <span class="badge" style="background: linear-gradient(135deg, var(--detail-danger) 0%, #F2709C 100%); color: white; padding: 0.4rem 0.9rem; border-radius: 12px; font-weight: 600;">✗ Yok</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>İç Parazit:</td>
+                                <td>
+                                    {% if ilan.hayvan_profili.ic_parazit %}
+                                        <span class="badge" style="background: linear-gradient(135deg, var(--detail-success) 0%, var(--detail-secondary) 100%); color: white; padding: 0.4rem 0.9rem; border-radius: 12px; font-weight: 600;">✓ Var</span>
+                                    {% else %}
+                                        <span class="badge" style="background: linear-gradient(135deg, var(--detail-danger) 0%, #F2709C 100%); color: white; padding: 0.4rem 0.9rem; border-radius: 12px; font-weight: 600;">✗ Yok</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Dış Parazit:</td>
+                                <td>
+                                    {% if ilan.hayvan_profili.dis_parazit %}
+                                        <span class="badge" style="background: linear-gradient(135deg, var(--detail-success) 0%, var(--detail-secondary) 100%); color: white; padding: 0.4rem 0.9rem; border-radius: 12px; font-weight: 600;">✓ Var</span>
+                                    {% else %}
+                                        <span class="badge" style="background: linear-gradient(135deg, var(--detail-danger) 0%, #F2709C 100%); color: white; padding: 0.4rem 0.9rem; border-radius: 12px; font-weight: 600;">✗ Yok</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% if ilan.hayvan_profili.sehir_disi_gonderim is not None %}
+                            <tr>
+                                <td>Şehir Dışına Gönderim:</td>
+                                <td>
+                                    {% if ilan.hayvan_profili.sehir_disi_gonderim %}
+                                        <span class="badge" style="background: linear-gradient(135deg, var(--detail-success) 0%, var(--detail-secondary) 100%); color: white; padding: 0.4rem 0.9rem; border-radius: 12px; font-weight: 600;">✓ Var</span>
+                                    {% else %}
+                                        <span class="badge" style="background: linear-gradient(135deg, var(--detail-warning) 0%, var(--detail-accent) 100%); color: white; padding: 0.4rem 0.9rem; border-radius: 12px; font-weight: 600;">⚠ Hayır</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endif %}
+                            <tr>
+                                <td>Görüntülenme:</td>
+                                <td>{{ ilan.goruntulenme_sayisi }} kez görüntülendi</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Açıklama -->
+                {% if ilan.aciklama or ilan.hayvan_profili.aciklama %}
+                <div class="description">
+                    <h4>İlan Detayları</h4>
+                    {% if ilan.aciklama %}
+                        <p>{{ ilan.aciklama|linebreaks }}</p>
+                    {% endif %}
+                    {% if ilan.hayvan_profili.aciklama %}
+                        <p>{{ ilan.hayvan_profili.aciklama|linebreaks }}</p>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Sağ Kolon - Satıcı Bilgileri -->
+            <div class="col-lg-4">
+                <div class="seller-info">
+                    <div class="seller-name">
+                        {{ ilan.hayvan_profili.kullanici.get_full_name|default:ilan.hayvan_profili.kullanici.username }}
+                    </div>
+                    <div class="mb-2">
+                        <small class="text-muted">Üyelik tarihi: {{ ilan.hayvan_profili.kullanici.date_joined|date:"d F Y" }}</small>
+                    </div>
+                    
+                    <div class="seller-stats">
+                        <div class="stat-box">
+                            <div class="stat-number">{{ aktif_ilan_sayisi }}</div>
+                            <div class="stat-label">Aktif İlan</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-number">{{ toplam_ilan_sayisi }}</div>
+                            <div class="stat-label">Toplam İlan</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-number">{{ uyelik_suresi }}</div>
+                            <div class="stat-label">Yıl</div>
+                        </div>
+                    </div>
+                    
+                    {% if ilan_sahibi_tel %}
+                        <div class="contact-buttons">
+                            {% if ilan_sahibi_whatsapp %}
+                            <a href="https://wa.me/90{{ ilan_sahibi_whatsapp }}"
+                               class="whatsapp-btn" target="_blank">
+                                <i class="fab fa-whatsapp"></i>
+                                WhatsApp
+                            </a>
+                            {% endif %}
+
+                            <a href="tel:{{ ilan_sahibi_tel }}" class="phone-btn">
+                                <i class="fas fa-phone"></i>
+                                Telefon
+                            </a>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-warning">
+                            <i class="fas fa-info-circle me-2"></i>İlan sahibi iletişim bilgilerini paylaşmamış.
+                        </div>
+                    {% endif %}
+                    
+                    <div class="mt-3 text-center">
+                        <small class="text-muted">
+                            <i class="fas fa-shield-alt me-1"></i>
+                            Güvenli alışveriş için dikkatli olun
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Benzer İlanlar -->
+        {% if benzer_ilanlar %}
+        <div class="similar-ads">
+            <h4>BENZER İLANLAR</h4>
+            <div class="row">
+                {% for benzer_ilan in benzer_ilanlar %}
+                <div class="col-md-3 mb-3">
+                    <a href="{% url 'ilan:ilan_detay' benzer_ilan.id %}" class="similar-card">
+                        {% if benzer_ilan.hayvan_profili.profil_fotografi and benzer_ilan.hayvan_profili.profil_fotografi.url %}
+                            <img src="{{ benzer_ilan.hayvan_profili.profil_fotografi.url }}" 
+                                 alt="{{ benzer_ilan.baslik }}" class="similar-image">
+                        {% else %}
+                            <img src="{% static 'images/default-pet.jpg' %}" 
+                                 alt="Varsayılan" class="similar-image">
+                        {% endif %}
+                        <div class="similar-info">
+                            <div class="similar-title">{{ benzer_ilan.baslik }}</div>
+                            <div class="similar-location">{{ benzer_ilan.hayvan_profili.il.ad }}/{{ benzer_ilan.hayvan_profili.ilce.ad }}</div>
+                        </div>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block js_dosyalar %}
+<script>
+    let currentImageIndex = 0;
+    const images = [];
+    
+    // Resimleri yükle
+    document.addEventListener('DOMContentLoaded', function() {
+        const thumbnails = document.querySelectorAll('.thumbnail');
+        thumbnails.forEach((thumb, index) => {
+            images.push(thumb.src);
+            if (thumb.classList.contains('active')) {
+                currentImageIndex = index;
+            }
+        });
+    });
+    
+    function changeImageWithFade(imageUrl, callback) {
+        const mainImage = document.getElementById('main-image');
+        // Fade out
+        mainImage.style.opacity = '0';
+        mainImage.style.transform = 'scale(0.98)';
+        
+        setTimeout(() => {
+            if (callback) callback();
+            // Fade in
+            mainImage.style.opacity = '1';
+            mainImage.style.transform = 'scale(1)';
+        }, 200);
+    }
+    
+    function changeImage(imageUrl) {
+        changeImageWithFade(imageUrl, function() {
+            document.getElementById('main-image').src = imageUrl;
+        });
+        
+        // Tüm thumbnails'ların active class'ını kaldır
+        document.querySelectorAll('.thumbnail').forEach(thumb => {
+            thumb.classList.remove('active');
+        });
+        
+        // Tıklanan thumbnail'a active class ekle
+        if (event && event.target) {
+            event.target.classList.add('active');
+            // Current index'i güncelle
+            currentImageIndex = images.indexOf(imageUrl);
+        }
+    }
+    
+    function previousImage() {
+        if (images.length > 0) {
+            currentImageIndex = (currentImageIndex - 1 + images.length) % images.length;
+            changeImageWithFade(images[currentImageIndex], function() {
+                document.getElementById('main-image').src = images[currentImageIndex];
+            });
+            
+            // Thumbnail güncelle
+            const thumbnails = document.querySelectorAll('.thumbnail');
+            thumbnails.forEach((thumb, index) => {
+                thumb.classList.toggle('active', index === currentImageIndex);
+            });
+        }
+    }
+    
+    function nextImage() {
+        if (images.length > 0) {
+            currentImageIndex = (currentImageIndex + 1) % images.length;
+            changeImageWithFade(images[currentImageIndex], function() {
+                document.getElementById('main-image').src = images[currentImageIndex];
+            });
+            
+            // Thumbnail güncelle
+            const thumbnails = document.querySelectorAll('.thumbnail');
+            thumbnails.forEach((thumb, index) => {
+                thumb.classList.toggle('active', index === currentImageIndex);
+            });
+        }
+    }
+    
+    // Klavye navigasyonu
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowLeft') {
+            previousImage();
+        } else if (e.key === 'ArrowRight') {
+            nextImage();
+        }
+    });
+</script>
+{% endblock %}

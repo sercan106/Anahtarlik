@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sipariş Onayı</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .email-container {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            border-bottom: 3px solid #28a745;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #28a745;
+            margin-bottom: 10px;
+        }
+        .success-icon {
+            font-size: 48px;
+            color: #28a745;
+            margin-bottom: 15px;
+        }
+        .order-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .order-details {
+            margin: 20px 0;
+        }
+        .product-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .product-item:last-child {
+            border-bottom: none;
+        }
+        .total {
+            font-weight: bold;
+            font-size: 18px;
+            color: #28a745;
+            text-align: right;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid #28a745;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            color: #666;
+            font-size: 14px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .btn:hover {
+            background: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            <div class="logo">🐾 PetSafe Hub</div>
+            <div class="success-icon">✅</div>
+            <h1>Siparişiniz Onaylandı!</h1>
+            <p>Sipariş numaranız: <strong>#{{ siparis.id }}</strong></p>
+        </div>
+
+        <div class="order-info">
+            <h3>📋 Sipariş Bilgileri</h3>
+            <p><strong>Tarih:</strong> {{ siparis.olusturulma_tarihi|date:"d.m.Y H:i" }}</p>
+            <p><strong>Durum:</strong> {{ siparis.get_durum_display }}</p>
+            <p><strong>Toplam Tutar:</strong> ₺{{ siparis.toplam_fiyat|floatformat:2 }}</p>
+        </div>
+
+        <div class="order-details">
+            <h3>🛍️ Sipariş Detayları</h3>
+            {% for kalem in siparis.kalemler.all %}
+            <div class="product-item">
+                <div>
+                    <strong>{{ kalem.urun.ad }}</strong>
+                    {% if kalem.urun.urun_tipi == 'etiket' %}
+                        <br><small>🏷️ Etiket Ürünü</small>
+                    {% else %}
+                        <br><small>📦 Normal Ürün</small>
+                    {% endif %}
+                </div>
+                <div>
+                    {{ kalem.miktar }} adet × ₺{{ kalem.fiyat|floatformat:2 }}
+                </div>
+            </div>
+            {% endfor %}
+            <div class="total">
+                Toplam: ₺{{ siparis.toplam_fiyat|floatformat:2 }}
+            </div>
+        </div>
+
+        <div class="order-info">
+            <h3>📍 Teslimat Adresi</h3>
+            <p>{{ siparis.adres|linebreaks }}</p>
+        </div>
+
+        {% if siparis.kullanici %}
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="{{ site_url }}{% url 'shop:siparis_detay' siparis.id %}" class="btn">
+                Sipariş Detaylarını Görüntüle
+            </a>
+        </div>
+        {% endif %}
+
+        <div class="footer">
+            <p>Bu email otomatik olarak gönderilmiştir.</p>
+            <p>PetSafe Hub - Evcil Hayvan Dostu Alışveriş</p>
+            <p>📧 {{ contact_email }} | 🌐 {{ site_url }}</p>
+        </div>
+    </div>
+</body>
+</html>
+

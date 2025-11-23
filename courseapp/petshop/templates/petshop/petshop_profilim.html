@@ -1,0 +1,224 @@
+{% extends 'ana.html' %}
+{% load static %}
+
+{% block title %}Profilim - PetShop{% endblock %}
+
+{% block content %}
+<div class="container mt-4 mb-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fas fa-store me-2 text-primary"></i>PetShop Profilim</h2>
+                <a href="{% url 'petshop:profil_duzenle' %}" class="btn btn-outline-primary">
+                    <i class="fas fa-edit me-2"></i>Profili Düzenle
+                </a>
+            </div>
+
+            <!-- Kişisel Bilgiler -->
+            <div class="row mb-4">
+                <div class="col-lg-8">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0"><i class="fas fa-store-alt me-2"></i>Mağaza Bilgileri</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p><strong><i class="fas fa-building me-2 text-primary"></i>Mağaza Adı:</strong> {{ petshop.ad }}</p>
+                                    <p><strong><i class="fas fa-envelope me-2 text-primary"></i>E-posta:</strong> {{ petshop.email|default:"Belirtilmemiş" }}</p>
+                                    <p><strong><i class="fas fa-phone me-2 text-primary"></i>Telefon:</strong> {{ petshop.telefon|default:"Belirtilmemiş" }}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong><i class="fas fa-map-marker-alt me-2 text-primary"></i>Konum:</strong> {{ petshop.il.ad }}, {{ petshop.ilce.ad }}</p>
+                                    <p><strong><i class="fas fa-calendar me-2 text-primary"></i>Üyelik Tarihi:</strong> {{ petshop.olusturulma|date:"d.m.Y" }}</p>
+                                    <p><strong><i class="fas fa-toggle-on me-2 text-success"></i>Durum:</strong> 
+                                        {% if petshop.aktif %}
+                                            <span class="badge bg-success">Aktif</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">Pasif</span>
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            {% if petshop.adres_detay %}
+                            <hr>
+                            <p class="mb-0"><strong><i class="fas fa-home me-2 text-primary"></i>Adres:</strong><br>{{ petshop.adres_detay }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mağaza Detayları -->
+                <div class="col-lg-4">
+                    <div class="card shadow-sm border-info">
+                        <div class="card-header bg-info text-white">
+                            <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Mağaza Detayları</h5>
+                        </div>
+                        <div class="card-body">
+                            {% if petshop.magaza_tipi %}
+                                <p><strong>Tip:</strong> {{ petshop.get_magaza_tipi_display }}</p>
+                            {% endif %}
+                            {% if petshop.magaza_buyuklugu %}
+                                <p><strong>Büyüklük:</strong> {{ petshop.get_magaza_buyuklugu_display }}</p>
+                            {% endif %}
+                            {% if petshop.calisan_sayisi %}
+                                <p><strong>Çalışan:</strong> {{ petshop.calisan_sayisi }} kişi</p>
+                            {% endif %}
+                            {% if petshop.kurulus_yili %}
+                                <p class="mb-0"><strong>Kuruluş:</strong> {{ petshop.kurulus_yili }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- İstatistikler -->
+            <div class="row mb-4">
+                <div class="col-md-3 mb-3">
+                    <div class="card text-center border-primary shadow-sm">
+                        <div class="card-body">
+                            <i class="fas fa-tags fa-3x text-primary mb-2"></i>
+                            <h4 class="text-primary">{{ petshop.tahsis_sayisi }}</h4>
+                            <p class="card-text">Tahsis Edilen Künye</p>
+                            <a href="{% url 'petshop:tahsis_listesi' %}" class="btn btn-primary btn-sm">Görüntüle</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3 mb-3">
+                    <div class="card text-center border-success shadow-sm">
+                        <div class="card-body">
+                            <i class="fas fa-chart-line fa-3x text-success mb-2"></i>
+                            <h4 class="text-success">{{ petshop.satis_sayisi }}</h4>
+                            <p class="card-text">Satılan Künye</p>
+                            <a href="{% url 'petshop:satis_listesi' %}" class="btn btn-success btn-sm">Görüntüle</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3 mb-3">
+                    <div class="card text-center border-warning shadow-sm">
+                        <div class="card-body">
+                            <i class="fas fa-boxes fa-3x text-warning mb-2"></i>
+                            <h4 class="text-warning">{{ bekleyen_siparis }}</h4>
+                            <p class="card-text">Bekleyen Sipariş</p>
+                            <a href="{% url 'petshop:siparis_listesi' %}" class="btn btn-warning btn-sm">Görüntüle</a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Hizmetler -->
+            {% if hizmetler %}
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-secondary text-white">
+                            <h5 class="mb-0"><i class="fas fa-concierge-bell me-2"></i>Verilen Hizmetler</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex flex-wrap gap-2">
+                                {% for hizmet in hizmetler %}
+                                    <span class="badge bg-primary fs-6">{{ hizmet }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Web Sayfası ve Sosyal Medya -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-dark text-white">
+                            <h5 class="mb-0"><i class="fas fa-globe me-2"></i>Web & Sosyal Medya</h5>
+                        </div>
+                        <div class="card-body">
+                            {% if petshop.website %}
+                                <p><strong><i class="fas fa-link me-2"></i>Web Sitesi:</strong> <a href="{{ petshop.website }}" target="_blank">{{ petshop.website }}</a></p>
+                            {% endif %}
+                            
+                            <div class="d-flex gap-2 mb-3">
+                                {% if petshop.instagram %}
+                                    <a href="https://instagram.com/{{ petshop.instagram }}" target="_blank" class="btn btn-sm btn-outline-danger">
+                                        <i class="fab fa-instagram"></i>
+                                    </a>
+                                {% endif %}
+                                {% if petshop.facebook %}
+                                    <a href="https://facebook.com/{{ petshop.facebook }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                        <i class="fab fa-facebook"></i>
+                                    </a>
+                                {% endif %}
+                                {% if petshop.twitter %}
+                                    <a href="https://twitter.com/{{ petshop.twitter }}" target="_blank" class="btn btn-sm btn-outline-info">
+                                        <i class="fab fa-twitter"></i>
+                                    </a>
+                                {% endif %}
+                                {% if petshop.youtube %}
+                                    <a href="https://youtube.com/@{{ petshop.youtube }}" target="_blank" class="btn btn-sm btn-outline-danger">
+                                        <i class="fab fa-youtube"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+
+                            {% if petshop.web_aktif and petshop.web_slug %}
+                                <a href="{% url 'petshop:web_sayfasi_gorunum' petshop.web_slug %}" target="_blank" class="btn btn-primary w-100">
+                                    <i class="fas fa-external-link-alt me-2"></i>Kişisel Web Sayfamı Görüntüle
+                                </a>
+                            {% else %}
+                                <a href="{% url 'petshop:web_sayfasi_duzenle' %}" class="btn btn-outline-primary w-100">
+                                    <i class="fas fa-plus-circle me-2"></i>Web Sayfası Oluştur
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Hızlı Aksiyonlar -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0"><i class="fas fa-bolt me-2"></i>Hızlı İşlemler</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3 mb-2">
+                                    <a href="{% url 'petshop:tahsis_listesi' %}" class="btn btn-outline-primary w-100">
+                                        <i class="fas fa-tags me-2"></i>Etiket Tahsisleri
+                                    </a>
+                                </div>
+                                <div class="col-md-3 mb-2">
+                                    <a href="{% url 'petshop:satis_listesi' %}" class="btn btn-outline-success w-100">
+                                        <i class="fas fa-chart-line me-2"></i>Satış Raporları
+                                    </a>
+                                </div>
+                                <div class="col-md-3 mb-2">
+                                    <a href="{% url 'petshop:siparis_listesi' %}" class="btn btn-outline-warning w-100">
+                                        <i class="fas fa-boxes me-2"></i>Siparişler
+                                        {% if bekleyen_siparis > 0 %}
+                                            <span class="badge bg-danger">{{ bekleyen_siparis }}</span>
+                                        {% endif %}
+                                    </a>
+                                </div>
+                                <div class="col-md-3 mb-2">
+                                    <a href="{% url 'petshop:web_sayfasi_duzenle' %}" class="btn btn-outline-dark w-100">
+                                        <i class="fas fa-globe me-2"></i>Web Sayfam
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

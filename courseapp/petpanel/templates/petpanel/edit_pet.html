@@ -1,0 +1,393 @@
+{% extends "ana.html" %}
+{% load static %}
+
+{% block baslik %}Pet Bilgilerini Düzenle | PetSafe Hub{% endblock %}
+
+{% block css_dosyalar %}
+<style>
+    .pet-edit-container {
+        background: var(--surface-soft);
+        border-radius: var(--border-radius-lg);
+        box-shadow: var(--shadow-soft);
+        transition: var(--transition-gentle);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .pet-edit-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle at 0% 0%, rgba(91, 155, 213, 0.05) 0%, transparent 50%),
+                    radial-gradient(circle at 100% 100%, rgba(112, 193, 179, 0.05) 0%, transparent 50%);
+        pointer-events: none;
+    }
+
+    .pet-edit-header {
+        background: var(--primary-gradient);
+        padding: 2rem;
+        color: white;
+        border-radius: var(--border-radius) var(--border-radius) 0 0;
+        margin: -1px -1px 0 -1px;
+    }
+
+    .pet-edit-form {
+        padding: 2rem;
+    }
+
+    .form-group {
+        position: relative;
+        margin-bottom: 1.75rem;
+        padding-top: 1rem;
+    }
+
+    /* Input Styles */
+    .form-control, .form-select {
+        border-radius: var(--border-radius-sm);
+        border: 1px solid rgba(91, 155, 213, 0.25);
+        padding: 0.875rem 1.25rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        background: rgba(255, 255, 255, 0.92);
+        font-size: 1rem;
+        color: var(--text-primary);
+        min-height: 52px;
+        width: 100%;
+        outline: none;
+        box-shadow: 0 10px 30px rgba(91, 155, 213, 0.08);
+        backdrop-filter: blur(6px);
+    }
+
+    .form-control::placeholder {
+        color: var(--text-muted);
+        opacity: 0.7;
+        letter-spacing: 0.02rem;
+    }
+
+    .floating-label {
+        position: absolute;
+        top: -12px;
+        left: 18px;
+        padding: 0 8px;
+        background: rgba(255, 255, 255, 0.85);
+        border-radius: 999px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--primary-color);
+        text-transform: uppercase;
+        letter-spacing: 0.08rem;
+        box-shadow: 0 4px 12px rgba(91, 155, 213, 0.12);
+    }
+
+    .form-control:hover, .form-select:hover {
+        border-color: rgba(91, 155, 213, 0.45);
+        box-shadow: 0 14px 28px rgba(91, 155, 213, 0.12);
+        transform: translateY(-1px);
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 5px rgba(91, 155, 213, 0.2);
+        background-color: rgba(255, 255, 255, 0.98);
+    }
+
+    /* Textarea özel stilleri */
+    textarea.form-control {
+        min-height: 120px;
+        line-height: 1.6;
+        resize: vertical;
+    }
+
+    /* Select2 özel stilleri */
+    .select2-container--bootstrap-5 {
+        width: 100% !important;
+    }
+
+    .select2-container--bootstrap-5 .select2-selection {
+        border-radius: var(--border-radius-sm);
+        border: 1px solid rgba(91, 155, 213, 0.25);
+        min-height: 52px;
+        padding: 0.75rem 1.25rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        background: rgba(255, 255, 255, 0.92);
+        box-shadow: 0 10px 30px rgba(91, 155, 213, 0.08);
+        backdrop-filter: blur(6px);
+    }
+
+    .select2-container--bootstrap-5 .select2-selection:hover {
+        border-color: rgba(91, 155, 213, 0.45);
+        box-shadow: 0 14px 28px rgba(91, 155, 213, 0.12);
+        transform: translateY(-1px);
+    }
+
+    .select2-container--bootstrap-5.select2-container--focus .select2-selection {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 5px rgba(91, 155, 213, 0.2);
+    }
+
+    .select2-container--bootstrap-5 .select2-selection--single .select2-selection__rendered {
+        color: var(--text-primary);
+        padding: 0;
+        line-height: 1.5;
+    }
+
+    /* Dosya yükleme input özel stilleri */
+    input[type="file"].form-control {
+        padding: 0.675rem 1rem;
+        cursor: pointer;
+    }
+
+    input[type="file"].form-control::file-selector-button {
+        background: var(--primary-gradient);
+        border: none;
+        padding: 0.5rem 1rem;
+        margin-right: 1rem;
+        border-radius: var(--border-radius-sm);
+        color: white;
+        font-weight: 500;
+        transition: var(--transition-gentle);
+    }
+
+    input[type="file"].form-control::file-selector-button:hover {
+        background: var(--secondary-gradient);
+        transform: translateY(-1px);
+    }
+
+    /* Tarih input özel stilleri */
+    input[type="date"].form-control {
+        padding-right: 0.5rem;
+    }
+
+    /* Hata durumu stilleri */
+    .form-control.is-invalid,
+    .form-select.is-invalid,
+    .was-validated .form-control:invalid,
+    .was-validated .form-select:invalid {
+        border-color: var(--danger-color);
+        background-image: none;
+        box-shadow: 0 0 0 4px rgba(235, 87, 87, 0.1);
+    }
+
+    .form-control.is-invalid:focus,
+    .form-select.is-invalid:focus {
+        border-color: var(--danger-color);
+        box-shadow: 0 0 0 4px rgba(235, 87, 87, 0.15);
+    }
+
+    .btn-save {
+        background: var(--primary-gradient);
+        border: none;
+        padding: 0.75rem 2rem;
+        border-radius: var(--border-radius-sm);
+        color: white;
+        font-weight: 600;
+        transition: var(--transition-gentle);
+        box-shadow: var(--shadow-soft);
+    }
+
+    .btn-save:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-hover);
+    }
+
+    .btn-cancel {
+        background: var(--surface-soft);
+        border: 1px solid rgba(0,0,0,0.1);
+        padding: 0.75rem 2rem;
+        border-radius: var(--border-radius-sm);
+        color: var(--text-secondary);
+        font-weight: 600;
+        transition: var(--transition-gentle);
+    }
+
+    .btn-cancel:hover {
+        background: var(--surface-primary);
+        color: var(--text-primary);
+    }
+
+    .form-helper {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        margin-top: 0.5rem;
+    }
+
+    .error-feedback {
+        color: var(--danger-color);
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    @media (max-width: 768px) {
+        .pet-edit-container {
+            border-radius: var(--border-radius);
+        }
+
+        .pet-edit-header,
+        .pet-edit-form {
+            padding: 1.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="pet-edit-container">
+        <div class="pet-edit-header">
+            <h1 class="h3 mb-0">
+                <i class="fas fa-paw me-2"></i>
+                {{ pet.ad }} için Bilgileri Düzenle
+            </h1>
+        </div>
+
+        <form method="post" enctype="multipart/form-data" class="pet-edit-form">
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+            <div class="alert alert-danger" role="alert">
+                {% for error in form.non_field_errors %}
+                    <div>{{ error }}</div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+    <div class="row g-4">
+        {% for field in form.visible_fields %}
+        <div class="{% if field.name == 'resim' or field.name == 'fotograf' %}col-12{% else %}col-md-6{% endif %}">
+            <div class="form-group">
+                {% if field.name == 'resim' and pet.resim %}
+                <div class="image-upload-preview mb-3 text-center">
+                    <img src="{{ pet.resim.url }}" alt="{{ pet.ad }}" class="img-thumbnail shadow-sm" style="max-width: 220px; border-radius: 18px;">
+                </div>
+                {% endif %}
+
+                <label class="floating-label">{{ field.label }}</label>
+                {{ field }}
+
+                {% if field.help_text %}
+                <div class="form-helper">
+                    <i class="fas fa-info-circle me-1"></i>
+                    {{ field.help_text }}
+                </div>
+                {% endif %}
+
+                {% if field.errors %}
+                <div class="error-feedback">
+                    <i class="fas fa-exclamation-circle"></i>
+                    {{ field.errors }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+            <div class="d-flex gap-3 mt-4">
+                <button type="submit" class="btn btn-save">
+                    <i class="fas fa-check me-2"></i>Değişiklikleri Kaydet
+                </button>
+                <a href="{% url 'anahtarlik:pet_detail' pet.id %}" class="btn btn-cancel">
+                    <i class="fas fa-times me-2"></i>İptal
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block js_dosyalar %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const turSelect = document.getElementById('id_tur');
+    const irkSelect = document.getElementById('id_irk');
+
+    if (!turSelect || !irkSelect) {
+        return;
+    }
+
+    const defaultIrkOptionText = 'Seçiniz';
+    const loadingText = 'Yükleniyor...';
+    const errorText = 'Irklar yüklenemedi';
+
+    // Form zaten doğru ırk'ları yüklüyor, bu sadece kullanıcı deneyimi için
+    // Eğer breeds_for_species endpoint'i yoksa, form'un kendi mekanizması kullanılır
+    const breedsEndpointTemplate = "{% url 'breeds_for_species' %}" || "";
+
+    const resetIrkSelect = (placeholder, disabled = true) => {
+        irkSelect.innerHTML = '';
+        const option = document.createElement('option');
+        option.value = '';
+        option.textContent = placeholder;
+        irkSelect.appendChild(option);
+        irkSelect.value = '';
+        irkSelect.disabled = disabled;
+    };
+
+    const populateBreeds = async (turId, preserveValue = '') => {
+        resetIrkSelect(loadingText, true);
+
+        if (!turId) {
+            resetIrkSelect(defaultIrkOptionText, true);
+            return;
+        }
+
+        try {
+            const url = `${breedsEndpointTemplate}?tur_id=${encodeURIComponent(turId)}`;
+            const response = await fetch(url, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                credentials: 'same-origin',
+            });
+
+            if (!response.ok) {
+                throw new Error(`Network response was not ok (${response.status})`);
+            }
+
+            const data = await response.json();
+            const breeds = data.breeds || [];
+
+            irkSelect.innerHTML = '';
+
+            const placeholder = document.createElement('option');
+            placeholder.value = '';
+            placeholder.textContent = defaultIrkOptionText;
+            irkSelect.appendChild(placeholder);
+
+            breeds.forEach((breed) => {
+                const option = document.createElement('option');
+                option.value = breed.id;
+                option.textContent = breed.ad;
+                irkSelect.appendChild(option);
+            });
+
+            if (preserveValue && irkSelect.querySelector(`option[value="${preserveValue}"]`)) {
+                irkSelect.value = preserveValue;
+            } else {
+                irkSelect.value = '';
+            }
+
+            irkSelect.disabled = false;
+        } catch (error) {
+            console.error('Irk listesi yüklenirken hata oluştu:', error);
+            resetIrkSelect(errorText, true);
+        }
+    };
+
+    turSelect.addEventListener('change', () => {
+        populateBreeds(turSelect.value, '');
+    });
+
+    if (turSelect.value) {
+        populateBreeds(turSelect.value, irkSelect.value || '');
+    } else {
+        resetIrkSelect(defaultIrkOptionText, true);
+    }
+});
+</script>
+{% endblock %}

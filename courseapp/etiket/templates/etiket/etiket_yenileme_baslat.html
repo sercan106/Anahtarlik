@@ -1,0 +1,136 @@
+{% extends 'ana.html' %}
+{% load static %}
+
+{% block title %}Künye Yenileme - {{ etiket.seri_numarasi }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-sync-alt"></i> Künye Yenileme
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <!-- Künye Bilgileri -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-qrcode"></i> Künye Bilgileri</h6>
+                            <p><strong>Seri No:</strong> {{ etiket.seri_numarasi }}</p>
+                            <p><strong>Hayvan:</strong> {{ etiket.evcil_hayvan.ad }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-calendar"></i> Süre Bilgileri</h6>
+                            {% if etiket.son_kullanma_tarihi %}
+                                <p><strong>Mevcut Bitiş:</strong> 
+                                    <span class="{% if etiket.son_kullanma_tarihi < now %}text-danger{% else %}text-success{% endif %}">
+                                        {{ etiket.son_kullanma_tarihi|date:"d.m.Y H:i" }}
+                                    </span>
+                                </p>
+                            {% endif %}
+                            <p><strong>Durum:</strong> 
+                                {% if etiket.aktif %}
+                                    <span class="badge badge-success">Aktif</span>
+                                {% else %}
+                                    <span class="badge badge-secondary">Pasif</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- Yenileme Seçenekleri -->
+                    <h5 class="mb-3">
+                        <i class="fas fa-credit-card"></i> Yenileme Seçenekleri
+                    </h5>
+
+                    {% if fiyatlar %}
+                        <form method="post">
+                            {% csrf_token %}
+                            
+                            <div class="row">
+                                {% for fiyat in fiyatlar %}
+                                <div class="col-md-6 mb-3">
+                                    <div class="card h-100 {% if fiyat.sure_gun == 9999 %}border-warning{% endif %}">
+                                        <div class="card-body">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" 
+                                                       name="fiyat_id" id="fiyat_{{ fiyat.id }}" 
+                                                       value="{{ fiyat.id }}" required>
+                                                <label class="form-check-label w-100" for="fiyat_{{ fiyat.id }}">
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <div>
+                                                            <h6 class="mb-1">
+                                                                {% if fiyat.sure_gun == 9999 %}
+                                                                    <span class="badge bg-warning text-dark me-2">SINIRSIZ</span>Sınırsız Yenileme
+                                                                {% else %}
+                                                                    {{ fiyat.sure_gun }} Günlük Yenileme
+                                                                {% endif %}
+                                                            </h6>
+                                                            <small class="text-muted">
+                                                                Tüm Etiketler İçin Geçerli
+                                                            </small>
+                                                        </div>
+                                                        <div class="text-right">
+                                                            <h5 class="mb-0 text-primary">
+                                                                ₺{{ fiyat.user_price|floatformat:2 }}
+                                                            </h5>
+                                                            {% if fiyat.user_price != fiyat.fiyat %}
+                                                                <small class="text-success">
+                                                                    <s>₺{{ fiyat.fiyat|floatformat:2 }}</s>
+                                                                    İndirimli!
+                                                                </small>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="text-center mt-4">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-credit-card"></i> Ödemeye Geç
+                                </button>
+                                <a href="{% url 'etiket:etiket_yenileme_listesi' %}" class="btn btn-secondary btn-lg ml-2">
+                                    <i class="fas fa-arrow-left"></i> Geri Dön
+                                </a>
+                            </div>
+                        </form>
+                    {% else %}
+                        <div class="alert alert-warning text-center">
+                            <i class="fas fa-exclamation-triangle fa-2x mb-3"></i>
+                            <h5>Yenileme Seçeneği Bulunamadı</h5>
+                            <p>Bu künye kategorisi için henüz yenileme fiyatı tanımlanmamış.</p>
+                            <p>Lütfen daha sonra tekrar deneyin veya destek ekibiyle iletişime geçin.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Radio button seçiminde kartı vurgula
+document.querySelectorAll('input[name="fiyat_id"]').forEach(function(radio) {
+    radio.addEventListener('change', function() {
+        // Tüm kartları normal yap
+        document.querySelectorAll('.card').forEach(function(card) {
+            card.classList.remove('border-primary', 'bg-light');
+        });
+        
+        // Seçili kartı vurgula
+        if (this.checked) {
+            this.closest('.card').classList.add('border-primary', 'bg-light');
+        }
+    });
+});
+</script>
+{% endblock %}

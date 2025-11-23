@@ -1,0 +1,200 @@
+{% extends 'ana.html' %}
+{% load static %}
+
+{% block title %}Sahip Pro Panel{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="display-5 text-primary">🎖️ Sahip Pro Panel</h1>
+                    <p class="lead mb-0">{{ sahip.ad }} {{ sahip.soyad }}</p>
+                </div>
+                <div>
+                    <a href="{% url 'anahtarlik:sahip_pro_paketler' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-box me-2"></i>Paketler
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if aktif_abonelik %}
+    <!-- Aktif Abonelik Bilgileri -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm" style="border-left: 5px solid {{ aktif_abonelik.paket.renk }} !important;">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h5 class="text-primary mb-2">{{ aktif_abonelik.paket.paket_adi }}</h5>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <p class="mb-1"><strong>Başlangıç:</strong> {{ aktif_abonelik.baslangic_tarihi|date:"d.m.Y" }}</p>
+                                    <p class="mb-1"><strong>Bitiş:</strong> {{ aktif_abonelik.bitis_tarihi|date:"d.m.Y H:i" }}</p>
+                                </div>
+                                <div class="col-sm-6">
+                                    <p class="mb-1"><strong>Kalan Süre:</strong> {{ aktif_abonelik.kalan_gun }} gün</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-md-end">
+                            <div class="badge badge-success fs-6 p-2">✅ Aktif</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pro Özellikler -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h4 class="text-primary mb-3">🎯 Pro Özellikleriniz</h4>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Aşı Hatırlatmaları -->
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100 {% if pro_ozellikler.asi_hatirlatma %}border-success{% else %}border-secondary{% endif %}">
+                <div class="card-body text-center">
+                    <i class="fas fa-syringe fa-3x {% if pro_ozellikler.asi_hatirlatma %}text-success{% else %}text-muted{% endif %} mb-3"></i>
+                    <h5 class="card-title">Aşı Hatırlatmaları</h5>
+                    <p class="card-text">Otomatik aşı hatırlatma sistemi</p>
+                    {% if pro_ozellikler.asi_hatirlatma %}
+                        <a href="#" class="btn btn-success">
+                            <i class="fas fa-calendar-check me-2"></i>Yönet
+                        </a>
+                    {% else %}
+                        <p class="text-muted">Pro pakette mevcut değil</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Veteriner Randevuları -->
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100 {% if pro_ozellikler.veteriner_randevu %}border-success{% else %}border-secondary{% endif %}">
+                <div class="card-body text-center">
+                    <i class="fas fa-user-md fa-3x {% if pro_ozellikler.veteriner_randevu %}text-primary{% else %}text-muted{% endif %} mb-3"></i>
+                    <h5 class="card-title">Veteriner Randevuları</h5>
+                    <p class="card-text">Randevu hatırlatma sistemi</p>
+                    {% if pro_ozellikler.veteriner_randevu %}
+                        <a href="#" class="btn btn-primary">
+                            <i class="fas fa-calendar-plus me-2"></i>Randevu Al
+                        </a>
+                    {% else %}
+                        <p class="text-muted">Pro pakette mevcut değil</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- İlaç Takibi -->
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100 {% if pro_ozellikler.ilac_takibi %}border-success{% else %}border-secondary{% endif %}">
+                <div class="card-body text-center">
+                    <i class="fas fa-pills fa-3x {% if pro_ozellikler.ilac_takibi %}text-info{% else %}text-muted{% endif %} mb-3"></i>
+                    <h5 class="card-title">İlaç Takibi</h5>
+                    <p class="card-text">İlaç kullanım takip sistemi</p>
+                    {% if pro_ozellikler.ilac_takibi %}
+                        <a href="#" class="btn btn-info">
+                            <i class="fas fa-plus me-2"></i>İlaç Ekle
+                        </a>
+                    {% else %}
+                        <p class="text-muted">Pro pakette mevcut değil</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Beslenme Programı -->
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100 {% if pro_ozellikler.beslenme_programi %}border-success{% else %}border-secondary{% endif %}">
+                <div class="card-body text-center">
+                    <i class="fas fa-utensils fa-3x {% if pro_ozellikler.beslenme_programi %}text-warning{% else %}text-muted{% endif %} mb-3"></i>
+                    <h5 class="card-title">Beslenme Programı</h5>
+                    <p class="card-text">Beslenme takip ve planlama</p>
+                    {% if pro_ozellikler.beslenme_programi %}
+                        <a href="#" class="btn btn-warning">
+                            <i class="fas fa-clipboard-list me-2"></i>Plan Yap
+                        </a>
+                    {% else %}
+                        <p class="text-muted">Pro pakette mevcut değil</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Finansal Takip -->
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100 {% if pro_ozellikler.finansal_takip %}border-success{% else %}border-secondary{% endif %}">
+                <div class="card-body text-center">
+                    <i class="fas fa-chart-line fa-3x {% if pro_ozellikler.finansal_takip %}text-success{% else %}text-muted{% endif %} mb-3"></i>
+                    <h5 class="card-title">Finansal Takip</h5>
+                    <p class="card-text">Harcama takip ve analiz</p>
+                    {% if pro_ozellikler.finansal_takip %}
+                        <a href="#" class="btn btn-success">
+                            <i class="fas fa-chart-bar me-2"></i>Raporlar
+                        </a>
+                    {% else %}
+                        <p class="text-muted">Pro pakette mevcut değil</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Eğitim Programları -->
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100 {% if pro_ozellikler.egitim_programi %}border-success{% else %}border-secondary{% endif %}">
+                <div class="card-body text-center">
+                    <i class="fas fa-graduation-cap fa-3x {% if pro_ozellikler.egitim_programi %}text-danger{% else %}text-muted{% endif %} mb-3"></i>
+                    <h5 class="card-title">Eğitim Programları</h5>
+                    <p class="card-text">Evcil hayvan eğitim içerikleri</p>
+                    {% if pro_ozellikler.egitim_programi %}
+                        <a href="#" class="btn btn-danger">
+                            <i class="fas fa-play me-2"></i>Eğitimleri Gör
+                        </a>
+                    {% else %}
+                        <p class="text-muted">Pro pakette mevcut değil</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% else %}
+    <!-- Pro Abonelik Yok -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card bg-light border-0 text-center py-5">
+                <div class="card-body">
+                    <i class="fas fa-box-open fa-5x text-muted mb-4"></i>
+                    <h3 class="text-muted">Pro Aboneliğiniz Bulunmuyor</h3>
+                    <p class="lead text-muted mb-4">Evcil hayvanınız için en iyi bakım imkanlarını keşfedin!</p>
+                    <a href="{% url 'anahtarlik:sahip_pro_paketler' %}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-star me-2"></i>Pro Paketleri Keşfet
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+.card {
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
+}
+.badge {
+    font-size: 0.9rem !important;
+}
+</style>
+{% endblock %}

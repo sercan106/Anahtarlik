@@ -1,0 +1,296 @@
+{% extends 'ana.html' %}
+{% load static %}
+
+{% block baslik %}İlan Ver - PetSafe Hub{% endblock %}
+
+{% block css_dosyalar %}
+<style>
+    .ilan-olustur-header {
+        background: linear-gradient(135deg, #FF8C42 0%, #6FCF97 100%);
+        color: white;
+        padding: 3rem 0;
+        margin-bottom: 2rem;
+    }
+    
+    .profil-onizleme {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        margin-bottom: 2rem;
+    }
+    
+    .profil-resim {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 15px 15px 0 0;
+    }
+    
+    .profil-bilgi {
+        padding: 1.5rem;
+    }
+    
+    .profil-ad {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #2d3748;
+        margin-bottom: 0.5rem;
+    }
+    
+    .profil-detay {
+        color: #718096;
+        font-size: 0.9rem;
+        margin-bottom: 0.3rem;
+    }
+    
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-label {
+        font-weight: 600;
+        color: #2d3748;
+        margin-bottom: 0.5rem;
+    }
+    
+    .form-control, .form-select {
+        border-radius: 10px;
+        border: 1px solid #e2e8f0;
+        padding: 12px 15px;
+        transition: all 0.3s ease;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: #4facfe;
+        box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        border: none;
+        border-radius: 10px;
+        padding: 12px 30px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(79, 172, 254, 0.4);
+    }
+    
+    .kredi-bilgi {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        color: white;
+        padding: 1rem;
+        border-radius: 10px;
+        margin-bottom: 1.5rem;
+    }
+    
+    .onemli-ilan-grup {
+        background: #f8f9fa;
+        border: 1px solid #e9ecef;
+        border-radius: 10px;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block icerik %}
+<div class="container my-5">
+    <!-- Başlık -->
+    <div class="ilan-olustur-header text-center">
+        <div class="container">
+            <h1 class="mb-3">
+                <i class="fas fa-bullhorn me-3"></i>
+                İlan Ver
+            </h1>
+            <p class="lead mb-0">Hayvanınız için sahiplendirme ilanı oluşturun</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <!-- Kredi Bilgisi -->
+            <div class="kredi-bilgi">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <h5 class="mb-1">
+                            <i class="fas fa-coins me-2"></i>
+                            Mevcut Bakiye
+                        </h5>
+                        <p class="mb-0">{{ kullanici_bakiye }} Kredi</p>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <h5 class="mb-1">
+                            <i class="fas fa-calculator me-2"></i>
+                            İlan Ücreti
+                        </h5>
+                        <p class="mb-0">{{ ilan_ucreti }} Kredi</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hayvan Profili Önizleme -->
+            <div class="profil-onizleme">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="bg-light rounded d-flex align-items-center justify-content-center" style="height: 200px;">
+                            <i class="fas fa-paw fa-4x text-muted"></i>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="profil-bilgi">
+                            <h4 class="profil-ad">{{ profil_data.hayvan_adi }}</h4>
+                            <div class="row">
+                                <div class="col-6">
+                                    <p class="profil-detay">
+                                        <i class="fas fa-paw me-2"></i>
+                                        Tür: {{ profil_data.tur_ad|default:"Bilinmiyor" }}
+                                    </p>
+                                    <p class="profil-detay">
+                                        <i class="fas fa-birthday-cake me-2"></i>
+                                        Yaş: {{ profil_data.yas }}
+                                    </p>
+                                </div>
+                                <div class="col-6">
+                                    <p class="profil-detay">
+                                        <i class="fas fa-venus-mars me-2"></i>
+                                        Cinsiyet: {% if profil_data.cinsiyet == "DISI" %}Dişi{% elif profil_data.cinsiyet == "ERKEK" %}Erkek{% else %}{{ profil_data.cinsiyet }}{% endif %}
+                                    </p>
+                                    <p class="profil-detay">
+                                        <i class="fas fa-map-marker-alt me-2"></i>
+                                        Konum: {{ profil_data.il_ad|default:"Bilinmiyor" }}/{{ profil_data.ilce_ad|default:"Bilinmiyor" }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- İlan Formu -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-edit me-2"></i>
+                        İlan Bilgileri
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <!-- İlan Başlığı -->
+                        <div class="form-group">
+                            <label for="baslik" class="form-label">
+                                <i class="fas fa-heading me-1"></i>İlan Başlığı *
+                            </label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="baslik" 
+                                   name="baslik" 
+                                   value="Sevimli {{ profil_data.hayvan_adi }} Sahiplendirme İlanı"
+                                   required>
+                        </div>
+
+                        <!-- İlan Açıklaması -->
+                        <div class="form-group">
+                            <label for="aciklama" class="form-label">
+                                <i class="fas fa-comment me-1"></i>İlan Açıklaması *
+                            </label>
+                            <textarea class="form-control" 
+                                      id="aciklama" 
+                                      name="aciklama" 
+                                      rows="4" 
+                                      required>{{ profil_data.hayvan_adi }} için yeni bir yuva arıyoruz. {{ profil_data.tur_ad|default:"Bilinmiyor" }} cinsi, {{ profil_data.irk_ad|default:"Bilinmiyor" }} ırkı, {{ profil_data.yas }} yaşında. {{ profil_data.cinsiyet }} cinsiyet. {{ profil_data.il_ad|default:"Bilinmiyor" }}/{{ profil_data.ilce_ad|default:"Bilinmiyor" }} konumunda. Sevgi dolu bir aile arıyoruz!</textarea>
+                        </div>
+
+                        <!-- Öne Çıkarma -->
+                        <div class="onemli-ilan-grup">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" 
+                                       type="checkbox" 
+                                       id="onemli_mi" 
+                                       name="onemli_mi">
+                                <label class="form-check-label" for="onemli_mi">
+                                    <i class="fas fa-star me-2"></i>
+                                    <strong>Öne Çıkarma (+50 Kredi)</strong>
+                                    <small class="text-muted d-block">İlanınız ana sayfada öne çıkar</small>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Butonlar -->
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{% url 'ilan:hayvan_profili_olustur' %}" class="btn btn-secondary me-md-2">
+                                <i class="fas fa-arrow-left me-2"></i>Profili Düzenle
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-bullhorn me-2"></i>İlanı Yayınla
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Öne çıkarma seçildiğinde toplam ücreti güncelle
+    const onemliCheckbox = document.getElementById('onemli_mi');
+    const krediBilgi = document.querySelector('.kredi-bilgi');
+    
+    onemliCheckbox.addEventListener('change', function() {
+        if (this.checked) {
+            // Öne çıkarma seçildi
+            const toplamUcret = {{ ilan_ucreti }} + 50;
+            krediBilgi.innerHTML = `
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <h5 class="mb-1">
+                            <i class="fas fa-coins me-2"></i>
+                            Mevcut Bakiye
+                        </h5>
+                        <p class="mb-0">{{ kullanici_bakiye }} Kredi</p>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <h5 class="mb-1">
+                            <i class="fas fa-calculator me-2"></i>
+                            Toplam Ücret
+                        </h5>
+                        <p class="mb-0">${toplamUcret} Kredi (İlan: {{ ilan_ucreti }} + Öne Çıkarma: 50)</p>
+                    </div>
+                </div>
+            `;
+        } else {
+            // Öne çıkarma kaldırıldı
+            krediBilgi.innerHTML = `
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <h5 class="mb-1">
+                            <i class="fas fa-coins me-2"></i>
+                            Mevcut Bakiye
+                        </h5>
+                        <p class="mb-0">{{ kullanici_bakiye }} Kredi</p>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <h5 class="mb-1">
+                            <i class="fas fa-calculator me-2"></i>
+                            İlan Ücreti
+                        </h5>
+                        <p class="mb-0">{{ ilan_ucreti }} Kredi</p>
+                    </div>
+                </div>
+            `;
+        }
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,130 @@
+{% extends 'ana.html' %}
+{% load static %}
+
+{% block title %}Künye Yenileme{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="mb-4">
+                <i class="fas fa-sync-alt"></i> Künye Yenileme
+            </h2>
+            
+            <!-- Süresi Dolmuş Künyeler -->
+            {% if suresi_dolmus %}
+            <div class="card mb-4">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-exclamation-triangle"></i> Süresi Dolmuş Künyeler
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for etiket in suresi_dolmus %}
+                        <div class="col-md-6 col-lg-4 mb-3">
+                            <div class="card border-danger">
+                                <div class="card-body">
+                                    <h6 class="card-title">
+                                        <i class="fas fa-qrcode"></i> {{ etiket.seri_numarasi }}
+                                    </h6>
+                                    <p class="card-text">
+                                        <strong>Hayvan:</strong> {{ etiket.evcil_hayvan.ad }}<br>
+                                        <strong>Bitiş Tarihi:</strong> 
+                                        <span class="text-danger">{{ etiket.son_kullanma_tarihi|date:"d.m.Y" }}</span>
+                                    </p>
+                                    <a href="{% url 'etiket:etiket_yenileme_baslat' etiket.id %}" 
+                                       class="btn btn-danger btn-sm">
+                                        <i class="fas fa-credit-card"></i> Yenile
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- Aktif Künyeler -->
+            {% if aktif_etiketler %}
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-check-circle"></i> Aktif Künyeler
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for etiket in aktif_etiketler %}
+                        <div class="col-md-6 col-lg-4 mb-3">
+                            <div class="card border-success">
+                                <div class="card-body">
+                                    <h6 class="card-title">
+                                        <i class="fas fa-qrcode"></i> {{ etiket.seri_numarasi }}
+                                    </h6>
+                                    <p class="card-text">
+                                        <strong>Hayvan:</strong> {{ etiket.evcil_hayvan.ad }}<br>
+                                        <strong>Bitiş Tarihi:</strong> 
+                                        <span class="text-success">{{ etiket.son_kullanma_tarihi|date:"d.m.Y" }}</span>
+                                    </p>
+                                    <small class="text-muted">
+                                        Kalan süre: {{ etiket.son_kullanma_tarihi|timeuntil }}
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- Pasif Künyeler -->
+            {% if pasif_etiketler %}
+            <div class="card">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-pause-circle"></i> Pasif Künyeler
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for etiket in pasif_etiketler %}
+                        <div class="col-md-6 col-lg-4 mb-3">
+                            <div class="card border-secondary">
+                                <div class="card-body">
+                                    <h6 class="card-title">
+                                        <i class="fas fa-qrcode"></i> {{ etiket.seri_numarasi }}
+                                    </h6>
+                                    <p class="card-text">
+                                        <strong>Hayvan:</strong> {{ etiket.evcil_hayvan.ad }}<br>
+                                        <strong>Durum:</strong> Pasif
+                                    </p>
+                                    <a href="{% url 'etiket:etiket_yenileme_baslat' etiket.id %}" 
+                                       class="btn btn-primary btn-sm">
+                                        <i class="fas fa-play"></i> Aktifleştir
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            
+            {% if not suresi_dolmus and not aktif_etiketler and not pasif_etiketler %}
+            <div class="alert alert-info text-center">
+                <i class="fas fa-info-circle fa-2x mb-3"></i>
+                <h5>Henüz künyeniz bulunmuyor</h5>
+                <p>İlk künyenizi satın almak için mağazamızı ziyaret edin.</p>
+                <a href="{% url 'shop:home' %}" class="btn btn-primary">
+                    <i class="fas fa-shopping-cart"></i> Mağazaya Git
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

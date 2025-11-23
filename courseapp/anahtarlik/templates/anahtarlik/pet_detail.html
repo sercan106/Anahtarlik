@@ -1,0 +1,676 @@
+{% extends "ana.html" %}
+{% load static %}
+
+{% block baslik %}{{ hayvan.ad|default:"Evcil Hayvan" }} - Profil Detayı | PetSafe Hub{% endblock %}
+
+{% block css_dosyalar %}
+<style>
+    :root {
+        --primary-color: #4361ee;
+        --primary-light: #eef2ff;
+        --success-color: #10b981;
+        --success-light: #d1fae5;
+        --warning-color: #f59e0b;
+        --warning-light: #fef3c7;
+        --danger-color: #ef4444;
+        --danger-light: #fee2e2;
+        --text-dark: #1e293b;
+        --text-medium: #64748b;
+        --text-light: #94a3b8;
+        --bg-body: #f8fafc;
+        --bg-card: #ffffff;
+        --border-color: #e2e8f0;
+        --radius-xl: 20px;
+        --radius-lg: 16px;
+        --radius-md: 12px;
+        --shadow-soft: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    }
+
+    body {
+        background-color: var(--bg-body);
+        color: var(--text-dark);
+    }
+
+    /* Kart Yapısı */
+    .pet-card {
+        background: var(--bg-card);
+        border-radius: var(--radius-xl);
+        border: 1px solid var(--border-color);
+        box-shadow: var(--shadow-soft);
+        overflow: hidden;
+        margin-bottom: 1.5rem;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    /* Header ve Profil Resmi */
+    .pet-profile-header {
+        position: relative;
+        padding: 1.5rem;
+    }
+
+    .pet-image-wrapper {
+        position: relative;
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        aspect-ratio: 1/1; /* Kare oran */
+        background-color: #f1f5f9;
+    }
+
+    .pet-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    .pet-image-wrapper:hover .pet-image {
+        transform: scale(1.05);
+    }
+
+    .status-badge {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        padding: 6px 14px;
+        border-radius: 30px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: white;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        z-index: 2;
+    }
+
+    /* Grid Bilgileri */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .stat-box {
+        background: var(--bg-body);
+        padding: 1rem;
+        border-radius: var(--radius-md);
+        text-align: center;
+    }
+
+    .stat-label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        color: var(--text-light);
+        letter-spacing: 0.5px;
+        margin-bottom: 0.25rem;
+    }
+
+    .stat-value {
+        font-weight: 700;
+        color: var(--text-dark);
+        font-size: 1.1rem;
+    }
+
+    /* Butonlar */
+    .btn-action {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        padding: 0.8rem;
+        border-radius: var(--radius-md);
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+        transition: all 0.2s;
+        text-decoration: none;
+        border: none;
+        gap: 0.5rem;
+    }
+
+    .btn-primary-soft { background: var(--primary-light); color: var(--primary-color); }
+    .btn-primary-soft:hover { background: var(--primary-color); color: white; }
+    
+    .btn-danger-soft { background: var(--danger-light); color: var(--danger-color); }
+    .btn-danger-soft:hover { background: var(--danger-color); color: white; }
+    
+    .btn-success-solid { background: var(--success-color); color: white; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2); }
+    .btn-success-solid:hover { background: #059669; transform: translateY(-2px); }
+
+    /* Bilgi Listeleri (Sahip vb) */
+    .info-list-item {
+        display: flex;
+        align-items: flex-start;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid var(--border-color);
+    }
+    .info-list-item:last-child { border-bottom: none; }
+    
+    .info-icon {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--primary-light);
+        color: var(--primary-color);
+        border-radius: 8px;
+        margin-right: 1rem;
+        flex-shrink: 0;
+    }
+
+    /* Accordion Özelleştirme */
+    .custom-accordion .accordion-item {
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-lg);
+        margin-bottom: 1rem;
+        overflow: hidden;
+        background: white;
+    }
+    
+    .custom-accordion .accordion-button {
+        background: white;
+        font-weight: 600;
+        color: var(--text-dark);
+        box-shadow: none;
+        padding: 1.25rem;
+    }
+
+    .custom-accordion .accordion-button:not(.collapsed) {
+        background: var(--bg-body);
+        color: var(--primary-color);
+    }
+
+    .custom-accordion .accordion-button::after {
+        background-size: 1rem;
+    }
+
+    /* Kayıt Listesi Öğeleri */
+    .record-item {
+        background: #ffffff;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        padding: 1rem;
+        margin-bottom: 1rem;
+        transition: border-color 0.2s;
+    }
+    .record-item:hover {
+        border-color: var(--primary-color);
+    }
+
+    .record-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 0.5rem;
+    }
+
+    .badge-soft {
+        padding: 0.35em 0.65em;
+        border-radius: 6px;
+        font-size: 0.75em;
+        font-weight: 700;
+    }
+
+    /* Responsive */
+    @media (min-width: 992px) {
+        .sticky-sidebar {
+            position: sticky;
+            top: 2rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="fw-bold mb-0 text-dark">{{ hayvan.ad|default:"Bilinmeyen Hayvan" }}</h1>
+            <p class="text-muted mb-0">Profil Yönetimi</p>
+        </div>
+        <a href="{% url 'petpanel:pet_edit' hayvan.id %}" class="btn btn-primary-soft">
+            <i class="fas fa-pen me-2"></i> Düzenle
+        </a>
+    </div>
+
+    <div class="row g-4">
+        
+        <div class="col-lg-4">
+            <div class="sticky-sidebar">
+                
+                <div class="pet-card p-3">
+                    <div class="pet-image-wrapper mb-3">
+                        {% if hayvan.resim %}
+                            <img src="{{ hayvan.resim.url }}" class="pet-image" alt="{{ hayvan.ad }}">
+                        {% else %}
+                            {% with hayvan.tur.ad|lower as tur_adi %}
+                                {% if 'köpek' in tur_adi or 'kopek' in tur_adi %}
+                                    <img src="{% static 'img/icons/dog-icon.jpg' %}" class="pet-image" alt="Köpek">
+                                {% elif 'kedi' in tur_adi %}
+                                    <img src="{% static 'img/icons/cat-icon.jpg' %}" class="pet-image" alt="Kedi">
+                                {% else %}
+                                    <img src="{% static 'img/icons/other-pet.jpg' %}" class="pet-image" alt="Evcil Hayvan">
+                                {% endif %}
+                            {% endwith %}
+                        {% endif %}
+                        
+                        <span class="status-badge {% if hayvan.kayip_durumu %}bg-danger{% else %}bg-success{% endif %}">
+                            {% if hayvan.kayip_durumu %}Kayboldu 🚨{% else %}Güvende ✅{% endif %}
+                        </span>
+                    </div>
+
+                    <h3 class="text-center fw-bold mb-1">{{ hayvan.ad }}</h3>
+                    <p class="text-center text-muted small mb-3">{{ hayvan.tur.ad }} • {{ hayvan.cins }}</p>
+
+                    <div class="stats-grid">
+                        <div class="stat-box">
+                            <div class="stat-label">Yaş</div>
+                            <div class="stat-value">{{ hayvan.dogum_tarihi|timesince|default:"-" }}</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">Cinsiyet</div>
+                            <div class="stat-value">{{ hayvan.get_cinsiyet_display|default:"-" }}</div>
+                        </div>
+                    </div>
+
+                    {% if hayvan.etiket %}
+                    <div class="alert alert-light border text-center py-2 mb-3">
+                        <small class="text-muted d-block">Etiket Seri No</small>
+                        <strong class="text-primary font-monospace">{{ hayvan.etiket.seri_numarasi }}</strong>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="pet-card p-3">
+                    <h6 class="fw-bold mb-3 px-1">Hızlı İşlemler</h6>
+                    
+                    {% if hayvan.kayip_durumu %}
+                        <a href="{% url 'anahtarlik:mark_found' evcil_hayvan_id=hayvan.id %}" class="btn-action btn-success-solid">
+                            <i class="fas fa-check-circle"></i> Bulundu Olarak İşaretle
+                        </a>
+                        {% if hayvan.odul_miktari %}
+                        <div class="alert alert-warning d-flex align-items-center p-2 small mb-2">
+                            <i class="fas fa-award me-2"></i> Ödül: {{ hayvan.odul_miktari }} ₺
+                        </div>
+                        {% endif %}
+                    {% else %}
+                        <a href="{% url 'anahtarlik:kayip_bildir' evcil_hayvan_id=hayvan.id %}" class="btn-action btn-danger-soft">
+                            <i class="fas fa-exclamation-triangle"></i> Kayıp Bildir
+                        </a>
+                    {% endif %}
+
+                    {% if hayvan.etiket %}
+                        <a href="{{ hayvan.etiket.qr_kod_url }}" target="_blank" class="btn-action btn-primary-soft mb-0">
+                            <i class="fas fa-qrcode"></i> QR Kodu Görüntüle
+                        </a>
+                    {% endif %}
+                </div>
+
+                <div class="pet-card">
+                    <div class="p-3 border-bottom d-flex justify-content-between align-items-center bg-light">
+                        <h6 class="fw-bold mb-0"><i class="fas fa-user-shield me-2"></i>Sahip Bilgisi</h6>
+                        <a href="{% url 'petpanel:sahip_bilgilerini_duzenle' hayvan.id %}" class="btn btn-sm btn-white border">Düzenle</a>
+                    </div>
+                    <div class="p-3">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width:40px; height:40px; font-weight:bold;">
+                                {{ hayvan.sahip.ad|make_list|first }}{{ hayvan.sahip.soyad|make_list|first }}
+                            </div>
+                            <div class="ms-3">
+                                <h6 class="fw-bold mb-0">{{ hayvan.sahip.ad }} {{ hayvan.sahip.soyad }}</h6>
+                                <small class="text-muted">@{{ hayvan.sahip.kullanici.username }}</small>
+                            </div>
+                        </div>
+
+                        <div class="info-list-item">
+                            <div class="info-icon"><i class="fas fa-phone"></i></div>
+                            <div>
+                                <small class="text-muted d-block">Telefon</small>
+                                <a href="tel:{{ hayvan.sahip.telefon }}" class="text-dark text-decoration-none fw-semibold">{{ hayvan.sahip.telefon|default:"-" }}</a>
+                            </div>
+                        </div>
+
+                        {% if hayvan.sahip.yedek_telefon %}
+                        <div class="info-list-item">
+                            <div class="info-icon"><i class="fas fa-phone-alt"></i></div>
+                            <div>
+                                <small class="text-muted d-block">Yedek Telefon</small>
+                                <a href="tel:{{ hayvan.sahip.yedek_telefon }}" class="text-dark text-decoration-none">{{ hayvan.sahip.yedek_telefon }}</a>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <div class="info-list-item">
+                            <div class="info-icon"><i class="fas fa-envelope"></i></div>
+                            <div>
+                                <small class="text-muted d-block">E-Posta</small>
+                                <a href="mailto:{{ hayvan.sahip.kullanici.email }}" class="text-dark text-decoration-none text-break">{{ hayvan.sahip.kullanici.email }}</a>
+                            </div>
+                        </div>
+
+                        {% if hayvan.sahip.acil_durum_kontagi %}
+                        <div class="info-list-item">
+                            <div class="info-icon text-danger bg-danger-subtle"><i class="fas fa-ambulance"></i></div>
+                            <div>
+                                <small class="text-muted d-block">Acil Durum</small>
+                                <span class="fw-semibold">{{ hayvan.sahip.acil_durum_kontagi }}</span>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        {% if hayvan.sahip.adres %}
+                        <div class="info-list-item">
+                            <div class="info-icon"><i class="fas fa-map-marker-alt"></i></div>
+                            <div>
+                                <small class="text-muted d-block">Adres</small>
+                                <span class="small">{{ hayvan.sahip.adres }}</span>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            
+            <div class="pet-card p-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold mb-0">Özel Notlar</h5>
+                    <a href="{% url 'petpanel:notlari_duzenle' hayvan.id %}" class="btn btn-sm btn-light border">Düzenle</a>
+                </div>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="p-3 bg-light rounded h-100">
+                            <small class="text-muted fw-bold mb-1 d-block"><i class="fas fa-sticky-note me-1"></i> Genel</small>
+                            <p class="mb-0 small">{{ hayvan.genel_not|default:"-" }}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 bg-light rounded h-100">
+                            <small class="text-muted fw-bold mb-1 d-block"><i class="fas fa-brain me-1"></i> Davranış</small>
+                            <p class="mb-0 small">{{ hayvan.davranis_notu|default:"-" }}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 bg-light rounded h-100">
+                            <small class="text-muted fw-bold mb-1 d-block"><i class="fas fa-heartbeat me-1"></i> Sağlık Notu</small>
+                            <p class="mb-0 small">{{ hayvan.saglik_notu|default:"-" }}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 bg-light rounded h-100">
+                            <small class="text-muted fw-bold mb-1 d-block"><i class="fas fa-utensils me-1"></i> Beslenme Notu</small>
+                            <p class="mb-0 small">{{ hayvan.beslenme_notu|default:"-" }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% if kilo_kayitlari|length > 0 %}
+            <div class="pet-card p-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold mb-0">Kilo Takibi</h5>
+                    </div>
+                <div style="height: 300px; width: 100%;">
+                    <canvas id="kiloChart"></canvas>
+                </div>
+            </div>
+            {% endif %}
+
+            <h5 class="fw-bold mb-3 ms-1">Tıbbi ve Yaşamsal Geçmiş</h5>
+            <div class="accordion custom-accordion" id="petAccordion">
+                
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="hAlerji">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#cAlerji">
+                            <span class="me-3 p-2 rounded bg-danger-subtle text-danger"><i class="fas fa-allergies"></i></span>
+                            Alerjiler
+                            {% if hayvan.alerjiler.count > 0 %}
+                                <span class="badge bg-danger ms-2 rounded-pill">{{ hayvan.alerjiler.count }}</span>
+                            {% endif %}
+                        </button>
+                    </h2>
+                    <div id="cAlerji" class="accordion-collapse collapse" data-bs-parent="#petAccordion">
+                        <div class="accordion-body bg-light">
+                            {% for a in hayvan.alerjiler.all %}
+                            <div class="record-item">
+                                <div class="record-header">
+                                    <span class="fw-bold text-danger">{{ a.alerji_turu }}</span>
+                                    <small class="text-muted">{{ a.kaydedilme_tarihi|date:"d.m.Y" }}</small>
+                                </div>
+                                <p class="text-muted small mb-2">{{ a.aciklama|default:"Açıklama yok" }}</p>
+                                <div class="d-flex gap-2 justify-content-end">
+                                    <a href="{% url 'petpanel:alerji_duzenle' a.id %}" class="btn btn-sm btn-white border py-0">Düzenle</a>
+                                    <a href="{% url 'petpanel:alerji_sil' a.id %}" class="btn btn-sm btn-white border text-danger py-0" onclick="return confirm('Silmek istediğinize emin misiniz?')">Sil</a>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <div class="text-center text-muted py-3">Kayıtlı alerji bulunmuyor.</div>
+                            {% endfor %}
+                            <div class="d-grid mt-2">
+                                <a href="{% url 'petpanel:alerji_ekle' hayvan.id %}" class="btn btn-outline-primary btn-sm border-dashed">
+                                    <i class="fas fa-plus me-1"></i> Yeni Alerji Ekle
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="hSaglik">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#cSaglik">
+                            <span class="me-3 p-2 rounded bg-primary-subtle text-primary"><i class="fas fa-syringe"></i></span>
+                            Sağlık & Aşı Kayıtları
+                        </button>
+                    </h2>
+                    <div id="cSaglik" class="accordion-collapse collapse" data-bs-parent="#petAccordion">
+                        <div class="accordion-body bg-light">
+                            {% for s in hayvan.saglik_kayitlari.all %}
+                            <div class="record-item">
+                                <div class="record-header">
+                                    <span class="fw-bold text-primary">{{ s.asi_turu }}</span>
+                                    <span class="badge bg-white border text-dark">{{ s.asi_tarihi|date:"d.m.Y" }}</span>
+                                </div>
+                                <p class="text-muted small mb-2">{{ s.notlar|default:"Not yok" }}</p>
+                                <div class="d-flex gap-2 justify-content-end">
+                                    <a href="{% url 'petpanel:saglik_duzenle' s.id %}" class="btn btn-sm btn-white border py-0">Düzenle</a>
+                                    <a href="{% url 'petpanel:saglik_sil' s.id %}" class="btn btn-sm btn-white border text-danger py-0" onclick="return confirm('Silinsin mi?')">Sil</a>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <div class="text-center text-muted py-3">Kayıt yok.</div>
+                            {% endfor %}
+                            <div class="d-grid mt-2">
+                                <a href="{% url 'petpanel:saglik_ekle' hayvan.id %}" class="btn btn-outline-primary btn-sm border-dashed">
+                                    <i class="fas fa-plus me-1"></i> Aşı/Sağlık Kaydı Ekle
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="hIlac">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#cIlac">
+                            <span class="me-3 p-2 rounded bg-warning-subtle text-warning"><i class="fas fa-pills"></i></span>
+                            İlaç Tedavileri
+                        </button>
+                    </h2>
+                    <div id="cIlac" class="accordion-collapse collapse" data-bs-parent="#petAccordion">
+                        <div class="accordion-body bg-light">
+                            {% for i in hayvan.ilac_kayitlari.all %}
+                            <div class="record-item">
+                                <div class="record-header">
+                                    <span class="fw-bold text-dark">{{ i.ilac_adi }}</span>
+                                    <small class="text-muted">
+                                        {{ i.baslangic_tarihi|date:"d/m" }} - {{ i.bitis_tarihi|date:"d/m/Y"|default:"Devam" }}
+                                    </small>
+                                </div>
+                                <div class="mb-2">
+                                    <span class="badge bg-light text-secondary border">Doz: {{ i.dozaj }}</span>
+                                </div>
+                                <p class="text-muted small mb-2">{{ i.notlar }}</p>
+                                <div class="d-flex gap-2 justify-content-end">
+                                    <a href="{% url 'petpanel:ilac_duzenle' i.id %}" class="btn btn-sm btn-white border py-0">Düzenle</a>
+                                    <a href="{% url 'petpanel:ilac_sil' i.id %}" class="btn btn-sm btn-white border text-danger py-0" onclick="return confirm('Silinsin mi?')">Sil</a>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <div class="text-center text-muted py-3">İlaç kaydı yok.</div>
+                            {% endfor %}
+                            <div class="d-grid mt-2">
+                                <a href="{% url 'petpanel:ilac_ekle' hayvan.id %}" class="btn btn-outline-primary btn-sm border-dashed">
+                                    <i class="fas fa-plus me-1"></i> İlaç Ekle
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="hAmeliyat">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#cAmeliyat">
+                            <span class="me-3 p-2 rounded bg-danger-subtle text-danger"><i class="fas fa-heart-broken"></i></span>
+                            Ameliyatlar
+                        </button>
+                    </h2>
+                    <div id="cAmeliyat" class="accordion-collapse collapse" data-bs-parent="#petAccordion">
+                        <div class="accordion-body bg-light">
+                            {% for a in hayvan.ameliyat_kayitlari.all %}
+                            <div class="record-item">
+                                <div class="record-header">
+                                    <span class="fw-bold text-danger">{{ a.ameliyat_turu }}</span>
+                                    <span class="text-muted small">{{ a.tarih|date:"d.m.Y" }}</span>
+                                </div>
+                                <p class="mb-1 small"><strong class="text-dark">Vet:</strong> {{ a.veteriner|default:"Belirtilmemiş" }}</p>
+                                <p class="text-muted small mb-2">{{ a.notlar }}</p>
+                                <div class="d-flex gap-2 justify-content-end">
+                                    <a href="{% url 'petpanel:ameliyat_duzenle' a.id %}" class="btn btn-sm btn-white border py-0">Düzenle</a>
+                                    <a href="{% url 'petpanel:ameliyat_sil' a.id %}" class="btn btn-sm btn-white border text-danger py-0" onclick="return confirm('Silinsin mi?')">Sil</a>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <div class="text-center text-muted py-3">Ameliyat kaydı yok.</div>
+                            {% endfor %}
+                            <div class="d-grid mt-2">
+                                <a href="{% url 'petpanel:ameliyat_ekle' hayvan.id %}" class="btn btn-outline-primary btn-sm border-dashed">
+                                    <i class="fas fa-plus me-1"></i> Ameliyat Ekle
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="hBeslenme">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#cBeslenme">
+                            <span class="me-3 p-2 rounded bg-success-subtle text-success"><i class="fas fa-bone"></i></span>
+                            Beslenme Geçmişi
+                        </button>
+                    </h2>
+                    <div id="cBeslenme" class="accordion-collapse collapse" data-bs-parent="#petAccordion">
+                        <div class="accordion-body bg-light">
+                            {% for b in hayvan.beslenme_kayitlari.all %}
+                            <div class="record-item">
+                                <div class="record-header">
+                                    <span class="fw-bold text-success">{{ b.besin_turu }}</span>
+                                    <span class="text-muted small">{{ b.tarih|date:"d.m.Y" }}</span>
+                                </div>
+                                <p class="mb-1 small"><strong class="text-dark">Miktar:</strong> {{ b.miktar }}</p>
+                                <p class="text-muted small mb-2">{{ b.notlar }}</p>
+                                <div class="d-flex gap-2 justify-content-end">
+                                    <a href="{% url 'petpanel:beslenme_duzenle' b.id %}" class="btn btn-sm btn-white border py-0">Düzenle</a>
+                                    <a href="{% url 'petpanel:beslenme_sil' b.id %}" class="btn btn-sm btn-white border text-danger py-0" onclick="return confirm('Silinsin mi?')">Sil</a>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <div class="text-center text-muted py-3">Kayıt yok.</div>
+                            {% endfor %}
+                            <div class="d-grid mt-2">
+                                <a href="{% url 'petpanel:beslenme_ekle' hayvan.id %}" class="btn btn-outline-primary btn-sm border-dashed">
+                                    <i class="fas fa-plus me-1"></i> Beslenme Ekle
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div> </div> </div> </div>
+{% endblock %}
+
+{% block js_dosyalar %}
+{% if kilo_kayitlari|length > 0 %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const ctx = document.getElementById('kiloChart');
+    if (!ctx) return;
+
+    try {
+        const rawData = JSON.parse('{{ kilo_data_json|escapejs }}');
+        const labels = rawData.map(item => item.tarih);
+        const data = rawData.map(item => parseFloat(item.kilo));
+
+        // Modern Gradyan Dolgu
+        let gradient = ctx.getContext('2d').createLinearGradient(0, 0, 0, 300);
+        gradient.addColorStop(0, 'rgba(67, 97, 238, 0.25)'); // Primary color (opacity)
+        gradient.addColorStop(1, 'rgba(67, 97, 238, 0.0)');
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Kilo (kg)',
+                    data: data,
+                    borderColor: '#4361ee',
+                    backgroundColor: gradient,
+                    borderWidth: 3,
+                    pointBackgroundColor: '#ffffff',
+                    pointBorderColor: '#4361ee',
+                    pointBorderWidth: 2,
+                    pointRadius: 5,
+                    pointHoverRadius: 7,
+                    fill: true,
+                    tension: 0.35 // Eğrisel çizgi
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#1e293b',
+                        padding: 12,
+                        titleFont: { size: 13 },
+                        bodyFont: { size: 14, weight: 'bold' },
+                        displayColors: false,
+                        callbacks: {
+                            label: function(context) {
+                                return context.parsed.y + ' kg';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { display: false },
+                        ticks: { font: { size: 11 }, color: '#94a3b8' }
+                    },
+                    y: {
+                        border: { display: false },
+                        grid: { borderDash: [4, 4], color: '#e2e8f0' },
+                        ticks: { font: { size: 11 }, color: '#94a3b8' }
+                    }
+                }
+            }
+        });
+    } catch (e) {
+        console.error("Grafik verisi işlenirken hata:", e);
+    }
+});
+</script>
+{% endif %}
+{% endblock %}

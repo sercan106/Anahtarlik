@@ -1,0 +1,371 @@
+{% extends 'ana.html' %}
+{% load static %}
+
+{% block title %}{{ title }} - PetSafe Hub CMS{% endblock %}
+
+{% block content %}
+<style>
+    .cms-form-container {
+        max-width: 900px;
+        margin: 100px auto 50px;
+        padding: 20px;
+    }
+
+    .cms-form-header {
+        background: linear-gradient(135deg, rgba(91, 155, 213, 0.1) 0%, rgba(112, 193, 179, 0.1) 100%);
+        border-radius: 20px;
+        padding: 30px;
+        margin-bottom: 30px;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .cms-form-header h1 {
+        color: #5B9BD5;
+        margin-bottom: 5px;
+        font-weight: 700;
+        font-size: 2rem;
+    }
+
+    .cms-form-header p {
+        color: #666;
+        margin: 0;
+    }
+
+    .cms-form-card {
+        background: white;
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(91, 155, 213, 0.1);
+    }
+
+    .form-section {
+        margin-bottom: 35px;
+        padding-bottom: 35px;
+        border-bottom: 2px solid rgba(91, 155, 213, 0.1);
+    }
+
+    .form-section:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
+    }
+
+    .form-section-title {
+        color: #5B9BD5;
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .form-group {
+        margin-bottom: 25px;
+    }
+
+    .form-group label {
+        display: block;
+        color: #333;
+        font-weight: 600;
+        margin-bottom: 8px;
+        font-size: 0.95rem;
+    }
+
+    .form-control, .form-select {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus, .form-select:focus {
+        outline: none;
+        border-color: #5B9BD5;
+        box-shadow: 0 0 0 3px rgba(91, 155, 213, 0.1);
+    }
+
+    textarea.form-control {
+        resize: vertical;
+        min-height: 120px;
+    }
+
+    .help-text {
+        display: block;
+        margin-top: 5px;
+        font-size: 0.85rem;
+        color: #999;
+    }
+
+    .form-check {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 10px;
+    }
+
+    .form-check-input {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+    }
+
+    .form-check-label {
+        margin: 0;
+        cursor: pointer;
+        font-weight: 500;
+    }
+
+    .button-group {
+        display: flex;
+        gap: 15px;
+        margin-top: 30px;
+    }
+
+    .btn-submit {
+        flex: 1;
+        background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
+        color: white;
+        border: none;
+        padding: 15px 40px;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 20px rgba(91, 155, 213, 0.3);
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 30px rgba(91, 155, 213, 0.4);
+    }
+
+    .btn-cancel {
+        flex: 1;
+        background: #e0e0e0;
+        color: #666;
+        border: none;
+        padding: 15px 40px;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+
+    .btn-cancel:hover {
+        background: #d0d0d0;
+        color: #555;
+    }
+
+    .image-preview {
+        max-width: 100%;
+        max-height: 300px;
+        margin-top: 15px;
+        border-radius: 10px;
+        border: 2px solid #e0e0e0;
+        padding: 5px;
+    }
+
+    .current-image {
+        margin-top: 15px;
+    }
+
+    .current-image img {
+        max-width: 100%;
+        max-height: 200px;
+        border-radius: 10px;
+    }
+
+    .alert-info {
+        background: rgba(91, 155, 213, 0.1);
+        border: 1px solid rgba(91, 155, 213, 0.3);
+        border-radius: 10px;
+        padding: 15px 20px;
+        margin-bottom: 25px;
+        color: #5B9BD5;
+    }
+
+    .alert-info i {
+        margin-right: 10px;
+    }
+
+    @media (max-width: 768px) {
+        .cms-form-container {
+            margin-top: 80px;
+            padding: 10px;
+        }
+
+        .cms-form-card {
+            padding: 25px;
+        }
+
+        .button-group {
+            flex-direction: column;
+        }
+    }
+</style>
+
+<div class="cms-form-container">
+    <div class="cms-form-header">
+        <h1><i class="fas fa-images"></i> {{ title }}</h1>
+        <p>Ana sayfadaki hero carousel için slide oluşturun veya düzenleyin</p>
+    </div>
+
+    <div class="cms-form-card">
+        <div class="alert-info">
+            <i class="fas fa-info-circle"></i>
+            <strong>Bilgi:</strong> Buton alanlarını boş bırakırsanız, varsayılan "Bulunan Hayvanı Bildir" ve "Yeni Etiket Aktive Et" butonları kullanılır.
+        </div>
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <!-- Ana Bilgiler -->
+            <div class="form-section">
+                <h3 class="form-section-title">
+                    <i class="fas fa-align-left"></i> Ana Bilgiler
+                </h3>
+
+                <div class="form-group">
+                    <label for="{{ form.baslik.id_for_label }}">Başlık *</label>
+                    {{ form.baslik }}
+                    {% if form.baslik.help_text %}
+                        <span class="help-text">{{ form.baslik.help_text }}</span>
+                    {% endif %}
+                    {% if form.baslik.errors %}
+                        <span class="help-text" style="color: #FF8C42;">{{ form.baslik.errors.0 }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.aciklama.id_for_label }}">Açıklama *</label>
+                    {{ form.aciklama }}
+                    {% if form.aciklama.help_text %}
+                        <span class="help-text">{{ form.aciklama.help_text }}</span>
+                    {% endif %}
+                    {% if form.aciklama.errors %}
+                        <span class="help-text" style="color: #FF8C42;">{{ form.aciklama.errors.0 }}</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Görsel Tasarım -->
+            <div class="form-section">
+                <h3 class="form-section-title">
+                    <i class="fas fa-palette"></i> Görsel Tasarım
+                </h3>
+
+                <div class="form-group">
+                    <label for="{{ form.arka_plan_resim.id_for_label }}">Arka Plan Resmi</label>
+                    {{ form.arka_plan_resim }}
+                    {% if form.arka_plan_resim.help_text %}
+                        <span class="help-text">{{ form.arka_plan_resim.help_text }}</span>
+                    {% endif %}
+                    {% if slide.arka_plan_resim %}
+                        <div class="current-image">
+                            <p style="margin: 10px 0 5px 0; color: #666; font-size: 0.9rem;">Mevcut resim:</p>
+                            <img src="{{ slide.arka_plan_resim.url }}" alt="Mevcut resim">
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.arka_plan_renk.id_for_label }}">Arka Plan Renk/Gradient *</label>
+                    {{ form.arka_plan_renk }}
+                    {% if form.arka_plan_renk.help_text %}
+                        <span class="help-text">{{ form.arka_plan_renk.help_text }}</span>
+                    {% endif %}
+                    {% if form.arka_plan_renk.errors %}
+                        <span class="help-text" style="color: #FF8C42;">{{ form.arka_plan_renk.errors.0 }}</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Butonlar -->
+            <div class="form-section">
+                <h3 class="form-section-title">
+                    <i class="fas fa-mouse-pointer"></i> Call-to-Action Butonları
+                </h3>
+
+                <div class="form-group">
+                    <label for="{{ form.buton_1_metin.id_for_label }}">Buton 1 Metin</label>
+                    {{ form.buton_1_metin }}
+                    {% if form.buton_1_metin.help_text %}
+                        <span class="help-text">{{ form.buton_1_metin.help_text }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.buton_1_url.id_for_label }}">Buton 1 URL</label>
+                    {{ form.buton_1_url }}
+                    {% if form.buton_1_url.help_text %}
+                        <span class="help-text">{{ form.buton_1_url.help_text }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.buton_2_metin.id_for_label }}">Buton 2 Metin</label>
+                    {{ form.buton_2_metin }}
+                    {% if form.buton_2_metin.help_text %}
+                        <span class="help-text">{{ form.buton_2_metin.help_text }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.buton_2_url.id_for_label }}">Buton 2 URL</label>
+                    {{ form.buton_2_url }}
+                    {% if form.buton_2_url.help_text %}
+                        <span class="help-text">{{ form.buton_2_url.help_text }}</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Ayarlar -->
+            <div class="form-section">
+                <h3 class="form-section-title">
+                    <i class="fas fa-sliders-h"></i> Ayarlar
+                </h3>
+
+                <div class="form-group">
+                    <label for="{{ form.sira.id_for_label }}">Gösterim Sırası *</label>
+                    {{ form.sira }}
+                    {% if form.sira.help_text %}
+                        <span class="help-text">{{ form.sira.help_text }}</span>
+                    {% endif %}
+                    {% if form.sira.errors %}
+                        <span class="help-text" style="color: #FF8C42;">{{ form.sira.errors.0 }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <div class="form-check">
+                        {{ form.aktif }}
+                        <label class="form-check-label" for="{{ form.aktif.id_for_label }}">
+                            Slide aktif (Ana sayfada gösterilsin)
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button type="submit" class="btn-submit">
+                    <i class="fas fa-save"></i> {{ submit_text }}
+                </button>
+                <a href="{% url 'anahtarlik:cms_dashboard' %}" class="btn-cancel">
+                    <i class="fas fa-times"></i> İptal
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

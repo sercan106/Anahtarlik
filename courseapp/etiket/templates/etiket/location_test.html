@@ -1,0 +1,210 @@
+{% extends 'ana.html' %}
+{% load static %}
+
+{% block title %}Konum Test Sayfası{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-map-marker-alt me-2"></i>
+                        Konum Test Sayfası
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-4">
+                        Bu sayfa konum gönderme işlevselliğini test etmek için oluşturulmuştur.
+                    </p>
+                    
+                    <!-- Test Butonları -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <button id="test-gps-btn" class="btn btn-success btn-lg w-100">
+                                <i class="fas fa-satellite-dish me-2"></i>
+                                GPS Konumu Test Et
+                            </button>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <button id="test-ip-btn" class="btn btn-info btn-lg w-100">
+                                <i class="fas fa-globe me-2"></i>
+                                IP Konumu Test Et
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Sonuçlar -->
+                    <div id="test-results" class="mt-4" style="display: none;">
+                        <h5>Test Sonuçları:</h5>
+                        <div id="gps-result" class="alert alert-success" style="display: none;">
+                            <h6><i class="fas fa-satellite-dish me-2"></i>GPS Konumu:</h6>
+                            <p id="gps-coords"></p>
+                            <p id="gps-accuracy"></p>
+                        </div>
+                        <div id="ip-result" class="alert alert-info" style="display: none;">
+                            <h6><i class="fas fa-globe me-2"></i>IP Konumu:</h6>
+                            <p id="ip-location"></p>
+                        </div>
+                    </div>
+                    
+                    <!-- Debug Bilgileri -->
+                    <div id="debug-info" class="mt-4" style="display: none;">
+                        <h5>Debug Bilgileri:</h5>
+                        <div class="alert alert-warning">
+                            <pre id="debug-content"></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const testGpsBtn = document.getElementById('test-gps-btn');
+    const testIpBtn = document.getElementById('test-ip-btn');
+    const testResults = document.getElementById('test-results');
+    const gpsResult = document.getElementById('gps-result');
+    const ipResult = document.getElementById('ip-result');
+    const debugInfo = document.getElementById('debug-info');
+    
+    let debugData = {
+        timestamp: new Date().toISOString(),
+        userAgent: navigator.userAgent,
+        language: navigator.language,
+        platform: navigator.platform,
+        cookieEnabled: navigator.cookieEnabled,
+        onLine: navigator.onLine
+    };
+    
+    // GPS Test
+    testGpsBtn.addEventListener('click', function() {
+        const btn = this;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> GPS alınıyor...';
+        
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+                    const acc = position.coords.accuracy;
+                    
+                    // GPS sonuçlarını göster
+                    document.getElementById('gps-coords').textContent = 
+                        `Enlem: ${lat.toFixed(8)}, Boylam: ${lng.toFixed(8)}`;
+                    document.getElementById('gps-accuracy').textContent = 
+                        `Doğruluk: ±${Math.round(acc)} metre`;
+                    
+                    gpsResult.style.display = 'block';
+                    testResults.style.display = 'block';
+                    
+                    // Debug bilgilerini güncelle
+                    debugData.gps = {
+                        latitude: lat,
+                        longitude: lng,
+                        accuracy: acc,
+                        timestamp: position.timestamp
+                    };
+                    
+                    // Backend'e test gönder
+                    fetch('{% url "etiket:location_test" %}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        body: new URLSearchParams({
+                            'action': 'test_gps',
+                            'gps_latitude': lat,
+                            'gps_longitude': lng,
+                            'gps_accuracy': acc
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('GPS test sonucu:', data);
+                        debugData.backend_response = data;
+                        updateDebugInfo();
+                    })
+                    .catch(error => {
+                        console.error('GPS test hatası:', error);
+                        debugData.error = error.message;
+                        updateDebugInfo();
+                    });
+                    
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-check me-2"></i> GPS Test Tamamlandı';
+                },
+                function(error) {
+                    console.error('GPS hatası:', error);
+                    alert('GPS konumu alınamadı: ' + error.message);
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-satellite-dish me-2"></i> GPS Konumu Test Et';
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 0
+                }
+            );
+        } else {
+            alert('Tarayıcınız GPS konumu desteklemiyor!');
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-satellite-dish me-2"></i> GPS Konumu Test Et';
+        }
+    });
+    
+    // IP Test
+    testIpBtn.addEventListener('click', function() {
+        const btn = this;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> IP alınıyor...';
+        
+        fetch('{% url "etiket:location_test" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: new URLSearchParams({
+                'action': 'test_ip'
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('IP test sonucu:', data);
+            
+            // IP sonuçlarını göster
+            document.getElementById('ip-location').textContent = 
+                `${data.ip_city}, ${data.ip_country} (IP: ${data.ip_address})`;
+            
+            ipResult.style.display = 'block';
+            testResults.style.display = 'block';
+            
+            // Debug bilgilerini güncelle
+            debugData.ip = data;
+            updateDebugInfo();
+            
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-check me-2"></i> IP Test Tamamlandı';
+        })
+        .catch(error => {
+            console.error('IP test hatası:', error);
+            alert('IP konumu alınamadı: ' + error.message);
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-globe me-2"></i> IP Konumu Test Et';
+        });
+    });
+    
+    function updateDebugInfo() {
+        document.getElementById('debug-content').textContent = JSON.stringify(debugData, null, 2);
+        debugInfo.style.display = 'block';
+    }
+});
+</script>
+{% endblock %}
+

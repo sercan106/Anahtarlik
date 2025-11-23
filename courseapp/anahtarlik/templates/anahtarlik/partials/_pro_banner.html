@@ -1,0 +1,18 @@
+{% if pro_active %}
+<div class="alert alert-success d-flex align-items-center" role="alert">
+  <i class="fas fa-crown me-2"></i>
+  <div>
+    PRO üyeliğiniz aktif. Çiftleşme önerileri ve gelişmiş özellikler açık.
+    <a href="{% url 'ciftlesme:my_profiles' %}" class="ms-2 alert-link">Profillerim</a>
+  </div>
+  </div>
+{% else %}
+<div class="alert alert-warning d-flex align-items-center" role="alert">
+  <i class="fas fa-lock me-2"></i>
+  <div>
+    PRO avantajları kilitli: Çiftleşme önerileri, ekstra bildirimler ve daha fazlası.
+    <a href="{% url 'shop:shop_home' %}" class="ms-2 alert-link">PRO'yu şimdi ekle</a>
+  </div>
+</div>
+{% endif %}
+

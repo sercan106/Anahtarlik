@@ -1,0 +1,475 @@
+{% extends 'ana.html' %}
+
+{% block title %}Profil Düzenle - PetSafe Hub{% endblock %}
+
+{% block css_dosyalar %}
+<style>
+/* Modern Profile Edit Page */
+.profil-duzenle-container {
+    min-height: 80vh;
+    padding: 60px 0;
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+}
+
+.form-wrapper {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.form-card {
+    background: white;
+    border-radius: 20px;
+    border: none;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    margin-bottom: 30px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.form-header {
+    background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
+    padding: 35px 40px;
+    color: white;
+    border: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.form-header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+    border-radius: 50%;
+}
+
+.form-header h2 {
+    margin: 0;
+    font-weight: 700;
+    font-size: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    position: relative;
+    z-index: 1;
+}
+
+.form-header i {
+    font-size: 2.2rem;
+}
+
+.form-body {
+    padding: 45px 40px;
+}
+
+.section-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 3px solid #5B9BD5;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.section-title i {
+    color: #5B9BD5;
+    font-size: 1.5rem;
+}
+
+.form-label {
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 10px;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.form-control {
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    padding: 14px 18px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 0.95rem;
+    background: #f8f9fa;
+}
+
+.form-control:focus {
+    border-color: #5B9BD5;
+    box-shadow: 0 0 0 4px rgba(91, 155, 213, 0.1);
+    outline: none;
+    background: white;
+    transform: translateY(-1px);
+}
+
+.form-control:hover {
+    border-color: rgba(91, 155, 213, 0.4);
+    background: white;
+}
+
+textarea.form-control {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.form-text {
+    font-size: 0.85rem;
+    color: #6c757d;
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.form-text i {
+    color: #5B9BD5;
+}
+
+.section-divider {
+    border: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(91, 155, 213, 0.3), transparent);
+    margin: 40px 0;
+    position: relative;
+}
+
+.section-divider::after {
+    content: '';
+    position: absolute;
+    top: -3px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 7px;
+    background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
+    border-radius: 10px;
+}
+
+.password-section-title {
+    color: #5B9BD5;
+    font-weight: 700;
+    font-size: 1.2rem;
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.password-section-title i {
+    font-size: 1.4rem;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
+    border: none;
+    padding: 16px 40px;
+    border-radius: 50px;
+    font-weight: 600;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 6px 20px rgba(91, 155, 213, 0.3);
+    color: white;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(91, 155, 213, 0.4);
+    color: white;
+}
+
+.btn-secondary {
+    background: white;
+    border: 2px solid #e9ecef;
+    color: #6c757d;
+    padding: 16px 40px;
+    border-radius: 50px;
+    font-weight: 600;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-secondary:hover {
+    transform: translateY(-2px);
+    background: #f8f9fa;
+    border-color: #5B9BD5;
+    color: #5B9BD5;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+.form-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    margin-top: 40px;
+    padding-top: 30px;
+    border-top: 1px solid #e9ecef;
+}
+
+@media (max-width: 768px) {
+    .profil-duzenle-container {
+        padding: 30px 0;
+    }
+
+    .form-header {
+        padding: 25px 20px;
+    }
+
+    .form-header h2 {
+        font-size: 1.5rem;
+    }
+
+    .form-body {
+        padding: 30px 20px;
+    }
+
+    .form-actions {
+        flex-direction: column-reverse;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        width: 100%;
+        justify-content: center;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profil-duzenle-container">
+    <div class="container form-wrapper">
+        <div class="form-card">
+            <div class="form-header">
+                <h2><i class="fas fa-user-edit"></i>Profil Bilgilerini Düzenle</h2>
+            </div>
+            <div class="form-body">
+                <form method="post">
+                        {% csrf_token %}
+                        
+                        <!-- Kullanıcı Tipine Göre Form Alanları -->
+                        {% if user.sahip %}
+                            <!-- SAHİP KULLANICI FORM -->
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="ad" class="form-label">Ad <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="ad" name="ad" value="{{ sahip.ad }}" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="soyad" class="form-label">Soyad <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="soyad" name="soyad" value="{{ sahip.soyad }}" required>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="telefon" class="form-label">Telefon <span class="text-danger">*</span></label>
+                                    <input type="tel" class="form-control" id="telefon" name="telefon" value="{{ sahip.telefon }}" required>
+                                    <div class="form-text">5 ile başlayan 10-11 haneli telefon numarası</div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="yedek_telefon" class="form-label">Yedek Telefon</label>
+                                    <input type="tel" class="form-control" id="yedek_telefon" name="yedek_telefon" value="{{ sahip.yedek_telefon }}">
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="acil_durum_kontagi" class="form-label">Acil Durum İletişim</label>
+                                <textarea class="form-control" id="acil_durum_kontagi" name="acil_durum_kontagi" rows="3" placeholder="Acil durumlarda aranacak kişi ve iletişim bilgileri">{{ sahip.acil_durum_kontagi }}</textarea>
+                            </div>
+                            
+                        {% elif user.veteriner_profili %}
+                            <!-- VETERİNER KULLANICI FORM -->
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="ad" class="form-label">Ad <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="ad" name="ad" value="{{ user.veteriner_profili.ad }}" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="soyad" class="form-label">Soyad <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="soyad" name="soyad" value="{{ user.veteriner_profili.soyad }}" required>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="telefon" class="form-label">Telefon <span class="text-danger">*</span></label>
+                                    <input type="tel" class="form-control" id="telefon" name="telefon" value="{{ user.veteriner_profili.telefon }}" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="email" class="form-label">E-posta <span class="text-danger">*</span></label>
+                                    <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" required>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="uzmanlik_alanlari" class="form-label">Uzmanlık Alanları</label>
+                                    <input type="text" class="form-control" id="uzmanlik_alanlari" name="uzmanlik_alanlari" value="{{ user.veteriner_profili.uzmanlik_alanlari }}" placeholder="Örn: Küçük hayvan cerrahisi, dermatoloji">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="deneyim_yili" class="form-label">Deneyim Yılı</label>
+                                    <input type="number" class="form-control" id="deneyim_yili" name="deneyim_yili" value="{{ user.veteriner_profili.deneyim_yili }}" min="0" max="50">
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="ozgecmis" class="form-label">Özgeçmiş</label>
+                                <textarea class="form-control" id="ozgecmis" name="ozgecmis" rows="4" placeholder="Eğitim, deneyim ve uzmanlık alanlarınız hakkında bilgi verin">{{ user.veteriner_profili.ozgecmis }}</textarea>
+                            </div>
+                            
+                        {% elif user.petshop_profili %}
+                            <!-- PETSHOP KULLANICI FORM -->
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="isletme_adi" class="form-label">İşletme Adı <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="isletme_adi" name="isletme_adi" value="{{ user.petshop_profili.isletme_adi }}" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="yetkili_kisi" class="form-label">Yetkili Kişi <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="yetkili_kisi" name="yetkili_kisi" value="{{ user.petshop_profili.yetkili_kisi }}" required>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="telefon" class="form-label">Telefon <span class="text-danger">*</span></label>
+                                    <input type="tel" class="form-control" id="telefon" name="telefon" value="{{ user.petshop_profili.telefon }}" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="email" class="form-label">E-posta <span class="text-danger">*</span></label>
+                                    <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" required>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="vergi_no" class="form-label">Vergi Numarası</label>
+                                    <input type="text" class="form-control" id="vergi_no" name="vergi_no" value="{{ user.petshop_profili.vergi_no }}">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="ticaret_sicil_no" class="form-label">Ticaret Sicil Numarası</label>
+                                    <input type="text" class="form-control" id="ticaret_sicil_no" name="ticaret_sicil_no" value="{{ user.petshop_profili.ticaret_sicil_no }}">
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="isletme_aciklamasi" class="form-label">İşletme Açıklaması</label>
+                                <textarea class="form-control" id="isletme_aciklamasi" name="isletme_aciklamasi" rows="4" placeholder="İşletmeniz hakkında bilgi verin">{{ user.petshop_profili.isletme_aciklamasi }}</textarea>
+                            </div>
+                            
+                        {% else %}
+                            <!-- MİSAFİR KULLANICI FORM -->
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="ad" class="form-label">Ad <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="ad" name="ad" value="{{ user.first_name }}" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="soyad" class="form-label">Soyad <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="soyad" name="soyad" value="{{ user.last_name }}" required>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="email" class="form-label">E-posta <span class="text-danger">*</span></label>
+                                    <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="telefon" class="form-label">Telefon</label>
+                                    <input type="tel" class="form-control" id="telefon" name="telefon" value="{{ user.misafir_profili.telefon|default:'' }}">
+                                </div>
+                            </div>
+                        {% endif %}
+                        
+                        <!-- Şifre Değiştirme -->
+                        <hr class="section-divider">
+
+                        <div class="password-section-title">
+                            <i class="fas fa-lock"></i>
+                            <span>Şifre Değiştirme</span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="new_password1" class="form-label">Yeni Şifre</label>
+                            <input type="password" class="form-control" id="new_password1" name="new_password1" placeholder="Yeni şifre girin (boş bırakabilirsiniz)">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="new_password2" class="form-label">Yeni Şifre Tekrar</label>
+                            <input type="password" class="form-control" id="new_password2" name="new_password2" placeholder="Yeni şifreyi tekrar girin">
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="current_password" class="form-label">Mevcut Şifre</label>
+                            <input type="password" class="form-control" id="current_password" name="current_password" placeholder="Şifre değiştirmek için mevcut şifrenizi girin">
+                        </div>
+
+                        <!-- Butonlar -->
+                        <div class="form-actions">
+                            {% if user.sahip %}
+                                <a href="{% url 'anahtarlik:sahip_profilim' %}" class="btn btn-secondary">
+                                    <i class="fas fa-arrow-left me-2"></i>Geri
+                                </a>
+                            {% elif user.veteriner_profili %}
+                                <a href="{% url 'veteriner:veteriner_paneli' %}" class="btn btn-secondary">
+                                    <i class="fas fa-arrow-left me-2"></i>Geri
+                                </a>
+                            {% elif user.petshop_profili %}
+                                <a href="{% url 'anahtarlik:kullanici_paneli' %}" class="btn btn-secondary">
+                                    <i class="fas fa-arrow-left me-2"></i>Geri
+                                </a>
+                            {% else %}
+                                <a href="{% url 'guest_dashboard' %}" class="btn btn-secondary">
+                                    <i class="fas fa-arrow-left me-2"></i>Geri
+                                </a>
+                            {% endif %}
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Kaydet
+                            </button>
+                        </div>
+                    </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Şifre uyumluluğu kontrolü
+document.getElementById('new_password2').addEventListener('input', function() {
+    const password1 = document.getElementById('new_password1').value;
+    const password2 = this.value;
+    
+    if (password1 && password2 && password1 !== password2) {
+        this.setCustomValidity('Şifreler eşleşmiyor');
+    } else {
+        this.setCustomValidity('');
+    }
+});
+
+// Şifre değiştirme alanlarının görünürlüğü
+document.getElementById('new_password1').addEventListener('input', function() {
+    const password2 = document.getElementById('new_password2');
+    const currentPassword = document.getElementById('current_password');
+    
+    if (this.value) {
+        password2.required = true;
+        currentPassword.required = true;
+    } else {
+        password2.required = false;
+        currentPassword.required = false;
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,186 @@
+{% extends 'ana.html' %}
+{% load static %}
+
+{% block title %}Kargo Takip - PetSafe Hub{% endblock %}
+
+{% block css_dosyalar %}
+<style>
+    body {
+        background: #f5f5f5 !important;
+    }
+
+    .tracking-container {
+        max-width: 600px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+
+    .tracking-header {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+
+    .tracking-header h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #333;
+        margin: 0 0 10px 0;
+    }
+
+    .order-number {
+        color: #667eea;
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+
+    .tracking-form {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-label {
+        display: block;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 8px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .btn {
+        width: 100%;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .back-btn {
+        display: inline-block;
+        background: #6c757d;
+        color: white;
+        padding: 12px 24px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        margin-top: 20px;
+        text-align: center;
+    }
+
+    .back-btn:hover {
+        background: #5a6268;
+        color: white;
+        text-decoration: none;
+    }
+
+    .alert {
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+
+    .alert-danger {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="tracking-container">
+    <div class="tracking-header">
+        <h1>📦 Kargo Takip</h1>
+        <div class="order-number">Sipariş No: #{{ siparis_id }}</div>
+    </div>
+
+    <div class="tracking-form">
+        <h2 class="form-title">Sipariş Bilgilerinizi Girin</h2>
+        
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-danger">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="email" class="form-label">E-posta Adresiniz</label>
+                <input type="email" id="email" name="email" class="form-control" required 
+                       placeholder="ornek@email.com">
+            </div>
+
+            <div class="form-group">
+                <label for="telefon" class="form-label">Telefon Numaranız</label>
+                <input type="tel" id="telefon" name="telefon" class="form-control" required 
+                       placeholder="0555 555 55 55">
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                📦 Kargo Durumunu Sorgula
+            </button>
+        </form>
+
+        <a href="{% url 'shop:shop_home' %}" class="back-btn">
+            ← Ana Sayfaya Dön
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+
+
+
+
+
+
+

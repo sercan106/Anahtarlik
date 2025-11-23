@@ -1,0 +1,22 @@
+{% extends "ana.html" %}
+
+{% block baslik %}Sahip Bilgilerini Güncelle | {{ pet.ad }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h2 class="mb-4">👤 Sahip Bilgileri - {{ pet.ad }}</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+        <div class="card">
+            <div class="card-body">
+                {{ form.as_p }}
+            </div>
+            <div class="card-footer text-end">
+                <a href="{% url 'anahtarlik:pet_detail' pet.id %}" class="btn btn-secondary">İptal</a>
+                <button type="submit" class="btn btn-success">Kaydet</button>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,187 @@
+{% extends "ana.html" %}
+{% block baslik %}<title>Petshop Profil</title>{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fas fa-user-edit me-2"></i>Petshop Profil</h2>
+                <a href="{% url 'petshop:petshop_paneli' %}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Geri Dön
+                </a>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Profil Bilgileri</h5>
+                        </div>
+                        <div class="card-body">
+                            <form method="post">
+                                {% csrf_token %}
+                                
+                                <!-- Temel Bilgiler -->
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Petshop Adı *</label>
+                                        {{ form.ad }}
+                                        {% if form.ad.errors %}
+                                            <div class="text-danger small">{{ form.ad.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Telefon</label>
+                                        {{ form.telefon }}
+                                        {% if form.telefon.errors %}
+                                            <div class="text-danger small">{{ form.telefon.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">E-posta</label>
+                                        {{ form.email }}
+                                        {% if form.email.errors %}
+                                            <div class="text-danger small">{{ form.email.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">İl</label>
+                                        {{ form.il }}
+                                        {% if form.il.errors %}
+                                            <div class="text-danger small">{{ form.il.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">İlçe</label>
+                                        {{ form.ilce }}
+                                        {% if form.ilce.errors %}
+                                            <div class="text-danger small">{{ form.ilce.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Vergi No</label>
+                                        {{ form.vergi_no }}
+                                        {% if form.vergi_no.errors %}
+                                            <div class="text-danger small">{{ form.vergi_no.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label">Adres Detayı</label>
+                                    {{ form.adres_detay }}
+                                    {% if form.adres_detay.errors %}
+                                        <div class="text-danger small">{{ form.adres_detay.errors }}</div>
+                                    {% endif %}
+                                </div>
+                                
+                                <!-- İşletme Bilgileri -->
+                                <hr>
+                                <h6 class="text-primary mb-3">İşletme Bilgileri</h6>
+                                
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Vergi Dairesi</label>
+                                        {{ form.vergi_dairesi }}
+                                        {% if form.vergi_dairesi.errors %}
+                                            <div class="text-danger small">{{ form.vergi_dairesi.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Ticaret Sicil No</label>
+                                        {{ form.ticaret_sicil_no }}
+                                        {% if form.ticaret_sicil_no.errors %}
+                                            <div class="text-danger small">{{ form.ticaret_sicil_no.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <!-- Ödeme ve Kargo Tercihleri -->
+                                <hr>
+                                <h6 class="text-primary mb-3">Ödeme ve Kargo Tercihleri</h6>
+                                
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Ödeme Modeli</label>
+                                        {{ form.odeme_modeli }}
+                                        {% if form.odeme_modeli.errors %}
+                                            <div class="text-danger small">{{ form.odeme_modeli.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Tercih Edilen Kargo</label>
+                                        {{ form.tercih_edilen_kargo }}
+                                        {% if form.tercih_edilen_kargo.errors %}
+                                            <div class="text-danger small">{{ form.tercih_edilen_kargo.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <div class="form-check">
+                                        {{ form.aktif }}
+                                        <label class="form-check-label" for="{{ form.aktif.id_for_label }}">
+                                            Aktif
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save me-2"></i>Kaydet
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">İstatistikler</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <strong>Tahsis Sayısı:</strong>
+                                <span class="badge bg-primary ms-2">{{ petshop.tahsis_sayisi }}</span>
+                            </div>
+                            <div class="mb-3">
+                                <strong>Satış Sayısı:</strong>
+                                <span class="badge bg-success ms-2">{{ petshop.satis_sayisi }}</span>
+                            </div>
+                            <div class="mb-3">
+                                <strong>Oluşturulma Tarihi:</strong>
+                                <br><small class="text-muted">{{ petshop.olusturulma|date:"d.m.Y H:i" }}</small>
+                            </div>
+                            <div class="mb-3">
+                                <strong>Durum:</strong>
+                                {% if petshop.aktif %}
+                                    <span class="badge bg-success ms-2">Aktif</span>
+                                {% else %}
+                                    <span class="badge bg-danger ms-2">Pasif</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+
+
+
+
+
+
+

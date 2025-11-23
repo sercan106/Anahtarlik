@@ -1,0 +1,427 @@
+{% extends "ana.html" %}
+{% load static %}
+
+{% block title %}Kredi Satın Al - PetSafe Hub{% endblock %}
+
+{% block css_dosyalar %}
+<style>
+    :root {
+        --shop-primary: #5B9BD5;
+        --shop-secondary: #70C1B3;
+        --shop-accent: #FF8C42;
+        --shop-success: #6FCF97;
+        --shop-warning: #F2C94C;
+    }
+
+    .shop-header {
+        background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
+        color: white;
+        padding: 3rem 1rem;
+        margin-bottom: 2rem;
+        border-radius: 0 0 40px 40px;
+        text-align: center;
+    }
+
+    .shop-header h1 {
+        font-weight: 800;
+        margin-bottom: 0.5rem;
+        font-size: 2.5rem;
+    }
+
+    @media (max-width: 768px) {
+        .shop-header h1 {
+            font-size: 1.8rem;
+        }
+    }
+
+    .alert-custom {
+        background: linear-gradient(135deg, rgba(242, 201, 76, 0.1) 0%, rgba(255, 140, 66, 0.1) 100%);
+        border-left: 5px solid var(--shop-warning);
+        border-radius: 15px;
+        padding: 1.2rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .alert-info-custom {
+        background: linear-gradient(135deg, rgba(91, 155, 213, 0.1) 0%, rgba(112, 193, 179, 0.1) 100%);
+        border-left: 5px solid var(--shop-primary);
+        border-radius: 15px;
+        padding: 1.2rem;
+        margin-bottom: 2rem;
+    }
+
+    .paket-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 28px;
+        padding: 2rem;
+        text-align: center;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 15px 45px rgba(91, 155, 213, 0.12);
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .paket-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+        background: linear-gradient(90deg, var(--shop-primary) 0%, var(--shop-secondary) 100%);
+        transform: scaleX(0);
+        transition: transform 0.4s ease;
+    }
+
+    .paket-card:hover::before {
+        transform: scaleX(1);
+    }
+
+    .paket-card:hover {
+        transform: translateY(-10px) scale(1.02);
+        box-shadow: 0 25px 60px rgba(91, 155, 213, 0.25);
+        border-color: var(--shop-primary);
+    }
+
+    .paket-badge {
+        display: inline-block;
+        background: linear-gradient(135deg, var(--shop-warning) 0%, var(--shop-accent) 100%);
+        color: white;
+        padding: 0.5rem 1.5rem;
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 0.85rem;
+        margin-bottom: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .paket-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--shop-primary);
+        margin-bottom: 1rem;
+    }
+
+    .paket-description {
+        color: #6c757d;
+        font-size: 0.9rem;
+        margin-bottom: 1.5rem;
+        min-height: 40px;
+    }
+
+    .paket-kredi {
+        font-size: 3rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, var(--shop-primary) 0%, var(--shop-secondary) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0.5rem;
+    }
+
+    .paket-fiyat {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--shop-accent);
+        margin-bottom: 0.5rem;
+    }
+
+    .paket-birim {
+        font-size: 0.85rem;
+        color: #6c757d;
+        margin-bottom: 2rem;
+    }
+
+    .btn-paket {
+        background: linear-gradient(135deg, var(--shop-primary) 0%, var(--shop-secondary) 100%);
+        border: none;
+        border-radius: 20px;
+        color: white;
+        padding: 1rem 2.5rem;
+        font-weight: 700;
+        font-size: 1.1rem;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 10px 30px rgba(91, 155, 213, 0.3);
+        width: 100%;
+    }
+
+    .btn-paket:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 40px rgba(91, 155, 213, 0.4);
+        color: white;
+    }
+
+    .btn-paket:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .btn-geri {
+        background: linear-gradient(135deg, rgba(91, 155, 213, 0.1) 0%, rgba(112, 193, 179, 0.1) 100%);
+        border: 2px solid var(--shop-primary);
+        border-radius: 20px;
+        color: var(--shop-primary);
+        padding: 1rem 2rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-geri:hover {
+        background: linear-gradient(135deg, var(--shop-primary) 0%, var(--shop-secondary) 100%);
+        color: white;
+        transform: translateY(-3px);
+    }
+
+    /* Modal Styling */
+    .modal-content {
+        border-radius: 28px;
+        border: none;
+        overflow: hidden;
+    }
+
+    .modal-header {
+        background: linear-gradient(135deg, var(--shop-primary) 0%, var(--shop-secondary) 100%);
+        color: white;
+        border: none;
+        padding: 1.5rem;
+    }
+
+    .modal-body {
+        padding: 2rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .paket-kredi {
+            font-size: 2.5rem;
+        }
+
+        .paket-fiyat {
+            font-size: 1.5rem;
+        }
+
+        .paket-card {
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+    }
+
+    /* Animation for empty state */
+    .empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
+    }
+
+    .empty-state i {
+        font-size: 4rem;
+        color: var(--shop-secondary);
+        opacity: 0.5;
+        margin-bottom: 1.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+{% csrf_token %}
+<div class="container mt-4 mb-5">
+    <!-- Header -->
+    <div class="shop-header">
+        <h1><i class="fas fa-coins me-2"></i>Kredi Satın Al</h1>
+        <p class="mb-0 opacity-90">İhtiyacınıza uygun kredi paketini seçin</p>
+    </div>
+
+    <div class="container" style="max-width: 1200px;">
+        <!-- Alerts -->
+        <div class="alert-custom">
+            <strong><i class="fas fa-exclamation-triangle me-2"></i>TEST MODU:</strong> Gerçek ödeme yapmadan kredi eklenecektir.
+        </div>
+
+        <div class="alert-info-custom">
+            <strong><i class="fas fa-info-circle me-2"></i>Bilgilendirme:</strong> Kredi ile daha fazla ilan verebilir ve öne çıkarabilirsiniz.
+        </div>
+
+        <!-- Paketler -->
+        <div class="row g-4 mb-5">
+            {% for paket in kredi_paketleri %}
+            <div class="col-lg-3 col-md-6 col-sm-6">
+                <div class="paket-card">
+                    {% if paket.etiket %}
+                    <div class="paket-badge">{{ paket.etiket }}</div>
+                    {% endif %}
+
+                    <h5 class="paket-title">{{ paket.ad }}</h5>
+
+                    {% if paket.aciklama %}
+                    <p class="paket-description">{{ paket.aciklama }}</p>
+                    {% endif %}
+
+                    <div class="paket-kredi">{{ paket.kredi_adet }}</div>
+                    <small class="d-block mb-3 text-muted fw-bold">KREDİ</small>
+
+                    <div class="paket-fiyat">₺{{ paket.fiyat }}</div>
+                    <div class="paket-birim">₺{{ paket.birim_fiyat|floatformat:2 }}/kredi</div>
+
+                    <button class="btn btn-paket" data-paket-id="{{ paket.id }}">
+                        <i class="fas fa-shopping-cart me-2"></i>Satın Al
+                    </button>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12">
+                <div class="empty-state">
+                    <i class="fas fa-box-open"></i>
+                    <h5 class="text-muted">Aktif kredi paketi bulunmamaktadır.</h5>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Geri Dön Button -->
+        <div class="text-center mt-5">
+            <a href="{% url 'ilan:kredi_durumu' %}" class="btn btn-geri">
+                <i class="fas fa-arrow-left me-2"></i>Kredi Durumuma Dön
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="odemeModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold"><i class="fas fa-credit-card me-2"></i>Ödeme</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="odeme-detaylari"></div>
+                <div class="alert-custom">
+                    <strong><i class="fas fa-shield-alt me-2"></i>Test Modu:</strong> Gerçek para çekilmeyecektir.
+                </div>
+                <form id="payment-form">
+                    <div id="payment-element" class="mb-3"></div>
+                    <button id="submit" class="btn btn-paket">
+                        <span id="button-text">Ödeme Yap</span>
+                        <span id="spinner" class="spinner-border spinner-border-sm ms-2" style="display: none;"></span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js_dosyalar %}
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+const stripe = Stripe('{{ stripe_public_key }}');
+
+document.addEventListener('DOMContentLoaded', function() {
+    const satinAlBtns = document.querySelectorAll('.btn-paket[data-paket-id]');
+    const odemeModal = new bootstrap.Modal(document.getElementById('odemeModal'));
+
+    satinAlBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const paketId = this.dataset.paketId;
+            if (paketId) krediSatinAl(paketId);
+        });
+    });
+
+    function krediSatinAl(paketId) {
+        const btn = document.querySelector(`[data-paket-id="${paketId}"]`);
+        const originalHTML = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>İşleniyor...';
+        btn.disabled = true;
+
+        fetch('{% url "ilan:kredi_satin_al" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: `paket=${paketId}`
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                if (data.test_mode) {
+                    // Success animation
+                    btn.innerHTML = '<i class="fas fa-check-circle me-2"></i>Başarılı!';
+                    btn.style.background = 'linear-gradient(135deg, #6FCF97 0%, #70C1B3 100%)';
+
+                    setTimeout(() => {
+                        alert(`${data.message} - ${data.paket.adet} kredi eklendi!`);
+                        window.location.href = '{% url "ilan:kredi_durumu" %}';
+                    }, 1000);
+                } else {
+                    document.getElementById('odeme-detaylari').innerHTML = `
+                        <div class="alert-info-custom mb-3">
+                            <strong>${data.paket.ad}</strong><br>
+                            <span class="fs-4">${data.paket.adet} kredi - ₺${data.paket.fiyat}</span>
+                        </div>
+                    `;
+                    odemeModal.show();
+                    startPayment(data.client_secret);
+                }
+            } else {
+                alert(data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Hata:', error);
+            alert('Bir hata oluştu. Lütfen tekrar deneyin.');
+        })
+        .finally(() => {
+            if (!data || !data.test_mode) {
+                btn.innerHTML = originalHTML;
+                btn.disabled = false;
+            }
+        });
+    }
+
+    function startPayment(clientSecret) {
+        const elements = stripe.elements({
+            clientSecret: clientSecret
+        });
+
+        const paymentElement = elements.create('payment');
+        paymentElement.mount('#payment-element');
+
+        const form = document.getElementById('payment-form');
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const submitButton = document.getElementById('submit');
+            const buttonText = document.getElementById('button-text');
+            const spinner = document.getElementById('spinner');
+
+            submitButton.disabled = true;
+            buttonText.textContent = 'İşleniyor...';
+            spinner.style.display = 'inline-block';
+
+            const {error} = await stripe.confirmPayment({
+                elements,
+                confirmParams: {
+                    return_url: window.location.origin + '{% url "ilan:kredi_durumu" %}'
+                }
+            });
+
+            if (error) {
+                alert(error.message);
+                submitButton.disabled = false;
+                buttonText.textContent = 'Ödeme Yap';
+                spinner.style.display = 'none';
+            } else {
+                buttonText.textContent = 'Başarılı! Yönlendiriliyor...';
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

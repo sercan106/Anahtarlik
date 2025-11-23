@@ -1,0 +1,583 @@
+{% extends 'ana.html' %}
+{% load static %}
+
+{% block baslik %}Hayvan Profili Oluştur - PetSafe Hub{% endblock %}
+
+{% block css_dosyalar %}
+<style>
+    .profil-olustur-header {
+        background: linear-gradient(135deg, #FF8C42 0%, #6FCF97 100%);
+        color: white;
+        padding: 3rem 0;
+        margin-bottom: 2rem;
+    }
+    
+    .profil-form-kart {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+    
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-label {
+        font-weight: 600;
+        color: #2d3748;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+    
+    .form-control {
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 0.8rem 1rem;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .form-control:focus {
+        border-color: #4facfe;
+        box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+        outline: none;
+    }
+    
+    .form-check-input {
+        width: 20px;
+        height: 20px;
+        border-radius: 6px;
+        border: 2px solid #e2e8f0;
+    }
+    
+    .form-check-input:checked {
+        background-color: #4facfe;
+        border-color: #4facfe;
+    }
+    
+    .form-check-label {
+        margin-left: 0.5rem;
+        font-weight: 500;
+        color: #4a5568;
+    }
+    
+    .kredi-bilgi {
+        background: linear-gradient(135deg, #38a169 0%, #48bb78 100%);
+        color: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+    
+    .kredi-miktar {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+    
+    .submit-btn {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        color: white;
+        border: none;
+        border-radius: 15px;
+        padding: 1rem 3rem;
+        font-weight: 600;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        width: 100%;
+    }
+    
+    .submit-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+    }
+    
+    .submit-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+    }
+    
+    .adim-bilgi {
+        background: rgba(79, 172, 254, 0.1);
+        border-radius: 12px;
+        padding: 1rem;
+        margin-bottom: 2rem;
+        border-left: 4px solid #4facfe;
+    }
+    
+    .resim-preview {
+        width: 150px;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 15px;
+        border: 3px solid #e2e8f0;
+        margin-top: 1rem;
+    }
+    
+    .il-ilce-container {
+        display: flex;
+        gap: 1rem;
+    }
+    
+    .il-ilce-container .form-group {
+        flex: 1;
+    }
+    
+    .sağlik-bilgileri {
+        background: rgba(79, 172, 254, 0.05);
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+    }
+    
+    .sağlik-bilgileri h5 {
+        color: #4facfe;
+        margin-bottom: 1rem;
+    }
+    
+    .checkbox-group {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block icerik %}
+<!-- Header -->
+<div class="profil-olustur-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1 class="mb-3">
+                    <i class="fas fa-paw me-2"></i>
+                    Hayvan Profili Oluştur
+                </h1>
+                <p class="mb-0">Sevimli dostunuz için detaylı bir profil oluşturun</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Kredi Bilgisi -->
+            <div class="kredi-bilgi">
+                <div class="kredi-miktar">{{ profil_olusturma_ucreti }} Kredi</div>
+                <p class="mb-0">Hayvan profili oluşturmak için gerekli kredi miktarı</p>
+                <small>Mevcut bakiyeniz: <strong>{{ kullanici_bakiye }} kredi</strong></small>
+            </div>
+
+            <!-- Form -->
+            <div class="profil-form-kart">
+                <div class="p-4">
+                    <div class="adim-bilgi">
+                        <h5 class="mb-2">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Adım 1: Hayvan Bilgileri
+                        </h5>
+                        <p class="mb-0">Hayvanınızın temel bilgilerini girin</p>
+                    </div>
+
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <!-- Temel Bilgiler -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="{{ form.hayvan_adi.id_for_label }}">
+                                        <i class="fas fa-tag me-2"></i>Hayvan Adı *
+                                    </label>
+                                    {{ form.hayvan_adi }}
+                                    {% if form.hayvan_adi.errors %}
+                                        <div class="text-danger mt-1">{{ form.hayvan_adi.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="{{ form.tur.id_for_label }}">
+                                        <i class="fas fa-paw me-2"></i>Tür *
+                                    </label>
+                                    {{ form.tur }}
+                                    {% if form.tur.errors %}
+                                        <div class="text-danger mt-1">{{ form.tur.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="{{ form.irk.id_for_label }}">
+                                        <i class="fas fa-dna me-2"></i>Irk *
+                                    </label>
+                                    {{ form.irk }}
+                                    {% if form.irk.errors %}
+                                        <div class="text-danger mt-1">{{ form.irk.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="{{ form.dogum_tarihi.id_for_label }}">
+                                        <i class="fas fa-birthday-cake me-2"></i>Doğum Tarihi *
+                                    </label>
+                                    {{ form.dogum_tarihi }}
+                                    {% if form.dogum_tarihi.errors %}
+                                        <div class="text-danger mt-1">{{ form.dogum_tarihi.errors.0 }}</div>
+                                    {% endif %}
+                                    <small class="form-text text-muted">Hayvanın doğum tarihini seçin. Yaş otomatik hesaplanacaktır.</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="{{ form.cinsiyet.id_for_label }}">
+                                        <i class="fas fa-venus-mars me-2"></i>Cinsiyet *
+                                    </label>
+                                    {{ form.cinsiyet }}
+                                    {% if form.cinsiyet.errors %}
+                                        <div class="text-danger mt-1">{{ form.cinsiyet.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="{{ form.profil_fotografi.id_for_label }}">
+                                        <i class="fas fa-camera me-2"></i>Profil Fotoğrafı *
+                                    </label>
+                                    {{ form.profil_fotografi }}
+                                    {% if form.profil_fotografi.errors %}
+                                        <div class="text-danger mt-1">{{ form.profil_fotografi.errors.0 }}</div>
+                                    {% endif %}
+                                    <div id="resim-preview"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Ek Resimler -->
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label class="form-label" for="resimler">
+                                        <i class="fas fa-images me-2"></i>Ek Resimler (Maksimum 3)
+                                    </label>
+                                    <input type="file" name="resimler" id="resimler" class="form-control" accept="image/*" multiple>
+                                    <small class="form-text text-muted">Maksimum 3 resim yükleyebilirsiniz.</small>
+                                    <div id="ek-resim-preview" class="mt-3"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sağlık Bilgileri -->
+                        <div class="sağlik-bilgileri">
+                            <h5>
+                                <i class="fas fa-heartbeat me-2"></i>
+                                Sağlık Bilgileri
+                            </h5>
+                            <div class="checkbox-group">
+                                <div class="form-check">
+                                    {{ form.asi_durumu }}
+                                    <label class="form-check-label" for="{{ form.asi_durumu.id_for_label }}">
+                                        <i class="fas fa-syringe me-1"></i>Aşı Durumu
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    {{ form.ic_parazit }}
+                                    <label class="form-check-label" for="{{ form.ic_parazit.id_for_label }}">
+                                        <i class="fas fa-bug me-1"></i>İç Parazit
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    {{ form.dis_parazit }}
+                                    <label class="form-check-label" for="{{ form.dis_parazit.id_for_label }}">
+                                        <i class="fas fa-bug me-1"></i>Dış Parazit
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Gönderim -->
+                        <div class="sağlik-bilgileri">
+                            <h5>
+                                <i class="fas fa-truck me-2"></i>
+                                Gönderim Bilgileri
+                            </h5>
+                            <div class="checkbox-group">
+                                <div class="form-check">
+                                    {{ form.sehir_disi_gonderim }}
+                                    <label class="form-check-label" for="{{ form.sehir_disi_gonderim.id_for_label }}">
+                                        <i class="fas fa-truck me-1"></i>Şehir Dışına Gönderim
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Konum Bilgileri -->
+                        <div class="row">
+                            <div class="col-12">
+                                <h5 class="mb-3">
+                                    <i class="fas fa-map-marker-alt me-2 text-primary"></i>
+                                    Konum Bilgileri
+                                </h5>
+                            </div>
+                        </div>
+
+                        <div class="il-ilce-container">
+                            <div class="form-group">
+                                <label class="form-label" for="{{ form.il.id_for_label }}">
+                                    <i class="fas fa-map me-2"></i>İl *
+                                </label>
+                                {{ form.il }}
+                                {% if form.il.errors %}
+                                    <div class="text-danger mt-1">{{ form.il.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="{{ form.ilce.id_for_label }}">
+                                    <i class="fas fa-map-pin me-2"></i>İlçe *
+                                </label>
+                                {{ form.ilce }}
+                                {% if form.ilce.errors %}
+                                    <div class="text-danger mt-1">{{ form.ilce.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="{{ form.mahalle.id_for_label }}">
+                                        <i class="fas fa-home me-2"></i>Mahalle
+                                    </label>
+                                    {{ form.mahalle }}
+                                    {% if form.mahalle.errors %}
+                                        <div class="text-danger mt-1">{{ form.mahalle.errors.0 }}</div>
+                                    {% endif %}
+                                    <small class="text-muted">Mahalle listeden seçiniz</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="mahalle_diger">
+                                        <i class="fas fa-edit me-2"></i>Mahalle (Manuel)
+                                    </label>
+                                    <input type="text" name="mahalle_diger" id="mahalle_diger" class="form-control" placeholder="Mahalle listede yoksa manuel giriniz">
+                                    <small class="text-muted">Listede yoksa buraya yazabilirsiniz</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- İletişim Bilgileri -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="{{ form.telefon.id_for_label }}">
+                                        <i class="fas fa-phone me-2"></i>Telefon Numarası *
+                                    </label>
+                                    {{ form.telefon }}
+                                    {% if form.telefon.errors %}
+                                        <div class="text-danger mt-1">{{ form.telefon.errors.0 }}</div>
+                                    {% endif %}
+                                    <small class="form-text text-muted">İlan için iletişim telefon numaranız (05XX XXX XX XX)</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Açıklama -->
+                        <div class="form-group">
+                            <label class="form-label" for="{{ form.aciklama.id_for_label }}">
+                                <i class="fas fa-comment me-2"></i>Hayvan Hakkında Açıklama
+                            </label>
+                            {{ form.aciklama }}
+                            {% if form.aciklama.errors %}
+                                <div class="text-danger mt-1">{{ form.aciklama.errors.0 }}</div>
+                            {% endif %}
+                            <small class="text-muted">Hayvanınızın özellikleri, karakteri ve özel durumları hakkında bilgi verin</small>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="text-center mt-4">
+                            <button type="submit" class="submit-btn" 
+                                    {% if kullanici_bakiye < profil_olusturma_ucreti %}disabled{% endif %}>
+                                <i class="fas fa-save me-2"></i>
+                                Hayvan Profili Oluştur ({{ profil_olusturma_ucreti }} Kredi)
+                            </button>
+                            
+                            {% if kullanici_bakiye < profil_olusturma_ucreti %}
+                                <div class="alert alert-warning mt-3">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                    Yetersiz bakiye! Profil oluşturmak için {{ profil_olusturma_ucreti }} kredi gerekli.
+                                    <a href="{% url 'ilan:kredi_durumu' %}" class="btn btn-sm btn-outline-primary ms-2">
+                                        Kredi Satın Al
+                                    </a>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js_dosyalar %}
+<script>
+    // Resim önizleme
+    document.getElementById('{{ form.profil_fotografi.id_for_label }}').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const preview = document.getElementById('resim-preview');
+                preview.innerHTML = '<img src="' + e.target.result + '" class="resim-preview" alt="Önizleme">';
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // Ek resimler önizleme
+    document.getElementById('resimler').addEventListener('change', function(e) {
+        const files = Array.from(e.target.files);
+        const preview = document.getElementById('ek-resim-preview');
+        
+        if (files.length > 3) {
+            alert('Maksimum 3 resim seçebilirsiniz. İlk 3 resim gösterilecek.');
+            files.splice(3);
+        }
+        
+        preview.innerHTML = '';
+        
+        files.forEach((file, index) => {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const imgDiv = document.createElement('div');
+                imgDiv.className = 'd-inline-block me-2 mb-2';
+                imgDiv.innerHTML = `
+                    <div class="position-relative">
+                        <img src="${e.target.result}" class="img-thumbnail" style="width: 100px; height: 100px; object-fit: cover;">
+                        <small class="d-block text-center">Resim ${index + 1}</small>
+                    </div>
+                `;
+                preview.appendChild(imgDiv);
+            };
+            reader.readAsDataURL(file);
+        });
+    });
+
+    // İl-İlçe bağımlılığı
+    document.getElementById('{{ form.il.id_for_label }}').addEventListener('change', function() {
+        const ilId = this.value;
+        const ilceSelect = document.getElementById('{{ form.ilce.id_for_label }}');
+        const mahalleSelect = document.getElementById('{{ form.mahalle.id_for_label }}');
+        
+        // Mahalle dropdown'ını da sıfırla
+        mahalleSelect.innerHTML = '<option value="">Önce ilçe seçiniz</option>';
+        
+        if (ilId) {
+            ilceSelect.innerHTML = '<option value="">Yükleniyor...</option>';
+            
+            fetch(`{% url 'ilan:ilce_listesi' %}?il_id=${ilId}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Tüm seçenekleri temizle
+                    ilceSelect.innerHTML = '<option value="">İlçe seçin</option>';
+                    
+                    // Yeni seçenekleri ekle
+                    data.forEach(ilce => {
+                        const option = document.createElement('option');
+                        option.value = ilce.id;
+                        option.textContent = ilce.ad;
+                        ilceSelect.appendChild(option);
+                    });
+                });
+        } else {
+            ilceSelect.innerHTML = '<option value="">Önce il seçiniz</option>';
+        }
+    });
+
+    // İlçe-Mahalle bağımlılığı
+    document.getElementById('{{ form.ilce.id_for_label }}').addEventListener('change', function() {
+        const ilceId = this.value;
+        const mahalleSelect = document.getElementById('{{ form.mahalle.id_for_label }}');
+        
+        if (ilceId) {
+            mahalleSelect.innerHTML = '<option value="">Yükleniyor...</option>';
+            
+            fetch(`{% url 'ilan:mahalle_listesi' %}?ilce_id=${ilceId}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Tüm seçenekleri temizle
+                    mahalleSelect.innerHTML = '<option value="">Mahalle seçin</option>';
+                    
+                    // Yeni seçenekleri ekle
+                    data.forEach(mahalle => {
+                        const option = document.createElement('option');
+                        option.value = mahalle.id;
+                        option.textContent = mahalle.ad;
+                        mahalleSelect.appendChild(option);
+                    });
+                });
+        } else {
+            mahalleSelect.innerHTML = '<option value="">Önce ilçe seçiniz</option>';
+        }
+    });
+
+    // Tür-ırk bağımlılığı
+    const turSelect = document.getElementById('{{ form.tur.id_for_label }}');
+    const irkSelect = document.getElementById('{{ form.irk.id_for_label }}');
+    
+    function loadIrklar(turId) {
+        if (turId) {
+            fetch(`{% url 'ilan:irk_listesi' %}?tur_id=${turId}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Mevcut seçili değeri sakla
+                    const currentValue = irkSelect.value;
+                    
+                    // Tüm seçenekleri temizle
+                    irkSelect.innerHTML = '<option value="">Irk seçin</option>';
+                    
+                    // Yeni seçenekleri ekle
+                    data.forEach(irk => {
+                        const option = document.createElement('option');
+                        option.value = irk.id;
+                        option.textContent = irk.ad;
+                        if (irk.id == currentValue) {
+                            option.selected = true;
+                        }
+                        irkSelect.appendChild(option);
+                    });
+                })
+                .catch(error => {
+                    console.error('Irk yükleme hatası:', error);
+                });
+        } else {
+            irkSelect.innerHTML = '<option value="">Önce tür seçiniz</option>';
+        }
+    }
+    
+    // Tür değiştiğinde ırkları yükle
+    turSelect.addEventListener('change', function() {
+        loadIrklar(this.value);
+    });
+    
+    // Sayfa yüklendiğinde, eğer tür seçiliyse ırkları yükle (geri dönüş durumu için)
+    if (turSelect.value) {
+        loadIrklar(turSelect.value);
+    }
+</script>
+{% endblock %}

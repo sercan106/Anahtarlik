@@ -1,0 +1,594 @@
+<!-- account/templates/accaunt/register.html -->
+    
+{% extends 'ana.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% load widget_tweaks %}
+
+{% block baslik %}
+<title>PatiQuard - Kayıt Ol</title>
+{% endblock baslik %}
+
+{% block css_dosyalar %}
+<style>
+    /* Ana Tema Renkleri */
+    :root {
+        --primary-color: #5B9BD5;
+        --secondary-color: #70C1B3;
+        --accent-color: #FF8C42;
+        --success-color: #6FCF97;
+        --warning-color: #F2C94C;
+        --text-primary: #2d3436;
+        --text-secondary: #636e72;
+        --text-muted: #b2bec3;
+        --border-radius: 20px;
+        --shadow-soft: 0 10px 30px rgba(91, 155, 213, 0.15);
+        --shadow-hover: 0 15px 40px rgba(91, 155, 213, 0.25);
+        --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Container */
+    .register-container {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-soft);
+        padding: 40px;
+        margin-top: 40px;
+        margin-bottom: 60px;
+        max-width: 650px;
+        width: 100%;
+        transition: var(--transition-smooth);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .register-container:hover {
+        box-shadow: var(--shadow-hover);
+        transform: translateY(-5px);
+    }
+
+    /* Header */
+    .register-header {
+        text-align: center;
+        margin-bottom: 30px;
+        position: relative;
+    }
+
+    .register-header h2 {
+        font-weight: 700;
+        font-size: 1.9rem;
+        color: var(--text-primary);
+        margin-bottom: 12px;
+        background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .register-header p {
+        color: var(--text-secondary);
+        font-size: 1.05rem;
+        margin-bottom: 0;
+        font-weight: 500;
+    }
+
+    .step-icon {
+        font-size: 2.5rem;
+        background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-right: 12px;
+        display: inline-block;
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+
+    /* Progress Bar */
+    .progress {
+        height: 8px;
+        border-radius: 10px;
+        background: rgba(91, 155, 213, 0.1);
+        overflow: hidden;
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .progress-bar {
+        background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 50%, #6FCF97 100%);
+        transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 2px 8px rgba(91, 155, 213, 0.4);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .progress-bar::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        animation: shimmer 2s infinite;
+    }
+
+    @keyframes shimmer {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
+    }
+
+    /* Alerts */
+    .alert {
+        border-radius: 15px;
+        background: linear-gradient(135deg, rgba(242, 201, 76, 0.1) 0%, rgba(255, 140, 66, 0.1) 100%);
+        border: 2px solid rgba(242, 201, 76, 0.3);
+        border-left: 4px solid var(--warning-color);
+        color: var(--text-primary);
+        padding: 15px 20px;
+        animation: slideIn 0.5s ease;
+        backdrop-filter: blur(10px);
+    }
+
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Form Groups */
+    .form-group {
+        margin-bottom: 25px;
+        position: relative;
+    }
+
+    .form-label {
+        color: var(--text-primary);
+        font-weight: 600;
+        margin-bottom: 10px;
+        display: block;
+        font-size: 0.95rem;
+    }
+
+    .form-control {
+        border-radius: 15px;
+        border: 2px solid rgba(91, 155, 213, 0.2);
+        padding: 12px 18px;
+        transition: var(--transition-smooth);
+        background: rgba(255, 255, 255, 0.9);
+        color: var(--text-primary);
+        font-size: 1rem;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 4px rgba(91, 155, 213, 0.1);
+        background: white;
+        transform: translateY(-2px);
+    }
+
+    .form-control:hover:not(:focus) {
+        border-color: rgba(91, 155, 213, 0.3);
+    }
+
+    .form-textarea {
+        resize: vertical;
+        min-height: 120px;
+    }
+
+    /* Validation */
+    .text-danger {
+        color: #EB5757 !important;
+        font-size: 0.85rem;
+        margin-top: 6px;
+        display: block;
+    }
+
+    .form-control.is-invalid {
+        border-color: #EB5757;
+    }
+
+    /* Submit Button */
+    .btn-submit {
+        background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
+        color: white;
+        border: none;
+        padding: 15px 40px;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 1.05rem;
+        letter-spacing: 0.5px;
+        transition: var(--transition-smooth);
+        width: 100%;
+        cursor: pointer;
+        box-shadow: 0 8px 25px rgba(91, 155, 213, 0.3);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-submit::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        transition: left 0.6s;
+    }
+
+    .btn-submit:hover::before {
+        left: 100%;
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 12px 35px rgba(91, 155, 213, 0.4);
+    }
+
+    .btn-submit:active {
+        transform: translateY(-1px) scale(0.98);
+    }
+
+    /* Bottom Links */
+    .text-center.mt-3 {
+        padding-top: 20px;
+        border-top: 2px solid rgba(91, 155, 213, 0.1);
+    }
+
+    .btn-outline-primary,
+    .btn-outline-success {
+        border: 2px solid rgba(91, 155, 213, 0.2);
+        border-radius: 50px;
+        padding: 8px 20px;
+        font-weight: 500;
+        transition: var(--transition-smooth);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-outline-primary {
+        color: var(--primary-color);
+    }
+
+    .btn-outline-success {
+        color: var(--success-color);
+        border-color: rgba(111, 207, 151, 0.2);
+    }
+
+    .btn-outline-primary:hover {
+        background: rgba(91, 155, 213, 0.1);
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+        transform: translateY(-2px);
+    }
+
+    .btn-outline-success:hover {
+        background: rgba(111, 207, 151, 0.1);
+        border-color: var(--success-color);
+        color: var(--success-color);
+        transform: translateY(-2px);
+    }
+
+    .text-muted.small {
+        color: var(--text-muted) !important;
+        font-size: 0.9rem;
+    }
+
+    /* Focused Animation */
+    .form-group.focused .form-label {
+        color: var(--primary-color);
+        transform: translateY(-2px);
+    }
+
+    /* Responsive */
+    @media (max-width: 576px) {
+        .register-container {
+            padding: 30px 25px;
+            margin: 20px 15px;
+        }
+
+        .register-header h2 {
+            font-size: 1.6rem;
+        }
+
+        .register-header p {
+            font-size: 0.95rem;
+        }
+
+        .step-icon {
+            font-size: 2rem;
+        }
+
+        .btn-submit {
+            padding: 14px 30px;
+            font-size: 1rem;
+        }
+
+        .form-control {
+            padding: 12px 16px;
+        }
+    }
+
+    @media (max-width: 400px) {
+        .register-header h2 {
+            font-size: 1.4rem;
+        }
+
+        .d-flex.gap-2 {
+            flex-direction: column !important;
+            gap: 10px !important;
+        }
+
+        .btn-outline-primary,
+        .btn-outline-success {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock css_dosyalar %}
+
+{% block content %}
+<div class="container d-flex justify-content-center">
+    <div class="register-container" data-aos="fade-up" data-aos-duration="800">
+        <div class="register-header">
+            <h2>
+                {% if step == 1 %}
+                    <i class="fas fa-tag step-icon"></i> Etiket Kontrolü
+                {% elif step == 2 %}
+                    <i class="fas fa-paw step-icon"></i> Evcil Hayvan Bilgileri
+                {% else %}
+                    <i class="fas fa-user step-icon"></i> Sahip Bilgileri
+                {% endif %}
+            </h2>
+            <p>Adım {{ step }} / 3</p>
+        </div>
+
+        <div class="progress mb-4" data-aos="fade-right" data-aos-delay="200">
+            <div class="progress-bar" role="progressbar" style="width: {{ step|add:"0" }}0%;" 
+                 aria-valuenow="{{ step|add:"0" }}0" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+
+        {% for message in messages %}
+            <div class="alert alert-warning" role="alert" data-aos="fade-up" data-aos-delay="300">
+                {{ message }}
+            </div>
+        {% endfor %}
+
+        <form method="POST" enctype="multipart/form-data" data-aos="fade-up" data-aos-delay="400" id="register-form">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                    {% if field.name == 'adres' %}
+                        {{ field|add_class:"form-control form-textarea" }}
+                    {% else %}
+                        {{ field|add_class:"form-control" }}
+                    {% endif %}
+                    {% if field.errors %}
+                        <small class="text-danger">{{ field.errors }}</small>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            <button type="submit" class="btn-submit">Devam Et</button>
+        </form>
+        
+        {% if step == 3 %}
+        <div class="text-center mt-3">
+            <p class="text-muted small mb-2">Telefon numarası zaten kayıtlı ise:</p>
+            <div class="d-flex gap-2 justify-content-center flex-wrap">
+                <a href="{% url 'user_login' %}" class="btn btn-outline-primary btn-sm">
+                    <i class="fas fa-sign-in-alt me-1"></i>Giriş Yap
+                </a>
+                <a href="{% url 'künye_aktivasyon' %}" class="btn btn-outline-success btn-sm">
+                    <i class="fas fa-tag me-1"></i>Künye Aktive Et
+                </a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock content %}
+
+{% block js_dosyalar %}
+<script>
+    // Form alanlarına odaklanma animasyonu
+    document.querySelectorAll('.form-control').forEach(input => {
+        input.addEventListener('focus', function() {
+            this.parentElement.classList.add('focused');
+        });
+        input.addEventListener('blur', function() {
+            this.parentElement.classList.remove('focused');
+        });
+    });
+
+    // Adım 2 için: Tür değiştikçe ırk listesini getir
+    (function() {
+        const tur = document.getElementById('id_tur');
+        const irk = document.getElementById('id_irk');
+        if (tur && irk) {
+            const loadBreeds = async function(turId) {
+                irk.innerHTML = '<option value="">Seçiniz</option>';
+                if (!turId) return;
+                try {
+                    const resp = await fetch('{% url "breeds_for_species" %}?tur_id=' + turId);
+                    const data = await resp.json();
+                    console.log('Tür ID:', turId, 'Gelen veri:', data);
+                    (data.breeds || []).forEach(function(item){
+                        const opt = document.createElement('option');
+                        opt.value = item.id;
+                        opt.textContent = item.ad;
+                        irk.appendChild(opt);
+                    });
+                } catch (e) { 
+                    console.error('Hata:', e);
+                }
+            };
+
+            tur.addEventListener('change', function(){
+                loadBreeds(this.value);
+            });
+
+            // Sayfa ilk açıldığında tür seçili ise ilgili cinsleri yükle
+            if (tur.value) {
+                loadBreeds(tur.value);
+            }
+        }
+    })();
+
+    // Adım 3 için: İl değiştikçe ilçe listesini getir
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('🔧 İl-İlçe dinamik yükleme başlatılıyor...');
+        console.log('📊 Mevcut step:', {{ step|default:"undefined" }});
+        
+        // Sadece step 3'te çalış
+        {% if step == 3 %}
+        console.log('✅ Step 3 - İl-İlçe yükleme aktif');
+        
+        // Tüm select elementlerini kontrol et
+        const allSelects = document.querySelectorAll('select');
+        console.log('📋 Tüm select elementler:', allSelects);
+        allSelects.forEach((select, index) => {
+            console.log(`Select ${index}:`, select.id, select.name, select.className);
+        });
+        
+        const il = document.getElementById('id_il');
+        const ilce = document.getElementById('id_ilce');
+        
+        console.log('🔍 İl field:', il);
+        console.log('🔍 İlçe field:', ilce);
+        
+        if (!il || !ilce) {
+            console.warn('⚠️ İl veya İlçe field bulunamadı');
+            console.log('🔍 Mevcut form field\'ları:');
+            const form = document.querySelector('form');
+            if (form) {
+                const inputs = form.querySelectorAll('input, select, textarea');
+                inputs.forEach((input, index) => {
+                    console.log(`Field ${index}:`, input.id, input.name, input.type);
+                });
+            }
+            return;
+        }
+        {% else %}
+        console.log('⏭️ Step {{ step|default:"undefined" }} - İl-İlçe yükleme atlandı');
+        return;
+        {% endif %}
+        
+        console.log('✅ İl ve İlçe field bulundu');
+        
+        const loadDistricts = async function(ilId) {
+            console.log('🔄 İlçeler yükleniyor:', ilId);
+            
+            // İlçe alanını temizle
+            ilce.innerHTML = '<option value="">Seçiniz</option>';
+            
+            if (!ilId) {
+                console.log('❌ İl ID yok');
+                return;
+            }
+            
+            // Loading göster
+            ilce.disabled = true;
+            const loadingOption = document.createElement('option');
+            loadingOption.value = '';
+            loadingOption.textContent = 'Yükleniyor...';
+            ilce.appendChild(loadingOption);
+            
+            try {
+                console.log('📡 API isteği gönderiliyor:', '/api/districts/?il_id=' + ilId);
+                
+                const resp = await fetch('/api/districts/?il_id=' + ilId, {
+                    method: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'same-origin'
+                });
+                
+                console.log('📡 Response status:', resp.status);
+                
+                if (!resp.ok) {
+                    throw new Error(`HTTP error! status: ${resp.status}`);
+                }
+                
+                const data = await resp.json();
+                console.log('📡 Gelen veri:', data);
+                
+                // Loading'i kaldır
+                ilce.innerHTML = '<option value="">Seçiniz</option>';
+                
+                // Yeni seçenekleri ekle
+                (data || []).forEach(function(item){
+                    const opt = document.createElement('option');
+                    opt.value = item.id;
+                    opt.textContent = item.ad;
+                    ilce.appendChild(opt);
+                });
+                
+                console.log('✅ İlçeler yüklendi:', data.length);
+                
+            } catch (e) { 
+                console.error('❌ Hata:', e);
+                ilce.innerHTML = '<option value="">Hata oluştu</option>';
+            } finally {
+                ilce.disabled = false;
+            }
+        };
+
+        // İl değiştiğinde ilçe listesini güncelle
+        il.addEventListener('change', function() {
+            console.log('🔄 İl değişti:', this.value);
+            loadDistricts(this.value);
+        });
+
+        // Sayfa ilk açıldığında il seçili ise ilgili ilçeleri yükle
+        if (il.value) {
+            console.log('🔄 Sayfa yüklendi, mevcut il:', il.value);
+            loadDistricts(il.value);
+        }
+        
+        // Fotoğraf önizleme
+        const resimInput = document.getElementById('id_resim');
+        if (resimInput) {
+            resimInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        // Mevcut önizleme varsa kaldır
+                        const existingPreview = document.getElementById('image-preview');
+                        if (existingPreview) {
+                            existingPreview.remove();
+                        }
+                        
+                        // Yeni önizleme oluştur
+                        const preview = document.createElement('div');
+                        preview.id = 'image-preview';
+                        preview.innerHTML = `
+                            <div class="mt-3 text-center">
+                                <img src="${e.target.result}" class="img-thumbnail" style="max-width: 200px; max-height: 200px;">
+                                <p class="small text-muted mt-2">Fotoğraf Önizlemesi</p>
+                            </div>
+                        `;
+                        resimInput.parentNode.appendChild(preview);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+    });
+</script>
+{% endblock js_dosyalar %}

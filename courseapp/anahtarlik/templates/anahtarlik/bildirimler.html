@@ -1,0 +1,874 @@
+{% extends 'ana.html' %}
+{% load static %}
+
+{% block title %}Bildirimlerim{% endblock %}
+
+{% block css_dosyalar %}
+<!-- AOS animasyonları kaldırıldı - performans için -->
+<style>
+    :root {
+        --primary-gradient: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
+        --secondary-gradient: linear-gradient(135deg, #70C1B3 0%, #6FCF97 100%);
+        --success-gradient: linear-gradient(135deg, #6FCF97 0%, #70C1B3 100%);
+        --warning-gradient: linear-gradient(135deg, #F2C94C 0%, #FFB88C 100%);
+        --info-gradient: linear-gradient(135deg, #5B9BD5 0%, #9B9ECE 100%);
+    }
+
+    body, html {
+        background: #f8f9fa;
+        min-height: 100vh;
+        overflow-x: hidden !important;
+        max-width: 100% !important;
+        box-sizing: border-box;
+    }
+    
+    * {
+        box-sizing: border-box;
+    }
+
+    /* Hero Header - BASİTLEŞTİRİLDİ */
+    .bildirim-hero {
+        background: var(--primary-gradient);
+        padding: 40px 0 20px;
+        margin-top: -20px;
+        width: 100%;
+        overflow-x: hidden;
+        /* Animasyonlar kaldırıldı - performans için */
+    }
+    
+    .bildirim-hero .container {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    .bildirim-hero h1 {
+        color: white;
+        font-weight: 700;
+        font-size: 1.8rem;
+        text-shadow: 2px 4px 20px rgba(0, 0, 0, 0.2);
+        margin-bottom: 0.5rem;
+    }
+
+    .bildirim-hero p {
+        color: rgba(255, 255, 255, 0.95);
+        font-size: 1rem;
+        margin: 0;
+    }
+
+    /* Mobil uyumluluk */
+    @media (max-width: 768px) {
+        .bildirim-hero {
+            padding: 20px 0 15px;
+        }
+        
+        .bildirim-hero h1 {
+            font-size: 1.5rem;
+        }
+        
+        .bildirim-hero p {
+            font-size: 0.9rem;
+        }
+        
+        .bildirim-container {
+            margin-top: -20px;
+            padding-bottom: 40px;
+        }
+        
+        .d-flex.gap-3 {
+            gap: 1rem !important;
+        }
+        
+        .bildirim-icon {
+            width: 40px !important;
+            height: 40px !important;
+            min-width: 40px !important;
+            font-size: 1.2rem !important;
+        }
+        
+        .card-title-modern {
+            font-size: 1rem !important;
+            word-wrap: break-word !important;
+            overflow-wrap: break-word !important;
+            max-width: 100% !important;
+        }
+        
+        .card-text-modern {
+            font-size: 0.9rem !important;
+            word-wrap: break-word !important;
+            overflow-wrap: break-word !important;
+            max-width: 100% !important;
+        }
+        
+        .badge {
+            font-size: 0.75rem !important;
+        }
+        
+        .card-body-modern {
+            padding: 1rem !important;
+        }
+        
+        .card-body-modern .d-flex {
+            min-width: 0 !important;
+            max-width: 100% !important;
+        }
+        
+        .flex-grow-1 {
+            min-width: 0 !important;
+            overflow: hidden !important;
+            max-width: 100% !important;
+        }
+        
+        .time-badge {
+            font-size: 0.75rem !important;
+            padding: 4px 10px !important;
+        }
+        
+        .btn-modern {
+            padding: 8px 16px !important;
+            font-size: 0.85rem !important;
+        }
+        
+        .bildirim-hero .btn {
+            padding: 8px 18px !important;
+            font-size: 0.9rem !important;
+        }
+        
+        .bildirim-hero .d-flex {
+            flex-wrap: wrap !important;
+            gap: 1rem !important;
+        }
+    }
+    
+    @media (max-width: 640px) {
+        .bildirim-container .container {
+            padding-left: 10px !important;
+            padding-right: 10px !important;
+        }
+        
+        .bildirim-item {
+            margin-bottom: 12px !important;
+        }
+        
+        .card-body-modern {
+            padding: 0.875rem !important;
+        }
+        
+        .bildirim-icon {
+            width: 36px !important;
+            height: 36px !important;
+            min-width: 36px !important;
+            font-size: 1.1rem !important;
+        }
+        
+        .card-title-modern {
+            font-size: 0.95rem !important;
+        }
+        
+        .card-text-modern {
+            font-size: 0.85rem !important;
+        }
+        
+        .badge-modern {
+            font-size: 0.7rem !important;
+            padding: 0.3rem 0.7rem !important;
+        }
+        
+        .badge-yeni {
+            font-size: 0.7rem !important;
+            padding: 0.3rem 0.7rem !important;
+        }
+        
+        .time-badge {
+            font-size: 0.7rem !important;
+            padding: 4px 8px !important;
+        }
+        
+        .btn-modern {
+            padding: 6px 14px !important;
+            font-size: 0.8rem !important;
+        }
+        
+        .bildirim-hero .btn {
+            padding: 6px 14px !important;
+            font-size: 0.85rem !important;
+        }
+    }
+    
+    @media (max-width: 375px) {
+        .bildirim-container .container {
+            padding-left: 8px !important;
+            padding-right: 8px !important;
+        }
+        
+        .card-body-modern {
+            padding: 0.75rem !important;
+        }
+        
+        .bildirim-icon {
+            width: 32px !important;
+            height: 32px !important;
+            min-width: 32px !important;
+            font-size: 1rem !important;
+        }
+        
+        .card-title-modern {
+            font-size: 0.9rem !important;
+        }
+        
+        .card-text-modern {
+            font-size: 0.8rem !important;
+        }
+        
+        .time-badge {
+            font-size: 0.65rem !important;
+            padding: 3px 6px !important;
+        }
+        
+        .btn-modern {
+            padding: 5px 12px !important;
+            font-size: 0.75rem !important;
+        }
+        
+        .btn-modern span {
+            display: none;
+        }
+        
+        .btn-modern i {
+            margin: 0 !important;
+        }
+        
+        .bildirim-hero .btn {
+            padding: 5px 12px !important;
+            font-size: 0.8rem !important;
+        }
+        
+        .bildirim-hero .btn span {
+            display: none;
+        }
+        
+        .bildirim-hero .btn i {
+            margin: 0 !important;
+        }
+    }
+
+    .bildirim-hero .btn {
+        background: rgba(255, 255, 255, 0.25);
+        backdrop-filter: blur(10px);
+        border: 2px solid rgba(255, 255, 255, 0.4);
+        color: white;
+        font-weight: 600;
+        border-radius: 50px;
+        padding: 10px 25px;
+        transition: all 0.3s ease;
+        white-space: nowrap;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .bildirim-hero .btn:hover {
+        background: rgba(255, 255, 255, 0.35);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        color: white;
+    }
+
+    /* Container */
+    .bildirim-container {
+        margin-top: -30px;
+        padding-bottom: 60px;
+        width: 100%;
+        overflow-x: hidden;
+    }
+    
+    .bildirim-container .container {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    /* Bildirim Card - MOBİL UYUMLU */
+    .bildirim-item {
+        background: white;
+        border-radius: 8px;
+        border: 1px solid #dee2e6;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin-bottom: 16px;
+        border-left: 4px solid #dee2e6;
+        max-width: 100%;
+        overflow: hidden;
+        width: 100%;
+    }
+
+    /* Mobil uyumluluk */
+    @media (max-width: 768px) {
+        .bildirim-item {
+            margin-bottom: 12px;
+            border-radius: 6px;
+        }
+    }
+
+    /* Okunmamış Bildirimler - SÜPER BASİT */
+    .bildirim-item.okunmamis {
+        background: #f8f9fa;
+        border-left: 4px solid #5B9BD5;
+    }
+    /* Gereksiz CSS'ler kaldırıldı - performans için */
+
+    /* Güzel Sayfalama */
+    .pagination-modern {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 2rem 0;
+        gap: 0.5rem;
+    }
+
+    .pagination-modern .page-link {
+        background: white;
+        border: 2px solid #e9ecef;
+        color: #6c757d;
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        min-width: 44px;
+        text-align: center;
+    }
+
+    .pagination-modern .page-link:hover {
+        background: #5B9BD5;
+        border-color: #5B9BD5;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(91, 155, 213, 0.3);
+    }
+
+    .pagination-modern .page-item.active .page-link {
+        background: #5B9BD5;
+        border-color: #5B9BD5;
+        color: white;
+        box-shadow: 0 4px 12px rgba(91, 155, 213, 0.3);
+    }
+
+    .pagination-modern .page-item.disabled .page-link {
+        background: #f8f9fa;
+        border-color: #e9ecef;
+        color: #adb5bd;
+        cursor: not-allowed;
+    }
+
+    .pagination-modern .page-item.disabled .page-link:hover {
+        transform: none;
+        box-shadow: none;
+    }
+
+    /* Mobil sayfalama */
+    @media (max-width: 768px) {
+        .pagination-modern {
+            margin: 1.5rem 0;
+            gap: 0.25rem;
+        }
+        
+        .pagination-modern .page-link {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.9rem;
+            min-width: 40px;
+        }
+    }
+
+    /* Bildirim Türlerine Göre Border Renkleri */
+    .bildirim-item.qr-tarama {
+        border-left-color: #6FCF97;
+    }
+
+    .bildirim-item.bulan-bilgi {
+        border-left-color: #F2C94C;
+    }
+
+    .bildirim-item.genel {
+        border-left-color: #9B9ECE;
+    }
+
+    /* Icon Boxes */
+    .bildirim-icon {
+        width: 60px;
+        height: 60px;
+        min-width: 60px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+        flex-shrink: 0;
+        position: relative;
+        transition: all 0.3s ease;
+    }
+
+    .bildirim-icon::after {
+        content: '';
+        position: absolute;
+        inset: -4px;
+        border-radius: 20px;
+        background: currentColor;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: -1;
+        filter: blur(12px);
+    }
+
+    .bildirim-item:hover .bildirim-icon::after {
+        opacity: 0.3;
+    }
+
+    .bildirim-icon.qr-tarama {
+        background: linear-gradient(145deg, rgba(111, 207, 151, 0.2), rgba(112, 193, 179, 0.2));
+        color: #6FCF97;
+    }
+
+    .bildirim-icon.bulan-bilgi {
+        background: linear-gradient(145deg, rgba(242, 201, 76, 0.2), rgba(255, 184, 140, 0.2));
+        color: #F2C94C;
+    }
+
+    .bildirim-icon.genel {
+        background: linear-gradient(145deg, rgba(155, 158, 206, 0.2), rgba(91, 155, 213, 0.2));
+        color: #9B9ECE;
+    }
+
+    /* Badge Modern */
+    .badge-modern {
+        padding: 0.4rem 0.9rem;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.75rem;
+        letter-spacing: 0.3px;
+        text-transform: uppercase;
+    }
+
+    .badge-modern.bg-success-gradient {
+        background: var(--success-gradient);
+        color: white;
+        box-shadow: 0 4px 12px rgba(111, 207, 151, 0.3);
+    }
+
+    .badge-modern.bg-warning-gradient {
+        background: var(--warning-gradient);
+        color: white;
+        box-shadow: 0 4px 12px rgba(242, 201, 76, 0.3);
+    }
+
+    .badge-modern.bg-info-gradient {
+        background: var(--info-gradient);
+        color: white;
+        box-shadow: 0 4px 12px rgba(155, 158, 206, 0.3);
+    }
+
+    /* Yeni Badge - Belirgin */
+    .badge-yeni {
+        background: linear-gradient(135deg, #5B9BD5 0%, #9B9ECE 100%);
+        color: white;
+        padding: 0.4rem 0.9rem;
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        box-shadow:
+            0 4px 12px rgba(91, 155, 213, 0.4),
+            0 0 20px rgba(91, 155, 213, 0.3);
+        animation: pulse-badge 2s ease-in-out infinite;
+        position: relative;
+    }
+
+    @keyframes pulse-badge {
+        0%, 100% {
+            transform: scale(1);
+            box-shadow:
+                0 4px 12px rgba(91, 155, 213, 0.4),
+                0 0 20px rgba(91, 155, 213, 0.3);
+        }
+        50% {
+            transform: scale(1.05);
+            box-shadow:
+                0 6px 16px rgba(91, 155, 213, 0.5),
+                0 0 30px rgba(91, 155, 213, 0.5);
+        }
+    }
+
+    /* Card Body - MOBİL UYUMLU */
+    .card-body-modern {
+        padding: 1.5rem;
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden;
+    }
+    
+    .card-body-modern .d-flex {
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    /* Mobil uyumluluk */
+    @media (max-width: 768px) {
+        .card-body-modern {
+            padding: 1rem;
+        }
+    }
+
+    .card-title-modern {
+        font-weight: 700;
+        font-size: 1.15rem;
+        color: #2d3436;
+        margin-bottom: 0.5rem;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        max-width: 100%;
+    }
+
+    .card-text-modern {
+        color: #636e72;
+        font-size: 1rem;
+        line-height: 1.6;
+        margin-bottom: 1rem;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        max-width: 100%;
+    }
+
+    /* Buttons */
+    .btn-modern {
+        padding: 10px 24px;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        letter-spacing: 0.3px;
+        border: none;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .btn-modern::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        transition: left 0.6s;
+    }
+
+    .btn-modern:hover::before {
+        left: 100%;
+    }
+
+    .btn-modern:hover {
+        transform: translateY(-2px);
+        text-decoration: none;
+    }
+
+    .btn-outline-modern {
+        background: rgba(255, 255, 255, 0.9);
+        border: 2px solid currentColor;
+    }
+
+    .btn-outline-modern:hover {
+        background: currentColor;
+        color: white !important;
+    }
+
+    .btn-outline-primary-modern {
+        color: #5B9BD5;
+    }
+
+    /* Empty State */
+    .empty-state-modern {
+        background: linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%);
+        backdrop-filter: blur(25px);
+        border-radius: 28px;
+        padding: 4rem 2rem;
+        text-align: center;
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        box-shadow:
+            0 20px 60px rgba(0, 0, 0, 0.08),
+            0 8px 20px rgba(0, 0, 0, 0.05);
+    }
+
+    .empty-state-icon {
+        width: 120px;
+        height: 120px;
+        margin: 0 auto 2rem;
+        border-radius: 50%;
+        background: linear-gradient(145deg, rgba(91, 155, 213, 0.1), rgba(112, 193, 179, 0.1));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3.5rem;
+        color: #5B9BD5;
+    }
+
+    .empty-state-modern h4 {
+        font-weight: 700;
+        color: #2d3436;
+        margin-bottom: 1rem;
+    }
+
+    .empty-state-modern p {
+        color: #636e72;
+        max-width: 500px;
+        margin: 0 auto;
+        line-height: 1.6;
+    }
+
+    /* Time Badge */
+    .time-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        background: rgba(91, 155, 213, 0.08);
+        border-radius: 12px;
+        color: #636e72;
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .bildirim-hero {
+            padding: 20px 0 15px;
+        }
+
+        .bildirim-hero h1 {
+            font-size: 1.5rem;
+        }
+
+        .bildirim-hero p {
+            font-size: 0.9rem;
+        }
+
+        .bildirim-container {
+            margin-top: -20px;
+        }
+
+        .bildirim-item {
+            border-radius: 16px;
+        }
+
+        .card-body-modern {
+            padding: 1rem;
+        }
+
+        .bildirim-icon {
+            width: 40px;
+            height: 40px;
+            min-width: 40px;
+            font-size: 1.2rem;
+        }
+
+        .empty-state-modern {
+            padding: 3rem 1.5rem;
+        }
+
+        .empty-state-icon {
+            width: 100px;
+            height: 100px;
+            font-size: 3rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Header -->
+<div class="bildirim-hero">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3" data-aos="fade-down">
+            <div>
+                <h1>
+                    <i class="fas fa-bell me-2"></i>
+                    Bildirimlerim
+                </h1>
+                <p>
+                    {% if bildirimler %}
+                        Toplam <strong>{{ bildirimler.count }}</strong> bildirim
+                    {% else %}
+                        Henüz bildirim yok
+                    {% endif %}
+                </p>
+            </div>
+
+            {% if bildirimler %}
+                <div>
+                    <a href="{% url 'anahtarlik:tum_bildirimleri_oku' %}" class="btn">
+                        <i class="fas fa-check-double me-1"></i>
+                        Tümünü Okundu İşaretle
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="bildirim-container">
+    <div class="container">
+        <!-- Bildirim Listesi -->
+        {% if bildirimler %}
+            <div class="row" style="margin: 0; width: 100%; max-width: 100%;">
+                {% for bildirim in bildirimler %}
+                    <div class="col-12 mb-4" style="padding-left: 15px; padding-right: 15px; max-width: 100%;">
+                        <div class="bildirim-item {% if not bildirim.okundu %}okunmamis{% endif %} {{ bildirim.tur|lower|cut:'_' }}">
+                            <div class="card-body-modern">
+                                <div class="d-flex align-items-start gap-3" style="min-width: 0; max-width: 100%;">
+                                    <!-- Icon -->
+                                    <div class="bildirim-icon {{ bildirim.tur|lower|cut:'_' }}">
+                                        {% if bildirim.tur == 'QR_TARAMA' %}
+                                            <i class="fas fa-qrcode"></i>
+                                        {% elif bildirim.tur == 'BULAN_BILGI' %}
+                                            <i class="fas fa-user-plus"></i>
+                                        {% else %}
+                                            <i class="fas fa-info-circle"></i>
+                                        {% endif %}
+                                    </div>
+
+                                    <!-- Content -->
+                                    <div class="flex-grow-1" style="min-width: 0; overflow: hidden; max-width: 100%;">
+                                        <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-2" style="min-width: 0;">
+                                            <h5 class="card-title-modern mb-0" style="word-wrap: break-word; overflow-wrap: break-word; max-width: 100%;">{{ bildirim.baslik }}</h5>
+                                            <div class="d-flex gap-2 align-items-center" style="flex-shrink: 0;">
+                                                <span class="badge-modern
+                                                    {% if bildirim.tur == 'QR_TARAMA' %}bg-success-gradient
+                                                    {% elif bildirim.tur == 'BULAN_BILGI' %}bg-warning-gradient
+                                                    {% else %}bg-info-gradient{% endif %}">
+                                                    {% if bildirim.tur == 'QR_TARAMA' %}QR Tarama
+                                                    {% elif bildirim.tur == 'BULAN_BILGI' %}Bulan Bilgi
+                                                    {% else %}Genel{% endif %}
+                                                </span>
+                                                {% if not bildirim.okundu %}
+                                                    <span class="badge-yeni">
+                                                        <i class="fas fa-star me-1"></i>Yeni
+                                                    </span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+
+                                        <p class="card-text-modern mb-3" style="word-wrap: break-word; overflow-wrap: break-word; max-width: 100%;">{{ bildirim.mesaj }}</p>
+
+                                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2" style="min-width: 0;">
+                                            <span class="time-badge" style="flex-shrink: 0;">
+                                                <i class="fas fa-clock"></i>
+                                                {{ bildirim.olusturma_zamani|date:"d.m.Y H:i" }}
+                                            </span>
+
+                                            {% if bildirim.url or bildirim.tarama %}
+                                                <a href="{% url 'anahtarlik:bildirim_oku' bildirim.id %}"
+                                                   class="btn-modern btn-outline-modern btn-outline-primary-modern" style="flex-shrink: 0; white-space: nowrap;">
+                                                    <i class="fas fa-external-link-alt"></i>
+                                                    <span>Detay</span>
+                                                </a>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            
+            <!-- Güzel Sayfalama -->
+            {% if bildirimler.has_other_pages %}
+                <nav aria-label="Bildirim sayfalama" class="pagination-modern">
+                    {% if bildirimler.has_previous %}
+                        <div class="page-item">
+                            <a class="page-link" href="?page=1" title="İlk sayfa">
+                                <i class="fas fa-angle-double-left"></i>
+                            </a>
+                        </div>
+                        <div class="page-item">
+                            <a class="page-link" href="?page={{ bildirimler.previous_page_number }}" title="Önceki sayfa">
+                                <i class="fas fa-angle-left"></i>
+                            </a>
+                        </div>
+                    {% endif %}
+                    
+                    <!-- Sayfa numaraları -->
+                    {% for num in bildirimler.paginator.page_range %}
+                        {% if num == bildirimler.number %}
+                            <div class="page-item active">
+                                <span class="page-link">{{ num }}</span>
+                            </div>
+                        {% elif num > bildirimler.number|add:'-3' and num < bildirimler.number|add:'3' %}
+                            <div class="page-item">
+                                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if bildirimler.has_next %}
+                        <div class="page-item">
+                            <a class="page-link" href="?page={{ bildirimler.next_page_number }}" title="Sonraki sayfa">
+                                <i class="fas fa-angle-right"></i>
+                            </a>
+                        </div>
+                        <div class="page-item">
+                            <a class="page-link" href="?page={{ bildirimler.paginator.num_pages }}" title="Son sayfa">
+                                <i class="fas fa-angle-double-right"></i>
+                            </a>
+                        </div>
+                    {% endif %}
+                </nav>
+            {% endif %}
+        {% else %}
+            <!-- Empty State -->
+            <div>
+                <div class="empty-state-modern">
+                    <div class="empty-state-icon">
+                        <i class="fas fa-bell-slash"></i>
+                    </div>
+                    <h4>Henüz bildirim yok</h4>
+                    <p>
+                        Hayvanınızın QR kodu tarandığında veya bulan kişi bilgi verdiğinde
+                        burada bildirimlerinizi görebileceksiniz.
+                    </p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block js_dosyalar %}
+<script>
+    // AOS kaldırıldı - performans için
+
+    // Okunmamış bildirimlere ekstra vurgu
+    document.addEventListener('DOMContentLoaded', function() {
+        const okunmamislar = document.querySelectorAll('.bildirim-item.okunmamis');
+
+        // İlk okunmamış bildirime scroll
+        if (okunmamislar.length > 0) {
+            setTimeout(() => {
+                okunmamislar[0].scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+            }, 500);
+        }
+
+        // Hover efektleri kaldırıldı - performans için
+    });
+</script>
+{% endblock %}

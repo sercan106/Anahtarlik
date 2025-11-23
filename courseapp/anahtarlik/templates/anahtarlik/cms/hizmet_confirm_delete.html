@@ -1,0 +1,120 @@
+{% extends 'ana.html' %}
+{% load static %}
+
+{% block title %}Hizmet Sil - PetSafe Hub CMS{% endblock %}
+
+{% block content %}
+<style>
+    .delete-container {
+        max-width: 600px;
+        margin: 150px auto 50px;
+        padding: 20px;
+    }
+
+    .delete-card {
+        background: white;
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+
+    .delete-icon {
+        font-size: 4rem;
+        color: #FF8C42;
+        margin-bottom: 20px;
+    }
+
+    .delete-card h2 {
+        color: #333;
+        margin-bottom: 15px;
+    }
+
+    .hizmet-info {
+        background: rgba(255, 140, 66, 0.1);
+        border-radius: 10px;
+        padding: 20px;
+        margin: 25px 0;
+        text-align: left;
+    }
+
+    .hizmet-info h3 {
+        color: #5B9BD5;
+        margin-bottom: 10px;
+    }
+
+    .hizmet-info p {
+        color: #666;
+        margin: 5px 0;
+    }
+
+    .button-group {
+        display: flex;
+        gap: 15px;
+        margin-top: 30px;
+    }
+
+    .btn-delete-confirm {
+        flex: 1;
+        background: #FF8C42;
+        color: white;
+        border: none;
+        padding: 15px 30px;
+        border-radius: 50px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-delete-confirm:hover {
+        background: #E67A30;
+    }
+
+    .btn-cancel {
+        flex: 1;
+        background: #e0e0e0;
+        color: #666;
+        border: none;
+        padding: 15px 30px;
+        border-radius: 50px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s ease;
+    }
+
+    .btn-cancel:hover {
+        background: #d0d0d0;
+        color: #555;
+    }
+</style>
+
+<div class="delete-container">
+    <div class="delete-card">
+        <div class="delete-icon">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <h2>Bu hizmeti silmek istediğinize emin misiniz?</h2>
+        <p>Bu işlem geri alınamaz!</p>
+
+        <div class="hizmet-info">
+            <h3><i class="{{ hizmet.ikon }}"></i> {{ hizmet.baslik }}</h3>
+            <p>{{ hizmet.aciklama|truncatewords:20 }}</p>
+            <p><strong>Sıra:</strong> {{ hizmet.sira }} | <strong>Durum:</strong> {% if hizmet.aktif %}Aktif{% else %}Pasif{% endif %}</p>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="button-group">
+                <button type="submit" class="btn-delete-confirm">
+                    <i class="fas fa-trash"></i> Evet, Sil
+                </button>
+                <a href="{% url 'anahtarlik:cms_dashboard' %}" class="btn-cancel">
+                    <i class="fas fa-times"></i> İptal
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

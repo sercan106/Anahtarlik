@@ -1,0 +1,160 @@
+{% extends 'ana.html' %}
+{% load static %}
+
+{% block title %}Sahip Pro Paketleri{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="text-center mb-5">
+                <h1 class="display-4 text-primary mb-3">🎖️ Sahip Pro Paketleri</h1>
+                <p class="lead">Evcil hayvanınız için en iyi bakım ve takip imkanları</p>
+            </div>
+
+            {% if aktif_abonelik %}
+            <div class="alert alert-success mb-4">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h5 class="mb-2">✅ Aktif Pro Aboneliğiniz</h5>
+                        <p class="mb-1"><strong>Paket:</strong> {{ aktif_abonelik.paket.paket_adi }}</p>
+                        <p class="mb-1"><strong>Bitiş Tarihi:</strong> {{ aktif_abonelik.bitis_tarihi|date:"d.m.Y H:i" }}</p>
+                        <p class="mb-0"><strong>Kalan Süre:</strong> {{ aktif_abonelik.kalan_gun }} gün</p>
+                    </div>
+                    <div class="col-md-4 text-md-end">
+                        <a href="{% url 'anahtarlik:sahip_pro_panel' %}" class="btn btn-success">
+                            <i class="fas fa-tachometer-alt me-2"></i>Pro Panel
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row">
+        {% for paket in pro_paketler %}
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100 shadow-lg border-0 {% if aktif_abonelik and aktif_abonelik.paket.id == paket.id %}border-success bg-light{% endif %}" 
+                 style="border-left: 5px solid {{ paket.renk }} !important;">
+                <div class="card-header text-white text-center" style="background-color: {{ paket.renk }};">
+                    <h4 class="mb-0">{{ paket.paket_adi }}</h4>
+                    <div class="h2 mb-0">{{ paket.fiyat }} TL<small>/{{ paket.sure_gun }} gün</small></div>
+                </div>
+                
+                <div class="card-body d-flex flex-column">
+                    {% if paket.aciklama %}
+                    <p class="card-text text-muted">{{ paket.aciklama }}</p>
+                    {% endif %}
+                    
+                    <div class="mb-3">
+                        <h6 class="text-primary">📊 Temel Haklar</h6>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-calendar text-info me-2"></i>{{ paket.sure_gun }} Gün Geçerli</li>
+                            <li><i class="fas fa-images text-warning me-2"></i>{{ paket.foto_galeri_limit }} Fotoğraf</li>
+                        </ul>
+                    </div>
+
+                    <div class="mb-4">
+                        <h6 class="text-primary">🎯 Pro Özellikler</h6>
+                        <div class="row">
+                            <div class="col-6">
+                                {% if paket.asi_hatirlatma %}
+                                    <small><i class="fas fa-syringe text-success me-1"></i>Aşı Hatırlatma</small><br>
+                                {% endif %}
+                                {% if paket.veteriner_randevu %}
+                                    <small><i class="fas fa-user-md text-primary me-1"></i>Vet. Randevu</small><br>
+                                {% endif %}
+                                {% if paket.ilac_takibi %}
+                                    <small><i class="fas fa-pills text-info me-1"></i>İlaç Takibi</small><br>
+                                {% endif %}
+                            </div>
+                            <div class="col-6">
+                                {% if paket.beslenme_programi %}
+                                    <small><i class="fas fa-utensils text-warning me-1"></i>Beslenme</small><br>
+                                {% endif %}
+                                {% if paket.finansal_takip %}
+                                    <small><i class="fas fa-chart-line text-success me-1"></i>Finansal</small><br>
+                                {% endif %}
+                                {% if paket.egitim_programi %}
+                                    <small><i class="fas fa-graduation-cap text-danger me-1"></i>Eğitim</small><br>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-auto">
+                        {% if aktif_abonelik and aktif_abonelik.paket.id == paket.id %}
+                            <button class="btn btn-success w-100" disabled>
+                                <i class="fas fa-check me-2"></i>Aktif Paket
+                            </button>
+                        {% elif aktif_abonelik %}
+                            <button class="btn btn-secondary w-100" disabled>
+                                <i class="fas fa-lock me-2"></i>Zaten Aktif Abonelik Var
+                            </button>
+                        {% else %}
+                            <a href="{% url 'anahtarlik:sahip_pro_abonelik_al' paket.id %}" 
+                               class="btn btn-primary w-100"
+                               onclick="return confirm('{{ paket.paket_adi }} paketini almak istediğinize emin misiniz?')">
+                                <i class="fas fa-shopping-cart me-2"></i>Paketi Al
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% if not pro_paketler %}
+    <div class="text-center py-5">
+        <div class="mb-4">
+            <i class="fas fa-box-open" style="font-size: 4rem; color: #ccc;"></i>
+        </div>
+        <h4 class="text-muted">Henüz Pro Paket Tanımlanmamış</h4>
+        <p class="text-muted">Yakında harika pro paketlerle karşınızda olacağız!</p>
+    </div>
+    {% endif %}
+
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card bg-light border-0">
+                <div class="card-body text-center">
+                    <h5 class="text-primary">💡 Pro Paket Avantajları</h5>
+                    <div class="row mt-3">
+                        <div class="col-md-3">
+                            <i class="fas fa-syringe fa-2x text-success mb-2"></i>
+                            <h6>Aşı Takibi</h6>
+                            <small class="text-muted">Otomatik hatırlatmalar</small>
+                        </div>
+                        <div class="col-md-3">
+                            <i class="fas fa-calendar-check fa-2x text-primary mb-2"></i>
+                            <h6>Randevu Yönetimi</h6>
+                            <small class="text-muted">Veteriner randevuları</small>
+                        </div>
+                        <div class="col-md-3">
+                            <i class="fas fa-chart-bar fa-2x text-info mb-2"></i>
+                            <h6>Detaylı Raporlar</h6>
+                            <small class="text-muted">Sağlık ve maliyet</small>
+                        </div>
+                        <div class="col-md-3">
+                            <i class="fas fa-headset fa-2x text-warning mb-2"></i>
+                            <h6>Öncelikli Destek</h6>
+                            <small class="text-muted">7/24 yardım</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    transition: transform 0.2s;
+}
+.card:hover {
+    transform: translateY(-5px);
+}
+</style>
+{% endblock %}

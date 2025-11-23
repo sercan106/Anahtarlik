@@ -1,0 +1,360 @@
+{% extends 'ana.html' %}
+{% load static %}
+
+{% block baslik %}İlan Oluştur - {{ hayvan_profili.hayvan_adi }} - PetSafe Hub{% endblock %}
+
+{% block css_dosyalar %}
+<style>
+    .ilan-olustur-header {
+        background: linear-gradient(135deg, #FF8C42 0%, #6FCF97 100%);
+        color: white;
+        padding: 3rem 0;
+        margin-bottom: 2rem;
+    }
+    
+    .profil-onizleme {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        margin-bottom: 2rem;
+    }
+    
+    .profil-resim {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+    }
+    
+    .profil-bilgi {
+        padding: 1.5rem;
+    }
+    
+    .profil-ad {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #2d3748;
+        margin-bottom: 0.5rem;
+    }
+    
+    .profil-detay {
+        color: #4a5568;
+        font-size: 0.9rem;
+        margin-bottom: 0.3rem;
+    }
+    
+    .ilan-form-kart {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+    
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-label {
+        font-weight: 600;
+        color: #2d3748;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+    
+    .form-control {
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 0.8rem 1rem;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .form-control:focus {
+        border-color: #4facfe;
+        box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+        outline: none;
+    }
+    
+    .form-check-input {
+        width: 20px;
+        height: 20px;
+        border-radius: 6px;
+        border: 2px solid #e2e8f0;
+    }
+    
+    .form-check-input:checked {
+        background-color: #4facfe;
+        border-color: #4facfe;
+    }
+    
+    .form-check-label {
+        margin-left: 0.5rem;
+        font-weight: 500;
+        color: #4a5568;
+    }
+    
+    .kredi-bilgi {
+        background: linear-gradient(135deg, #38a169 0%, #48bb78 100%);
+        color: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+    
+    .kredi-miktar {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+    
+    .submit-btn {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        color: white;
+        border: none;
+        border-radius: 15px;
+        padding: 1rem 3rem;
+        font-weight: 600;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        width: 100%;
+    }
+    
+    .submit-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+    }
+    
+    .submit-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+    }
+    
+    .adim-bilgi {
+        background: rgba(79, 172, 254, 0.1);
+        border-radius: 12px;
+        padding: 1rem;
+        margin-bottom: 2rem;
+        border-left: 4px solid #4facfe;
+    }
+    
+    
+    .onemli-ilan-grup {
+        background: rgba(255, 193, 7, 0.1);
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+        border: 2px solid rgba(255, 193, 7, 0.3);
+    }
+    
+    .onemli-ilan-grup h5 {
+        color: #f57c00;
+        margin-bottom: 1rem;
+    }
+    
+    .onemli-ilan-grup .form-check-label {
+        color: #f57c00;
+        font-weight: 600;
+    }
+</style>
+{% endblock %}
+
+{% block icerik %}
+<!-- Header -->
+<div class="ilan-olustur-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1 class="mb-3">
+                    <i class="fas fa-plus-circle me-2"></i>
+                    İlan Oluştur
+                </h1>
+                <p class="mb-0">{{ hayvan_profili.hayvan_adi }} için ilan oluşturun</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <!-- Sol Kolon - Profil Önizleme -->
+        <div class="col-lg-4">
+            <div class="profil-onizleme">
+                {% if hayvan_profili.profil_fotografi %}
+                    <img src="{{ hayvan_profili.profil_fotografi.url }}" 
+                         alt="{{ hayvan_profili.hayvan_adi }}" 
+                         class="profil-resim">
+                {% else %}
+                    <img src="{% static 'images/default-pet.jpg' %}" 
+                         alt="Varsayılan" 
+                         class="profil-resim">
+                {% endif %}
+                
+                <div class="profil-bilgi">
+                    <div class="profil-ad">{{ hayvan_profili.hayvan_adi }}</div>
+                    <div class="profil-detay">
+                        <i class="fas fa-paw me-1"></i>{{ hayvan_profili.tur.ad }}
+                    </div>
+                    <div class="profil-detay">
+                        <i class="fas fa-dna me-1"></i>{{ hayvan_profili.irk.ad }}
+                    </div>
+                    <div class="profil-detay">
+                        <i class="fas fa-venus-mars me-1"></i>{{ hayvan_profili.get_cinsiyet_display }}
+                    </div>
+                    <div class="profil-detay">
+                        <i class="fas fa-birthday-cake me-1"></i>{{ hayvan_profili.yas_hesapla }}
+                    </div>
+                    <div class="profil-detay">
+                        <i class="fas fa-map-marker-alt me-1"></i>
+                        {{ hayvan_profili.il.ad }}/{{ hayvan_profili.ilce.ad }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sağ Kolon - İlan Formu -->
+        <div class="col-lg-8">
+            <!-- Sahip Kullanıcısı İçin Özel Bilgi -->
+            {% if is_sahip %}
+            <div class="alert alert-info mb-4">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-info-circle fa-2x me-3"></i>
+                    <div>
+                        <h6 class="mb-1">Sahip Kullanıcısı Özel Avantajı</h6>
+                        <p class="mb-0">Hayvan bilgileriniz otomatik olarak doldurulmuştur. İstediğiniz değişiklikleri yapabilirsiniz.</p>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- Kredi Bilgisi -->
+            <div class="kredi-bilgi">
+                <div class="kredi-miktar">{{ ilan_ucreti }} Kredi</div>
+                <p class="mb-0">İlan oluşturmak için gerekli kredi miktarı</p>
+                <small>Mevcut bakiyeniz: <strong>{{ kullanici_bakiye }} kredi</strong></small>
+            </div>
+
+            <!-- Form -->
+            <div class="ilan-form-kart">
+                <div class="p-4">
+                    <div class="adim-bilgi">
+                        <h5 class="mb-2">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Adım 2: İlan Bilgileri
+                        </h5>
+                        <p class="mb-0">İlanınızın detaylarını girin</p>
+                    </div>
+
+                    <form method="POST">
+                        {% csrf_token %}
+                        
+                        <!-- Hayvan Profili (Hidden) -->
+                        {{ form.hayvan_profili }}
+                        
+                        <!-- İlan Başlığı -->
+                        <div class="form-group">
+                            <label class="form-label" for="{{ form.baslik.id_for_label }}">
+                                <i class="fas fa-heading me-2"></i>İlan Başlığı *
+                            </label>
+                            {% if is_sahip %}
+                                <!-- Sahip kullanıcısı için otomatik başlık önerisi -->
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="{{ form.baslik.id_for_label }}" 
+                                       name="{{ form.baslik.name }}" 
+                                       value="Sevimli {{ hayvan_profili.hayvan_adi }} Sahiplendirme İlanı"
+                                       placeholder="İlan başlığını girin">
+                            {% else %}
+                                {{ form.baslik }}
+                            {% endif %}
+                            {% if form.baslik.errors %}
+                                <div class="text-danger mt-1">{{ form.baslik.errors.0 }}</div>
+                            {% endif %}
+                            <small class="text-muted">Dikkat çekici bir başlık yazın</small>
+                        </div>
+
+                        <!-- İlan Türü -->
+                        <div class="form-group">
+                            <label class="form-label" for="{{ form.ilan_turu.id_for_label }}">
+                                <i class="fas fa-tag me-2"></i>İlan Türü *
+                            </label>
+                            {{ form.ilan_turu }}
+                            {% if form.ilan_turu.errors %}
+                                <div class="text-danger mt-1">{{ form.ilan_turu.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+
+                        <!-- İlan Açıklaması -->
+                        <div class="form-group">
+                            <label class="form-label" for="{{ form.aciklama.id_for_label }}">
+                                <i class="fas fa-comment me-2"></i>İlan Açıklaması
+                            </label>
+                            {% if is_sahip %}
+                                <!-- Sahip kullanıcısı için otomatik açıklama önerisi -->
+                                <textarea class="form-control" 
+                                          id="{{ form.aciklama.id_for_label }}" 
+                                          name="{{ form.aciklama.name }}" 
+                                          rows="4" 
+                                          placeholder="İlan açıklamasını girin">{{ hayvan_profili.aciklama|default:"Sevimli "|add:hayvan_profili.hayvan_adi|add:" için yeni bir yuva arıyoruz. "|add:hayvan_profili.tur.ad|add:" cinsi, "|add:hayvan_profili.irk.ad|add:" ırkı, "|add:hayvan_profili.yas_hesapla|add:". "|add:hayvan_profili.get_cinsiyet_display|add:" cinsiyet. "|add:hayvan_profili.il.ad|add:"/"|add:hayvan_profili.ilce.ad|add:" konumunda. Sevgi dolu bir aile arıyoruz!" }}</textarea>
+                            {% else %}
+                                {{ form.aciklama }}
+                            {% endif %}
+                            {% if form.aciklama.errors %}
+                                <div class="text-danger mt-1">{{ form.aciklama.errors.0 }}</div>
+                            {% endif %}
+                            <small class="text-muted">İlanınız hakkında detaylı bilgi verin</small>
+                        </div>
+
+                        <!-- Öne Çıkarma -->
+                        <div class="onemli-ilan-grup">
+                            <h5>
+                                <i class="fas fa-star me-2"></i>
+                                Öne Çıkarma
+                            </h5>
+                            <div class="form-check">
+                                {{ form.onemli_mi }}
+                                <label class="form-check-label" for="{{ form.onemli_mi.id_for_label }}">
+                                    <i class="fas fa-star me-1"></i>
+                                    İlanımı öne çıkarsın (+{{ onemli_ilan_ucreti }} kredi)
+                                </label>
+                            </div>
+                            <small class="text-muted">Öne çıkan ilanlar ana sayfada üstte görünür</small>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="text-center mt-4">
+                            <button type="submit" class="submit-btn" 
+                                    {% if kullanici_bakiye < ilan_ucreti %}disabled{% endif %}>
+                                <i class="fas fa-save me-2"></i>
+                                İlan Oluştur ({{ ilan_ucreti }} Kredi)
+                            </button>
+                            
+                            {% if kullanici_bakiye < ilan_ucreti %}
+                                <div class="alert alert-warning mt-3">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                    Yetersiz bakiye! İlan oluşturmak için {{ ilan_ucreti }} kredi gerekli.
+                                    <a href="{% url 'ilan:kredi_durumu' %}" class="btn btn-sm btn-outline-primary ms-2">
+                                        Kredi Satın Al
+                                    </a>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js_dosyalar %}
+<script>
+</script>
+{% endblock %}

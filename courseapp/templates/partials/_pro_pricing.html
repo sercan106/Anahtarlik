@@ -1,0 +1,63 @@
+{% load static %}
+<section id="pro" class="py-5" style="background: #0f172a; color: #e2e8f0;">
+  <div class="container">
+    <div class="text-center mb-4">
+      <h2 class="fw-bold" style="color:#fff;">PRO Planları</h2>
+      <p class="text-muted mb-0">Çiftleşme önerileri, gelişmiş bildirimler ve daha fazlası</p>
+    </div>
+
+    <div class="row g-4 align-items-stretch">
+      <!-- PRO Aylık -->
+      <div class="col-md-6">
+        <div class="card h-100 shadow border-0" style="border-radius:14px;">
+          <div class="card-body p-4 d-flex flex-column">
+            <div class="d-flex align-items-center mb-2">
+              <span class="badge bg-success me-2">Popüler</span>
+              <h3 class="h5 mb-0">PRO Aylık</h3>
+            </div>
+            <div class="display-6 fw-bold" style="color:#111827;">69 TL<span class="fs-6 fw-normal text-muted">/ay</span></div>
+            <ul class="list-unstyled mt-3 mb-4 small">
+              <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Çiftleşme profili + öneriler</li>
+              <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Gelişmiş QR bildirim ve log</li>
+              <li class="mb-2"><i class="fas fa-check text-success me-2"></i> PDF profil export</li>
+              <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Genişletilmiş sağlık kayıt limitleri</li>
+            </ul>
+            <div class="mt-auto">
+              <a href="{% url 'shop:shop_home' %}?kategori=pro" class="btn btn-success w-100">
+                <i class="fas fa-crown me-2"></i>PRO’yu Satın Al
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PRO Yıllık -->
+      <div class="col-md-6">
+        <div class="card h-100 shadow border-0" style="border-radius:14px;">
+          <div class="card-body p-4 d-flex flex-column">
+            <div class="d-flex align-items-center mb-2">
+              <span class="badge bg-primary me-2">En İyi Fiyat</span>
+              <h3 class="h5 mb-0">PRO Yıllık</h3>
+            </div>
+            <div class="display-6 fw-bold" style="color:#111827;">699 TL<span class="fs-6 fw-normal text-muted">/yıl</span></div>
+            <ul class="list-unstyled mt-3 mb-4 small">
+              <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Aylığa göre %15+ tasarruf</li>
+              <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Tüm PRO özellikleri</li>
+              <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Öncelikli destek</li>
+            </ul>
+            <div class="mt-auto">
+              <a href="{% url 'shop:shop_home' %}?kategori=pro" class="btn btn-primary w-100">
+                <i class="fas fa-shopping-basket me-2"></i>Yıllık PRO’yu Al
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-center mt-4 small text-muted">
+      <i class="fas fa-info-circle me-1"></i> Fiyatlar bilgilendirme amaçlıdır. Ödeme sayfasındaki tutarlar geçerlidir.
+    </div>
+  </div>
+</section>
+

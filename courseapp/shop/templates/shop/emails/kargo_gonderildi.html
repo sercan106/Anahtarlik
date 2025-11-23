@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kargo Gönderildi</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .email-container {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            border-bottom: 3px solid #007bff;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #007bff;
+            margin-bottom: 10px;
+        }
+        .shipping-icon {
+            font-size: 48px;
+            color: #007bff;
+            margin-bottom: 15px;
+        }
+        .tracking-info {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #007bff;
+        }
+        .tracking-number {
+            font-size: 18px;
+            font-weight: bold;
+            color: #007bff;
+            margin: 10px 0;
+        }
+        .order-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            color: #666;
+            font-size: 14px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .btn:hover {
+            background: #0056b3;
+        }
+        .timeline {
+            margin: 20px 0;
+        }
+        .timeline-item {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+        .timeline-icon {
+            margin-right: 15px;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            <div class="logo">🐾 PetSafe Hub</div>
+            <div class="shipping-icon">📦</div>
+            <h1>Siparişiniz Kargoya Verildi!</h1>
+            <p>Sipariş numaranız: <strong>#{{ siparis.id }}</strong></p>
+        </div>
+
+        <div class="tracking-info">
+            <h3>🚚 Kargo Takip Bilgileri</h3>
+            <p><strong>Kargo Firması:</strong> {{ siparis.kargo_firma.ad if siparis.kargo_firma else 'Belirtilmemiş' }}</p>
+            <div class="tracking-number">
+                Takip Numarası: {{ siparis.kargo_takip_no|default:"Henüz atanmadı" }}
+            </div>
+            <p><strong>Tahmini Teslimat:</strong> {{ tahmini_teslimat|default:"2-3 iş günü" }}</p>
+        </div>
+
+        <div class="order-info">
+            <h3>📋 Sipariş Özeti</h3>
+            <p><strong>Sipariş Tarihi:</strong> {{ siparis.olusturulma_tarihi|date:"d.m.Y H:i" }}</p>
+            <p><strong>Kargo Tarihi:</strong> {{ kargo_tarihi|date:"d.m.Y H:i" }}</p>
+            <p><strong>Toplam Tutar:</strong> ₺{{ siparis.toplam_fiyat|floatformat:2 }}</p>
+        </div>
+
+        <div class="timeline">
+            <h3>📅 Kargo Durumu</h3>
+            <div class="timeline-item">
+                <span class="timeline-icon">✅</span>
+                <div>
+                    <strong>Sipariş Alındı</strong><br>
+                    <small>{{ siparis.olusturulma_tarihi|date:"d.m.Y H:i" }}</small>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <span class="timeline-icon">📦</span>
+                <div>
+                    <strong>Kargoya Verildi</strong><br>
+                    <small>{{ kargo_tarihi|date:"d.m.Y H:i" }}</small>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <span class="timeline-icon">🚚</span>
+                <div>
+                    <strong>Yolda</strong><br>
+                    <small>Tahmini: {{ tahmini_teslimat|default:"2-3 iş günü" }}</small>
+                </div>
+            </div>
+        </div>
+
+        {% if siparis.kullanici %}
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="{{ site_url }}{% url 'shop:kargo_takip' siparis.id %}" class="btn">
+                Kargo Takip Et
+            </a>
+        </div>
+        {% endif %}
+
+        <div class="footer">
+            <p>Kargo takip numaranızı kullanarak kargo firmasının web sitesinden detaylı takip yapabilirsiniz.</p>
+            <p>PetSafe Hub - Evcil Hayvan Dostu Alışveriş</p>
+            <p>📧 {{ contact_email }} | 🌐 {{ site_url }}</p>
+        </div>
+    </div>
+</body>
+</html>
+

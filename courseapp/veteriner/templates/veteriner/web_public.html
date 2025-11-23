@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="{{ veteriner.web_seo_aciklama|default:veteriner.web_aciklama|default:'Güvenilir veteriner hizmetleri' }}">
+  <meta name="keywords" content="{{ veteriner.web_seo_anahtar_kelimeler|default:'veteriner, evcil hayvan, kedi, köpek' }}">
+  <title>{{ veteriner.web_seo_baslik|default:veteriner.web_baslik|default:veteriner.ad }}</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body { 
+      scroll-behavior: smooth;
+      overflow-x: hidden;
+    }
+    
+    /* Hero Background with Parallax Effect */
+    .hero-bg { 
+      {% if veteriner.web_resim1 %}
+      background-image: linear-gradient(135deg, rgba(16, 185, 129, 0.9) 0%, rgba(59, 130, 246, 0.85) 100%), url('{{ veteriner.web_resim1.url }}');
+      {% else %}
+      background-image: linear-gradient(135deg, rgba(16, 185, 129, 0.9) 0%, rgba(59, 130, 246, 0.85) 100%), url('https://images.unsplash.com/photo-1548681528-6a5c45b66b42?w=1600');
+      {% endif %}
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      position: relative;
+    }
+    
+    /* Glassmorphism Effect */
+    .glass {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    /* Floating Animation */
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+    }
+    
+    .float-anim {
+      animation: float 3s ease-in-out infinite;
+    }
+    
+    /* Fade In Animation */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .fade-in-up {
+      animation: fadeInUp 0.8s ease-out forwards;
+    }
+    
+    /* Staggered Animation */
+    .stagger-1 { animation-delay: 0.1s; }
+    .stagger-2 { animation-delay: 0.2s; }
+    .stagger-3 { animation-delay: 0.3s; }
+    .stagger-4 { animation-delay: 0.4s; }
+    
+    /* Card Hover Effect */
+    .card-hover {
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    
+    .card-hover:hover {
+      transform: translateY(-10px) scale(1.02);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    }
+    
+    /* Gradient Text */
+    .gradient-text {
+      background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    /* Pulse Animation for CTA */
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
+      50% { box-shadow: 0 0 0 15px rgba(59, 130, 246, 0); }
+    }
+    
+    .pulse-btn {
+      animation: pulse 2s infinite;
+    }
+    
+    /* Smooth Reveal on Scroll */
+    .reveal {
+      opacity: 0;
+      transform: translateY(50px);
+      transition: all 0.8s ease-out;
+    }
+    
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    /* Mobile Menu */
+    .mobile-menu {
+      transform: translateX(100%);
+      transition: transform 0.3s ease-in-out;
+    }
+    
+    .mobile-menu.active {
+      transform: translateX(0);
+    }
+    
+    /* Mobile Menu Overlay */
+    .menu-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 39;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    
+    .menu-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    
+    /* Gradient Border */
+    .gradient-border {
+      position: relative;
+      border: 2px solid transparent;
+      background: linear-gradient(white, white) padding-box,
+                  linear-gradient(135deg, #10b981, #3b82f6) border-box;
+    }
+    
+    /* Icon Animations */
+    .icon-bounce {
+      transition: transform 0.3s ease;
+    }
+    
+    .icon-bounce:hover {
+      transform: scale(1.2) rotate(5deg);
+    }
+    
+    /* Progress Bar */
+    .progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #10b981, #3b82f6);
+      z-index: 9999;
+      transition: width 0.3s ease;
+    }
+    
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(135deg, #10b981, #3b82f6);
+      border-radius: 5px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(135deg, #059669, #2563eb);
+    }
+    
+    .map-container { 
+      height: 400px;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Paw Print Animation */
+    @keyframes pawPrint {
+      0%, 100% { opacity: 0.3; transform: scale(0.9); }
+      50% { opacity: 1; transform: scale(1.1); }
+    }
+    
+    .paw-anim {
+      animation: pawPrint 1.5s ease-in-out infinite;
+    }
+  </style>
+</head>
+<body class="font-sans text-gray-800 bg-gradient-to-br from-gray-50 to-blue-50">
+  <!-- Progress Bar -->
+  <div class="progress-bar" id="progressBar"></div>
+
+  <!-- Header Section -->
+  <header class="bg-white/80 backdrop-blur-md text-gray-800 sticky top-0 z-50 shadow-lg border-b border-gray-200">
+    <div class="container mx-auto flex justify-between items-center p-4 lg:px-8">
+      <div class="flex items-center space-x-4 fade-in-up">
+        {% if veteriner.logo %}
+          <img src="{{ veteriner.logo.url }}" alt="{{ veteriner.web_baslik|default:veteriner.ad }} Logo" class="h-12 lg:h-14 icon-bounce">
+        {% else %}
+           <div class="w-12 h-12 lg:w-14 lg:h-14 bg-gradient-to-br from-green-400 to-blue-500 rounded-full flex items-center justify-center text-white text-2xl font-bold icon-bounce">
+             <i class="fas fa-paw"></i>
+           </div>
+        {% endif %}
+        <h1 class="text-xl lg:text-2xl font-bold gradient-text">{{ veteriner.web_baslik|default:veteriner.ad }}</h1>
+      </div>
+      
+      <!-- Desktop Navigation -->
+      <nav class="hidden lg:block fade-in-up stagger-1">
+        <ul class="flex space-x-8 items-center">
+          <li><a href="#hakkimizda" class="hover:text-blue-600 transition-colors duration-300 font-medium">Hakkımızda</a></li>
+          <li><a href="#hizmetler" class="hover:text-blue-600 transition-colors duration-300 font-medium">Hizmetler</a></li>
+          <li><a href="#randevu" class="hover:text-blue-600 transition-colors duration-300 font-medium">Randevu</a></li>
+          <li><a href="#iletisim" class="hover:text-blue-600 transition-colors duration-300 font-medium">İletişim</a></li>
+          <li>
+            <a href="#randevu" class="bg-gradient-to-r from-green-500 to-blue-500 text-white px-6 py-3 rounded-full hover:shadow-xl transform hover:scale-105 transition-all duration-300 pulse-btn font-semibold">
+              {{ veteriner.cta_metin|default:'Randevu Al' }}
+            </a>
+          </li>
+        </ul>
+      </nav>
+      
+      <!-- Mobile Menu Button -->
+      <button class="lg:hidden text-gray-800 focus:outline-none" id="mobileMenuBtn">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+      </button>
+    </div>
+  </header>
+  
+  <!-- Mobile Menu Overlay -->
+  <div class="menu-overlay" id="menuOverlay"></div>
+  
+  <!-- Mobile Menu -->
+  <div class="mobile-menu fixed top-0 right-0 w-full h-full bg-white z-40 lg:hidden" id="mobileMenu">
+    <div class="flex flex-col items-center justify-center h-full space-y-8">
+      <button class="absolute top-6 right-6 text-gray-800" id="closeMenuBtn">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+      <a href="#hakkimizda" class="text-2xl font-semibold text-gray-800 hover:text-blue-600 transition-colors mobile-link">Hakkımızda</a>
+      <a href="#hizmetler" class="text-2xl font-semibold text-gray-800 hover:text-blue-600 transition-colors mobile-link">Hizmetler</a>
+      <a href="#randevu" class="text-2xl font-semibold text-gray-800 hover:text-blue-600 transition-colors mobile-link">Randevu</a>
+      <a href="#iletisim" class="text-2xl font-semibold text-gray-800 hover:text-blue-600 transition-colors mobile-link">İletişim</a>
+      <a href="#randevu" class="bg-gradient-to-r from-green-500 to-blue-500 text-white px-8 py-4 rounded-full text-xl font-semibold mobile-link">
+        {{ veteriner.cta_metin|default:'Randevu Al' }}
+      </a>
+    </div>
+  </div>
+
+  <!-- Hero Section -->
+  <section class="hero-bg min-h-screen flex items-center justify-center text-white relative overflow-hidden">
+     <!-- Animated Background Elements -->
+     <div class="absolute inset-0 overflow-hidden">
+       <div class="absolute top-20 left-10 text-6xl opacity-20 float-anim"><i class="fas fa-dog"></i></div>
+       <div class="absolute top-40 right-20 text-6xl opacity-20 float-anim" style="animation-delay: 0.5s;"><i class="fas fa-cat"></i></div>
+       <div class="absolute bottom-40 left-20 text-6xl opacity-20 float-anim" style="animation-delay: 1s;"><i class="fas fa-rabbit"></i></div>
+       <div class="absolute bottom-20 right-10 text-6xl opacity-20 float-anim" style="animation-delay: 1.5s;"><i class="fas fa-dove"></i></div>
+     </div>
+     
+     <div class="glass p-8 lg:p-16 rounded-3xl max-w-4xl mx-4 text-center relative z-10 fade-in-up">
+       <div class="text-6xl lg:text-7xl mb-6 paw-anim"><i class="fas fa-paw"></i></div>
+      <h2 class="text-4xl lg:text-6xl font-bold mb-6 leading-tight">{{ veteriner.web_slogan|default:'Evcil Dostlarınızın Sağlığı Bizim Önceliğimiz!' }}</h2>
+      <p class="text-lg lg:text-xl mb-8 text-gray-100">{{ veteriner.web_aciklama|default:'Profesyonel veteriner hizmetleri ile patili dostlarınıza en iyi bakımı sunuyoruz.' }}</p>
+      <a href="#randevu" class="inline-block bg-white text-blue-600 px-8 lg:px-10 py-4 rounded-full hover:bg-gray-100 shadow-2xl text-lg font-bold transform hover:scale-110 transition-all duration-300">
+        {{ veteriner.cta_metin|default:'Şimdi Randevu Al' }} →
+      </a>
+       <div class="mt-8 flex justify-center space-x-4 lg:space-x-6 text-4xl lg:text-5xl">
+         <span class="icon-bounce" style="animation-delay: 0s;"><i class="fas fa-dog"></i></span>
+         <span class="icon-bounce" style="animation-delay: 0.1s;"><i class="fas fa-cat"></i></span>
+         <span class="icon-bounce" style="animation-delay: 0.2s;"><i class="fas fa-rabbit"></i></span>
+         <span class="icon-bounce" style="animation-delay: 0.3s;"><i class="fas fa-dove"></i></span>
+       </div>
+    </div>
+  </section>
+
+  <!-- Hakkımızda Section -->
+  <section id="hakkimizda" class="py-20 lg:py-32 bg-white reveal">
+    <div class="container mx-auto px-4 lg:px-8">
+      <div class="text-center mb-16">
+        <div class="inline-block bg-gradient-to-r from-green-100 to-blue-100 px-6 py-2 rounded-full mb-4">
+          <span class="text-blue-600 font-semibold">Biz Kimiz?</span>
+        </div>
+        <h2 class="text-4xl lg:text-5xl font-bold mb-6 gradient-text">Hakkımızda</h2>
+        <p class="text-lg lg:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">{{ veteriner.web_aciklama|default:'Uzman veteriner hekimlerimizle sağlıklı ve mutlu yaşamlar için çalışıyoruz. Her canlının sağlığı bizim için değerlidir.' }}</p>
+      </div>
+      
+       <div class="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12 max-w-6xl mx-auto">
+         <div class="text-center card-hover bg-gradient-to-br from-green-50 to-white p-8 rounded-2xl shadow-lg">
+           <div class="text-5xl mb-4 text-green-600"><i class="fas fa-heart"></i></div>
+           <h3 class="text-2xl font-bold mb-3 text-gray-800">Sevgi & Özen</h3>
+           <p class="text-gray-600">Tüm dostlarımıza sevgiyle yaklaşır, onların mutluluğu için çalışırız.</p>
+         </div>
+         
+         <div class="text-center card-hover bg-gradient-to-br from-blue-50 to-white p-8 rounded-2xl shadow-lg">
+           <div class="text-5xl mb-4 text-blue-600"><i class="fas fa-hospital"></i></div>
+           <h3 class="text-2xl font-bold mb-3 text-gray-800">Uzman Kadro</h3>
+           <p class="text-gray-600">Alanında deneyimli veteriner hekimlerimizle en iyi hizmeti sunuyoruz.</p>
+         </div>
+         
+         <div class="text-center card-hover bg-gradient-to-br from-purple-50 to-white p-8 rounded-2xl shadow-lg">
+           <div class="text-5xl mb-4 text-purple-600"><i class="fas fa-bolt"></i></div>
+           <h3 class="text-2xl font-bold mb-3 text-gray-800">7/24 Destek</h3>
+           <p class="text-gray-600">Acil durumlarınızda yanınızdayız, her zaman ulaşabilirsiniz.</p>
+         </div>
+       </div>
+    </div>
+  </section>
+
+  <!-- Hizmetler Section -->
+  <section id="hizmetler" class="py-20 lg:py-32 bg-gradient-to-br from-gray-50 to-blue-50 reveal">
+    <div class="container mx-auto px-4 lg:px-8">
+      <div class="text-center mb-16">
+        <div class="inline-block bg-gradient-to-r from-green-100 to-blue-100 px-6 py-2 rounded-full mb-4">
+          <span class="text-blue-600 font-semibold">Neler Yapıyoruz?</span>
+        </div>
+        <h2 class="text-4xl lg:text-5xl font-bold mb-6 gradient-text">Hizmetlerimiz</h2>
+        <p class="text-lg text-gray-600 max-w-2xl mx-auto">Patili dostlarınız için sunduğumuz profesyonel veteriner hizmetleri</p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+         {% if veteriner.hizmet1_baslik %}
+         <div class="bg-white p-8 rounded-2xl shadow-lg card-hover gradient-border">
+           <div class="text-4xl mb-4 text-blue-600"><i class="fas fa-stethoscope"></i></div>
+           <h3 class="text-2xl font-bold mb-4 text-gray-800">{{ veteriner.hizmet1_baslik }}</h3>
+           <p class="text-gray-600 leading-relaxed">{{ veteriner.hizmet1_aciklama }}</p>
+         </div>
+         {% else %}
+         <div class="bg-white p-8 rounded-2xl shadow-lg card-hover gradient-border">
+           <div class="text-4xl mb-4 text-blue-600"><i class="fas fa-stethoscope"></i></div>
+           <h3 class="text-2xl font-bold mb-4 text-gray-800">Genel Muayene</h3>
+           <p class="text-gray-600 leading-relaxed">Evcil dostlarınızın sağlık kontrolü ve kapsamlı muayene hizmetleri.</p>
+         </div>
+         {% endif %}
+         
+         {% if veteriner.hizmet2_baslik %}
+         <div class="bg-white p-8 rounded-2xl shadow-lg card-hover gradient-border">
+           <div class="text-4xl mb-4 text-green-600"><i class="fas fa-syringe"></i></div>
+           <h3 class="text-2xl font-bold mb-4 text-gray-800">{{ veteriner.hizmet2_baslik }}</h3>
+           <p class="text-gray-600 leading-relaxed">{{ veteriner.hizmet2_aciklama }}</p>
+         </div>
+         {% else %}
+         <div class="bg-white p-8 rounded-2xl shadow-lg card-hover gradient-border">
+           <div class="text-4xl mb-4 text-green-600"><i class="fas fa-syringe"></i></div>
+           <h3 class="text-2xl font-bold mb-4 text-gray-800">Aşılama</h3>
+           <p class="text-gray-600 leading-relaxed">Tüm aşı türleri ve koruyucu sağlık programları ile dostlarınızı koruyun.</p>
+         </div>
+         {% endif %}
+         
+         {% if veteriner.hizmet3_baslik %}
+         <div class="bg-white p-8 rounded-2xl shadow-lg card-hover gradient-border">
+           <div class="text-4xl mb-4 text-red-600"><i class="fas fa-user-md"></i></div>
+           <h3 class="text-2xl font-bold mb-4 text-gray-800">{{ veteriner.hizmet3_baslik }}</h3>
+           <p class="text-gray-600 leading-relaxed">{{ veteriner.hizmet3_aciklama }}</p>
+         </div>
+         {% else %}
+         <div class="bg-white p-8 rounded-2xl shadow-lg card-hover gradient-border">
+           <div class="text-4xl mb-4 text-red-600"><i class="fas fa-user-md"></i></div>
+           <h3 class="text-2xl font-bold mb-4 text-gray-800">Cerrahi İşlemler</h3>
+           <p class="text-gray-600 leading-relaxed">Modern ekipmanlarımızla güvenli cerrahi müdahale ve operasyonlar.</p>
+         </div>
+         {% endif %}
+         
+         <div class="bg-white p-8 rounded-2xl shadow-lg card-hover gradient-border">
+           <div class="text-4xl mb-4 text-purple-600"><i class="fas fa-microscope"></i></div>
+           <h3 class="text-2xl font-bold mb-4 text-gray-800">Laboratuvar</h3>
+           <p class="text-gray-600 leading-relaxed">Hızlı ve güvenilir laboratuvar test sonuçları ile kesin teşhis.</p>
+         </div>
+         
+         <div class="bg-white p-8 rounded-2xl shadow-lg card-hover gradient-border">
+           <div class="text-4xl mb-4 text-orange-600"><i class="fas fa-home"></i></div>
+           <h3 class="text-2xl font-bold mb-4 text-gray-800">Evde Bakım</h3>
+           <p class="text-gray-600 leading-relaxed">Evinizde profesyonel veteriner hizmeti alma imkanı.</p>
+         </div>
+         
+         <div class="bg-white p-8 rounded-2xl shadow-lg card-hover gradient-border">
+           <div class="text-4xl mb-4 text-cyan-600"><i class="fas fa-shower"></i></div>
+           <h3 class="text-2xl font-bold mb-4 text-gray-800">Bakım & Tımar</h3>
+           <p class="text-gray-600 leading-relaxed">Dostlarınızın temizlik ve bakım ihtiyaçları için özel hizmetler.</p>
+         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SSS Section -->
+  {% if veteriner.web_aciklama %}
+  <section id="sss" class="py-20 lg:py-32 bg-white reveal">
+    <div class="container mx-auto px-4 lg:px-8">
+      <div class="text-center mb-16">
+        <div class="inline-block bg-gradient-to-r from-green-100 to-blue-100 px-6 py-2 rounded-full mb-4">
+          <span class="text-blue-600 font-semibold">Merak Edilenler</span>
+        </div>
+        <h2 class="text-4xl lg:text-5xl font-bold mb-6 gradient-text">Sıkça Sorulan Sorular</h2>
+      </div>
+      
+       <div class="space-y-6 max-w-4xl mx-auto">
+         <div class="bg-gradient-to-br from-green-50 to-white p-8 rounded-2xl shadow-lg card-hover">
+           <h3 class="text-xl font-bold mb-3 text-gray-800 flex items-center">
+             <span class="text-2xl mr-3 text-green-600"><i class="fas fa-question-circle"></i></span> Aşı takvimi nasıl belirlenir?
+           </h3>
+           <p class="text-gray-600 ml-11">Evcil hayvanınızın yaşına ve türüne göre kişiselleştirilir. Bilgi için bize ulaşın.</p>
+         </div>
+         
+         <div class="bg-gradient-to-br from-blue-50 to-white p-8 rounded-2xl shadow-lg card-hover">
+           <h3 class="text-xl font-bold mb-3 text-gray-800 flex items-center">
+             <span class="text-2xl mr-3 text-red-600"><i class="fas fa-exclamation-triangle"></i></span> Acil durumlarda ne yapmalıyım?
+           </h3>
+           <p class="text-gray-600 ml-11">{% if veteriner.telefon %}Hemen <strong class="text-blue-600">{{ veteriner.telefon }}</strong> numarasını arayın.{% else %}Acil hattımızdan bize ulaşın.{% endif %}</p>
+         </div>
+         
+         <div class="bg-gradient-to-br from-purple-50 to-white p-8 rounded-2xl shadow-lg card-hover">
+           <h3 class="text-xl font-bold mb-3 text-gray-800 flex items-center">
+             <span class="text-2xl mr-3 text-purple-600"><i class="fas fa-calendar-alt"></i></span> Randevu almak zorunlu mu?
+           </h3>
+           <p class="text-gray-600 ml-11">Randevu ile gelmeniz bekleme sürenizi minimize eder ancak acil durumlar için randevu gerekmez.</p>
+         </div>
+         
+         <div class="bg-gradient-to-br from-orange-50 to-white p-8 rounded-2xl shadow-lg card-hover">
+           <h3 class="text-xl font-bold mb-3 text-gray-800 flex items-center">
+             <span class="text-2xl mr-3 text-orange-600"><i class="fas fa-credit-card"></i></span> Hangi ödeme yöntemlerini kabul ediyorsunuz?
+           </h3>
+           <p class="text-gray-600 ml-11">Nakit, kredi kartı ve havale/EFT ile ödeme yapabilirsiniz.</p>
+         </div>
+       </div>
+    </div>
+  </section>
+  {% endif %}
+
+  <!-- Randevu Section -->
+  <section id="randevu" class="py-20 lg:py-32 bg-gradient-to-br from-blue-600 to-green-500 reveal">
+    <div class="container mx-auto px-4 lg:px-8">
+      <div class="text-center mb-16 text-white">
+        <div class="text-5xl mb-4"><i class="fas fa-calendar-check"></i></div>
+        <h2 class="text-4xl lg:text-5xl font-bold mb-6">Randevu Al</h2>
+        <p class="text-lg lg:text-xl opacity-90">Patili dostunuz için hemen randevu oluşturun</p>
+      </div>
+      
+      <!-- Başarı Mesajı -->
+      {% if randevu_basarili %}
+      <div class="max-w-2xl mx-auto mb-8">
+        <div class="bg-green-500 text-white p-6 rounded-2xl shadow-2xl text-center">
+          <div class="text-4xl mb-3"><i class="fas fa-check-circle"></i></div>
+          <h3 class="text-xl font-bold mb-2">🎉 Randevu Başarıyla Oluşturuldu!</h3>
+          <p class="text-lg">{{ randevu_basarili }}</p>
+        </div>
+      </div>
+      {% endif %}
+      
+      <div class="max-w-2xl mx-auto bg-white p-8 lg:p-12 rounded-3xl shadow-2xl">
+        <form method="post" action="{% url 'veteriner:public_randevu_olustur' veteriner.web_slug %}">
+          {% csrf_token %}
+          <div class="space-y-6">
+            <div>
+              <label for="musteri_adi" class="block text-sm font-semibold text-gray-700 mb-2">Ad Soyad *</label>
+              <input type="text" id="musteri_adi" name="musteri_adi" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors" placeholder="Adınız ve soyadınız" required>
+            </div>
+            
+            <div>
+              <label for="musteri_telefon" class="block text-sm font-semibold text-gray-700 mb-2">Telefon *</label>
+              <input type="tel" id="musteri_telefon" name="musteri_telefon" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors" placeholder="0555 123 45 67" required>
+            </div>
+            
+            <div>
+              <label for="musteri_email" class="block text-sm font-semibold text-gray-700 mb-2">E-posta</label>
+              <input type="email" id="musteri_email" name="musteri_email" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors" placeholder="ornek@mail.com">
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label for="tarih" class="block text-sm font-semibold text-gray-700 mb-2">Randevu Tarihi *</label>
+                <input type="date" id="tarih" name="tarih" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors" required min="{% now 'Y-m-d' %}">
+              </div>
+              
+              <div>
+                <label for="saat" class="block text-sm font-semibold text-gray-700 mb-2">Saat *</label>
+                <select id="saat" name="saat" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors" required>
+                  <option value="">Önce tarih seçiniz</option>
+                </select>
+                <div id="saat-uyari" class="text-sm text-gray-600 mt-2 hidden">
+                  <i class="fas fa-info-circle mr-1"></i>Seçilen tarihte veteriner çalışmıyor
+                </div>
+              </div>
+            </div>
+            
+            <div>
+              <label for="hayvan_adi" class="block text-sm font-semibold text-gray-700 mb-2">Evcil Hayvan Adı *</label>
+              <input type="text" id="hayvan_adi" name="hayvan_adi" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors" placeholder="Boncuk, Karabaş, vb." required>
+            </div>
+            
+            <div>
+              <label for="hayvan_turu" class="block text-sm font-semibold text-gray-700 mb-2">Evcil Hayvan Türü *</label>
+              <select id="hayvan_turu" name="hayvan_turu" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors" required>
+                <option value="">Seçiniz</option>
+                <option value="Köpek">🐶 Köpek</option>
+                <option value="Kedi">🐱 Kedi</option>
+                <option value="Kuş">🦜 Kuş</option>
+                <option value="Tavşan">🐰 Tavşan</option>
+                <option value="Diğer">🐾 Diğer</option>
+              </select>
+            </div>
+            
+            <div>
+              <label for="sorun_aciklamasi" class="block text-sm font-semibold text-gray-700 mb-2">Sorun Açıklaması *</label>
+              <textarea id="sorun_aciklamasi" name="sorun_aciklamasi" rows="4" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors" placeholder="Evcil hayvanınızın sorunu hakkında detay verin..." required></textarea>
+            </div>
+            
+            <div>
+              <label for="notlar" class="block text-sm font-semibold text-gray-700 mb-2">Ek Notlar</label>
+              <textarea id="notlar" name="notlar" rows="2" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors" placeholder="Ek bilgiler..."></textarea>
+            </div>
+            
+            <button type="submit" class="w-full bg-gradient-to-r from-green-500 to-blue-500 text-white px-6 py-4 rounded-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 text-lg font-bold">
+              <i class="fas fa-calendar-check mr-2"></i> Randevu Talep Et
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- İletişim Section -->
+  <section id="iletisim" class="py-20 lg:py-32 bg-white reveal">
+    <div class="container mx-auto px-4 lg:px-8">
+      <div class="text-center mb-16">
+        <div class="inline-block bg-gradient-to-r from-green-100 to-blue-100 px-6 py-2 rounded-full mb-4">
+          <span class="text-blue-600 font-semibold">Bizimle İletişime Geçin</span>
+        </div>
+        <h2 class="text-4xl lg:text-5xl font-bold mb-6 gradient-text">İletişim</h2>
+        <p class="text-lg text-gray-600 max-w-2xl mx-auto">Sorularınız için bize ulaşın, size yardımcı olmaktan mutluluk duyarız</p>
+      </div>
+      
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-7xl mx-auto items-start">
+         <!-- Contact Info -->
+         <div class="space-y-8">
+           <div class="bg-gradient-to-br from-green-50 to-white p-8 rounded-2xl shadow-lg card-hover">
+             <div class="flex items-start space-x-4">
+               <div class="text-4xl text-green-600"><i class="fas fa-map-marker-alt"></i></div>
+               <div>
+                 <h3 class="text-xl font-bold mb-2 text-gray-800">Adres</h3>
+                 {% if veteriner.adres_detay %}
+                 <p class="text-gray-600">{{ veteriner.adres_detay }}{% if veteriner.ilce %}, {{ veteriner.ilce.ad }}{% endif %}{% if veteriner.il %}, {{ veteriner.il.ad }}{% endif %}</p>
+                 {% else %}
+                 <p class="text-gray-600">İstanbul, Türkiye</p>
+                 {% endif %}
+               </div>
+             </div>
+           </div>
+           
+           <div class="bg-gradient-to-br from-blue-50 to-white p-8 rounded-2xl shadow-lg card-hover">
+             <div class="flex items-start space-x-4">
+               <div class="text-4xl text-blue-600"><i class="fas fa-phone-alt"></i></div>
+               <div>
+                 <h3 class="text-xl font-bold mb-2 text-gray-800">Telefon</h3>
+                 {% if veteriner.telefon %}
+                 <a href="tel:{{ veteriner.telefon }}" class="text-blue-600 hover:text-blue-700 font-semibold text-lg">{{ veteriner.telefon }}</a>
+                 {% else %}
+                 <p class="text-gray-600">0555 123 45 67</p>
+                 {% endif %}
+               </div>
+             </div>
+           </div>
+           
+           <div class="bg-gradient-to-br from-purple-50 to-white p-8 rounded-2xl shadow-lg card-hover">
+             <div class="flex items-start space-x-4">
+               <div class="text-4xl text-purple-600"><i class="fas fa-envelope"></i></div>
+               <div>
+                 <h3 class="text-xl font-bold mb-2 text-gray-800">E-posta</h3>
+                 {% if veteriner.email %}
+                 <a href="mailto:{{ veteriner.email }}" class="text-blue-600 hover:text-blue-700 font-semibold">{{ veteriner.email }}</a>
+                 {% else %}
+                 <p class="text-gray-600">info@veteriner.com</p>
+                 {% endif %}
+               </div>
+             </div>
+           </div>
+           
+           <div class="bg-gradient-to-br from-orange-50 to-white p-8 rounded-2xl shadow-lg card-hover">
+             <div class="flex items-start space-x-4">
+               <div class="text-4xl text-orange-600"><i class="fas fa-clock"></i></div>
+               <div>
+                 <h3 class="text-xl font-bold mb-2 text-gray-800">Çalışma Saatleri</h3>
+                 <p class="text-gray-600">
+                   <strong>Pazartesi - Cumartesi:</strong><br>
+                   {% if veteriner.pazartesi_baslangic and veteriner.pazartesi_bitis %}
+                   {{ veteriner.pazartesi_baslangic|time:'H:i' }} - {{ veteriner.pazartesi_bitis|time:'H:i' }}
+                   {% else %}
+                   09:00 - 18:00
+                   {% endif %}
+                 </p>
+                 <p class="text-gray-600 mt-2">
+                   <strong>Pazar:</strong> Kapalı
+                 </p>
+               </div>
+             </div>
+           </div>
+           
+           <!-- Social Media -->
+           <div class="flex space-x-6 justify-center lg:justify-start">
+             {% if instagram_url %}
+             <a href="{{ instagram_url }}" target="_blank" class="w-14 h-14 bg-gradient-to-br from-pink-500 to-orange-500 rounded-full flex items-center justify-center text-white text-2xl hover:scale-110 transform transition-all duration-300 shadow-lg">
+               <i class="fab fa-instagram"></i>
+             </a>
+             {% endif %}
+             {% if facebook_url %}
+             <a href="{{ facebook_url }}" target="_blank" class="w-14 h-14 bg-blue-600 rounded-full flex items-center justify-center text-white text-2xl hover:scale-110 transform transition-all duration-300 shadow-lg">
+               <i class="fab fa-facebook-f"></i>
+             </a>
+             {% endif %}
+             {% if veteriner.whatsapp %}
+             <a href="https://wa.me/{{ veteriner.whatsapp }}" target="_blank" class="w-14 h-14 bg-green-500 rounded-full flex items-center justify-center text-white text-2xl hover:scale-110 transform transition-all duration-300 shadow-lg">
+               <i class="fab fa-whatsapp"></i>
+             </a>
+             {% endif %}
+           </div>
+         </div>
+        
+        <!-- Map -->
+        <div class="map-container">
+          {% if veteriner.il and veteriner.ilce %}
+          <iframe src="https://www.google.com/maps?q={{ veteriner.ilce.ad|urlencode }}+{{ veteriner.il.ad|urlencode }}&output=embed" width="100%" height="100%" style="border:0;" allowfullscreen loading="lazy"></iframe>
+          {% else %}
+          <iframe src="https://www.google.com/maps?q=Istanbul&output=embed" width="100%" height="100%" style="border:0;" allowfullscreen loading="lazy"></iframe>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-gradient-to-r from-gray-900 to-gray-800 text-white py-12">
+    <div class="container mx-auto px-4 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+        <!-- Brand -->
+        <div>
+          <div class="flex items-center space-x-3 mb-4">
+            {% if veteriner.logo %}
+             <img src="{{ veteriner.logo.url }}" alt="Logo" class="h-10">
+             {% else %}
+             <div class="w-10 h-10 bg-gradient-to-br from-green-400 to-blue-500 rounded-full flex items-center justify-center text-xl text-white"><i class="fas fa-paw"></i></div>
+             {% endif %}
+            <h3 class="text-xl font-bold">{{ veteriner.web_baslik|default:veteriner.ad }}</h3>
+          </div>
+          <p class="text-gray-400 leading-relaxed">Evcil dostlarınızın sağlığı için güvenilir partneriniz.</p>
+        </div>
+        
+        <!-- Quick Links -->
+        <div>
+          <h3 class="text-lg font-bold mb-4">Hızlı Linkler</h3>
+          <ul class="space-y-2">
+            <li><a href="#hakkimizda" class="text-gray-400 hover:text-white transition-colors">Hakkımızda</a></li>
+            <li><a href="#hizmetler" class="text-gray-400 hover:text-white transition-colors">Hizmetler</a></li>
+            <li><a href="#randevu" class="text-gray-400 hover:text-white transition-colors">Randevu</a></li>
+            <li><a href="#iletisim" class="text-gray-400 hover:text-white transition-colors">İletişim</a></li>
+          </ul>
+        </div>
+        
+        <!-- Contact -->
+        <div>
+          <h3 class="text-lg font-bold mb-4">İletişim</h3>
+          <ul class="space-y-2 text-gray-400">
+            {% if veteriner.telefon %}<li><i class="fas fa-phone-alt mr-2"></i> {{ veteriner.telefon }}</li>{% endif %}
+            {% if veteriner.email %}<li><i class="fas fa-envelope mr-2"></i> {{ veteriner.email }}</li>{% endif %}
+            {% if veteriner.adres_detay %}<li><i class="fas fa-map-marker-alt mr-2"></i> {{ veteriner.ilce.ad }}, {{ veteriner.il.ad }}</li>{% endif %}
+          </ul>
+        </div>
+      </div>
+      
+      <div class="border-t border-gray-700 pt-8 text-center">
+        <p class="text-gray-400">&copy; {{ now|date:'Y' }} {{ veteriner.web_baslik|default:veteriner.ad }}. Tüm hakları saklıdır.</p>
+        <div class="mt-4 space-x-4">
+          <a href="#gizlilik" class="text-gray-400 hover:text-white transition-colors text-sm">Gizlilik Politikası</a>
+          <span class="text-gray-600">|</span>
+          <a href="#cerez" class="text-gray-400 hover:text-white transition-colors text-sm">Çerez Bildirimi</a>
+          <span class="text-gray-600">|</span>
+          <a href="#kvkk" class="text-gray-400 hover:text-white transition-colors text-sm">KVKK</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scroll to Top Button -->
+  <button id="scrollTopBtn" class="fixed bottom-8 right-8 bg-gradient-to-r from-green-500 to-blue-500 text-white w-14 h-14 rounded-full shadow-2xl hover:scale-110 transform transition-all duration-300 opacity-0 pointer-events-none z-40 flex items-center justify-center text-2xl">
+    ↑
+  </button>
+
+  <script>
+    // Mobile Menu Toggle
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const closeMenuBtn = document.getElementById('closeMenuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const menuOverlay = document.getElementById('menuOverlay');
+    const mobileLinks = document.querySelectorAll('.mobile-link');
+    
+    function openMobileMenu() {
+      mobileMenu.classList.add('active');
+      menuOverlay.classList.add('active');
+      document.body.style.overflow = 'hidden'; // Prevent scroll when menu is open
+    }
+    
+    function closeMobileMenu() {
+      mobileMenu.classList.remove('active');
+      menuOverlay.classList.remove('active');
+      document.body.style.overflow = ''; // Restore scroll
+    }
+    
+    mobileMenuBtn.addEventListener('click', () => {
+      if (mobileMenu.classList.contains('active')) {
+        closeMobileMenu();
+      } else {
+        openMobileMenu();
+      }
+    });
+    closeMenuBtn.addEventListener('click', closeMobileMenu);
+    menuOverlay.addEventListener('click', closeMobileMenu);
+    
+    mobileLinks.forEach(link => {
+      link.addEventListener('click', closeMobileMenu);
+    });
+    
+    // Close on ESC
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeMobileMenu();
+      }
+    });
+    
+    // Smooth scroll for navigation links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        const href = this.getAttribute('href');
+        if (href && href.length > 1) {
+          e.preventDefault();
+          const target = document.querySelector(href);
+          if (target) {
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }
+      });
+    });
+    
+    // Progress Bar
+    window.addEventListener('scroll', () => {
+      const winScroll = document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const scrolled = (winScroll / height) * 100;
+      document.getElementById('progressBar').style.width = scrolled + '%';
+    });
+    
+    // Reveal on Scroll Animation
+    const reveals = document.querySelectorAll('.reveal');
+    
+    const revealOnScroll = () => {
+      reveals.forEach(element => {
+        const elementTop = element.getBoundingClientRect().top;
+        const windowHeight = window.innerHeight;
+        
+        if (elementTop < windowHeight - 100) {
+          element.classList.add('active');
+        }
+      });
+    };
+    
+    window.addEventListener('scroll', revealOnScroll);
+    revealOnScroll(); // Initial check
+    
+    // Scroll to Top Button
+    const scrollTopBtn = document.getElementById('scrollTopBtn');
+    
+    window.addEventListener('scroll', () => {
+      if (window.pageYOffset > 300) {
+        scrollTopBtn.style.opacity = '1';
+        scrollTopBtn.style.pointerEvents = 'auto';
+      } else {
+        scrollTopBtn.style.opacity = '0';
+        scrollTopBtn.style.pointerEvents = 'none';
+      }
+    });
+    
+    scrollTopBtn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+    
+    // Add hover effect to cards
+    const cards = document.querySelectorAll('.card-hover');
+    cards.forEach(card => {
+      card.addEventListener('mouseenter', function() {
+        this.style.transform = 'translateY(-10px) scale(1.02)';
+      });
+      
+      card.addEventListener('mouseleave', function() {
+        this.style.transform = 'translateY(0) scale(1)';
+      });
+    });
+    
+    // Çalışma saatleri kontrolü
+    const tarihInput = document.getElementById('tarih');
+    const saatSelect = document.getElementById('saat');
+    const saatUyari = document.getElementById('saat-uyari');
+    
+    // Veteriner çalışma saatleri (varsayılan)
+    const calismaSaatleri = {
+      0: { // Pazartesi
+        baslangic: '09:00',
+        bitis: '18:00',
+        kapali: false
+      },
+      1: { // Salı
+        baslangic: '09:00',
+        bitis: '18:00',
+        kapali: false
+      },
+      2: { // Çarşamba
+        baslangic: '09:00',
+        bitis: '18:00',
+        kapali: false
+      },
+      3: { // Perşembe
+        baslangic: '09:00',
+        bitis: '18:00',
+        kapali: false
+      },
+      4: { // Cuma
+        baslangic: '09:00',
+        bitis: '18:00',
+        kapali: false
+      },
+      5: { // Cumartesi
+        baslangic: '09:00',
+        bitis: '18:00',
+        kapali: false
+      },
+      6: { // Pazar
+        baslangic: '09:00',
+        bitis: '18:00',
+        kapali: true
+      }
+    };
+    
+    function generateTimeSlots(baslangic, bitis) {
+      const slots = [];
+      const start = parseInt(baslangic.split(':')[0]);
+      const end = parseInt(bitis.split(':')[0]);
+      
+      for (let hour = start; hour < end; hour++) {
+        slots.push(`${hour.toString().padStart(2, '0')}:00`);
+        slots.push(`${hour.toString().padStart(2, '0')}:30`);
+      }
+      return slots;
+    }
+    
+    function updateTimeSlots() {
+      const selectedDate = tarihInput.value;
+      if (!selectedDate) {
+        saatSelect.innerHTML = '<option value="">Önce tarih seçiniz</option>';
+        saatUyari.classList.add('hidden');
+        return;
+      }
+      
+      const date = new Date(selectedDate);
+      const dayOfWeek = date.getDay();
+      const calisma = calismaSaatleri[dayOfWeek];
+      
+      saatSelect.innerHTML = '';
+      
+      if (calisma.kapali) {
+        saatSelect.innerHTML = '<option value="">Bu gün çalışmıyor</option>';
+        saatUyari.classList.remove('hidden');
+        return;
+      }
+      
+      const timeSlots = generateTimeSlots(calisma.baslangic, calisma.bitis);
+      saatSelect.innerHTML = '<option value="">Saat seçiniz</option>';
+      
+      timeSlots.forEach(slot => {
+        const option = document.createElement('option');
+        option.value = slot;
+        option.textContent = slot;
+        saatSelect.appendChild(option);
+      });
+      
+      saatUyari.classList.add('hidden');
+    }
+    
+    tarihInput.addEventListener('change', updateTimeSlots);
+    
+    // Form validation
+    const appointmentForm = document.querySelector('#randevu form');
+    if (appointmentForm) {
+      appointmentForm.addEventListener('submit', (e) => {
+        const name = document.getElementById('musteri_adi').value;
+        const phone = document.getElementById('musteri_telefon').value;
+        const date = document.getElementById('tarih').value;
+        const time = document.getElementById('saat').value;
+        const petName = document.getElementById('hayvan_adi').value;
+        const petType = document.getElementById('hayvan_turu').value;
+        const problem = document.getElementById('sorun_aciklamasi').value;
+        
+        if (!name || !phone || !date || !time || !petName || !petType || !problem) {
+          e.preventDefault();
+          alert('Lütfen tüm zorunlu alanları doldurunuz!');
+          return false;
+        }
+        
+        // Tarih kontrolü
+        const today = new Date().toISOString().split('T')[0];
+        if (date < today) {
+          e.preventDefault();
+          alert('Geçmiş tarih seçilemez!');
+          return false;
+        }
+        
+        // Çalışma saatleri kontrolü
+        const selectedDate = new Date(date);
+        const dayOfWeek = selectedDate.getDay();
+        const calisma = calismaSaatleri[dayOfWeek];
+        
+        if (calisma.kapali) {
+          e.preventDefault();
+          alert('Seçilen tarihte veteriner çalışmıyor!');
+          return false;
+        }
+      });
+    }
+  </script>
+</body>
+</html>

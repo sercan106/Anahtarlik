@@ -1,0 +1,212 @@
+{% extends "ana.html" %}
+{% load static %}
+
+{% block title %}Tüm Sipariş Taleplerim - PetSafe Hub{% endblock %}
+
+{% block css_dosyalar %}
+<style>
+    :root {
+        --list-primary: #5B9BD5;
+        --list-secondary: #70C1B3;
+        --list-success: #6FCF97;
+    }
+
+    .list-container {
+        max-width: 1400px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .list-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 28px;
+        box-shadow: 0 15px 45px rgba(91, 155, 213, 0.12);
+        overflow: hidden;
+    }
+
+    .list-header {
+        background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
+        color: white;
+        padding: 2rem;
+        text-align: center;
+    }
+
+    .list-header h4 {
+        font-weight: 800;
+        font-size: 1.75rem;
+        margin: 0;
+    }
+
+    .table-container {
+        padding: 2rem;
+    }
+
+    .modern-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 0.75rem;
+    }
+
+    .modern-table thead th {
+        background: linear-gradient(135deg, rgba(91, 155, 213, 0.1) 0%, rgba(112, 193, 179, 0.1) 100%);
+        color: var(--list-primary);
+        font-weight: 700;
+        padding: 1rem 1.5rem;
+        text-align: left;
+        border: none;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .modern-table thead th:first-child {
+        border-radius: 15px 0 0 15px;
+    }
+
+    .modern-table thead th:last-child {
+        border-radius: 0 15px 15px 0;
+    }
+
+    .modern-table tbody tr {
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 15px;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(91, 155, 213, 0.08);
+    }
+
+    .modern-table tbody tr:hover {
+        transform: translateX(5px);
+        box-shadow: 0 5px 15px rgba(91, 155, 213, 0.15);
+    }
+
+    .modern-table tbody td {
+        padding: 1.25rem 1.5rem;
+        border: none;
+        vertical-align: middle;
+    }
+
+    .modern-table tbody tr td:first-child {
+        border-radius: 15px 0 0 15px;
+        font-weight: 700;
+        color: var(--list-primary);
+        font-size: 1.1rem;
+    }
+
+    .modern-table tbody tr td:last-child {
+        border-radius: 0 15px 15px 0;
+    }
+
+    .badge-modern {
+        padding: 0.5rem 0.85rem;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 0.8rem;
+        margin-right: 0.25rem;
+        display: inline-block;
+    }
+
+    .badge-modern.bg-success {
+        background: linear-gradient(135deg, #6FCF97 0%, #70C1B3 100%) !important;
+        color: white;
+    }
+
+    .badge-modern.bg-warning {
+        background: linear-gradient(135deg, #F2C94C 0%, #FF8C42 100%) !important;
+        color: white;
+    }
+
+    .badge-modern.bg-primary {
+        background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%) !important;
+        color: white;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
+    }
+
+    .empty-state i {
+        font-size: 4rem;
+        color: var(--list-secondary);
+        opacity: 0.5;
+        margin-bottom: 1rem;
+    }
+
+    @media (max-width: 992px) {
+        .list-container { margin: 1rem auto; }
+        .list-header h4 { font-size: 1.4rem; }
+        .table-container { padding: 1rem; overflow-x: auto; }
+        .modern-table { border-spacing: 0 0.5rem; min-width: 900px; }
+        .modern-table thead th,
+        .modern-table tbody td {
+            padding: 0.75rem 1rem;
+            font-size: 0.85rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="list-container">
+    <div class="list-card">
+        <div class="list-header">
+            <h4><i class="fas fa-boxes me-2"></i>Tüm Sipariş Taleplerim</h4>
+        </div>
+
+        <div class="table-container">
+            {% if page_obj %}
+            <div class="table-responsive">
+                <table class="modern-table">
+                    <thead>
+                        <tr>
+                            <th><i class="fas fa-sort-numeric-up me-2"></i>Adet</th>
+                            <th><i class="fas fa-calendar me-2"></i>Talep Tarihi</th>
+                            <th><i class="fas fa-info-circle me-2"></i>Durum</th>
+                            <th><i class="fas fa-truck me-2"></i>Kargo</th>
+                            <th><i class="fas fa-barcode me-2"></i>Takip No</th>
+                            <th><i class="fas fa-map-marker-alt me-2"></i>Adres</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for s in page_obj %}
+                        <tr>
+                            <td>{{ s.talep_edilen_adet }}</td>
+                            <td>{{ s.talep_tarihi|date:"d.m.Y H:i" }}</td>
+                            <td>
+                                {% if s.onaylandi %}
+                                <span class="badge badge-modern bg-success">Onaylandı</span>
+                                {% else %}
+                                <span class="badge badge-modern bg-warning">Beklemede</span>
+                                {% endif %}
+                                {% if s.kargolandimi %}
+                                <span class="badge badge-modern bg-primary">Kargolandı</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ s.get_kargo_sirketi_display|default:"—" }}</td>
+                            <td><code>{{ s.kargo_takip_no|default:"—" }}</code></td>
+                            <td><small>{{ s.gonderim_adresi }}</small></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <i class="fas fa-inbox"></i>
+                <h5 class="text-muted">Kayıt yok</h5>
+                <p class="text-muted">Henüz sipariş talebiniz bulunmuyor.</p>
+            </div>
+            {% endif %}
+
+            {% if page_obj.has_other_pages %}
+            <div class="mt-4">
+                {% include "partials/pagination.html" with page_obj=page_obj %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

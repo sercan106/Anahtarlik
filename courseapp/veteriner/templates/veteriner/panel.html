@@ -1,0 +1,688 @@
+{% extends "ana.html" %}
+{% load static %}
+
+{% block title %}Veteriner Paneli - PetSafe Hub{% endblock %}
+
+{% block css_dosyalar %}
+<style>
+    :root {
+        --panel-primary: #5B9BD5;
+        --panel-secondary: #70C1B3;
+        --panel-accent: #FF8C42;
+        --panel-success: #6FCF97;
+        --panel-warning: #F2C94C;
+        --panel-info: #9B9ECE;
+    }
+
+    /* Hero Section */
+    .hero-panel {
+        background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
+        border-radius: 28px;
+        padding: 3rem 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 15px 45px rgba(91, 155, 213, 0.18);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hero-panel::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -10%;
+        width: 400px;
+        height: 400px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+    }
+
+    .hero-panel h2 {
+        font-weight: 800;
+        font-size: 2rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Stat Cards */
+    .stat-card-modern {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 24px;
+        padding: 2rem;
+        text-align: center;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 10px 30px rgba(91, 155, 213, 0.1);
+        position: relative;
+        overflow: hidden;
+        height: 100%;
+    }
+
+    .stat-card-modern::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--panel-primary) 0%, var(--panel-secondary) 100%);
+        transform: scaleX(0);
+        transition: transform 0.4s ease;
+    }
+
+    .stat-card-modern:hover::before {
+        transform: scaleX(1);
+    }
+
+    .stat-card-modern:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 50px rgba(91, 155, 213, 0.2);
+    }
+
+    .stat-icon {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 1.5rem;
+        background: linear-gradient(135deg, var(--panel-primary) 0%, var(--panel-secondary) 100%);
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 2rem;
+        box-shadow: 0 10px 25px rgba(91, 155, 213, 0.3);
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, var(--panel-primary) 0%, var(--panel-secondary) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0.5rem;
+    }
+
+    /* Panel Cards */
+    .panel-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 28px;
+        box-shadow: 0 15px 45px rgba(91, 155, 213, 0.12);
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .panel-card:hover {
+        box-shadow: 0 20px 55px rgba(91, 155, 213, 0.18);
+    }
+
+    .panel-header {
+        background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
+        color: white;
+        padding: 1.5rem 2rem;
+    }
+
+    .panel-header.success {
+        background: linear-gradient(135deg, #6FCF97 0%, #70C1B3 100%);
+    }
+
+    .panel-header.warning {
+        background: linear-gradient(135deg, #F2C94C 0%, #FF8C42 100%);
+    }
+
+    .panel-header.info {
+        background: linear-gradient(135deg, #9B9ECE 0%, #70C1B3 100%);
+    }
+
+    /* Modern Table */
+    .modern-table {
+        margin-bottom: 0;
+    }
+
+    .modern-table thead th {
+        background: linear-gradient(135deg, rgba(91, 155, 213, 0.08) 0%, rgba(112, 193, 179, 0.08) 100%);
+        color: var(--panel-primary);
+        font-weight: 700;
+        padding: 1rem 1.5rem;
+        border: none;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .modern-table tbody tr {
+        transition: all 0.3s ease;
+        border-bottom: 1px solid rgba(91, 155, 213, 0.08);
+    }
+
+    .modern-table tbody tr:hover {
+        background: linear-gradient(135deg, rgba(91, 155, 213, 0.05) 0%, rgba(112, 193, 179, 0.05) 100%);
+        transform: translateX(5px);
+    }
+
+    .modern-table tbody td {
+        padding: 1rem 1.5rem;
+        border: none;
+        vertical-align: middle;
+    }
+
+    /* Badge Modern */
+    .badge-modern {
+        padding: 0.5rem 1rem;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 0.85rem;
+    }
+
+    .badge-success-modern {
+        background: linear-gradient(135deg, #6FCF97 0%, #70C1B3 100%);
+        color: white;
+    }
+
+    .badge-warning-modern {
+        background: linear-gradient(135deg, #F2C94C 0%, #FF8C42 100%);
+        color: white;
+    }
+
+    .badge-primary-modern {
+        background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
+        color: white;
+    }
+
+    .badge-info-modern {
+        background: linear-gradient(135deg, #9B9ECE 0%, #70C1B3 100%);
+        color: white;
+    }
+
+    /* CTA Button */
+    .btn-cta {
+        background: white;
+        color: var(--panel-primary);
+        border: none;
+        border-radius: 20px;
+        padding: 1rem 3rem;
+        font-weight: 700;
+        font-size: 1.1rem;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-cta:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+        color: var(--panel-primary);
+    }
+
+    /* Info Box */
+    .info-box {
+        background: linear-gradient(135deg, rgba(91, 155, 213, 0.05) 0%, rgba(112, 193, 179, 0.05) 100%);
+        border-left: 4px solid var(--panel-success);
+        border-radius: 12px;
+        padding: 1rem 1.5rem;
+        margin-bottom: 0.75rem;
+        transition: all 0.3s ease;
+    }
+
+    .info-box:hover {
+        transform: translateX(5px);
+        background: linear-gradient(135deg, rgba(91, 155, 213, 0.1) 0%, rgba(112, 193, 179, 0.1) 100%);
+    }
+
+    .info-icon {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, var(--panel-success) 0%, var(--panel-secondary) 100%);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+    }
+
+    /* Empty State */
+    .empty-state-panel {
+        text-align: center;
+        padding: 3rem 1rem;
+    }
+
+    .empty-state-panel i {
+        font-size: 3rem;
+        color: var(--panel-secondary);
+        opacity: 0.3;
+        margin-bottom: 1rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .hero-panel {
+            padding: 2rem 1.5rem;
+        }
+
+        .hero-panel h2 {
+            font-size: 1.5rem;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            font-size: 1.5rem;
+        }
+
+        .panel-header {
+            padding: 1rem 1.5rem;
+        }
+
+        .modern-table thead th,
+        .modern-table tbody td {
+            padding: 0.75rem 1rem;
+            font-size: 0.85rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Hero Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="hero-panel text-white">
+                <div class="row align-items-center">
+                    <div class="col-12 position-relative" style="z-index: 1;">
+                        <h2 class="mb-2"><i class="fas fa-hospital-user me-2"></i>Veteriner Paneli</h2>
+                        <p class="mb-0 opacity-90 fs-5">Merhaba, <strong>{{ vet.ad|default:request.user.username }}</strong> - Evcil hayvan sahiplerine daha iyi hizmet verin</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- İstatistik Kartları -->
+    <div class="row g-4 mb-5">
+      <div class="col-lg-3 col-md-6">
+        <div class="stat-card-modern">
+          <div class="stat-icon">
+            <i class="fas fa-tags"></i>
+          </div>
+          <h6 class="text-muted mb-2 text-uppercase" style="font-size: 0.85rem; letter-spacing: 0.5px;">Tahsis Edilen Etiketler</h6>
+          <div class="stat-number">{{ tahsis_sayisi }}</div>
+          <small class="text-muted">Toplam tahsis</small>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6">
+        <div class="stat-card-modern">
+          <div class="stat-icon" style="background: linear-gradient(135deg, #6FCF97 0%, #70C1B3 100%);">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          <h6 class="text-muted mb-2 text-uppercase" style="font-size: 0.85rem; letter-spacing: 0.5px;">Satılan Etiketler</h6>
+          <div class="stat-number" style="background: linear-gradient(135deg, #6FCF97 0%, #70C1B3 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">{{ satis_sayisi }}</div>
+          <small class="text-muted">Aktif satış</small>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6">
+        <div class="stat-card-modern">
+          <div class="stat-icon" style="background: linear-gradient(135deg, #FF8C42 0%, #F2C94C 100%);">
+            <i class="fas fa-warehouse"></i>
+          </div>
+          <h6 class="text-muted mb-2 text-uppercase" style="font-size: 0.85rem; letter-spacing: 0.5px;">Kalan Envanter</h6>
+          <div class="stat-number" style="background: linear-gradient(135deg, #FF8C42 0%, #F2C94C 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">{{ kalan_envanter }}</div>
+          <small class="text-muted">Stokta mevcut</small>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6">
+        <div class="stat-card-modern">
+          <div class="stat-icon" style="background: linear-gradient(135deg, #9B9ECE 0%, #70C1B3 100%);">
+            <i class="fas fa-users"></i>
+          </div>
+          <h6 class="text-muted mb-2 text-uppercase" style="font-size: 0.85rem; letter-spacing: 0.5px;">Danışman Olduğum Sahipler</h6>
+          <div class="stat-number" style="background: linear-gradient(135deg, #9B9ECE 0%, #70C1B3 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">{{ vet.danisman_sahip_sayisi }}</div>
+          <small class="text-muted">{{ vet.kapasite_durumu }}</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Başarı ve Faydalar Bölümü -->
+    <div class="row g-4 mb-5">
+      <div class="col-lg-8">
+        <div class="panel-card h-100">
+          <div class="panel-header success">
+            <div class="d-flex align-items-center">
+              <div class="bg-white bg-opacity-20 rounded-circle p-2 me-3">
+                <i class="fas fa-trophy fa-lg"></i>
+              </div>
+              <div>
+                <h5 class="mb-1 fw-bold">🎯 Satış Başarınız = Danışman Olduğunuz Evcil Hayvan Sahibi Sayısı</h5>
+                <p class="mb-0 opacity-90 small">Ne kadar etiket satarsanız, o kadar çok evcil hayvan sahibine danışman olursunuz</p>
+              </div>
+            </div>
+          </div>
+          <div class="p-4">
+            <div class="row">
+              <div class="col-md-6">
+                <h6 class="mb-3 fw-bold" style="color: var(--panel-success);">
+                  <i class="fas fa-rocket me-2"></i>Ne Kadar Satarsanız:
+                </h6>
+                <div class="info-box">
+                  <div class="d-flex align-items-center">
+                    <div class="info-icon me-3">
+                      <i class="fas fa-check fa-sm"></i>
+                    </div>
+                    <span>O kadar çok evcil hayvan sahibine danışman olursunuz</span>
+                  </div>
+                </div>
+                <div class="info-box">
+                  <div class="d-flex align-items-center">
+                    <div class="info-icon me-3">
+                      <i class="fas fa-check fa-sm"></i>
+                    </div>
+                    <span>Evcil hayvan sahibi profillerinde görünürsünüz</span>
+                  </div>
+                </div>
+                <div class="info-box">
+                  <div class="d-flex align-items-center">
+                    <div class="info-icon me-3">
+                      <i class="fas fa-check fa-sm"></i>
+                    </div>
+                    <span>Daha çok müşteriye ulaşırsınız</span>
+                  </div>
+                </div>
+                <div class="info-box">
+                  <div class="d-flex align-items-center">
+                    <div class="info-icon me-3">
+                      <i class="fas fa-check fa-sm"></i>
+                    </div>
+                    <span>Daha çok gelir elde edersiniz</span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <h6 class="mb-3 fw-bold" style="color: var(--panel-primary);">
+                  <i class="fas fa-chart-pie me-2"></i>Mevcut Durumunuz:
+                </h6>
+                <div style="background: linear-gradient(135deg, rgba(91, 155, 213, 0.05) 0%, rgba(112, 193, 179, 0.05) 100%); border-radius: 20px; padding: 1.5rem;">
+                  <div class="row g-3">
+                    <div class="col-6">
+                      <div class="text-center p-3" style="background: linear-gradient(135deg, rgba(91, 155, 213, 0.1) 0%, rgba(112, 193, 179, 0.1) 100%); border-radius: 15px;">
+                        <div class="fw-bold fs-4" style="color: var(--panel-primary);">{{ vet.danisman_sahip_sayisi }}</div>
+                        <small class="text-muted">Danışman Olduğum Sahipler</small>
+                      </div>
+                    </div>
+                    <div class="col-6">
+                      <div class="text-center p-3" style="background: linear-gradient(135deg, rgba(242, 201, 76, 0.1) 0%, rgba(255, 140, 66, 0.1) 100%); border-radius: 15px;">
+                        <div class="fw-bold fs-4" style="color: var(--panel-warning);">{{ vet.satis_basari_seviyesi }}</div>
+                        <small class="text-muted">Başarı Seviyesi</small>
+                      </div>
+                    </div>
+                    <div class="col-12 mt-2">
+                      <div class="d-flex justify-content-between align-items-center">
+                        <span class="text-muted fw-bold">Kapasite:</span>
+                        <span class="badge badge-modern {% if vet.kapasite_yuzdesi >= 100 %}bg-danger{% elif vet.kapasite_yuzdesi >= 80 %}badge-warning-modern{% elif vet.kapasite_yuzdesi >= 50 %}badge-info-modern{% else %}badge-success-modern{% endif %}">
+                          {{ vet.danisman_sahip_sayisi }}/{{ vet.dinamik_kapasite }} (%{{ vet.kapasite_yuzdesi|floatformat:1 }})
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="panel-card h-100 position-relative overflow-hidden" style="background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 50%, #FF8C42 100%);">
+          <!-- Floating Elements -->
+          <div class="position-absolute top-0 end-0" style="transform: translate(30px, -30px);">
+            <div class="bg-white bg-opacity-10 rounded-circle" style="width: 80px; height: 80px;"></div>
+          </div>
+          <div class="position-absolute bottom-0 start-0" style="transform: translate(-20px, 20px);">
+            <div class="bg-white bg-opacity-5 rounded-circle" style="width: 60px; height: 60px;"></div>
+          </div>
+
+          <div class="text-center text-white p-5 position-relative" style="z-index: 1;">
+            <!-- Minimalist Icon -->
+            <div class="mb-4">
+              <div class="bg-white bg-opacity-15 rounded-circle p-3 d-inline-flex align-items-center justify-content-center mx-auto" style="width: 100px; height: 100px;">
+                <i class="fas fa-shopping-cart fa-3x"></i>
+              </div>
+            </div>
+
+            <!-- Clean Typography -->
+            <h4 class="mb-3 fw-bold">Yeni Sipariş</h4>
+            <p class="mb-4 opacity-90">Etiket siparişi oluşturun</p>
+
+            <!-- Prominent CTA Button -->
+            <a href="{% url 'shop:etiket_list' %}" class="btn btn-cta text-decoration-none">
+              <i class="fas fa-plus-circle me-2"></i>
+              Etiket Ürünleri
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Etiket Yönetimi Bölümü -->
+    <div class="row g-4 mb-5">
+      <div class="col-lg-6">
+        <div class="panel-card h-100">
+          <div class="panel-header info">
+            <div class="d-flex justify-content-between align-items-center">
+              <div class="d-flex align-items-center">
+                <div class="bg-white bg-opacity-20 rounded-circle p-2 me-3">
+                  <i class="fas fa-tags"></i>
+                </div>
+                <div>
+                  <h6 class="mb-0 fw-bold">Tahsis Edilen Etiketler</h6>
+                  <small class="opacity-90">Size tahsis edilen etiketler</small>
+                </div>
+              </div>
+              <a href="{% url 'veteriner:tahsis_listesi' %}" class="btn btn-light btn-sm rounded-pill">
+                <i class="fas fa-external-link-alt me-1"></i>Hepsini Gör
+              </a>
+            </div>
+          </div>
+          <div class="p-0">
+            {% if tahsis_edilenler %}
+            <div class="table-responsive">
+              <table class="modern-table">
+                <thead>
+                  <tr>
+                    <th><i class="fas fa-barcode me-2"></i>Seri No</th>
+                    <th><i class="fas fa-calendar me-2"></i>Tahsis Tarihi</th>
+                    <th><i class="fas fa-info-circle me-2"></i>Durum</th>
+                  </tr>
+                </thead>
+                <tbody>
+                {% for e in tahsis_edilenler %}
+                  <tr>
+                    <td class="fw-bold" style="color: var(--panel-primary);">{{ e.seri_numarasi }}</td>
+                    <td>{{ e.tahsis_tarihi|date:"d.m.Y" }}</td>
+                    <td>
+                      {% if e.aktif %}
+                        <span class="badge badge-modern badge-success-modern">
+                          <i class="fas fa-check me-1"></i>Aktif
+                        </span>
+                      {% else %}
+                        <span class="badge badge-modern badge-warning-modern">
+                          <i class="fas fa-clock me-1"></i>Pasif
+                        </span>
+                      {% endif %}
+                    </td>
+                  </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+            </div>
+            {% else %}
+            <div class="empty-state-panel">
+              <i class="fas fa-inbox"></i>
+              <h6 class="text-muted">Kayıt Yok</h6>
+              <p class="text-muted small mb-0">Tahsis edilmiş etiket bulunmamaktadır</p>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="panel-card h-100">
+          <div class="panel-header success">
+            <div class="d-flex justify-content-between align-items-center">
+              <div class="d-flex align-items-center">
+                <div class="bg-white bg-opacity-20 rounded-circle p-2 me-3">
+                  <i class="fas fa-chart-line"></i>
+                </div>
+                <div>
+                  <h6 class="mb-0 fw-bold">Satılan / Aktif Edilen Etiketler</h6>
+                  <small class="opacity-90">Evcil hayvan sahipleri tarafından aktif edilen etiketler</small>
+                </div>
+              </div>
+              <a href="{% url 'veteriner:satis_listesi' %}" class="btn btn-light btn-sm rounded-pill">
+                <i class="fas fa-external-link-alt me-1"></i>Hepsini Gör
+              </a>
+            </div>
+          </div>
+          <div class="p-0">
+            {% if satilanlar %}
+            <div class="table-responsive">
+              <table class="modern-table">
+                <thead>
+                  <tr>
+                    <th><i class="fas fa-barcode me-2"></i>Seri No</th>
+                    <th><i class="fas fa-play-circle me-2"></i>İlk Aktivasyon</th>
+                    <th><i class="fas fa-clock me-2"></i>Son Aktifleşme</th>
+                  </tr>
+                </thead>
+                <tbody>
+                {% for e in satilanlar %}
+                  <tr>
+                    <td class="fw-bold" style="color: var(--panel-success);">{{ e.seri_numarasi }}</td>
+                    <td>{{ e.first_activated_at|date:"d.m.Y H:i" }}</td>
+                    <td>{{ e.aktiflestirme_tarihi|date:"d.m.Y H:i" }}</td>
+                  </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+            </div>
+            {% else %}
+            <div class="empty-state-panel">
+              <i class="fas fa-chart-line"></i>
+              <h6 class="text-muted">Kayıt Yok</h6>
+              <p class="text-muted small mb-0">Henüz satılan etiket bulunmamaktadır</p>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sipariş Talepleri Bölümü -->
+    <div class="row g-4 mb-5">
+      <div class="col-12">
+        <div class="panel-card">
+          <div class="panel-header warning">
+            <div class="d-flex justify-content-between align-items-center">
+              <div class="d-flex align-items-center">
+                <div class="bg-white bg-opacity-20 rounded-circle p-2 me-3">
+                  <i class="fas fa-shopping-cart"></i>
+                </div>
+                <div>
+                  <h6 class="mb-0 fw-bold">Sipariş Taleplerim</h6>
+                  <small class="opacity-90">Etiket siparişlerinizin durumu</small>
+                </div>
+              </div>
+              <a href="{% url 'veteriner:siparis_listesi' %}" class="btn btn-light btn-sm rounded-pill">
+                <i class="fas fa-external-link-alt me-1"></i>Hepsini Gör
+              </a>
+            </div>
+          </div>
+          <div class="p-0">
+            {% if siparis_istekleri %}
+            <div class="table-responsive">
+              <table class="modern-table">
+                <thead>
+                  <tr>
+                    <th><i class="fas fa-sort-numeric-up me-2"></i>Talep Edilen Adet</th>
+                    <th><i class="fas fa-calendar me-2"></i>Talep Tarihi</th>
+                    <th><i class="fas fa-info-circle me-2"></i>Durum</th>
+                    <th><i class="fas fa-map-marker-alt me-2"></i>Adres</th>
+                  </tr>
+                </thead>
+                <tbody>
+                {% for s in siparis_istekleri %}
+                  <tr>
+                    <td class="fw-bold" style="color: var(--panel-warning);">{{ s.talep_edilen_adet }} etiket</td>
+                    <td>{{ s.talep_tarihi|date:"d.m.Y" }}</td>
+                    <td>
+                      <div class="d-flex flex-wrap gap-1">
+                        {% if s.onaylandi %}
+                          <span class="badge badge-modern badge-success-modern">
+                            <i class="fas fa-check me-1"></i>Onaylandı
+                          </span>
+                        {% else %}
+                          <span class="badge badge-modern badge-warning-modern">
+                            <i class="fas fa-clock me-1"></i>Beklemede
+                          </span>
+                        {% endif %}
+                        {% if s.kargolandimi %}
+                          <span class="badge badge-modern badge-primary-modern">
+                            <i class="fas fa-truck me-1"></i>Kargolandı
+                          </span>
+                        {% endif %}
+                        {% if s.numune_mi %}
+                          <span class="badge badge-modern badge-info-modern">
+                            <i class="fas fa-gift me-1"></i>Numune
+                          </span>
+                        {% endif %}
+                      </div>
+                    </td>
+                    <td>
+                      {% if s.farkli_adres_kullan %}
+                        <span class="badge badge-modern badge-info-modern">
+                          <i class="fas fa-map-marker-alt me-1"></i>Farklı Adres
+                        </span>
+                      {% else %}
+                        <span class="badge badge-modern" style="background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%); color: white;">
+                          <i class="fas fa-home me-1"></i>Kayıtlı Adres
+                        </span>
+                      {% endif %}
+                    </td>
+                  </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+            </div>
+            {% else %}
+            <div class="empty-state-panel">
+              <i class="fas fa-shopping-cart"></i>
+              <h6 class="text-muted">Kayıt Yok</h6>
+              <p class="text-muted small mb-0">Henüz sipariş talebiniz bulunmamaktadır</p>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mesajlar -->
+    {% if messages %}
+      <div class="row g-4 mb-4">
+        <div class="col-12">
+          {% for m in messages %}
+            <div class="alert alert-{{ m.tags|default:'info' }} border-0 shadow-sm mb-3" style="border-radius: 20px; padding: 1.25rem 1.5rem;">
+              <i class="fas fa-info-circle me-2"></i>{{ m }}
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}

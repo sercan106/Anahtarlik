@@ -1,0 +1,414 @@
+{% extends 'ana.html' %}
+{% load static %}
+
+{% block baslik %}<title>Etiket Aktivasyonu · PetSafe Hub</title>{% endblock baslik %}
+
+{% block css_dosyalar %}
+<link href="https://unpkg.com/aos@next/dist/aos.css" rel="stylesheet">
+<style>
+    /* ========== ETIKET AKTIVASYON PAGE STYLES ========== */
+    
+    .activation-container {
+        min-height: calc(100vh - 200px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 80px 20px 40px;
+        position: relative;
+    }
+    
+    .activation-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: var(--border-radius-lg);
+        box-shadow: var(--shadow-hover);
+        padding: 3rem;
+        width: 100%;
+        position: relative;
+        overflow: hidden;
+        animation: fadeInUp 0.6s ease-out;
+        margin: 0 auto;
+    }
+    
+    .activation-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+        background: var(--primary-gradient);
+    }
+    
+    .step-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--primary-gradient);
+        color: white;
+        padding: 8px 20px;
+        border-radius: 50px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 15px rgba(91, 155, 213, 0.3);
+    }
+    
+    .activation-card h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 1rem;
+        line-height: 1.2;
+        background: var(--primary-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .activation-card .intro-text {
+        color: var(--text-secondary);
+        font-size: 1.05rem;
+        line-height: 1.7;
+        margin-bottom: 2rem;
+    }
+    
+    .form-group-modern {
+        margin-bottom: 1.75rem;
+    }
+    
+    .form-label-modern {
+        display: block;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 0.75rem;
+        font-size: 0.95rem;
+    }
+    
+    .form-label-modern .required {
+        color: var(--danger-color);
+        margin-left: 3px;
+    }
+    
+    .form-control-modern {
+        width: 100%;
+        padding: 14px 18px;
+        border: 2px solid rgba(91, 155, 213, 0.2);
+        border-radius: var(--border-radius-sm);
+        font-size: 1rem;
+        transition: var(--transition-smooth);
+        background: white;
+        color: var(--text-primary);
+    }
+    
+    .form-control-modern:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 4px rgba(91, 155, 213, 0.1);
+        background: white;
+    }
+    
+    .form-control-modern::placeholder {
+        color: var(--text-muted);
+    }
+    
+    .form-help-text {
+        display: block;
+        margin-top: 0.5rem;
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        line-height: 1.5;
+    }
+    
+    .form-error {
+        display: block;
+        margin-top: 0.5rem;
+        font-size: 0.875rem;
+        color: var(--danger-color);
+        font-weight: 500;
+    }
+    
+    .btn-continue {
+        width: 100%;
+        padding: 16px 32px;
+        background: var(--primary-gradient);
+        color: white;
+        border: none;
+        border-radius: var(--border-radius-sm);
+        font-size: 1rem;
+        font-weight: 600;
+        transition: var(--transition-smooth);
+        box-shadow: 0 6px 20px rgba(91, 155, 213, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 2rem;
+    }
+    
+    .btn-continue:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(91, 155, 213, 0.4);
+        color: white;
+    }
+    
+    .btn-continue:active {
+        transform: translateY(0);
+    }
+    
+    .btn-continue i {
+        font-size: 1.1rem;
+    }
+    
+    .help-link {
+        text-align: center;
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 1px solid rgba(0, 0, 0, 0.08);
+    }
+    
+    .help-link p {
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .help-link a {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 600;
+        transition: var(--transition-gentle);
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+    
+    .help-link a:hover {
+        color: var(--secondary-color);
+        text-decoration: underline;
+    }
+    
+    .help-link a i {
+        font-size: 0.9rem;
+    }
+    
+    /* Alert Messages - Modern Style */
+    .alert-modern {
+        padding: 1rem 1.25rem;
+        border-radius: var(--border-radius-sm);
+        margin-bottom: 1.5rem;
+        border: none;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .alert-modern.alert-success {
+        background: linear-gradient(135deg, rgba(111, 207, 151, 0.15) 0%, rgba(111, 207, 151, 0.1) 100%);
+        color: #047857;
+        border-left: 4px solid var(--success-color);
+    }
+    
+    .alert-modern.alert-error,
+    .alert-modern.alert-danger {
+        background: linear-gradient(135deg, rgba(235, 87, 87, 0.15) 0%, rgba(235, 87, 87, 0.1) 100%);
+        color: #b91c1c;
+        border-left: 4px solid var(--danger-color);
+    }
+    
+    .alert-modern.alert-info {
+        background: linear-gradient(135deg, rgba(91, 155, 213, 0.15) 0%, rgba(91, 155, 213, 0.1) 100%);
+        color: #1e40af;
+        border-left: 4px solid var(--primary-color);
+    }
+    
+    .alert-modern.alert-warning {
+        background: linear-gradient(135deg, rgba(242, 201, 76, 0.15) 0%, rgba(242, 201, 76, 0.1) 100%);
+        color: #92400e;
+        border-left: 4px solid var(--warning-color);
+    }
+    
+    .alert-modern i {
+        font-size: 1.1rem;
+    }
+    
+    /* Animations */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .activation-container {
+            padding: 60px 15px 30px;
+        }
+        
+        .activation-card {
+            padding: 2rem 1.5rem;
+            border-radius: var(--border-radius);
+        }
+        
+        .activation-card h1 {
+            font-size: 1.75rem;
+        }
+        
+        .activation-card .intro-text {
+            font-size: 1rem;
+        }
+        
+        .form-control-modern {
+            padding: 12px 16px;
+        }
+        
+        .btn-continue {
+            padding: 14px 28px;
+            font-size: 0.95rem;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .activation-container {
+            padding: 50px 12px 25px;
+        }
+        
+        .activation-card {
+            padding: 1.75rem 1.25rem;
+        }
+        
+        .activation-card h1 {
+            font-size: 1.5rem;
+        }
+        
+        .step-badge {
+            font-size: 0.8rem;
+            padding: 6px 16px;
+        }
+        
+        .form-control-modern {
+            padding: 12px 14px;
+            font-size: 0.95rem;
+        }
+        
+        .btn-continue {
+            padding: 12px 24px;
+            font-size: 0.9rem;
+        }
+    }
+</style>
+{% endblock css_dosyalar %}
+
+{% block icerik %}
+<div class="activation-container">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-8 col-lg-6 col-xl-5" data-aos="fade-up">
+                <div class="activation-card">
+                    <span class="step-badge">
+                        <i class="fas fa-check-circle"></i>
+                        Adım 1 / 3
+                    </span>
+                    
+                    <h1>Etiketinizi Doğrulayın</h1>
+                    <p class="intro-text">
+                        Künyenizin üzerinde bulunan seri numarasını girerek başlayın. Bu numara ile etiketinizi sisteme kaydedebilirsiniz.
+                    </p>
+
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert-modern alert-{{ message.tags }}" role="alert">
+                                {% if message.tags == 'error' or message.tags == 'danger' %}
+                                    <i class="fas fa-exclamation-circle"></i>
+                                {% elif message.tags == 'success' %}
+                                    <i class="fas fa-check-circle"></i>
+                                {% elif message.tags == 'warning' %}
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                {% else %}
+                                    <i class="fas fa-info-circle"></i>
+                                {% endif %}
+                                <span>{{ message }}</span>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        
+                        <div class="form-group-modern">
+                            <label for="{{ form.seri_numarasi.id_for_label }}" class="form-label-modern">
+                                Etiket Seri Numarası
+                                <span class="required">*</span>
+                            </label>
+                            <input type="text" 
+                                   name="{{ form.seri_numarasi.name }}" 
+                                   id="{{ form.seri_numarasi.id_for_label }}" 
+                                   class="form-control-modern"
+                                   value="{{ form.seri_numarasi.value|default:'' }}"
+                                   placeholder="7 haneli seri numarasını giriniz"
+                                   required>
+                            <span class="form-help-text">
+                                <i class="fas fa-info-circle"></i>
+                                Künyenizin üzerinde bulunan 7 haneli seri numarasını giriniz.
+                            </span>
+                            {% for error in form.seri_numarasi.errors %}
+                                <span class="form-error">
+                                    <i class="fas fa-exclamation-circle"></i>
+                                    {{ error }}
+                                </span>
+                            {% endfor %}
+                        </div>
+
+                        <button type="submit" class="btn-continue">
+                            <span>Devam Et</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </form>
+                    
+                    <div class="help-link">
+                        <p>Yardıma mı ihtiyacınız var?</p>
+                        <a href="{% url 'shop:shop_home' %}">
+                            <i class="fas fa-store"></i>
+                            Etiket mağazasını inceleyin
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock icerik %}
+
+{% block js_dosyalar %}
+<script>
+    // Initialize AOS animations
+    if (typeof AOS !== 'undefined') {
+        AOS.init({
+            duration: 800,
+            once: true,
+            easing: 'ease-out-cubic',
+            offset: 50
+        });
+    }
+    
+    // Auto-focus on input
+    document.addEventListener('DOMContentLoaded', function() {
+        const input = document.querySelector('.form-control-modern');
+        if (input) {
+            input.focus();
+        }
+    });
+</script>
+{% endblock js_dosyalar %}
+
+

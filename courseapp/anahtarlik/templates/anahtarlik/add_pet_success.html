@@ -1,0 +1,44 @@
+{% extends 'ana.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h3>➕ Yeni Evcil Hayvan Ekle</h3>
+    <form method="POST" class="mt-4">
+        {% csrf_token %}
+        <div class="form-group mb-3">
+            <label>Etiket Seri Numarası</label>
+            <input type="text" name="seri_numarasi" class="form-control" required>
+        </div>
+        <div class="form-group mb-3">
+            <label>Ad</label>
+            <input type="text" name="ad" class="form-control" required>
+        </div>
+        <div class="form-group mb-3">
+            <label>Tür</label>
+            <select name="tur" class="form-control">
+                <option value="kopek">Köpek</option>
+                <option value="kedi">Kedi</option>
+                <option value="diger">Diğer</option>
+            </select>
+        </div>
+        <div class="form-group mb-3">
+            <label>Cins</label>
+            <input type="text" name="cins" class="form-control">
+        </div>
+        <div class="form-group mb-3">
+            <label>Sağlık Bilgisi</label>
+            <textarea name="saglik_bilgisi" class="form-control"></textarea>
+        </div>
+        <div class="form-group mb-3">
+            <label>Beslenme Bilgisi</label>
+            <textarea name="beslenme_bilgisi" class="form-control"></textarea>
+        </div>
+        <div class="form-group mb-3">
+            <label>Davranış Notları</label>
+            <textarea name="davranis_notlari" class="form-control"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Kaydet</button>
+        <a href="{% url 'anahtarlik:kullanici_paneli' %}" class="btn btn-secondary">Vazgeç</a>
+    </form>
+</div>
+{% endblock %}

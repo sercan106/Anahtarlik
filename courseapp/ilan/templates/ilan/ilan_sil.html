@@ -1,0 +1,167 @@
+{% extends 'ana.html' %}
+{% load static %}
+
+{% block baslik %}İlan Sil - PetSafe Hub{% endblock %}
+
+{% block icerik %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Başlık -->
+            <div class="text-center mb-4">
+                <div class="mb-3">
+                    <i class="fas fa-exclamation-triangle fa-3x text-warning"></i>
+                </div>
+                <h1 class="mb-2">İlan Silme Onayı</h1>
+                <p class="text-muted">Bu işlem geri alınamaz!</p>
+            </div>
+
+            <!-- İlan Bilgileri -->
+            <div class="card mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Silinecek İlan Bilgileri
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            {% if ilan.hayvan_profili.profil_fotografi %}
+                                <img src="{{ ilan.hayvan_profili.profil_fotografi.url }}" 
+                                     alt="{{ ilan.hayvan_profili.hayvan_adi }}" 
+                                     class="img-fluid rounded">
+                            {% elif ilan.hayvan_profili.resimler.first %}
+                                <img src="{{ ilan.hayvan_profili.resimler.first.resim.url }}" 
+                                     alt="{{ ilan.hayvan_profili.hayvan_adi }}" 
+                                     class="img-fluid rounded">
+                            {% else %}
+                                <div class="bg-light rounded d-flex align-items-center justify-content-center" style="height: 150px;">
+                                    <i class="fas fa-paw fa-2x text-muted"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-8">
+                            <h5 class="card-title">{{ ilan.baslik }}</h5>
+                            <p class="text-muted mb-2">
+                                <i class="fas fa-paw me-1"></i>{{ ilan.hayvan_profili.hayvan_adi }}
+                            </p>
+                            
+                            <div class="row mb-2">
+                                <div class="col-6">
+                                    <small class="text-muted d-block">Tür</small>
+                                    <strong>{{ ilan.hayvan_profili.tur.ad }}</strong>
+                                </div>
+                                <div class="col-6">
+                                    <small class="text-muted d-block">Irk</small>
+                                    <strong>{{ ilan.hayvan_profili.irk.ad }}</strong>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-2">
+                                <div class="col-6">
+                                    <small class="text-muted d-block">Yaş</small>
+                                    <strong>{{ ilan.hayvan_profili.yas_hesapla }}</strong>
+                                </div>
+                                <div class="col-6">
+                                    <small class="text-muted d-block">Konum</small>
+                                    <strong>{{ ilan.hayvan_profili.il.ad }}/{{ ilan.hayvan_profili.ilce.ad }}</strong>
+                                </div>
+                            </div>
+                            
+                            <small class="text-muted">
+                                <i class="fas fa-calendar me-1"></i>
+                                Oluşturulma: {{ ilan.olusturulma_tarihi|date:"d.m.Y H:i" }}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Uyarı Mesajı -->
+            <div class="alert alert-danger">
+                <h6 class="alert-heading">
+                    <i class="fas fa-warning me-2"></i>
+                    Dikkat!
+                </h6>
+                <p class="mb-2">Bu işlem aşağıdaki verileri kalıcı olarak silecektir:</p>
+                <ul class="mb-0">
+                    <li><strong>İlan bilgileri</strong> (başlık, açıklama, tarih)</li>
+                    <li><strong>Hayvan profili</strong> (tüm hayvan bilgileri)</li>
+                    <li><strong>Tüm fotoğraflar</strong> (ana fotoğraf + ek resimler)</li>
+                    <li><strong>İlan geçmişi</strong> (tüm ilan kayıtları)</li>
+                </ul>
+            </div>
+
+            <!-- Onay Formu -->
+            <form method="post" class="text-center">
+                {% csrf_token %}
+                
+                <div class="mb-4">
+                    <div class="form-check d-inline-block">
+                        <input class="form-check-input" type="checkbox" id="onay" required>
+                        <label class="form-check-label" for="onay">
+                            <strong>Bu işlemin geri alınamayacağını anlıyorum ve onaylıyorum</strong>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                    <a href="{% url 'ilan:kullanici_ilanlari' %}" class="btn btn-secondary me-md-2">
+                        <i class="fas fa-arrow-left me-2"></i>Geri Dön
+                    </a>
+                    <button type="submit" class="btn btn-danger" id="silBtn" disabled>
+                        <i class="fas fa-trash me-2"></i>İlanı Kalıcı Olarak Sil
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const onayCheckbox = document.getElementById('onay');
+    const silBtn = document.getElementById('silBtn');
+    
+    onayCheckbox.addEventListener('change', function() {
+        silBtn.disabled = !this.checked;
+    });
+    
+    // Form submit onayı
+    document.querySelector('form').addEventListener('submit', function(e) {
+        if (!onayCheckbox.checked) {
+            e.preventDefault();
+            alert('Lütfen onay kutusunu işaretleyin!');
+            return false;
+        }
+        
+        const confirmMessage = 'Bu işlem geri alınamaz! İlanı silmek istediğinizden emin misiniz?';
+        if (!confirm(confirmMessage)) {
+            e.preventDefault();
+            return false;
+        }
+    });
+});
+</script>
+
+<style>
+.alert-danger {
+    border-left: 4px solid #dc3545;
+}
+
+.card-header {
+    border-bottom: 1px solid #dee2e6;
+}
+
+#silBtn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.form-check-input:checked + .form-check-label {
+    color: #dc3545;
+    font-weight: bold;
+}
+</style>
+{% endblock %}

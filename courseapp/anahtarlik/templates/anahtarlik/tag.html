@@ -1,0 +1,32 @@
+{% extends 'ana.html' %}
+{% load static %}
+{% block baslik %}<title>PatiQuard - Etiket Doğrula</title>{% endblock baslik %}
+{% block content %}
+<section class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-6">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+            <div class="card kart-ozel shadow-sm">
+                <div class="card-body kart-govde">
+                    <h3 class="text-center mb-4">Etiket Doğrulama</h3>
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="seri_numarasi" class="form-label">Künye Seri Numarası</label>
+                            <input type="text" class="form-control" id="seri_numarasi" name="seri_numarasi" placeholder="Künyedeki seri numarasını girin" required>
+                        </div>
+                        <button type="submit" class="btn ozel-dugme">Doğrula</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

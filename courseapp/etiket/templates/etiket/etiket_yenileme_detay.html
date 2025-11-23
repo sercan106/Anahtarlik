@@ -1,0 +1,110 @@
+{% extends 'ana.html' %}
+{% load static %}
+
+{% block title %}Yenileme Detayı - {{ yenileme.etiket.seri_numarasi }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-receipt"></i> Yenileme Detayları
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <!-- Künye Bilgileri -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-qrcode"></i> Künye Bilgileri</h6>
+                            <p><strong>Seri No:</strong> {{ yenileme.etiket.seri_numarasi }}</p>
+                            <p><strong>Hayvan:</strong> {{ yenileme.etiket.evcil_hayvan.ad }}</p>
+                            <p><strong>Kategori:</strong> {{ yenileme.etiket.kategori.ad|default:"Genel" }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-user"></i> Kullanıcı Bilgileri</h6>
+                            <p><strong>Kullanıcı:</strong> {{ yenileme.kullanici.get_full_name|default:yenileme.kullanici.username }}</p>
+                            <p><strong>E-posta:</strong> {{ yenileme.kullanici.email }}</p>
+                            <p><strong>Talep Tarihi:</strong> {{ yenileme.talep_tarihi|date:"d.m.Y H:i" }}</p>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- Ödeme Bilgileri -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-credit-card"></i> Ödeme Bilgileri</h6>
+                            <p><strong>Yenileme Ücreti:</strong> 
+                                <span class="h5 text-primary">₺{{ yenileme.yenileme_ucreti|floatformat:2 }}</span>
+                            </p>
+                            <p><strong>Yenileme Süresi:</strong> {{ yenileme.yenileme_suresi_gun }} gün</p>
+                            <p><strong>Ödeme Durumu:</strong> 
+                                {% if yenileme.odeme_durumu == 'ODENDI' %}
+                                    <span class="badge badge-success">Ödendi</span>
+                                {% elif yenileme.odeme_durumu == 'BEKLEMEDE' %}
+                                    <span class="badge badge-warning">Beklemede</span>
+                                {% elif yenileme.odeme_durumu == 'IPTAL' %}
+                                    <span class="badge badge-danger">İptal</span>
+                                {% elif yenileme.odeme_durumu == 'IADE' %}
+                                    <span class="badge badge-info">İade</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-calendar"></i> Tarih Bilgileri</h6>
+                            {% if yenileme.odeme_tarihi %}
+                                <p><strong>Ödeme Tarihi:</strong> {{ yenileme.odeme_tarihi|date:"d.m.Y H:i" }}</p>
+                            {% endif %}
+                            {% if yenileme.yeni_bitis_tarihi %}
+                                <p><strong>Yeni Bitiş Tarihi:</strong> 
+                                    <span class="text-success">{{ yenileme.yeni_bitis_tarihi|date:"d.m.Y H:i" }}</span>
+                                </p>
+                            {% endif %}
+                            {% if yenileme.stripe_payment_intent_id %}
+                                <p><strong>Stripe ID:</strong> 
+                                    <small class="text-muted">{{ yenileme.stripe_payment_intent_id }}</small>
+                                </p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Durum Mesajları -->
+                    {% if yenileme.odeme_durumu == 'ODENDI' %}
+                        <div class="alert alert-success">
+                            <i class="fas fa-check-circle"></i>
+                            <strong>Başarılı!</strong> Künyeniz başarıyla yenilendi ve aktif hale getirildi.
+                        </div>
+                    {% elif yenileme.odeme_durumu == 'BEKLEMEDE' %}
+                        <div class="alert alert-warning">
+                            <i class="fas fa-clock"></i>
+                            <strong>Beklemede!</strong> Ödeme işleminiz tamamlanmamış. Lütfen ödeme sayfasına dönün.
+                        </div>
+                    {% elif yenileme.odeme_durumu == 'IPTAL' %}
+                        <div class="alert alert-danger">
+                            <i class="fas fa-times-circle"></i>
+                            <strong>İptal Edildi!</strong> Ödeme işlemi iptal edildi.
+                        </div>
+                    {% endif %}
+
+                    <!-- Aksiyon Butonları -->
+                    <div class="text-center mt-4">
+                        {% if yenileme.odeme_durumu == 'BEKLEMEDE' %}
+                            <a href="{% url 'etiket:etiket_yenileme_baslat' yenileme.etiket.id %}" 
+                               class="btn btn-primary">
+                                <i class="fas fa-credit-card"></i> Ödemeyi Tamamla
+                            </a>
+                        {% endif %}
+                        
+                        <a href="{% url 'etiket:etiket_yenileme_listesi' %}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Geri Dön
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

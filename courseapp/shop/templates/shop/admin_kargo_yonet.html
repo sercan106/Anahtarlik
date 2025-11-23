@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kargo Yönetimi - Admin Panel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+    body {
+        background: #f5f5f5 !important;
+    }
+
+    .admin-container {
+        max-width: 1200px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+
+    .admin-header {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .admin-header h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #333;
+        margin: 0 0 20px 0;
+    }
+
+    .admin-actions {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 30px;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+        background: #007bff;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #0056b3;
+        color: white;
+        text-decoration: none;
+    }
+
+    .btn-success {
+        background: #28a745;
+        color: white;
+    }
+
+    .btn-success:hover {
+        background: #1e7e34;
+        color: white;
+        text-decoration: none;
+    }
+
+    .btn-warning {
+        background: #ffc107;
+        color: #212529;
+    }
+
+    .btn-warning:hover {
+        background: #e0a800;
+        color: #212529;
+        text-decoration: none;
+    }
+
+    .btn-danger {
+        background: #dc3545;
+        color: white;
+    }
+
+    .btn-danger:hover {
+        background: #c82333;
+        color: white;
+        text-decoration: none;
+    }
+
+    .btn-secondary {
+        background: #6c757d;
+        color: white;
+    }
+
+    .btn-secondary:hover {
+        background: #5a6268;
+        color: white;
+        text-decoration: none;
+    }
+
+    .kargo-table {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .table th {
+        background: #f8f9fa;
+        padding: 15px;
+        text-align: left;
+        font-weight: 600;
+        color: #333;
+        border-bottom: 2px solid #e9ecef;
+    }
+
+    .table td {
+        padding: 15px;
+        border-bottom: 1px solid #e9ecef;
+        vertical-align: middle;
+    }
+
+    .table tr:hover {
+        background: #f8f9fa;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 15px;
+        font-weight: 600;
+        font-size: 0.8rem;
+    }
+
+    .status-badge.aktif {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .status-badge.pasif {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-content {
+        background-color: white;
+        margin: 3% auto;
+        padding: 30px;
+        border-radius: 15px;
+        width: 90%;
+        max-width: 600px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #e9ecef;
+    }
+
+    .modal-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #333;
+        margin: 0;
+    }
+
+    .close {
+        font-size: 1.5rem;
+        font-weight: bold;
+        cursor: pointer;
+        color: #999;
+    }
+
+    .close:hover {
+        color: #333;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-label {
+        display: block;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 8px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 10px 12px;
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #007bff;
+        box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+    }
+
+    .form-check {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .form-check-input {
+        width: 18px;
+        height: 18px;
+    }
+
+    .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 20px;
+        padding-top: 15px;
+        border-top: 2px solid #e9ecef;
+    }
+
+    .alert {
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+
+    .alert-success {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+
+    .alert-danger {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+
+    @media (max-width: 768px) {
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+        
+        .table {
+            font-size: 0.8rem;
+        }
+        
+        .table th, .table td {
+            padding: 8px;
+        }
+    }
+    </style>
+</head>
+<body>
+<div class="admin-container">
+    <div class="admin-header">
+        <h1>🚚 Kargo Yönetimi</h1>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-danger{% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="admin-actions">
+        <button onclick="openKargoModal()" class="btn btn-success">
+            ➕ Yeni Kargo Firması
+        </button>
+        <a href="{% url 'shop:admin_siparis_yonet' %}" class="btn btn-primary">
+            📦 Sipariş Yönetimi
+        </a>
+    </div>
+
+    <!-- Kargo Firmaları Tablosu -->
+    <div class="kargo-table">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Sıra</th>
+                    <th>Firma Adı</th>
+                    <th>Sabit Ücret</th>
+                    <th>Ücretsiz Kargo Limiti</th>
+                    <th>Tahmini Süre</th>
+                    <th>Durum</th>
+                    <th>İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for firma in kargo_firmalari %}
+                <tr>
+                    <td>{{ firma.sira }}</td>
+                    <td><strong>{{ firma.ad }}</strong></td>
+                    <td>₺{{ firma.sabit_ucret|floatformat:2 }}</td>
+                    <td>
+                        {% if firma.ucretsiz_kargo_limiti %}
+                            ₺{{ firma.ucretsiz_kargo_limiti|floatformat:2 }}
+                        {% else %}
+                            <span class="text-muted">-</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ firma.tahmini_sure_gun }} gün</td>
+                    <td>
+                        <span class="status-badge {% if firma.aktif %}aktif{% else %}pasif{% endif %}">
+                            {% if firma.aktif %}Aktif{% else %}Pasif{% endif %}
+                        </span>
+                    </td>
+                    <td>
+                        <div style="display: flex; gap: 5px; flex-wrap: wrap;">
+                            <button onclick="openKargoModal({{ firma.id }}, '{{ firma.ad }}', {{ firma.sabit_ucret }}, {% if firma.ucretsiz_kargo_limiti %}{{ firma.ucretsiz_kargo_limiti }}{% else %}null{% endif %}, {{ firma.tahmini_sure_gun }}, {{ firma.sira }}, {{ firma.aktif|yesno:'true,false' }})" class="btn btn-warning" style="font-size: 0.8rem; padding: 6px 10px;">
+                                ✏️
+                            </button>
+                            <form method="POST" style="display: inline;" onsubmit="return confirm('Bu kargo firmasını silmek istediğinize emin misiniz?')">
+                                {% csrf_token %}
+                                <input type="hidden" name="kargo_sil" value="1">
+                                <input type="hidden" name="firma_id" value="{{ firma.id }}">
+                                <button type="submit" class="btn btn-danger" style="font-size: 0.8rem; padding: 6px 10px;">
+                                    🗑️
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" style="text-align: center; padding: 40px; color: #666;">
+                        <div style="font-size: 1.2rem; margin-bottom: 10px;">🚚</div>
+                        Henüz kargo firması bulunmuyor.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Kargo Firması Modal -->
+<div id="kargoModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title" id="modalTitle">Kargo Firması Ekle</h3>
+            <span class="close" onclick="closeKargoModal()">&times;</span>
+        </div>
+        
+        <form method="POST" id="kargoForm">
+            {% csrf_token %}
+            <input type="hidden" id="firma_id" name="firma_id">
+            <input type="hidden" id="form_action" name="form_action" value="kargo_ekle">
+            
+            <div class="form-group">
+                <label for="ad" class="form-label">Firma Adı *</label>
+                <input type="text" id="ad" name="ad" class="form-control" required placeholder="Örn: Aras Kargo">
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="sabit_ucret" class="form-label">Sabit Ücret (₺) *</label>
+                    <input type="number" id="sabit_ucret" name="sabit_ucret" class="form-control" required step="0.01" placeholder="0.00">
+                </div>
+                
+                <div class="form-group">
+                    <label for="ucretsiz_kargo_limiti" class="form-label">Ücretsiz Kargo Limiti (₺)</label>
+                    <input type="number" id="ucretsiz_kargo_limiti" name="ucretsiz_kargo_limiti" class="form-control" step="0.01" placeholder="0.00">
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="tahmini_sure_gun" class="form-label">Tahmini Teslimat (Gün) *</label>
+                    <input type="number" id="tahmini_sure_gun" name="tahmini_sure_gun" class="form-control" required min="1" placeholder="3">
+                </div>
+                
+                <div class="form-group">
+                    <label for="sira" class="form-label">Sıra</label>
+                    <input type="number" id="sira" name="sira" class="form-control" min="0" placeholder="0">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <div class="form-check">
+                    <input type="checkbox" id="aktif" name="aktif" class="form-check-input">
+                    <label for="aktif" class="form-label" style="margin: 0;">Aktif</label>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeKargoModal()">İptal</button>
+                <button type="submit" class="btn btn-success" id="submitBtn">Kaydet</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function openKargoModal(firmaId = null, ad = '', sabitUcret = '', ucretsizLimit = null, tahminiSure = 3, sira = 0, aktif = true) {
+    const modal = document.getElementById('kargoModal');
+    const title = document.getElementById('modalTitle');
+    const form = document.getElementById('kargoForm');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    if (firmaId) {
+        // Düzenleme modu
+        title.textContent = 'Kargo Firması Düzenle';
+        document.getElementById('firma_id').value = firmaId;
+        document.getElementById('form_action').name = 'kargo_guncelle';
+        document.getElementById('ad').value = ad;
+        document.getElementById('sabit_ucret').value = sabitUcret;
+        document.getElementById('ucretsiz_kargo_limiti').value = ucretsizLimit || '';
+        document.getElementById('tahmini_sure_gun').value = tahminiSure;
+        document.getElementById('sira').value = sira;
+        document.getElementById('aktif').checked = aktif;
+        submitBtn.textContent = 'Güncelle';
+    } else {
+        // Ekleme modu
+        title.textContent = 'Kargo Firması Ekle';
+        form.reset();
+        document.getElementById('form_action').name = 'kargo_ekle';
+        document.getElementById('firma_id').value = '';
+        document.getElementById('aktif').checked = true;
+        submitBtn.textContent = 'Kaydet';
+    }
+    
+    modal.style.display = 'block';
+}
+
+function closeKargoModal() {
+    document.getElementById('kargoModal').style.display = 'none';
+}
+
+// Modal dışına tıklandığında kapat
+window.onclick = function(event) {
+    const modal = document.getElementById('kargoModal');
+    if (event.target == modal) {
+        closeKargoModal();
+    }
+}
+</script>
+</body>
+</html>

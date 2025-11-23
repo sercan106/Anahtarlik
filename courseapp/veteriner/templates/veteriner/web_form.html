@@ -1,0 +1,633 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Web Sayfamı Düzenle - {{ veteriner.ad }}</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { scroll-behavior: smooth; }
+    .preview-img { max-width: 200px; max-height: 150px; object-fit: cover; border-radius: 12px; margin-top: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    .char-counter { font-size: 0.85rem; color: #6b7280; }
+    .gradient-text {
+      background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+  </style>
+</head>
+<body class="font-sans bg-gradient-to-br from-gray-50 to-blue-50 text-gray-800">
+
+  <!-- Header -->
+  <header class="bg-white shadow-lg sticky top-0 z-50">
+    <div class="container mx-auto px-4 py-4">
+      <div class="flex justify-between items-center">
+        <h1 class="text-2xl lg:text-3xl font-bold gradient-text flex items-center">
+          <i class="fas fa-paw mr-3"></i> Web Sayfamı Düzenle
+        </h1>
+        <div class="flex gap-3 lg:gap-4">
+          {% if veteriner.web_slug and veteriner.web_aktif %}
+          <a href="{% url 'veteriner:web_sayfasi_gorunum' slug=veteriner.web_slug %}" 
+             target="_blank" 
+             class="bg-gradient-to-r from-green-500 to-blue-500 text-white px-4 py-2 lg:px-6 lg:py-3 rounded-full hover:shadow-xl transform hover:scale-105 transition-all font-semibold text-sm lg:text-base">
+            <i class="fas fa-eye mr-2"></i> Görüntüle
+          </a>
+          {% endif %}
+          <a href="{% url 'veteriner:veteriner_paneli' %}" 
+             class="bg-gray-600 text-white px-4 py-2 lg:px-6 lg:py-3 rounded-full hover:bg-gray-700 transition-all font-semibold text-sm lg:text-base">
+            <i class="fas fa-home mr-2"></i> Panel
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="container mx-auto px-4 py-8 lg:py-12">
+    <div class="max-w-6xl mx-auto">
+      
+      <!-- Info Card -->
+      <div class="bg-gradient-to-r from-blue-50 to-green-50 border-l-4 border-blue-600 p-6 mb-8 rounded-xl shadow-md">
+        <div class="flex items-start space-x-4">
+          <div class="text-3xl text-blue-600"><i class="fas fa-info-circle"></i></div>
+          <div class="flex-1">
+            <p class="text-sm lg:text-base leading-relaxed mb-3">
+              <strong class="text-blue-700">💡 İpucu:</strong> Aşağıdaki form alanları dolduruldukça web sayfanız otomatik olarak şekillenir. 
+              Boş bıraktığınız alanlar sayfada görünmez. Değişiklikleri kaydetmek için sayfanın altındaki 
+              <strong class="text-blue-700">"Kaydet"</strong> butonuna tıklayın.
+            </p>
+            {% if veteriner.web_slug %}
+            <p class="text-sm lg:text-base">
+              <strong class="text-green-700"><i class="fas fa-link mr-1"></i> Sayfanız:</strong> 
+              <span class="font-mono bg-white px-3 py-1 rounded text-xs lg:text-sm inline-block mt-1">
+                {{ request.scheme }}://{{ request.get_host }}{% url 'veteriner:web_sayfasi_gorunum' slug=veteriner.web_slug %}
+              </span>
+            </p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <form method="post" enctype="multipart/form-data" class="space-y-8">
+        {% csrf_token %}
+
+        <!-- Genel Ayarlar -->
+        <div class="bg-white rounded-2xl shadow-lg p-6 lg:p-8 border border-gray-100">
+          <h2 class="text-2xl lg:text-3xl font-bold text-blue-600 mb-6 pb-4 border-b-2 border-blue-100 flex items-center">
+            <i class="fas fa-cog mr-3"></i> Genel Ayarlar
+          </h2>
+          <div class="space-y-4">
+            <div class="flex items-center gap-4 p-4 bg-gradient-to-r from-green-50 to-blue-50 rounded-xl">
+              <input type="checkbox" name="web_aktif" id="id_web_aktif" 
+                     {% if form.web_aktif.value %}checked{% endif %}
+                     class="w-6 h-6 text-blue-600 rounded focus:ring-blue-500 cursor-pointer">
+              <label for="id_web_aktif" class="text-lg font-semibold cursor-pointer flex-1">
+                <i class="fas fa-globe mr-2 text-green-600"></i> Web sayfamı yayına al
+              </label>
+            </div>
+            <p class="text-sm text-gray-600 ml-10"><i class="fas fa-info-circle mr-1 text-blue-500"></i> Bu kutuyu işaretlediğinizde sayfanız herkese açık olur ve arama motorlarında görünür.</p>
+          </div>
+        </div>
+
+        <!-- Hero Bölümü -->
+        <div class="bg-white rounded-2xl shadow-lg p-6 lg:p-8 border border-gray-100">
+          <h2 class="text-2xl lg:text-3xl font-bold text-blue-600 mb-6 pb-4 border-b-2 border-blue-100 flex items-center">
+            <i class="fas fa-image mr-3"></i> Hero (Giriş) Bölümü
+          </h2>
+          <div class="grid grid-cols-1 gap-6">
+            <div>
+              <label for="id_web_baslik" class="block text-sm font-semibold text-gray-700 mb-2">
+                <i class="fas fa-heading mr-2 text-blue-500"></i> Başlık (Klinik Adı)
+              </label>
+              <input type="text" name="web_baslik" id="id_web_baslik" 
+                     value="{{ form.web_baslik.value|default:'' }}"
+                     placeholder="Pati Veteriner Kliniği"
+                     class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all">
+            </div>
+            <div>
+              <label for="id_web_slogan" class="block text-sm font-semibold text-gray-700 mb-2">
+                <i class="fas fa-quote-left mr-2 text-green-500"></i> Slogan (Ana Mesaj)
+              </label>
+              <input type="text" name="web_slogan" id="id_web_slogan" 
+                     value="{{ form.web_slogan.value|default:'' }}"
+                     placeholder="Evcil Dostlarınızın Sağlığı Bizim Önceliğimiz!"
+                     class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all">
+            </div>
+            <div>
+              <label for="id_web_aciklama" class="block text-sm font-semibold text-gray-700 mb-2">
+                <i class="fas fa-align-left mr-2 text-purple-500"></i> Açıklama (Alt Başlık)
+              </label>
+              <textarea name="web_aciklama" id="id_web_aciklama" rows="3"
+                        placeholder="İstanbul'da profesyonel veteriner hizmetleri ile..."
+                        class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all">{{ form.web_aciklama.value|default:'' }}</textarea>
+            </div>
+            <div>
+              <label for="id_web_resim1" class="block text-sm font-semibold text-gray-700 mb-2">
+                <i class="fas fa-mountain mr-2 text-orange-500"></i> Hero Arka Plan Görseli
+              </label>
+              <input type="file" name="web_resim1" id="id_web_resim1" accept="image/*"
+                     class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-500 transition-all file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+              {% if veteriner.web_resim1 %}
+              <img src="{{ veteriner.web_resim1.url }}" alt="Hero" class="preview-img">
+              <label class="inline-flex items-center mt-2 text-sm text-red-600 cursor-pointer">
+                <input type="checkbox" name="web_resim1-clear" class="mr-2"> <i class="fas fa-trash mr-1"></i> Görseli kaldır
+              </label>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <!-- Logo ve Renk -->
+        <div class="bg-white rounded-2xl shadow-lg p-6 lg:p-8 border border-gray-100">
+          <h2 class="text-2xl lg:text-3xl font-bold text-blue-600 mb-6 pb-4 border-b-2 border-blue-100 flex items-center">
+            <i class="fas fa-palette mr-3"></i> Logo ve Renk
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label for="id_logo" class="block text-sm font-semibold text-gray-700 mb-2">
+                <i class="fas fa-file-image mr-2 text-blue-500"></i> Logo
+              </label>
+              <input type="file" name="logo" id="id_logo" accept="image/*"
+                     class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-500 transition-all file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-green-50 file:text-green-700 hover:file:bg-green-100">
+              {% if veteriner.logo %}
+              <img src="{{ veteriner.logo.url }}" alt="Logo" class="preview-img">
+              <label class="inline-flex items-center mt-2 text-sm text-red-600 cursor-pointer">
+                <input type="checkbox" name="logo-clear" class="mr-2"> <i class="fas fa-trash mr-1"></i> Logoyu kaldır
+              </label>
+              {% endif %}
+            </div>
+            <div>
+              <label for="id_birincil_renk" class="block text-sm font-semibold text-gray-700 mb-2">
+                <i class="fas fa-fill-drip mr-2 text-purple-500"></i> Ana Renk (Hex)
+              </label>
+              <input type="text" name="birincil_renk" id="id_birincil_renk"
+                     value="{{ form.birincil_renk.value|default:'#2563eb' }}"
+                     placeholder="#2563eb"
+                     class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all">
+              <p class="text-xs text-gray-500 mt-2"><i class="fas fa-info-circle mr-1"></i> Örn: #2563eb (mavi), #10b981 (yeşil), #f59e0b (turuncu)</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- CTA ve İletişim -->
+        <div class="bg-white rounded-2xl shadow-lg p-6 lg:p-8 border border-gray-100">
+          <h2 class="text-2xl lg:text-3xl font-bold text-blue-600 mb-6 pb-4 border-b-2 border-blue-100 flex items-center">
+            <i class="fas fa-phone-alt mr-3"></i> CTA Butonu ve WhatsApp
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div>
+              <label for="id_cta_metin" class="block text-sm font-semibold text-gray-700 mb-2">
+                <i class="fas fa-mouse-pointer mr-2 text-blue-500"></i> CTA Buton Metni
+              </label>
+              <input type="text" name="cta_metin" id="id_cta_metin"
+                     value="{{ form.cta_metin.value|default:'' }}"
+                     placeholder="Randevu Al"
+                     class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all">
+            </div>
+            <div>
+              <label for="id_cta_link" class="block text-sm font-semibold text-gray-700 mb-2">
+                <i class="fas fa-link mr-2 text-green-500"></i> CTA Linki (opsiyonel)
+              </label>
+              <input type="url" name="cta_link" id="id_cta_link"
+                     value="{{ form.cta_link.value|default:'' }}"
+                     placeholder="https://randevu.com"
+                     class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all">
+            </div>
+            <div>
+              <label for="id_whatsapp" class="block text-sm font-semibold text-gray-700 mb-2">
+                <i class="fab fa-whatsapp mr-2 text-green-600"></i> WhatsApp (sadece rakam)
+              </label>
+              <input type="text" name="whatsapp" id="id_whatsapp"
+                     value="{{ form.whatsapp.value|default:'' }}"
+                     placeholder="905551112233"
+                     class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all">
+            </div>
+          </div>
+          <p class="text-sm text-gray-600 mt-4 p-3 bg-blue-50 rounded-lg"><i class="fas fa-info-circle mr-2 text-blue-600"></i> CTA butonu önce cta_link'e, yoksa WhatsApp'a, o da yoksa telefon numaranıza yönlendirir.</p>
+        </div>
+
+        <!-- Hizmetler -->
+        <div class="bg-white rounded-2xl shadow-lg p-6 lg:p-8 border border-gray-100">
+          <h2 class="text-2xl lg:text-3xl font-bold text-blue-600 mb-6 pb-4 border-b-2 border-blue-100 flex items-center">
+            <i class="fas fa-stethoscope mr-3"></i> Hizmetler (3 Kart)
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {% for i in "123" %}
+            <div class="p-6 bg-gradient-to-br from-gray-50 to-white rounded-xl border-2 border-gray-200 hover:border-blue-300 transition-all">
+              <h3 class="font-bold text-lg mb-4 text-gray-800 flex items-center">
+                <i class="fas fa-{% if i == '1' %}stethoscope{% elif i == '2' %}syringe{% else %}user-md{% endif %} mr-2 text-blue-600"></i> Hizmet {{ i }}
+              </h3>
+              <div class="space-y-4">
+                <div>
+                  <label for="id_hizmet{{ i }}_baslik" class="block text-xs font-semibold text-gray-600 mb-2">Başlık</label>
+                  <input type="text" name="hizmet{{ i }}_baslik" id="id_hizmet{{ i }}_baslik"
+                         value="{% if i == '1' %}{{ form.hizmet1_baslik.value|default:'' }}{% elif i == '2' %}{{ form.hizmet2_baslik.value|default:'' }}{% else %}{{ form.hizmet3_baslik.value|default:'' }}{% endif %}"
+                         placeholder="Rutin Muayene ve Aşılar"
+                         class="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 transition-all text-sm">
+                </div>
+                <div>
+                  <label for="id_hizmet{{ i }}_aciklama" class="block text-xs font-semibold text-gray-600 mb-2">Açıklama</label>
+                  <textarea name="hizmet{{ i }}_aciklama" id="id_hizmet{{ i }}_aciklama" rows="3"
+                            placeholder="Evcil hayvanlarınızın sağlığını korumak için..."
+                            class="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 transition-all text-sm">{% if i == '1' %}{{ form.hizmet1_aciklama.value|default:'' }}{% elif i == '2' %}{{ form.hizmet2_aciklama.value|default:'' }}{% else %}{{ form.hizmet3_aciklama.value|default:'' }}{% endif %}</textarea>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Galeri Görselleri -->
+        <div class="bg-white rounded-2xl shadow-lg p-6 lg:p-8 border border-gray-100">
+          <h2 class="text-2xl lg:text-3xl font-bold text-blue-600 mb-6 pb-4 border-b-2 border-blue-100 flex items-center">
+            <i class="fas fa-images mr-3"></i> Galeri Görselleri
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label for="id_web_resim2" class="block text-sm font-semibold text-gray-700 mb-2">
+                <i class="fas fa-image mr-2 text-green-500"></i> Görsel 2
+              </label>
+              <input type="file" name="web_resim2" id="id_web_resim2" accept="image/*"
+                     class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-500 transition-all file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-green-50 file:text-green-700 hover:file:bg-green-100">
+              {% if veteriner.web_resim2 %}
+              <img src="{{ veteriner.web_resim2.url }}" alt="Görsel 2" class="preview-img">
+              <label class="inline-flex items-center mt-2 text-sm text-red-600 cursor-pointer">
+                <input type="checkbox" name="web_resim2-clear" class="mr-2"> <i class="fas fa-trash mr-1"></i> Görseli kaldır
+              </label>
+              {% endif %}
+            </div>
+            <div>
+              <label for="id_web_resim3" class="block text-sm font-semibold text-gray-700 mb-2">
+                <i class="fas fa-image mr-2 text-purple-500"></i> Görsel 3
+              </label>
+              <input type="file" name="web_resim3" id="id_web_resim3" accept="image/*"
+                     class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-500 transition-all file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100">
+              {% if veteriner.web_resim3 %}
+              <img src="{{ veteriner.web_resim3.url }}" alt="Görsel 3" class="preview-img">
+              <label class="inline-flex items-center mt-2 text-sm text-red-600 cursor-pointer">
+                <input type="checkbox" name="web_resim3-clear" class="mr-2"> <i class="fas fa-trash mr-1"></i> Görseli kaldır
+              </label>
+              {% endif %}
+            </div>
+          </div>
+          <p class="text-sm text-gray-600 mt-4 p-3 bg-yellow-50 rounded-lg"><i class="fas fa-lightbulb mr-2 text-yellow-600"></i> Not: Hero arka plan görseli (web_resim1) yukarıda bulunmaktadır.</p>
+        </div>
+
+        <!-- Sosyal Medya -->
+        <div class="bg-white rounded-2xl shadow-lg p-6 lg:p-8 border border-gray-100">
+          <h2 class="text-2xl lg:text-3xl font-bold text-blue-600 mb-6 pb-4 border-b-2 border-blue-100 flex items-center">
+            <i class="fas fa-share-alt mr-3"></i> Sosyal Medya Linkleri
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div>
+              <label for="id_website" class="block text-sm font-semibold text-gray-700 mb-2">
+                <i class="fas fa-globe mr-2 text-blue-500"></i> Website
+              </label>
+              <input type="url" name="website" id="id_website"
+                     value="{{ form.website.value|default:'' }}"
+                     placeholder="https://..."
+                     class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all">
+            </div>
+            <div>
+              <label for="id_instagram" class="block text-sm font-semibold text-gray-700 mb-2">
+                <i class="fab fa-instagram mr-2 text-pink-500"></i> Instagram
+              </label>
+              <input type="text" name="instagram" id="id_instagram"
+                     value="{{ form.instagram.value|default:'' }}"
+                     placeholder="@kullaniciadi"
+                     class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all">
+            </div>
+            <div>
+              <label for="id_facebook" class="block text-sm font-semibold text-gray-700 mb-2">
+                <i class="fab fa-facebook mr-2 text-blue-600"></i> Facebook
+              </label>
+              <input type="text" name="facebook" id="id_facebook"
+                     value="{{ form.facebook.value|default:'' }}"
+                     placeholder="facebook.com/kullaniciadi"
+                     class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all">
+            </div>
+            <div>
+              <label for="id_twitter" class="block text-sm font-semibold text-gray-700 mb-2">
+                <i class="fab fa-x-twitter mr-2 text-gray-800"></i> X (Twitter)
+              </label>
+              <input type="text" name="twitter" id="id_twitter"
+                     value="{{ form.twitter.value|default:'' }}"
+                     placeholder="@kullaniciadi"
+                     class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all">
+            </div>
+            <div>
+              <label for="id_linkedin" class="block text-sm font-semibold text-gray-700 mb-2">
+                <i class="fab fa-linkedin mr-2 text-blue-700"></i> LinkedIn
+              </label>
+              <input type="text" name="linkedin" id="id_linkedin"
+                     value="{{ form.linkedin.value|default:'' }}"
+                     placeholder="linkedin.com/in/kullaniciadi"
+                     class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all">
+            </div>
+            <div>
+              <label for="id_youtube" class="block text-sm font-semibold text-gray-700 mb-2">
+                <i class="fab fa-youtube mr-2 text-red-600"></i> YouTube
+              </label>
+              <input type="text" name="youtube" id="id_youtube"
+                     value="{{ form.youtube.value|default:'' }}"
+                     placeholder="youtube.com/@kullaniciadi"
+                     class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all">
+            </div>
+          </div>
+        </div>
+
+        <!-- Çalışma Saatleri -->
+        <div class="bg-white rounded-2xl shadow-lg p-6 lg:p-8 border border-gray-100">
+          <h2 class="text-2xl lg:text-3xl font-bold text-blue-600 mb-6 pb-4 border-b-2 border-blue-100 flex items-center">
+            <i class="fas fa-clock mr-3"></i> Çalışma Saatleri
+          </h2>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Pazartesi -->
+            <div class="p-5 bg-gradient-to-br from-gray-50 to-white rounded-xl border-2 border-gray-200 hover:border-blue-300 transition-all">
+              <div class="flex items-center justify-between mb-4">
+                <label class="font-bold text-gray-800"><i class="fas fa-calendar-day mr-2 text-blue-500"></i> Pazartesi</label>
+                <label class="inline-flex items-center cursor-pointer">
+                  <input type="checkbox" name="pazartesi_kapali" {% if veteriner.pazartesi_kapali %}checked{% endif %} class="mr-2 w-5 h-5 text-red-600 rounded"> 
+                  <span class="text-sm text-red-600 font-semibold">Kapalı</span>
+                </label>
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label for="id_pazartesi_baslangic" class="block text-xs text-gray-600 mb-2 font-semibold">Başlangıç</label>
+                  <input type="time" name="pazartesi_baslangic" id="id_pazartesi_baslangic"
+                         value="{% if veteriner.pazartesi_baslangic %}{{ veteriner.pazartesi_baslangic|time:'H:i' }}{% endif %}"
+                         class="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 transition-all">
+                </div>
+                <div>
+                  <label for="id_pazartesi_bitis" class="block text-xs text-gray-600 mb-2 font-semibold">Bitiş</label>
+                  <input type="time" name="pazartesi_bitis" id="id_pazartesi_bitis"
+                         value="{% if veteriner.pazartesi_bitis %}{{ veteriner.pazartesi_bitis|time:'H:i' }}{% endif %}"
+                         class="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 transition-all">
+                </div>
+              </div>
+            </div>
+
+            <!-- Salı -->
+            <div class="p-5 bg-gradient-to-br from-gray-50 to-white rounded-xl border-2 border-gray-200 hover:border-blue-300 transition-all">
+              <div class="flex items-center justify-between mb-4">
+                <label class="font-bold text-gray-800"><i class="fas fa-calendar-day mr-2 text-blue-500"></i> Salı</label>
+                <label class="inline-flex items-center cursor-pointer">
+                  <input type="checkbox" name="sali_kapali" {% if veteriner.sali_kapali %}checked{% endif %} class="mr-2 w-5 h-5 text-red-600 rounded"> 
+                  <span class="text-sm text-red-600 font-semibold">Kapalı</span>
+                </label>
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label for="id_sali_baslangic" class="block text-xs text-gray-600 mb-2 font-semibold">Başlangıç</label>
+                  <input type="time" name="sali_baslangic" id="id_sali_baslangic"
+                         value="{% if veteriner.sali_baslangic %}{{ veteriner.sali_baslangic|time:'H:i' }}{% endif %}"
+                         class="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 transition-all">
+                </div>
+                <div>
+                  <label for="id_sali_bitis" class="block text-xs text-gray-600 mb-2 font-semibold">Bitiş</label>
+                  <input type="time" name="sali_bitis" id="id_sali_bitis"
+                         value="{% if veteriner.sali_bitis %}{{ veteriner.sali_bitis|time:'H:i' }}{% endif %}"
+                         class="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 transition-all">
+                </div>
+              </div>
+            </div>
+
+            <!-- Çarşamba -->
+            <div class="p-5 bg-gradient-to-br from-gray-50 to-white rounded-xl border-2 border-gray-200 hover:border-blue-300 transition-all">
+              <div class="flex items-center justify-between mb-4">
+                <label class="font-bold text-gray-800"><i class="fas fa-calendar-day mr-2 text-blue-500"></i> Çarşamba</label>
+                <label class="inline-flex items-center cursor-pointer">
+                  <input type="checkbox" name="carsamba_kapali" {% if veteriner.carsamba_kapali %}checked{% endif %} class="mr-2 w-5 h-5 text-red-600 rounded"> 
+                  <span class="text-sm text-red-600 font-semibold">Kapalı</span>
+                </label>
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label for="id_carsamba_baslangic" class="block text-xs text-gray-600 mb-2 font-semibold">Başlangıç</label>
+                  <input type="time" name="carsamba_baslangic" id="id_carsamba_baslangic"
+                         value="{% if veteriner.carsamba_baslangic %}{{ veteriner.carsamba_baslangic|time:'H:i' }}{% endif %}"
+                         class="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 transition-all">
+                </div>
+                <div>
+                  <label for="id_carsamba_bitis" class="block text-xs text-gray-600 mb-2 font-semibold">Bitiş</label>
+                  <input type="time" name="carsamba_bitis" id="id_carsamba_bitis"
+                         value="{% if veteriner.carsamba_bitis %}{{ veteriner.carsamba_bitis|time:'H:i' }}{% endif %}"
+                         class="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 transition-all">
+                </div>
+              </div>
+            </div>
+
+            <!-- Perşembe -->
+            <div class="p-5 bg-gradient-to-br from-gray-50 to-white rounded-xl border-2 border-gray-200 hover:border-blue-300 transition-all">
+              <div class="flex items-center justify-between mb-4">
+                <label class="font-bold text-gray-800"><i class="fas fa-calendar-day mr-2 text-blue-500"></i> Perşembe</label>
+                <label class="inline-flex items-center cursor-pointer">
+                  <input type="checkbox" name="persembe_kapali" {% if veteriner.persembe_kapali %}checked{% endif %} class="mr-2 w-5 h-5 text-red-600 rounded"> 
+                  <span class="text-sm text-red-600 font-semibold">Kapalı</span>
+                </label>
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label for="id_persembe_baslangic" class="block text-xs text-gray-600 mb-2 font-semibold">Başlangıç</label>
+                  <input type="time" name="persembe_baslangic" id="id_persembe_baslangic"
+                         value="{% if veteriner.persembe_baslangic %}{{ veteriner.persembe_baslangic|time:'H:i' }}{% endif %}"
+                         class="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 transition-all">
+                </div>
+                <div>
+                  <label for="id_persembe_bitis" class="block text-xs text-gray-600 mb-2 font-semibold">Bitiş</label>
+                  <input type="time" name="persembe_bitis" id="id_persembe_bitis"
+                         value="{% if veteriner.persembe_bitis %}{{ veteriner.persembe_bitis|time:'H:i' }}{% endif %}"
+                         class="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 transition-all">
+                </div>
+              </div>
+            </div>
+
+            <!-- Cuma -->
+            <div class="p-5 bg-gradient-to-br from-gray-50 to-white rounded-xl border-2 border-gray-200 hover:border-blue-300 transition-all">
+              <div class="flex items-center justify-between mb-4">
+                <label class="font-bold text-gray-800"><i class="fas fa-calendar-day mr-2 text-blue-500"></i> Cuma</label>
+                <label class="inline-flex items-center cursor-pointer">
+                  <input type="checkbox" name="cuma_kapali" {% if veteriner.cuma_kapali %}checked{% endif %} class="mr-2 w-5 h-5 text-red-600 rounded"> 
+                  <span class="text-sm text-red-600 font-semibold">Kapalı</span>
+                </label>
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label for="id_cuma_baslangic" class="block text-xs text-gray-600 mb-2 font-semibold">Başlangıç</label>
+                  <input type="time" name="cuma_baslangic" id="id_cuma_baslangic"
+                         value="{% if veteriner.cuma_baslangic %}{{ veteriner.cuma_baslangic|time:'H:i' }}{% endif %}"
+                         class="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 transition-all">
+                </div>
+                <div>
+                  <label for="id_cuma_bitis" class="block text-xs text-gray-600 mb-2 font-semibold">Bitiş</label>
+                  <input type="time" name="cuma_bitis" id="id_cuma_bitis"
+                         value="{% if veteriner.cuma_bitis %}{{ veteriner.cuma_bitis|time:'H:i' }}{% endif %}"
+                         class="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 transition-all">
+                </div>
+              </div>
+            </div>
+
+            <!-- Cumartesi -->
+            <div class="p-5 bg-gradient-to-br from-gray-50 to-white rounded-xl border-2 border-gray-200 hover:border-blue-300 transition-all">
+              <div class="flex items-center justify-between mb-4">
+                <label class="font-bold text-gray-800"><i class="fas fa-calendar-day mr-2 text-blue-500"></i> Cumartesi</label>
+                <label class="inline-flex items-center cursor-pointer">
+                  <input type="checkbox" name="cumartesi_kapali" {% if veteriner.cumartesi_kapali %}checked{% endif %} class="mr-2 w-5 h-5 text-red-600 rounded"> 
+                  <span class="text-sm text-red-600 font-semibold">Kapalı</span>
+                </label>
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label for="id_cumartesi_baslangic" class="block text-xs text-gray-600 mb-2 font-semibold">Başlangıç</label>
+                  <input type="time" name="cumartesi_baslangic" id="id_cumartesi_baslangic"
+                         value="{% if veteriner.cumartesi_baslangic %}{{ veteriner.cumartesi_baslangic|time:'H:i' }}{% endif %}"
+                         class="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 transition-all">
+                </div>
+                <div>
+                  <label for="id_cumartesi_bitis" class="block text-xs text-gray-600 mb-2 font-semibold">Bitiş</label>
+                  <input type="time" name="cumartesi_bitis" id="id_cumartesi_bitis"
+                         value="{% if veteriner.cumartesi_bitis %}{{ veteriner.cumartesi_bitis|time:'H:i' }}{% endif %}"
+                         class="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 transition-all">
+                </div>
+              </div>
+            </div>
+
+            <!-- Pazar -->
+            <div class="p-5 bg-gradient-to-br from-gray-50 to-white rounded-xl border-2 border-gray-200 hover:border-blue-300 transition-all">
+              <div class="flex items-center justify-between mb-4">
+                <label class="font-bold text-gray-800"><i class="fas fa-calendar-day mr-2 text-blue-500"></i> Pazar</label>
+                <label class="inline-flex items-center cursor-pointer">
+                  <input type="checkbox" name="pazar_kapali" {% if veteriner.pazar_kapali %}checked{% endif %} class="mr-2 w-5 h-5 text-red-600 rounded"> 
+                  <span class="text-sm text-red-600 font-semibold">Kapalı</span>
+                </label>
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label for="id_pazar_baslangic" class="block text-xs text-gray-600 mb-2 font-semibold">Başlangıç</label>
+                  <input type="time" name="pazar_baslangic" id="id_pazar_baslangic"
+                         value="{% if veteriner.pazar_baslangic %}{{ veteriner.pazar_baslangic|time:'H:i' }}{% endif %}"
+                         class="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 transition-all">
+                </div>
+                <div>
+                  <label for="id_pazar_bitis" class="block text-xs text-gray-600 mb-2 font-semibold">Bitiş</label>
+                  <input type="time" name="pazar_bitis" id="id_pazar_bitis"
+                         value="{% if veteriner.pazar_bitis %}{{ veteriner.pazar_bitis|time:'H:i' }}{% endif %}"
+                         class="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 transition-all">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SEO -->
+        <div class="bg-white rounded-2xl shadow-lg p-6 lg:p-8 border border-gray-100">
+          <h2 class="text-2xl lg:text-3xl font-bold text-blue-600 mb-6 pb-4 border-b-2 border-blue-100 flex items-center">
+            <i class="fas fa-search mr-3"></i> SEO (Arama Motoru Optimizasyonu)
+          </h2>
+          <div class="space-y-6">
+            <div>
+              <div class="flex justify-between items-center mb-2">
+                <label for="id_web_seo_baslik" class="block text-sm font-semibold text-gray-700">
+                  <i class="fas fa-heading mr-2 text-blue-500"></i> SEO Başlık
+                </label>
+                <span class="char-counter font-mono" id="seo-title-count">0/60</span>
+              </div>
+              <input type="text" name="web_seo_baslik" id="id_web_seo_baslik"
+                     value="{{ form.web_seo_baslik.value|default:'' }}"
+                     placeholder="Pati Veteriner Kliniği - İstanbul"
+                     maxlength="60"
+                     class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all">
+            </div>
+            <div>
+              <div class="flex justify-between items-center mb-2">
+                <label for="id_web_seo_aciklama" class="block text-sm font-semibold text-gray-700">
+                  <i class="fas fa-align-left mr-2 text-green-500"></i> SEO Açıklama
+                </label>
+                <span class="char-counter font-mono" id="seo-desc-count">0/160</span>
+              </div>
+              <textarea name="web_seo_aciklama" id="id_web_seo_aciklama" rows="3"
+                        placeholder="İstanbul'da güvenilir veteriner hizmetleri..."
+                        maxlength="160"
+                        class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all">{{ form.web_seo_aciklama.value|default:'' }}</textarea>
+            </div>
+            <div>
+              <label for="id_web_seo_anahtar_kelimeler" class="block text-sm font-semibold text-gray-700 mb-2">
+                <i class="fas fa-tags mr-2 text-purple-500"></i> Anahtar Kelimeler (virgülle ayırın)
+              </label>
+              <input type="text" name="web_seo_anahtar_kelimeler" id="id_web_seo_anahtar_kelimeler"
+                     value="{{ form.web_seo_anahtar_kelimeler.value|default:'' }}"
+                     placeholder="veteriner, evcil hayvan, kedi, köpek, İstanbul"
+                     class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all">
+            </div>
+          </div>
+        </div>
+
+        <!-- Kaydet Butonu -->
+        <div class="flex justify-center gap-6 pt-8 pb-4">
+          <button type="submit" 
+                  class="bg-gradient-to-r from-green-500 to-blue-500 text-white px-12 py-4 rounded-full hover:shadow-2xl transform hover:scale-105 transition-all duration-300 font-bold text-lg flex items-center">
+            <i class="fas fa-save mr-3"></i> Değişiklikleri Kaydet
+          </button>
+          <a href="{% url 'veteriner:veteriner_paneli' %}" 
+             class="bg-gray-600 text-white px-12 py-4 rounded-full hover:bg-gray-700 transform hover:scale-105 transition-all duration-300 font-bold text-lg flex items-center">
+            <i class="fas fa-times mr-3"></i> İptal
+          </a>
+        </div>
+      </form>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gradient-to-r from-gray-900 to-gray-800 text-white py-8 mt-12">
+    <div class="container mx-auto px-4 text-center">
+      <p class="text-gray-400"><i class="fas fa-paw mr-2"></i> &copy; {{ now|date:'Y' }} {{ veteriner.ad }}. Tüm hakları saklıdır.</p>
+    </div>
+  </footer>
+
+  <script>
+    // SEO karakter sayacı
+    const seoTitle = document.getElementById('id_web_seo_baslik');
+    const seoDesc = document.getElementById('id_web_seo_aciklama');
+    const titleCounter = document.getElementById('seo-title-count');
+    const descCounter = document.getElementById('seo-desc-count');
+
+    function updateCounter(input, counter) {
+      const len = input.value.length;
+      const max = input.getAttribute('maxlength');
+      counter.textContent = `${len}/${max}`;
+      if (len > max * 0.9) {
+        counter.style.color = '#ef4444';
+        counter.style.fontWeight = 'bold';
+      } else if (len > max * 0.7) {
+        counter.style.color = '#f59e0b';
+      } else {
+        counter.style.color = '#6b7280';
+      }
+    }
+
+    seoTitle.addEventListener('input', () => updateCounter(seoTitle, titleCounter));
+    seoDesc.addEventListener('input', () => updateCounter(seoDesc, descCounter));
+
+    // İlk yüklemede sayaç güncelle
+    updateCounter(seoTitle, titleCounter);
+    updateCounter(seoDesc, descCounter);
+    
+    // Smooth scroll
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>

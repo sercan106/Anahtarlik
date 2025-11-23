@@ -1,0 +1,127 @@
+{% extends 'ana.html' %}
+{% load static %}
+
+{% block title %}Değerlendirmeler - Veteriner Paneli{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="mb-0">
+                        <i class="fas fa-star text-warning me-2"></i>Müşteri Değerlendirmeleri
+                    </h2>
+                    <p class="text-muted mb-0">Müşterilerinizin görüşlerini buradan takip edebilirsiniz</p>
+                </div>
+                <a href="{% url 'veteriner:degerlendirme_ekle' %}" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>Yeni Değerlendirme
+                </a>
+            </div>
+
+            {% if page_obj %}
+                <div class="row">
+                    {% for degerlendirme in page_obj %}
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="card h-100 shadow-sm">
+                            <div class="card-body">
+                                <!-- Puan -->
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <div class="puan-goster">
+                                        {% for i in "12345" %}
+                                            {% if forloop.counter <= degerlendirme.puan %}
+                                                <i class="fas fa-star text-warning"></i>
+                                            {% else %}
+                                                <i class="far fa-star text-warning"></i>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                    <small class="text-muted">
+                                        {{ degerlendirme.olusturulma_tarihi|date:"d.m.Y" }}
+                                    </small>
+                                </div>
+
+                                <!-- Müşteri Bilgileri -->
+                                <h5 class="card-title mb-2">
+                                    <i class="fas fa-user-circle text-primary me-2"></i>
+                                    {{ degerlendirme.musteri_adi }}
+                                </h5>
+                                
+                                {% if degerlendirme.musteri_telefon %}
+                                <p class="text-muted small mb-3">
+                                    <i class="fas fa-phone me-1"></i>
+                                    {{ degerlendirme.musteri_telefon }}
+                                </p>
+                                {% endif %}
+
+                                <!-- Yorum -->
+                                {% if degerlendirme.yorum %}
+                                <p class="card-text text-muted">
+                                    {{ degerlendirme.yorum|truncatewords:30 }}
+                                </p>
+                                {% endif %}
+
+                                <!-- Randevu Bilgisi -->
+                                {% if degerlendirme.randevu %}
+                                <div class="mt-3 pt-3 border-top">
+                                    <small class="text-muted">
+                                        <i class="fas fa-calendar me-1"></i>
+                                        <strong>Randevu:</strong> 
+                                        {{ degerlendirme.randevu.tarih|date:"d.m.Y" }} - 
+                                        {{ degerlendirme.randevu.hizmet.hizmet_adi }}
+                                    </small>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Sayfalama -->
+                {% if page_obj.has_other_pages %}
+                <nav aria-label="Sayfa navigasyonu" class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Önceki</a>
+                        </li>
+                        {% endif %}
+
+                        {% for num in page_obj.paginator.page_range %}
+                            {% if page_obj.number == num %}
+                            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                            </li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}">Sonraki</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+            {% else %}
+                <div class="card">
+                    <div class="card-body text-center py-5">
+                        <i class="fas fa-star fa-4x text-muted mb-3"></i>
+                        <h5 class="text-muted">Henüz değerlendirme bulunmuyor</h5>
+                        <p class="text-muted">İlk değerlendirmeyi eklemek için yukarıdaki butonu kullanın.</p>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+
+
+
+

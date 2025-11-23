@@ -1,0 +1,232 @@
+{% extends 'ana.html' %}
+{% load static %}
+
+{% block title %}Ana Sayfa Ayarları - PetSafe Hub CMS{% endblock %}
+
+{% block content %}
+<style>
+    .cms-form-container {
+        max-width: 900px;
+        margin: 100px auto 50px;
+        padding: 20px;
+    }
+
+    .cms-form-header {
+        background: linear-gradient(135deg, rgba(91, 155, 213, 0.1) 0%, rgba(112, 193, 179, 0.1) 100%);
+        border-radius: 20px;
+        padding: 30px;
+        margin-bottom: 30px;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .cms-form-header h1 {
+        color: #5B9BD5;
+        margin-bottom: 5px;
+        font-weight: 700;
+        font-size: 2rem;
+    }
+
+    .cms-form-card {
+        background: white;
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(91, 155, 213, 0.1);
+    }
+
+    .form-section {
+        margin-bottom: 35px;
+        padding-bottom: 35px;
+        border-bottom: 2px solid rgba(91, 155, 213, 0.1);
+    }
+
+    .form-section:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
+    }
+
+    .form-section-title {
+        color: #5B9BD5;
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .form-group {
+        margin-bottom: 25px;
+    }
+
+    .form-group label {
+        display: block;
+        color: #333;
+        font-weight: 600;
+        margin-bottom: 8px;
+        font-size: 0.95rem;
+    }
+
+    .form-control, .form-select {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus, .form-select:focus {
+        outline: none;
+        border-color: #5B9BD5;
+        box-shadow: 0 0 0 3px rgba(91, 155, 213, 0.1);
+    }
+
+    textarea.form-control {
+        resize: vertical;
+        min-height: 100px;
+    }
+
+    .help-text {
+        display: block;
+        margin-top: 5px;
+        font-size: 0.85rem;
+        color: #999;
+    }
+
+    .button-group {
+        display: flex;
+        gap: 15px;
+        margin-top: 30px;
+    }
+
+    .btn-submit {
+        flex: 1;
+        background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
+        color: white;
+        border: none;
+        padding: 15px 40px;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 20px rgba(91, 155, 213, 0.3);
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 30px rgba(91, 155, 213, 0.4);
+    }
+
+    .btn-cancel {
+        flex: 1;
+        background: #e0e0e0;
+        color: #666;
+        border: none;
+        padding: 15px 40px;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+
+    .btn-cancel:hover {
+        background: #d0d0d0;
+        color: #555;
+    }
+
+    @media (max-width: 768px) {
+        .cms-form-container {
+            margin-top: 80px;
+            padding: 10px;
+        }
+
+        .cms-form-card {
+            padding: 25px;
+        }
+
+        .button-group {
+            flex-direction: column;
+        }
+    }
+</style>
+
+<div class="cms-form-container">
+    <div class="cms-form-header">
+        <h1><i class="fas fa-cog"></i> Ana Sayfa Ayarları</h1>
+        <p>Ana sayfa genel ayarlarını düzenleyin</p>
+    </div>
+
+    <div class="cms-form-card">
+        <form method="post">
+            {% csrf_token %}
+
+            <!-- Hizmetler Bölümü -->
+            <div class="form-section">
+                <h3 class="form-section-title">
+                    <i class="fas fa-th-large"></i> Hizmetler Bölümü
+                </h3>
+
+                <div class="form-group">
+                    <label for="{{ form.hizmetler_baslik.id_for_label }}">Hizmetler Başlık *</label>
+                    {{ form.hizmetler_baslik }}
+                    {% if form.hizmetler_baslik.errors %}
+                        <span class="help-text" style="color: #FF8C42;">{{ form.hizmetler_baslik.errors.0 }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.hizmetler_aciklama.id_for_label }}">Hizmetler Açıklama *</label>
+                    {{ form.hizmetler_aciklama }}
+                    {% if form.hizmetler_aciklama.errors %}
+                        <span class="help-text" style="color: #FF8C42;">{{ form.hizmetler_aciklama.errors.0 }}</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Carousel Ayarları -->
+            <div class="form-section">
+                <h3 class="form-section-title">
+                    <i class="fas fa-images"></i> Carousel Ayarları
+                </h3>
+
+                <div class="form-group">
+                    <label for="{{ form.slide_gecis_suresi.id_for_label }}">Slide Geçiş Süresi (ms) *</label>
+                    {{ form.slide_gecis_suresi }}
+                    {% if form.slide_gecis_suresi.help_text %}
+                        <span class="help-text">{{ form.slide_gecis_suresi.help_text }}</span>
+                    {% endif %}
+                    {% if form.slide_gecis_suresi.errors %}
+                        <span class="help-text" style="color: #FF8C42;">{{ form.slide_gecis_suresi.errors.0 }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.slide_animasyon.id_for_label }}">Animasyon Türü *</label>
+                    {{ form.slide_animasyon }}
+                    {% if form.slide_animasyon.help_text %}
+                        <span class="help-text">{{ form.slide_animasyon.help_text }}</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button type="submit" class="btn-submit">
+                    <i class="fas fa-save"></i> Ayarları Kaydet
+                </button>
+                <a href="{% url 'anahtarlik:cms_dashboard' %}" class="btn-cancel">
+                    <i class="fas fa-times"></i> İptal
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends "ana.html" %}
+{% load i18n %}
+
+{% block baslik %}<title>Google ile Giriş</title>{% endblock %}
+
+{% block css_dosyalar %}
+<style>
+  .oauth-container { min-height: 70vh; display: grid; place-items: center; background: linear-gradient(135deg,#f5f7fa,#e9eef5); }
+  .oauth-card { background:#fff; width:100%; max-width:520px; border-radius:16px; box-shadow:0 12px 30px rgba(0,0,0,.08); overflow:hidden; }
+  .oauth-header { background:linear-gradient(90deg,#18bc9c,#139a7f); color:#fff; padding:1.25rem 1.5rem; display:flex; align-items:center; gap:.75rem; }
+  .oauth-header i { font-size:1.4rem; }
+  .oauth-body { padding:1.75rem; }
+  .oauth-title { font-size:1.4rem; font-weight:700; margin:0 0 .25rem; color:#2b2d42; }
+  .oauth-sub { color:#6c757d; margin:0 0 1rem; }
+  .provider-chip { display:inline-flex; align-items:center; gap:.5rem; padding:.4rem .75rem; border-radius:999px; border:1px solid #e5e7eb; background:#f8fafc; font-weight:600; }
+  .btn-primaryx { background:#18bc9c; border:0; color:#fff; padding:.75rem 1rem; border-radius:10px; width:100%; font-weight:700; box-shadow:0 8px 16px rgba(24,188,156,.25); }
+  .btn-primaryx:hover { filter:brightness(.95); }
+  .btn-ghost { border:1px solid #e5e7eb; background:#fff; color:#374151; padding:.6rem .9rem; border-radius:10px; width:100%; font-weight:600; }
+  .oauth-actions { display:grid; gap:.75rem; margin-top:1rem; }
+  .note { font-size:.9rem; color:#6b7280; margin-top:.75rem; }
+  .list-unstyled { margin:0; padding-left:1.25rem; color:#6b7280; }
+  .go-home { margin-top:1rem; text-align:center; }
+  .go-home a { text-decoration:none; font-weight:600; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="oauth-container">
+  <div class="oauth-card">
+    <div class="oauth-header">
+      <i class="fab fa-google"></i>
+      <div><strong>Google ile Giriş</strong></div>
+    </div>
+    <div class="oauth-body">
+      <div class="oauth-title">Hesabınızı bağlamadan önce onaylayın</div>
+      <p class="oauth-sub">Google hesabınız ile giriş yapmak üzeresiniz. Devam ederek e‑posta ve temel profil bilginizi paylaşmayı onaylarsınız.</p>
+
+      <div class="provider-chip"><i class="fab fa-google" style="color:#ea4335"></i> Google</div>
+
+      <form method="post" action="{{ request.get_full_path }}" class="mt-3">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div class="oauth-actions">
+          <button type="submit" class="btn-primaryx"><i class="fas fa-check me-2"></i>Devam Et</button>
+          <a href="{% url 'user_login' %}" class="btn-ghost text-center"><i class="fas fa-times me-2"></i>Vazgeç</a>
+        </div>
+      </form>
+
+      <div class="note">
+        Güvenlik için yalnızca gerekli izinleri istiyoruz. İstediğiniz zaman hesap bağlantısını kaldırabilirsiniz.
+      </div>
+
+      <div class="go-home"><a href="/">Ana sayfaya dön</a></div>
+    </div>
+  </div>
+  
+</div>
+{% endblock %}

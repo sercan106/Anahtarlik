@@ -1,0 +1,284 @@
+{% extends 'ana.html' %}
+{% load static %}
+
+{% block title %}Profilim - Misafir{% endblock %}
+
+{% block css_dosyalar %}
+<style>
+    /* Guest dashboard — refined modern styles (glass, palette-aware, performance-friendly) */
+    .dashboard-container .card {
+        border-radius: var(--border-radius-sm);
+        box-shadow: var(--shadow-soft);
+        overflow: hidden;
+        background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(247,249,252,0.88));
+        border: 1px solid rgba(255,255,255,0.6);
+    }
+
+    /* small decorative accent in header */
+    .profile-header { display:flex; align-items:center }
+    .profile-avatar {
+        width:56px; height:56px; border-radius:50%;
+        background: var(--primary-gradient);
+        display:inline-flex; align-items:center; justify-content:center;
+        color:var(--text-light); font-weight:700; font-size:1.05rem;
+        box-shadow: var(--shadow-glow);
+        margin-right: .75rem;
+    }
+
+    /* Header variants using ana.html palette */
+    .card-header-accent { background: var(--calm-gradient); color: var(--text-light); padding: .95rem 1rem; font-weight:700 }
+    .card-header-warning { background: var(--warm-gradient); color: rgba(0,0,0,0.8); padding: .95rem 1rem; font-weight:700 }
+    .card-header-success { background: var(--secondary-gradient); color: var(--text-light); padding: .95rem 1rem; font-weight:700 }
+
+    /* Cards */
+    .card:hover { transform: translateY(-4px); transition: var(--transition-smooth); }
+
+    /* Stats: compact and balanced */
+    .stat-card { min-height:120px; padding:1rem; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:.25rem; background: linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,255,255,0.5)); border:1px solid rgba(91,155,213,0.04) }
+    .stat-card i { background: rgba(255,255,255,0.6); border-radius:12px; padding: .5rem; }
+    .stat-card h4 { font-size:1.5rem; margin:0; font-weight:800 }
+
+    /* Buttons — lightweight glassy style */
+    .quick-actions .btn { border-radius: calc(var(--border-radius-sm) - 6px); padding:.55rem .9rem; font-weight:700; transition: var(--transition-fast); }
+    .quick-actions .btn:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); }
+
+    .btn-outline-primary { border-color: rgba(91,155,213,0.18); color:var(--primary-color); background:transparent }
+
+    /* Informational box (neutralized — removed membership prompt) */
+    .alert-info { background: linear-gradient(90deg, rgba(91,155,213,0.05), rgba(112,193,179,0.03)); border:1px solid rgba(91,155,213,0.04); color:var(--text-primary); padding:.75rem 1rem; border-radius:8px }
+
+    .card-header.bg-primary { background: var(--primary-gradient); color: #fff; padding:.85rem 1rem; font-weight:700 }
+
+    .badge.bg-success { background: var(--secondary-gradient); color:#fff }
+    .badge.bg-secondary { background: rgba(99,110,114,0.08); color:var(--text-primary) }
+
+    /* Reduce motion for users who prefer it */
+    @media (prefers-reduced-motion: reduce) {
+        .card, .stat-card, .quick-actions .btn { transition: none !important; transform: none !important }
+    }
+
+    /* Responsive */
+    @media (max-width: 991px) { .profile-avatar { width:48px; height:48px } .stat-card { min-height:100px } }
+    @media (max-width: 575px) { .quick-actions .btn { padding:.45rem .6rem; font-size:.95rem } }
+    /* Buttons and badges: align with ana.html / ev.html palette */
+    .btn-primary,
+    .btn-primary:focus,
+    .btn-primary:hover {
+        background: var(--primary-gradient) !important;
+        border: 1px solid rgba(91,155,213,0.9) !important;
+        color: var(--text-light) !important;
+        box-shadow: 0 8px 24px rgba(91,155,213,0.12);
+    }
+
+    .btn-success,
+    .btn-success:focus,
+    .btn-success:hover {
+        background: var(--secondary-gradient) !important;
+        border: 1px solid rgba(112,193,179,0.9) !important;
+        color: var(--text-light) !important;
+        box-shadow: 0 8px 24px rgba(112,193,179,0.10);
+    }
+
+    .btn-warning,
+    .btn-warning:focus,
+    .btn-warning:hover {
+        background: var(--warm-gradient) !important;
+        border: 1px solid rgba(255,140,66,0.9) !important;
+        color: rgba(0,0,0,0.85) !important;
+        box-shadow: 0 8px 24px rgba(255,140,66,0.08);
+    }
+
+    /* Outline variants use tinted borders from palette */
+    .btn-outline-primary {
+        background: transparent !important;
+        color: var(--primary-color) !important;
+        border: 1px solid rgba(91,155,213,0.28) !important;
+    }
+
+    .btn-outline-info {
+        background: transparent !important;
+        color: var(--info-color) !important;
+        border: 1px solid rgba(155,158,206,0.22) !important;
+    }
+
+    .btn-outline-warning {
+        background: transparent !important;
+        color: var(--warning-color) !important;
+        border: 1px solid rgba(242,201,76,0.22) !important;
+    }
+
+    /* Small buttons: preserve visual weight */
+    .btn-sm {
+        padding: .45rem .7rem;
+        font-weight: 700;
+        border-radius: calc(var(--border-radius-sm) - 6px);
+    }
+
+    /* Badges consistent with palette */
+    .badge.bg-success { background: var(--secondary-gradient) !important; box-shadow: none; }
+    .badge.bg-primary { background: var(--primary-gradient) !important; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4 mb-5">
+    <div class="row dashboard-container">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="profile-header d-flex align-items-center gap-3">
+                    <div class="profile-avatar">{{ request.user.username|default:"M"|slice:":1"|upper }}</div>
+                    <h2 class="mb-0">Misafir Profilim</h2>
+                </div>
+                <a href="{% url 'misafir_profil_duzenle' %}" class="btn btn-outline-primary">
+                    <i class="fas fa-edit me-2"></i>Profili Düzenle
+                </a>
+            </div>
+
+            <!-- Kişisel Bilgiler -->
+            <div class="row mb-4">
+                <div class="col-lg-8">
+                        <div class="card">
+                            <div class="card-header card-header-accent">
+                                <h5 class="mb-0"><i class="fas fa-id-card me-2"></i>Kişisel Bilgiler</h5>
+                            </div>
+                            <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p><strong><i class="fas fa-user me-2 text-info"></i>Ad Soyad:</strong> {{ profil.ad_soyad }}</p>
+                                    <p><strong><i class="fas fa-envelope me-2 text-info"></i>E-posta:</strong> {{ request.user.email }}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong><i class="fas fa-phone me-2 text-info"></i>Telefon:</strong> {{ profil.telefon }}</p>
+                                    <p><strong><i class="fas fa-calendar me-2 text-info"></i>Üyelik Tarihi:</strong> {{ profil.olusturulma|date:"d.m.Y" }}</p>
+                                </div>
+                            </div>
+                            
+                            <hr>
+                            
+                            <div class="alert alert-info mb-0">
+                                <i class="fas fa-info-circle me-2"></i>
+                                <strong>Misafir Kullanıcı</strong>
+                                <p class="mb-0 mt-2 small">Hesabınız misafir düzeyinde kayıtlıdır. İlan verme ve kredi işlemleri gibi temel özellikleri kullanabilirsiniz.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Kredi Kartı -->
+                <div class="col-lg-4">
+                    <div class="card">
+                        <div class="card-header card-header-warning">
+                            <h5 class="mb-0"><i class="fas fa-coins me-2"></i>Kredi Bakiyesi</h5>
+                        </div>
+                        <div class="card-body text-center">
+                            <h2 class="text-warning mb-3">{{ kredi_bakiye }}</h2>
+                            <p class="text-muted small">Kredi Puanınız</p>
+                            <a href="{% url 'ilan:kredi_durumu' %}" class="btn btn-warning btn-sm w-100">
+                                <i class="fas fa-receipt me-2"></i>Kredi Geçmişi
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- İstatistikler -->
+            <div class="row mb-4">
+                <div class="col-md-6 mb-3">
+                    <div class="card stat-card">
+                        <div class="text-center w-100">
+                            <i class="fas fa-clipboard-list fa-3x text-primary mb-2"></i>
+                        </div>
+                        <div class="card-body text-center">
+                            <h4 class="text-primary">{{ ilan_sayisi }}</h4>
+                            <p class="card-text">Toplam İlan</p>
+                            <a href="{% url 'ilan:kullanici_ilanlari' %}" class="btn btn-primary btn-sm mt-2">Görüntüle</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <div class="card stat-card">
+                        <div class="text-center w-100">
+                            <i class="fas fa-check-circle fa-3x text-success mb-2"></i>
+                        </div>
+                        <div class="card-body text-center">
+                            <h4 class="text-success">{{ aktif_ilan_sayisi }}</h4>
+                            <p class="card-text">Aktif İlan</p>
+                            <a href="{% url 'ilan:kullanici_ilanlari' %}" class="btn btn-success btn-sm mt-2">Görüntüle</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Son İlanlar -->
+            {% if son_ilanlar %}
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0"><i class="fas fa-bullhorn me-2"></i>Son İlanlarım</h5>
+                        </div>
+                        <div class="card-body">
+                            {% for ilan in son_ilanlar %}
+                            <div class="border-bottom pb-3 mb-3">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h6 class="mb-1">{{ ilan.ad }}</h6>
+                                        <p class="text-muted small mb-1">
+                                            <i class="fas fa-map-marker-alt me-1"></i>{{ ilan.il.ad }}, {{ ilan.ilce.ad }}
+                                        </p>
+                                        <small class="text-muted">{{ ilan.olusturulma_tarihi|date:"d.m.Y H:i" }}</small>
+                                    </div>
+                                    <span class="badge {% if ilan.aktif %}bg-success{% else %}bg-secondary{% endif %}">
+                                        {% if ilan.aktif %}Aktif{% else %}Pasif{% endif %}
+                                    </span>
+                                </div>
+                            </div>
+                            {% endfor %}
+                            <a href="{% url 'ilan:kullanici_ilanlari' %}" class="btn btn-sm btn-outline-primary">
+                                Tüm İlanları Gör
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Hızlı Aksiyonlar -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card shadow-sm">
+                        <div class="card-header card-header-success">
+                            <h5 class="mb-0"><i class="fas fa-bolt me-2"></i>Hızlı İşlemler</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3 mb-2">
+                                    <a href="{% url 'ilan:hayvan_profili_olustur' %}" class="btn btn-outline-primary w-100 quick-actions">
+                                        <i class="fas fa-plus-circle me-2"></i>Yeni İlan
+                                    </a>
+                                </div>
+                                <div class="col-md-3 mb-2">
+                                    <a href="{% url 'ilan:kullanici_ilanlari' %}" class="btn btn-outline-info w-100 quick-actions">
+                                        <i class="fas fa-list me-2"></i>İlanlarım
+                                    </a>
+                                </div>
+                                <div class="col-md-3 mb-2">
+                                    <a href="{% url 'ilan:kredi_durumu' %}" class="btn btn-outline-warning w-100 quick-actions">
+                                        <i class="fas fa-coins me-2"></i>Kredi Durumu
+                                    </a>
+                                </div>
+                                <div class="col-md-3 mb-2">
+                                    <a href="{% url 'user_register' %}" class="btn btn-outline-success w-100 quick-actions">
+                                        <i class="fas fa-crown me-2"></i>Üyelik Bilgileri
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

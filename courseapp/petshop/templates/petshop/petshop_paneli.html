@@ -1,0 +1,184 @@
+{% extends "ana.html" %}
+{% block baslik %}<title>Petshop Paneli</title>{% endblock %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fas fa-store me-2"></i>Petshop Paneli</h2>
+                <span class="badge bg-primary fs-6">{{ petshop.ad }}</span>
+            </div>
+            
+            <!-- İstatistik Kartları -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card bg-primary text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h4 class="card-title">{{ toplam_siparis }}</h4>
+                                    <p class="card-text">Toplam Sipariş</p>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-shopping-cart fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-3">
+                    <div class="card bg-warning text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h4 class="card-title">{{ bekleyen_siparis }}</h4>
+                                    <p class="card-text">Bekleyen Sipariş</p>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-clock fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-3">
+                    <div class="card bg-success text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h4 class="card-title">{{ teslim_edilen }}</h4>
+                                    <p class="card-text">Teslim Edilen</p>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-check-circle fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-3">
+                    <div class="card bg-info text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h4 class="card-title">{{ petshop.tahsis_sayisi }}</h4>
+                                    <p class="card-text">Tahsis Edilen</p>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-tags fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Hızlı Erişim Menüsü -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Hızlı Erişim</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3 mb-3">
+                                    <a href="{% url 'petshop:siparis_listesi' %}" class="btn btn-outline-primary w-100">
+                                        <i class="fas fa-list me-2"></i>Siparişler
+                                    </a>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <a href="{% url 'petshop:tahsis_listesi' %}" class="btn btn-outline-success w-100">
+                                        <i class="fas fa-tags me-2"></i>Tahsisler
+                                    </a>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <a href="{% url 'petshop:satis_listesi' %}" class="btn btn-outline-info w-100">
+                                        <i class="fas fa-chart-line me-2"></i>Satışlar
+                                    </a>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <a href="{% url 'petshop:petshop_profil' %}" class="btn btn-outline-secondary w-100">
+                                        <i class="fas fa-user-edit me-2"></i>Profil
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Son Siparişler -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="card-title mb-0">Son Siparişler</h5>
+                            <a href="{% url 'petshop:siparis_listesi' %}" class="btn btn-sm btn-primary">Tümünü Gör</a>
+                        </div>
+                        <div class="card-body">
+                            {% if son_siparisler %}
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Sipariş No</th>
+                                                <th>Tutar</th>
+                                                <th>Durum</th>
+                                                <th>Ödeme</th>
+                                                <th>Tarih</th>
+                                                <th>İşlemler</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for siparis in son_siparisler %}
+                                            <tr>
+                                                <td>{{ siparis.siparis_no }}</td>
+                                                <td>{{ siparis.toplam_tutar }} ₺</td>
+                                                <td>
+                                                    <span class="badge bg-{% if siparis.siparis_durumu == 'TESLIM' %}success{% elif siparis.siparis_durumu == 'BEKLENIYOR' %}warning{% else %}secondary{% endif %}">
+                                                        {{ siparis.get_siparis_durumu_display }}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <span class="badge bg-{% if siparis.odeme_durumu == 'ALINDI' %}success{% elif siparis.odeme_durumu == 'BEKLEMEDE' %}warning{% else %}secondary{% endif %}">
+                                                        {{ siparis.get_odeme_durumu_display }}
+                                                    </span>
+                                                </td>
+                                                <td>{{ siparis.siparis_tarihi|date:"d.m.Y H:i" }}</td>
+                                                <td>
+                                                    <a href="{% url 'petshop:siparis_detay' siparis.id %}" class="btn btn-sm btn-outline-primary">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            {% else %}
+                                <div class="text-center py-4">
+                                    <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+                                    <p class="text-muted">Henüz sipariş bulunmuyor.</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+
+
+
+
+
+
+

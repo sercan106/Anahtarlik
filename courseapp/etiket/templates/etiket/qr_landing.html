@@ -1,0 +1,813 @@
+{% extends "ana.html" %}
+{% load static %}
+{% load l10n %}
+
+{% block title %}{{ hayvan.ad }} - Künye Bilgisi{% endblock %}
+
+{% block css_dosyalar %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+<style>
+    :root {
+        --primary-color: #4F46E5;
+        --success-color: #10B981;
+        --danger-color: #EF4444;
+        --warning-color: #F59E0B;
+        --bg-color: #F3F4F6;
+        --card-bg: rgba(255, 255, 255, 0.95);
+    }
+
+    body {
+        background-color: var(--bg-color);
+        font-family: 'Inter', sans-serif;
+        padding-bottom: 100px; /* Sticky footer payı */
+    }
+
+    /* Modern Kart Tasarımı (Glassmorphism) */
+    .modern-card {
+        background: var(--card-bg);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        border-radius: 24px;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        margin-bottom: 24px;
+        transition: transform 0.2s;
+    }
+
+    /* Kayıp Modu Animasyonu */
+    .emergency-mode {
+        border: 2px solid var(--danger-color);
+        animation: pulse-red 2s infinite;
+    }
+
+    @keyframes pulse-red {
+        0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+        70% { box-shadow: 0 0 0 20px rgba(239, 68, 68, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    }
+
+    /* Profil Resmi */
+    .profile-image-container {
+        width: 140px;
+        height: 140px;
+        margin: -70px auto 20px;
+        border-radius: 50%;
+        border: 6px solid white;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        background: white;
+        position: relative;
+        z-index: 10;
+    }
+    
+    .profile-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    /* Başlık Kartı Arkaplanı */
+    .header-bg {
+        height: 160px;
+        background: linear-gradient(135deg, var(--primary-color) 0%, #818CF8 100%);
+        border-radius: 24px 24px 0 0;
+    }
+    .header-bg.lost {
+        background: linear-gradient(135deg, var(--danger-color) 0%, #FCA5A5 100%);
+    }
+
+    /* Bilgi Kutucukları */
+    .info-pill {
+        background: #F9FAFB;
+        border-radius: 16px;
+        padding: 12px;
+        text-align: center;
+        border: 1px solid #E5E7EB;
+    }
+    .info-label { font-size: 0.75rem; color: #6B7280; text-transform: uppercase; letter-spacing: 0.5px; }
+    .info-value { font-weight: 700; color: #1F2937; font-size: 1rem; }
+
+    /* Harita */
+    #map-container {
+        height: 250px;
+        width: 100%;
+        border-radius: 16px;
+        z-index: 1;
+        margin-top: 15px;
+    }
+
+    /* Sticky Footer */
+    .sticky-footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(12px);
+        padding: 16px 24px;
+        box-shadow: 0 -4px 20px rgba(0,0,0,0.05);
+        z-index: 1000;
+        border-top: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .btn-xl {
+        padding: 16px 24px;
+        font-size: 1.1rem;
+        font-weight: 700;
+        border-radius: 16px;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        transition: transform 0.1s;
+    }
+    .btn-xl:active { transform: scale(0.98); }
+
+    .btn-whatsapp { background-color: #25D366; color: white; border: none; }
+    .btn-phone { background-color: var(--primary-color); color: white; border: none; }
+    .btn-whatsapp:hover { background-color: #1ebc57; color: white; }
+    .btn-phone:hover { background-color: #4338ca; color: white; }
+
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+
+            <div class="modern-card {% if hayvan.kayip_durumu %}emergency-mode{% endif %}">
+                <div class="header-bg {% if hayvan.kayip_durumu %}lost{% endif %}"></div>
+                
+                <div class="profile-image-container">
+                    {% if hayvan.resim %}
+                        <img src="{{ hayvan.resim.url }}" class="profile-image" alt="{{ hayvan.ad }}">
+                    {% else %}
+                        <div class="d-flex align-items-center justify-content-center h-100 bg-light text-secondary">
+                            <i class="fas fa-paw fa-4x"></i>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="text-center px-4 pb-4">
+                    {% if hayvan.kayip_durumu %}
+                        <div class="badge bg-danger px-3 py-2 rounded-pill mb-2 animate-pulse">🚨 KAYIP ARANIYOR</div>
+                        {% endif %}
+
+                    <h1 class="fw-bolder mb-1">{{ hayvan.ad }}</h1>
+                    <p class="text-muted mb-3">
+                        <i class="fas fa-fingerprint me-1"></i> ID: {{ etiket.seri_numarasi }}
+                    </p>
+
+                    <div class="row g-2 mb-4">
+                        <div class="col-6">
+                            <div class="info-pill">
+                                <div class="info-label">Tür</div>
+                                <div class="info-value">{{ hayvan.tur.ad }}</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="info-pill">
+                                <div class="info-label">Cinsiyet</div>
+                                <div class="info-value">{{ hayvan.get_cinsiyet_display }}</div>
+                            </div>
+                                </div>
+                                <div class="col-6">
+                            <div class="info-pill">
+                                <div class="info-label">Irk</div>
+                                <div class="info-value">{{ hayvan.irk.ad }}</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                                <div class="info-pill">
+                                <div class="info-label">Yaş</div>
+                                <div class="info-value">{{ hayvan.yas_hesapla }}</div>
+                            </div>
+                                </div>
+                            </div>
+
+                    {% if hayvan.saglik_notu %}
+                    <div class="alert alert-warning text-start border-0 shadow-sm rounded-4">
+                        <div class="d-flex">
+                            <div class="me-3"><i class="fas fa-notes-medical fa-2x text-warning"></i></div>
+                            <div>
+                                <h6 class="fw-bold mb-1">Sağlık Notu</h6>
+                                <small>{{ hayvan.saglik_notu }}</small>
+                            </div>
+                        </div>
+                                </div>
+                            {% endif %}
+                </div>
+            </div>
+
+            {% if etiket.aktif or hayvan.kayip_durumu %}
+            <div class="modern-card p-4">
+                <h5 class="fw-bold mb-4 border-bottom pb-2">
+                    <i class="fas fa-user-shield me-2 text-primary"></i>Sahip Bilgileri
+                </h5>
+                
+                <div class="d-flex align-items-center mb-4">
+                    <div class="bg-light rounded-circle p-3 me-3">
+                        <i class="fas fa-user fa-2x text-secondary"></i>
+                    </div>
+                                <div>
+                        <h4 class="fw-bold mb-0">
+                            {% if hayvan.sahip.ad or hayvan.sahip.soyad %}
+                                {{ hayvan.sahip.ad|default:"" }} {{ hayvan.sahip.soyad|default:"" }}
+                            {% else %}
+                                Kayıtlı Sahip
+                            {% endif %}
+                        </h4>
+                        <p class="text-muted mb-0">Kayıtlı Sahibi</p>
+                    </div>
+                </div>
+
+                <div id="location-status-box" style="display:none;" class="mb-3">
+                    <div id="location-alert" class="alert py-2 px-3 rounded-3 d-flex align-items-center">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <small id="location-message">Konumunuz tespit edildi ve sahibe iletildi.</small>
+                    </div>
+                    <div id="location-warning" style="display:none;" class="alert alert-warning py-2 px-3 rounded-3 mb-2">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <small id="location-warning-text"></small>
+                    </div>
+                    <div id="map-container"></div>
+                    <div class="mt-2 text-center">
+                        <button type="button" id="manual-location-btn" class="btn btn-sm btn-outline-secondary" style="display:none;">
+                            <i class="fas fa-map-marker-alt me-1"></i>Manuel Konum Gir
+                        </button>
+                    </div>
+                </div>
+
+                <div id="gps-loading-box" style="display:none;" class="mb-3">
+                    <div class="alert alert-info py-2 px-3 rounded-3 d-flex align-items-center">
+                        <div class="spinner-border spinner-border-sm me-2" role="status">
+                            <span class="visually-hidden">Yükleniyor...</span>
+                        </div>
+                        <small>Konumunuz alınıyor...</small>
+                    </div>
+                </div>
+
+                <div id="gps-error-box" style="display:none;" class="mb-3">
+                    <div class="alert alert-warning py-2 px-3 rounded-3 d-flex align-items-center">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <small id="gps-error-message">Konum alınamadı. Lütfen tarayıcı ayarlarınızdan konum iznini açın.</small>
+                    </div>
+                </div>
+
+                <p class="text-muted small text-center">
+                    <i class="fas fa-info-circle me-1"></i>
+                    Aşağıdaki butonları kullanarak hızlıca konum gönderebilirsiniz.
+                </p>
+            </div>
+            {% else %}
+            <div class="alert alert-secondary text-center py-4 rounded-4">
+                <h4>Hizmet Dışı</h4>
+                <p>Bu etiket şu an aktif değil.</p>
+            </div>
+            {% endif %}
+
+            <div class="modern-card p-4">
+                <h5 class="fw-bold mb-3">
+                    <i class="fas fa-envelope-open-text me-2 text-primary"></i>Mesaj Bırakın
+                </h5>
+                <p class="text-muted small mb-3">Telefonla ulaşamadıysanız buradan mesaj bırakabilirsiniz.</p>
+                
+                <form id="bulan-bilgi-form" method="POST" action="">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="bulan_bilgisi">
+                    {% if tarama_id %}
+                    <input type="hidden" name="tarama_id" value="{{ tarama_id }}">
+                    {% endif %}
+                    
+                    <div class="mb-3">
+                        <input type="text" class="form-control form-control-lg bg-light border-0" name="bulan_isim" placeholder="Adınız" required maxlength="100">
+                    </div>
+                    <div class="mb-3">
+                        <input type="tel" class="form-control form-control-lg bg-light border-0" name="bulan_telefon" placeholder="Telefon Numaranız (05XX XXX XX XX)" required pattern="(\+90|0)?[5][0-9]{9}" maxlength="15">
+                        <small class="text-muted">Örn: 0532 123 45 67</small>
+                    </div>
+                    <div class="mb-3">
+                        <input type="email" class="form-control form-control-lg bg-light border-0" name="bulan_email" placeholder="E-posta Adresiniz (Opsiyonel)" maxlength="254">
+                    </div>
+                    <div class="mb-3">
+                        <textarea class="form-control form-control-lg bg-light border-0" name="bulan_mesaj" rows="3" placeholder="Mesajınız (Örn: Kedinizi marketin önünde gördüm)" required maxlength="1000"></textarea>
+                    </div>
+                    
+                    <div id="form-loading" style="display:none;" class="mb-3">
+                        <div class="alert alert-info py-2 px-3 rounded-3 text-center">
+                            <div class="spinner-border spinner-border-sm me-2" role="status">
+                                <span class="visually-hidden">Gönderiliyor...</span>
+                            </div>
+                            <small>Mesajınız gönderiliyor...</small>
+                        </div>
+                    </div>
+                    
+                    <div id="form-success" style="display:none;" class="mb-3">
+                        <div class="alert alert-success py-2 px-3 rounded-3">
+                            <i class="fas fa-check-circle me-2"></i>
+                            <small>Mesajınız başarıyla gönderildi! Hayvan sahibi en kısa sürede sizinle iletişime geçecektir.</small>
+                        </div>
+                    </div>
+                    
+                    <div id="form-error" style="display:none;" class="mb-3">
+                        <div class="alert alert-danger py-2 px-3 rounded-3">
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                            <small id="form-error-message">Bir hata oluştu. Lütfen tekrar deneyin.</small>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" id="submit-btn" class="btn btn-dark w-100 py-3 rounded-3 fw-bold">
+                        <i class="fas fa-paper-plane me-2"></i>Mesajı Gönder
+                    </button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% if etiket.aktif or hayvan.kayip_durumu %}
+<div class="sticky-footer">
+    <div class="row g-2">
+        {% if hayvan.sahip.telefon %}
+        <div class="col-6">
+            <a href="tel:{{ hayvan.sahip.telefon }}" class="btn btn-xl btn-phone contact-trigger">
+                <i class="fas fa-phone-alt"></i> Ara
+            </a>
+        </div>
+        {% else %}
+        <div class="col-6">
+            <button class="btn btn-xl btn-phone" disabled title="Telefon numarası bulunamadı">
+                <i class="fas fa-phone-alt"></i> Ara
+            </button>
+        </div>
+        {% endif %}
+        <div class="{% if hayvan.sahip.telefon %}col-6{% else %}col-12{% endif %}">
+            <a href="#" id="whatsapp-link" target="_blank" class="btn btn-xl btn-whatsapp contact-trigger">
+                <i class="fab fa-whatsapp"></i> Mesaj
+            </a>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Değişkenler
+    const whatsappLink = document.getElementById('whatsapp-link');
+    const mapContainer = document.getElementById('map-container');
+    const locationStatusBox = document.getElementById('location-status-box');
+    const gpsLoadingBox = document.getElementById('gps-loading-box');
+    const gpsErrorBox = document.getElementById('gps-error-box');
+    const gpsErrorMessage = document.getElementById('gps-error-message');
+    
+    // Django'dan gelen veriler (Güvenli Veri Aktarımı)
+    const phoneRaw = '{{ hayvan.sahip.telefon|default:"" }}';
+    const phoneClean = phoneRaw ? phoneRaw.replace(/\D/g, '') : ''; // Sadece rakamlar
+    const petName = '{{ hayvan.ad }}';
+    const taramaId = '{{ tarama_id|default:"" }}';
+    
+    // tarama_id kontrolü
+    if (!taramaId) {
+        console.warn("⚠️ tarama_id bulunamadı, GPS güncelleme yapılamayacak");
+    }
+    
+    // Telefon kontrolü
+    if (!phoneClean) {
+        console.warn("⚠️ Telefon numarası bulunamadı, WhatsApp linki oluşturulamayacak");
+        if (whatsappLink) {
+            whatsappLink.href = '#';
+            whatsappLink.onclick = function(e) {
+                e.preventDefault();
+                alert('Telefon numarası bulunamadı. Lütfen mesaj formunu kullanın.');
+            };
+        }
+    }
+    
+    // Başlangıç mesajı (Konumsuz)
+    let currentMessage = `Merhaba, ${petName} isimli evcil hayvanınızı buldum. Lütfen bana ulaşın.`;
+    if (phoneClean) {
+        updateWhatsappUrl(currentMessage);
+    }
+
+    let map = null;
+    let gpsSent = false; // GPS gönderildi mi kontrolü
+
+    // 1. Konum İsteği Başlat
+    if (navigator.geolocation) {
+        gpsLoadingBox.style.display = 'block';
+        navigator.geolocation.getCurrentPosition(onSuccess, onError, {
+            enableHighAccuracy: true,
+            timeout: 15000,
+            maximumAge: 0
+        });
+    } else {
+        showGpsError('Bu tarayıcı konum servisini desteklemiyor.');
+    }
+
+    // 2. Konum Başarılıysa
+    function onSuccess(position) {
+        gpsLoadingBox.style.display = 'none';
+        gpsErrorBox.style.display = 'none';
+        
+        // Koordinatları Number'a çevir ve validasyon
+        const lat = Number(position.coords.latitude);
+        const lng = Number(position.coords.longitude);
+        const acc = Number(position.coords.accuracy);
+
+        // GPS koordinat validasyonu
+        if (isNaN(lat) || isNaN(lng) || isNaN(acc)) {
+            showGpsError('Geçersiz konum verisi alındı.');
+            return;
+        }
+
+        if (lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+            showGpsError('Geçersiz koordinat aralığı.');
+            return;
+        }
+
+        console.log("✅ Konum Bulundu:", lat, lng, "Doğruluk: ±" + Math.round(acc) + "m");
+
+        // Accuracy kontrolü ve uyarı mesajları
+        const locationAlert = document.getElementById('location-alert');
+        const locationMessage = document.getElementById('location-message');
+        const locationWarning = document.getElementById('location-warning');
+        const locationWarningText = document.getElementById('location-warning-text');
+        const manualLocationBtn = document.getElementById('manual-location-btn');
+        
+        // Accuracy'ye göre uyarı seviyesi belirle
+        let alertClass = 'alert-success';
+        let warningMessage = '';
+        let showManualBtn = false;
+        
+        if (acc >= 5000) {
+            // Çok yanlış konum (IP/Wi-Fi tabanlı)
+            alertClass = 'alert-danger';
+            warningMessage = '⚠️ Bu konum çok yanlış olabilir! PC\'lerde GPS olmadığı için IP tabanlı tahmini konum kullanılıyor. Lütfen manuel olarak doğru konumunuzu girin.';
+            showManualBtn = true;
+            locationMessage.textContent = 'Konum tespit edildi ancak doğruluğu düşük (±' + Math.round(acc/1000) + 'km).';
+        } else if (acc >= 1000) {
+            // Orta seviye yanlışlık
+            alertClass = 'alert-warning';
+            warningMessage = '⚠️ Bu konum tahmini bir konumdur (IP/Wi-Fi tabanlı). Doğruluğu düşük olabilir (±' + Math.round(acc) + 'm). Mümkünse cep telefonunuzdan konum paylaşın.';
+            showManualBtn = true;
+            locationMessage.textContent = 'Konum tespit edildi ve sahibe iletildi.';
+        } else if (acc >= 100) {
+            // Kabul edilebilir ama ideal değil
+            alertClass = 'alert-info';
+            locationMessage.textContent = 'Konumunuz tespit edildi ve sahibe iletildi. (Doğruluk: ±' + Math.round(acc) + 'm)';
+        } else {
+            // İyi doğruluk
+            locationMessage.textContent = 'Konumunuz tespit edildi ve sahibe iletildi. (Doğruluk: ±' + Math.round(acc) + 'm)';
+        }
+        
+        // Alert class'ını güncelle
+        locationAlert.className = 'alert ' + alertClass + ' py-2 px-3 rounded-3 d-flex align-items-center';
+        
+        // Uyarı mesajını göster/gizle
+        if (warningMessage) {
+            locationWarningText.textContent = warningMessage;
+            locationWarning.style.display = 'block';
+        } else {
+            locationWarning.style.display = 'none';
+        }
+        
+        // Manuel konum butonunu göster/gizle
+        if (showManualBtn) {
+            manualLocationBtn.style.display = 'inline-block';
+        } else {
+            manualLocationBtn.style.display = 'none';
+        }
+
+        // A. Haritayı Göster
+        locationStatusBox.style.display = 'block';
+        initMap(lat, lng);
+
+        // B. WhatsApp Linkini Konumla Güncelle
+        if (phoneClean) {
+            const mapsLink = `https://www.google.com/maps?q=${lat},${lng}`;
+            let locationMsg = `Merhaba, ${petName} isimli evcil hayvanınızı buldum.\n\n📍 Şu anki konumum:\n${mapsLink}`;
+            
+            // Accuracy uyarısı ekle
+            if (acc >= 5000) {
+                locationMsg += `\n\n⚠️ UYARI: Bu konum tahmini bir konumdur (IP tabanlı). Doğruluğu düşük olabilir (±${Math.round(acc/1000)}km).`;
+            } else if (acc >= 1000) {
+                locationMsg += `\n\n⚠️ NOT: Bu konum tahmini bir konumdur. Doğruluğu düşük olabilir (±${Math.round(acc)}m).`;
+            } else {
+                locationMsg += `\n\n(Doğruluk: ±${Math.round(acc)}m)`;
+            }
+            
+            updateWhatsappUrl(locationMsg);
+        }
+
+        // C. Sunucuya Kaydet (tarama_id varsa)
+        // Sadece accuracy < 5000m ise otomatik gönder (çok yanlış konumları gönderme)
+        if (taramaId && acc < 5000) {
+            saveToServer(lat, lng, acc);
+        } else if (taramaId && acc >= 5000) {
+            console.warn("⚠️ Accuracy çok düşük (" + acc + "m), otomatik gönderilmedi. Kullanıcı manuel gönderebilir.");
+            // Kullanıcıya bilgi ver
+            locationMessage.textContent += ' (Otomatik gönderilmedi - doğruluğu düşük)';
+        } else {
+            console.warn("⚠️ tarama_id yok, GPS sunucuya gönderilemedi");
+        }
+    }
+
+    function onError(error) {
+        gpsLoadingBox.style.display = 'none';
+        
+        let errorMsg = 'Konum alınamadı.';
+                if (error.code === error.PERMISSION_DENIED) {
+            errorMsg = 'Konum izni verilmedi. Lütfen tarayıcı ayarlarınızdan konum iznini açın.';
+        } else if (error.code === error.POSITION_UNAVAILABLE) {
+            errorMsg = 'Konum bilgisi alınamadı. Lütfen GPS\'inizin açık olduğundan emin olun.';
+        } else if (error.code === error.TIMEOUT) {
+            errorMsg = 'Konum alma zaman aşımına uğradı. Lütfen tekrar deneyin.';
+        }
+        
+        showGpsError(errorMsg);
+        console.warn("❌ Konum alınamadı:", error.message);
+    }
+    
+    function showGpsError(message) {
+        gpsErrorBox.style.display = 'block';
+        gpsErrorMessage.textContent = message;
+    }
+
+    // Yardımcı: WhatsApp Link Oluşturucu
+    function updateWhatsappUrl(text) {
+        if(whatsappLink && phoneClean) {
+            whatsappLink.href = `https://wa.me/${phoneClean}?text=${encodeURIComponent(text)}`;
+        }
+    }
+
+    // Yardımcı: Harita Başlatıcı
+    function initMap(lat, lng) {
+        if (!map && mapContainer) {
+            try {
+                map = L.map('map-container', { zoomControl: false }).setView([lat, lng], 15);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OSM'
+                }).addTo(map);
+                L.marker([lat, lng]).addTo(map).bindPopup('Sizin Konumunuz').openPopup();
+            } catch (err) {
+                console.error("Harita başlatma hatası:", err);
+            }
+        }
+    }
+
+    // Yardımcı: Sunucu Kaydı
+    function saveToServer(lat, lng, acc, force = false, konumKaynagi = 'GPS') {
+        // Accuracy kontrolü (çok yanlış konumları gönderme)
+        if (!force && acc >= 5000) {
+            console.warn("⚠️ Accuracy çok düşük (" + acc + "m), gönderilmedi. force=true ile zorla gönderebilirsiniz.");
+            return;
+        }
+
+        if (gpsSent && !force) {
+            console.log("⚠️ GPS zaten gönderildi, tekrar gönderilmiyor");
+            return;
+        }
+
+        if (!taramaId) {
+            console.warn("⚠️ tarama_id yok, GPS gönderilemedi");
+            return;
+    }
+
+        const formData = new URLSearchParams();
+        formData.append('action', 'update_gps');
+        formData.append('tarama_id', taramaId);
+        formData.append('gps_latitude', lat.toString());
+        formData.append('gps_longitude', lng.toString());
+        formData.append('gps_accuracy', acc.toString());
+        formData.append('konum_kaynagi', konumKaynagi);
+
+        fetch(window.location.href, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                gpsSent = true;
+                console.log("✅ GPS başarıyla gönderildi:", data);
+                // Başarı mesajını güncelle
+                const locationMessage = document.getElementById('location-message');
+                if (locationMessage) {
+                    locationMessage.textContent = `Konumunuz tespit edildi ve sahibe iletildi. (Doğruluk: ±${Math.round(acc)}m)`;
+                    const locationAlert = document.getElementById('location-alert');
+                    if (locationAlert) {
+                        locationAlert.className = 'alert alert-success py-2 px-3 rounded-3 d-flex align-items-center';
+                    }
+                }
+            } else {
+                throw new Error(data.error || 'GPS gönderilemedi');
+            }
+        })
+        .catch(err => {
+            console.error("❌ GPS gönderme hatası:", err);
+            showGpsError('Konum gönderilirken bir hata oluştu. Lütfen sayfayı yenileyip tekrar deneyin.');
+        });
+    }
+    
+    // Manuel konum girişi
+    const manualLocationBtn = document.getElementById('manual-location-btn');
+    if (manualLocationBtn) {
+        manualLocationBtn.addEventListener('click', function() {
+            // Google Maps'te konum seçme linki
+            const currentLat = map ? map.getCenter().lat : '';
+            const currentLng = map ? map.getCenter().lng : '';
+            const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${currentLat},${currentLng}`;
+            
+            // Kullanıcıya talimat ver
+            const userInput = prompt(
+                'Manuel konum girişi için:\n\n' +
+                '1. Aşağıdaki linke tıklayın ve Google Maps\'te doğru konumunuzu bulun\n' +
+                '2. Konumunuzun koordinatlarını kopyalayın (örnek: 41.0082, 28.9784)\n' +
+                '3. Buraya yapıştırın\n\n' +
+                'Link: ' + mapsUrl + '\n\n' +
+                'Koordinatları girin (lat, lng formatında):'
+            );
+            
+            if (userInput) {
+                const coords = userInput.trim().split(',');
+                if (coords.length === 2) {
+                    const manualLat = parseFloat(coords[0].trim());
+                    const manualLng = parseFloat(coords[1].trim());
+                    
+                    if (!isNaN(manualLat) && !isNaN(manualLng) &&
+                        manualLat >= -90 && manualLat <= 90 &&
+                        manualLng >= -180 && manualLng <= 180) {
+                        
+                        // Haritayı güncelle
+                        if (map) {
+                            map.setView([manualLat, manualLng], 15);
+                            map.eachLayer(function(layer) {
+                                if (layer instanceof L.Marker) {
+                                    map.removeLayer(layer);
+                                }
+                            });
+                            L.marker([manualLat, manualLng]).addTo(map).bindPopup('Manuel Konumunuz').openPopup();
+                        }
+                        
+                        // WhatsApp linkini güncelle
+                        if (phoneClean) {
+                            const mapsLink = `https://www.google.com/maps?q=${manualLat},${manualLng}`;
+                            const locationMsg = `Merhaba, ${petName} isimli evcil hayvanınızı buldum.\n\n📍 Manuel olarak belirlediğim konumum:\n${mapsLink}`;
+                            updateWhatsappUrl(locationMsg);
+                        }
+                        
+                        // Sunucuya gönder (manuel konum, accuracy=50m olarak işaretle, konum_kaynagi=MANUEL)
+                        saveToServer(manualLat, manualLng, 50, true, 'MANUEL');
+                        
+                        // Mesajı güncelle
+                        const locationMessage = document.getElementById('location-message');
+                        const locationAlert = document.getElementById('location-alert');
+                        if (locationMessage) {
+                            locationMessage.textContent = 'Manuel konumunuz kaydedildi ve sahibe iletildi.';
+                        }
+                        if (locationAlert) {
+                            locationAlert.className = 'alert alert-success py-2 px-3 rounded-3 d-flex align-items-center';
+                        }
+                        if (locationWarning) {
+                            locationWarning.style.display = 'none';
+                        }
+                        manualLocationBtn.style.display = 'none';
+                    } else {
+                        alert('Geçersiz koordinat formatı. Lütfen "lat, lng" formatında girin (örnek: 41.0082, 28.9784)');
+                    }
+                } else {
+                    alert('Geçersiz format. Lütfen "lat, lng" formatında girin (örnek: 41.0082, 28.9784)');
+                }
+            }
+        });
+    }
+    
+    // Butonlara basılınca (Eğer GPS henüz gelmediyse) manuel tetikle
+    document.querySelectorAll('.contact-trigger').forEach(btn => {
+        btn.addEventListener('click', function() {
+            if (!map && navigator.geolocation && !gpsSent) {
+                gpsLoadingBox.style.display = 'block';
+                gpsErrorBox.style.display = 'none';
+                navigator.geolocation.getCurrentPosition(onSuccess, onError, {
+                    enableHighAccuracy: true,
+                    timeout: 15000,
+                    maximumAge: 0
+                });
+            }
+        });
+    });
+    
+    // Form gönderimi
+    const bulanBilgiForm = document.getElementById('bulan-bilgi-form');
+    const formLoading = document.getElementById('form-loading');
+    const formSuccess = document.getElementById('form-success');
+    const formError = document.getElementById('form-error');
+    const formErrorMessage = document.getElementById('form-error-message');
+    const submitBtn = document.getElementById('submit-btn');
+    
+    if (bulanBilgiForm) {
+        bulanBilgiForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Form validasyonu
+            const bulanIsim = this.querySelector('[name="bulan_isim"]').value.trim();
+            const bulanTelefon = this.querySelector('[name="bulan_telefon"]').value.trim();
+            const bulanMesaj = this.querySelector('[name="bulan_mesaj"]').value.trim();
+            
+            if (!bulanIsim || !bulanTelefon || !bulanMesaj) {
+                showFormError('Lütfen tüm zorunlu alanları doldurun.');
+                return;
+            }
+            
+            // Telefon format kontrolü (basit)
+            const phoneRegex = /^(\+90|0)?[5][0-9]{9}$/;
+            const phoneClean = bulanTelefon.replace(/\D/g, '');
+            if (!phoneRegex.test(phoneClean)) {
+                showFormError('Lütfen geçerli bir telefon numarası girin. (05XX XXX XX XX)');
+                return;
+            }
+            
+            // Loading state
+            formLoading.style.display = 'block';
+            formSuccess.style.display = 'none';
+            formError.style.display = 'none';
+            submitBtn.disabled = true;
+            
+            // GPS koordinatlarını al (varsa)
+            const gpsLat = map ? map.getCenter().lat : '';
+            const gpsLng = map ? map.getCenter().lng : '';
+            const gpsAcc = map ? 50 : ''; // Varsayılan doğruluk
+            
+            // Form verilerini hazırla
+            const formData = new FormData(this);
+            if (gpsLat && gpsLng) {
+                formData.append('gps_latitude', gpsLat);
+                formData.append('gps_longitude', gpsLng);
+                if (gpsAcc) {
+                    formData.append('gps_accuracy', gpsAcc);
+                }
+            }
+            
+            // Gönder
+            fetch(window.location.href, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                formLoading.style.display = 'none';
+                if (data.success) {
+                    formSuccess.style.display = 'block';
+                    this.reset();
+                    // 3 saniye sonra mesajı gizle
+                    setTimeout(() => {
+                        formSuccess.style.display = 'none';
+                    }, 5000);
+                } else {
+                    throw new Error(data.error || 'Form gönderilemedi');
+                }
+            })
+            .catch(err => {
+                formLoading.style.display = 'none';
+                showFormError('Mesaj gönderilirken bir hata oluştu. Lütfen tekrar deneyin.');
+                console.error("Form gönderme hatası:", err);
+            })
+            .finally(() => {
+                submitBtn.disabled = false;
+            });
+        });
+    }
+    
+    function showFormError(message) {
+        formError.style.display = 'block';
+        formErrorMessage.textContent = message;
+        setTimeout(() => {
+            formError.style.display = 'none';
+        }, 5000);
+    }
+});
+</script>
+{% endblock %}

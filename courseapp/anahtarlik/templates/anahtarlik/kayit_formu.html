@@ -1,0 +1,198 @@
+{% extends 'ana.html' %}
+{% load static %}
+{% block baslik %}<title>PatiQuard - Kayıt Formu</title>{% endblock baslik %}
+{% block css_dosyalar %}
+<style>
+    .form-adimi {
+        transition: opacity 0.3s ease;
+    }
+    .form-adimi.d-none {
+        opacity: 0;
+    }
+    .gecersiz-girdi {
+        border-color: #dc3545 !important;
+    }
+    .gecerli-girdi {
+        border-color: #18bc9c !important;
+    }
+</style>
+{% endblock css_dosyalar %}
+{% block content %}
+<section class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-6">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+            <div class="progress mb-4" style="height: 8px;">
+                <div class="progress-bar bg-success" role="progressbar" id="ilerlemeCubugu" style="width: 33%; background-color: #18bc9c;" aria-valuenow="33" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <form id="cokAdimliForm" method="post" novalidate>
+                        {% csrf_token %}
+                        <div class="form-adimi" id="adim-1">
+                            <h3 class="text-center mb-4">Evcil Hayvan Bilgileri</h3>
+                            <div class="mb-3">
+                                <label for="petName" class="form-label">Evcil Hayvan Adı</label>
+                                <input type="text" class="form-control" id="petName" name="evcilHayvanAdi" placeholder="Evcil hayvanınızın adını girin" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="petType" class="form-label">Tür</label>
+                                <select class="form-select" id="petType" name="evcilHayvanTuru" required>
+                                    <option value="" disabled selected>Tür seçin</option>
+                                    <option value="kopek">Köpek</option>
+                                    <option value="kedi">Kedi</option>
+                                    <option value="diger">Diğer</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="petBreed" class="form-label">Cins</label>
+                                <input type="text" class="form-control" id="petBreed" name="evcilHayvanCinsi" placeholder="Cins girin" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="healthInfo" class="form-label">Sağlık Bilgisi</label>
+                                <textarea class="form-control" id="healthInfo" name="saglikBilgisi" rows="3" placeholder="Aşılar, hastalıklar vb."></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="dietInfo" class="form-label">Beslenme Bilgisi</label>
+                                <textarea class="form-control" id="dietInfo" name="beslenmeBilgisi" rows="3" placeholder="Yedikleri, beslenme düzeni vb."></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="behaviorNotes" class="form-label">Davranış Notları</label>
+                                <textarea class="form-control" id="behaviorNotes" name="davranisNotlari" rows="3" placeholder="Davranış özellikleri"></textarea>
+                            </div>
+                            <div class="d-flex justify-content-end">
+                                <button type="button" class="btn btn-primary" onclick="sonrakiAdim(2)">Devam Et</button>
+                            </div>
+                        </div>
+                        <div class="form-adimi d-none" id="adim-2">
+                            <h3 class="text-center mb-4">Sahip Bilgileri</h3>
+                            <div class="mb-3">
+                                <label for="ownerName" class="form-label">Ad Soyad</label>
+                                <input type="text" class="form-control" id="ownerName" name="sahipAdi" placeholder="Adınızı ve soyadınızı girin" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="ownerEmail" class="form-label">E-posta</label>
+                                <input type="email" class="form-control" id="ownerEmail" name="sahipEposta" placeholder="E-posta adresinizi girin" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="ownerPhone" class="form-label">Telefon Numarası</label>
+                                <input type="tel" class="form-control" id="ownerPhone" name="sahipTelefon" placeholder="Telefon numaranızı girin" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="ownerAddress" class="form-label">Adres</label>
+                                <textarea class="form-control" id="ownerAddress" name="sahipAdres" rows="3" placeholder="Adresinizi girin" required></textarea>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <button type="button" class="btn btn-secondary" onclick="oncekiAdim(1)">Geri</button>
+                                <button type="button" class="btn btn-primary" onclick="sonrakiAdim(3)">Devam Et</button>
+                            </div>
+                        </div>
+                        <div class="form-adimi d-none" id="adim-3">
+                            <h3 class="text-center mb-4">Etiket ve Onaylama</h3>
+                            <div class="mb-3">
+                                <label for="tagSerialNumber" class="form-label">Etiket Seri Numarası</label>
+                                <input type="text" class="form-control" id="tagSerialNumber" name="etiketSeriNumarasi" placeholder="Künyedeki seri numarasını girin" required>
+                            </div>
+                            <div class="mb-3">
+                                <p><strong>Evcil Hayvan Adı:</strong> <span id="onayEvcilHayvanAdi"></span></p>
+                                <p><strong>Tür:</strong> <span id="onayEvcilHayvanTuru"></span></p>
+                                <p><strong>Cins:</strong> <span id="onayEvcilHayvanCinsi"></span></p>
+                                <p><strong>Sağlık Bilgisi:</strong> <span id="onaySaglikBilgisi"></span></p>
+                                <p><strong>Beslenme Bilgisi:</strong> <span id="onayBeslenmeBilgisi"></span></p>
+                                <p><strong>Davranış Notları:</strong> <span id="onayDavranisNotlari"></span></p>
+                                <p><strong>Sahip Adı:</strong> <span id="onaySahipAdi"></span></p>
+                                <p><strong>E-posta:</strong> <span id="onaySahipEposta"></span></p>
+                                <p><strong>Telefon:</strong> <span id="onaySahipTelefon"></span></p>
+                                <p><strong>Adres:</strong> <span id="onaySahipAdres"></span></p>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <button type="button" class="btn btn-secondary" onclick="oncekiAdim(2)">Geri</button>
+                                <button type="submit" class="btn btn-primary">Kaydı Tamamla</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock content %}
+{% block js_dosyalar %}
+<script>
+    let guncelAdim = 1;
+    const toplamAdim = 3;
+
+    function sonrakiAdim(adim) {
+        if (adimiDogrula(guncelAdim)) {
+            document.getElementById(`adim-${guncelAdim}`).classList.add('d-none');
+            document.getElementById(`adim-${adim}`).classList.remove('d-none');
+            guncelAdim = adim;
+            ilerlemeCubugunuGuncelle();
+            if (adim === 3) {
+                onayBilgileriniDoldur();
+            }
+        }
+    }
+
+    function oncekiAdim(adim) {
+        document.getElementById(`adim-${guncelAdim}`).classList.add('d-none');
+        document.getElementById(`adim-${adim}`).classList.remove('d-none');
+        guncelAdim = adim;
+        ilerlemeCubugunuGuncelle();
+    }
+
+    function ilerlemeCubugunuGuncelle() {
+        const ilerleme = (guncelAdim / toplamAdim) * 100;
+        const ilerlemeCubugu = document.getElementById('ilerlemeCubugu');
+        ilerlemeCubugu.style.width = `${ilerleme}%`;
+        ilerlemeCubugu.setAttribute('aria-valuenow', ilerleme);
+    }
+
+    function adimiDogrula(adim) {
+        const girdiler = document.querySelectorAll(`#adim-${adim} input, #adim-${adim} select, #adim-${adim} textarea`);
+        let gecerli = true;
+        girdiler.forEach(girdi => {
+            if (!girdi.checkValidity()) {
+                girdi.classList.add('gecersiz-girdi');
+                gecerli = false;
+            } else {
+                girdi.classList.remove('gecersiz-girdi');
+                girdi.classList.add('gecerli-girdi');
+            }
+        });
+        return gecerli;
+    }
+
+    function onayBilgileriniDoldur() {
+        document.getElementById('onayEvcilHayvanAdi').textContent = document.getElementById('petName').value || 'Sağlanmadı';
+        document.getElementById('onayEvcilHayvanTuru').textContent = {
+            'kopek': 'Köpek',
+            'kedi': 'Kedi',
+            'diger': 'Diğer'
+        }[document.getElementById('petType').value] || 'Sağlanmadı';
+        document.getElementById('onayEvcilHayvanCinsi').textContent = document.getElementById('petBreed').value || 'Sağlanmadı';
+        document.getElementById('onaySaglikBilgisi').textContent = document.getElementById('healthInfo').value || 'Sağlanmadı';
+        document.getElementById('onayBeslenmeBilgisi').textContent = document.getElementById('dietInfo').value || 'Sağlanmadı';
+        document.getElementById('onayDavranisNotlari').textContent = document.getElementById('behaviorNotes').value || 'Sağlanmadı';
+        document.getElementById('onaySahipAdi').textContent = document.getElementById('ownerName').value || 'Sağlanmadı';
+        document.getElementById('onaySahipEposta').textContent = document.getElementById('ownerEmail').value || 'Sağlanmadı';
+        document.getElementById('onaySahipTelefon').textContent = document.getElementById('ownerPhone').value || 'Sağlanmadı';
+        document.getElementById('onaySahipAdres').textContent = document.getElementById('ownerAddress').value || 'Sağlanmadı';
+    }
+
+    document.getElementById('cokAdimliForm').addEventListener('submit', function(e) {
+        if (!adimiDogrula(guncelAdim)) {
+            e.preventDefault();
+            return;
+        }
+        this.submit();
+    });
+</script>
+{% endblock js_dosyalar %}

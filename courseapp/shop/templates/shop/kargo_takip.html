@@ -1,0 +1,351 @@
+{% extends 'ana.html' %}
+{% load static %}
+
+{% block title %}Kargo Takip - PetSafe Hub{% endblock %}
+
+{% block css_dosyalar %}
+<style>
+    body {
+        background: #f5f5f5 !important;
+    }
+
+    .tracking-container {
+        max-width: 1200px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+
+    .tracking-header {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .tracking-header h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #333;
+        margin: 0 0 10px 0;
+    }
+
+    .order-number {
+        color: #667eea;
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+
+    .tracking-content {
+        display: grid;
+        grid-template-columns: 1fr 400px;
+        gap: 30px;
+    }
+
+    .tracking-section {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+    }
+
+    .section-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #f1f3f4;
+    }
+
+    .tracking-timeline {
+        position: relative;
+        padding-left: 30px;
+    }
+
+    .tracking-timeline::before {
+        content: '';
+        position: absolute;
+        left: 15px;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: #e9ecef;
+    }
+
+    .timeline-item {
+        position: relative;
+        margin-bottom: 30px;
+        padding-left: 30px;
+    }
+
+    .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: -22px;
+        top: 8px;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: #e9ecef;
+        border: 3px solid white;
+        box-shadow: 0 0 0 2px #e9ecef;
+    }
+
+    .timeline-item.active::before {
+        background: #28a745;
+        box-shadow: 0 0 0 2px #28a745;
+    }
+
+    .timeline-item.completed::before {
+        background: #007bff;
+        box-shadow: 0 0 0 2px #007bff;
+    }
+
+    .timeline-content {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+        border-left: 4px solid #e9ecef;
+    }
+
+    .timeline-item.active .timeline-content {
+        background: #d4edda;
+        border-left-color: #28a745;
+    }
+
+    .timeline-item.completed .timeline-content {
+        background: #d1ecf1;
+        border-left-color: #007bff;
+    }
+
+    .timeline-title {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 5px;
+    }
+
+    .timeline-date {
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 10px;
+    }
+
+    .timeline-description {
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    .order-info {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        font-size: 0.95rem;
+    }
+
+    .info-row strong {
+        color: #333;
+        min-width: 120px;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    .status-badge.bekliyor {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .status-badge.odendi {
+        background: #d1ecf1;
+        color: #0c5460;
+    }
+
+    .status-badge.hazirlaniyor {
+        background: #fff5d1;
+        color: #b7791f;
+    }
+
+    .status-badge.kargoda,
+    .status-badge.gonderildi {
+        background: #cce5ff;
+        color: #004085;
+    }
+
+    .status-badge.teslim_edildi {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .status-badge.iptal {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    .status-badge.iade {
+        background: #ede9fe;
+        color: #5b21b6;
+    }
+
+    .back-btn {
+        display: inline-block;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 12px 24px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        margin-top: 20px;
+    }
+
+    .back-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        color: white;
+        text-decoration: none;
+    }
+
+    @media (max-width: 768px) {
+        .tracking-content {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="tracking-container">
+    <div class="tracking-header">
+        <h1>📦 Kargo Takip</h1>
+        <div class="order-number">Sipariş No: #{{ siparis.id }}</div>
+    </div>
+
+    <div class="tracking-content">
+        <!-- Sol Taraf - Kargo Takip Timeline -->
+        <div>
+            <div class="tracking-section">
+                <h2 class="section-title">🚚 Kargo Durumu</h2>
+                
+                <div class="tracking-timeline">
+                    {% for durum in durum_gecmisi %}
+                    <div class="timeline-item {% if forloop.last %}active{% elif forloop.counter0 > 0 %}completed{% endif %}">
+                        <div class="timeline-content">
+                            <div class="timeline-title">{{ durum.get_durum_display }}</div>
+                            <div class="timeline-date">{{ durum.olusturulma_tarihi|date:"d.m.Y H:i" }}</div>
+                            {% if durum.kargo_takip_no %}
+                                <div class="timeline-description">
+                                    <strong>Kargo Takip No:</strong> {{ durum.kargo_takip_no }}
+                                </div>
+                            {% endif %}
+                            {% if durum.aciklama %}
+                                <div class="timeline-description">{{ durum.aciklama }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="timeline-item active">
+                        <div class="timeline-content">
+                            <div class="timeline-title">Sipariş Alındı</div>
+                            <div class="timeline-date">{{ siparis.olusturulma_tarihi|date:"d.m.Y H:i" }}</div>
+                            <div class="timeline-description">Siparişiniz başarıyla alınmıştır. İşleme alınması bekleniyor.</div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Sağ Taraf - Sipariş Bilgileri -->
+        <div>
+            <div class="tracking-section">
+                <h2 class="section-title">📋 Sipariş Bilgileri</h2>
+                
+                <div class="order-info">
+                    <div class="info-row">
+                        <strong>Sipariş Tarihi:</strong>
+                        <span>{{ siparis.olusturulma_tarihi|date:"d.m.Y H:i" }}</span>
+                    </div>
+                    
+                    <div class="info-row">
+                        <strong>Mevcut Durum:</strong>
+                        <span class="status-badge {{ siparis.durum }}">
+                            {% if siparis.durum == 'bekliyor' %}
+                                Bekliyor
+                            {% elif siparis.durum == 'odendi' %}
+                                Ödendi
+                            {% elif siparis.durum == 'hazirlaniyor' %}
+                                Hazırlanıyor
+                            {% elif siparis.durum == 'kargoda' or siparis.durum == 'gonderildi' %}
+                                Kargoda
+                            {% elif siparis.durum == 'teslim_edildi' %}
+                                Teslim Edildi
+                            {% elif siparis.durum == 'iptal' %}
+                                İptal Edildi
+                            {% elif siparis.durum == 'iade' %}
+                                İade Edildi
+                            {% endif %}
+                        </span>
+                    </div>
+                    
+                    {% if siparis.kargo_firma %}
+                    <div class="info-row">
+                        <strong>Kargo Firması:</strong>
+                        <span>{{ siparis.kargo_firma.ad }}</span>
+                    </div>
+                    {% endif %}
+                    
+                    {% if siparis.kargo_takip_no %}
+                    <div class="info-row">
+                        <strong>Takip Numarası:</strong>
+                        <span>{{ siparis.kargo_takip_no }}</span>
+                    </div>
+                    {% endif %}
+                    
+                    {% if siparis.kullanici %}
+                        <div class="info-row">
+                            <strong>Müşteri:</strong>
+                            <span>{{ siparis.kullanici.get_full_name|default:siparis.kullanici.username }}</span>
+                        </div>
+                    {% else %}
+                        <div class="info-row">
+                            <strong>Müşteri:</strong>
+                            <span>{{ siparis.misafir_ad_soyad }}</span>
+                        </div>
+                        <div class="info-row">
+                            <strong>Email:</strong>
+                            <span>{{ siparis.misafir_email }}</span>
+                        </div>
+                        <div class="info-row">
+                            <strong>Telefon:</strong>
+                            <span>{{ siparis.misafir_telefon }}</span>
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="order-info">
+                    <h3 style="margin-bottom: 15px; color: #333;">📍 Teslimat Adresi</h3>
+                    <div style="white-space: pre-line; color: #666;">{{ siparis.adres }}</div>
+                </div>
+            </div>
+            
+            <a href="{% url 'shop:siparis_detay' siparis.id %}" class="back-btn">
+                ← Sipariş Detayına Dön
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

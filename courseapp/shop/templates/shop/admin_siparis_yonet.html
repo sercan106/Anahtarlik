@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sipariş Yönetimi - Admin Panel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+    body {
+        background: #f5f5f5 !important;
+    }
+
+    .admin-container {
+        max-width: 1600px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+
+    .admin-header {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .admin-header h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #333;
+        margin: 0 0 20px 0;
+    }
+
+    /* İstatistik Kartları */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+
+    .stat-card {
+        background: white;
+        padding: 25px;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        transition: transform 0.3s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .stat-icon {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+    }
+
+    .stat-number {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 5px;
+    }
+
+    .stat-label {
+        color: #666;
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+
+    .stat-card.bekliyor { border-left: 5px solid #ffc107; }
+    .stat-card.odendi { border-left: 5px solid #17a2b8; }
+    .stat-card.kargoda { border-left: 5px solid #007bff; }
+    .stat-card.teslim { border-left: 5px solid #28a745; }
+    .stat-card.pet-urun { border-left: 5px solid #ff6b6b; }
+    .stat-card.qr-urun { border-left: 5px solid #4ecdc4; }
+    .stat-card.coklu-siparis { border-left: 5px solid #a8e6cf; }
+    
+    /* Çoklu sipariş satırları */
+    .coklu-siparis-row {
+        background-color: #fff3cd !important;
+        border-left: 4px solid #ffc107;
+    }
+    
+    .coklu-siparis-row:hover {
+        background-color: #ffeaa7 !important;
+    }
+
+    /* Filtreler */
+    .filters-section {
+        background: white;
+        padding: 25px;
+        border-radius: 15px;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .filters-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .filter-label {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 8px;
+    }
+
+    .filter-control {
+        padding: 10px 12px;
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .filter-control:focus {
+        outline: none;
+        border-color: #007bff;
+        box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+    }
+
+    .filter-actions {
+        display: flex;
+        gap: 10px;
+        align-items: end;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+        background: #007bff;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #0056b3;
+        color: white;
+        text-decoration: none;
+    }
+
+    .btn-secondary {
+        background: #6c757d;
+        color: white;
+    }
+
+    .btn-secondary:hover {
+        background: #5a6268;
+        color: white;
+        text-decoration: none;
+    }
+
+    .btn-success {
+        background: #28a745;
+        color: white;
+    }
+
+    .btn-success:hover {
+        background: #1e7e34;
+        color: white;
+        text-decoration: none;
+    }
+
+    .btn-warning {
+        background: #ffc107;
+        color: #212529;
+    }
+
+    .btn-warning:hover {
+        background: #e0a800;
+        color: #212529;
+        text-decoration: none;
+    }
+
+    .btn-danger {
+        background: #dc3545;
+        color: white;
+    }
+
+    .btn-danger:hover {
+        background: #c82333;
+        color: white;
+        text-decoration: none;
+    }
+
+    /* Tablo */
+    .orders-table {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .table th {
+        background: #f8f9fa;
+        padding: 15px;
+        text-align: left;
+        font-weight: 600;
+        color: #333;
+        border-bottom: 2px solid #e9ecef;
+    }
+
+    .table td {
+        padding: 15px;
+        border-bottom: 1px solid #e9ecef;
+        vertical-align: middle;
+    }
+
+    .table tr:hover {
+        background: #f8f9fa;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 15px;
+        font-weight: 600;
+        font-size: 0.8rem;
+    }
+
+    .status-badge.bekliyor {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .status-badge.odendi {
+        background: #d1ecf1;
+        color: #0c5460;
+    }
+
+    .status-badge.hazirlaniyor {
+        background: #d1ecf1;
+        color: #0c5460;
+    }
+
+    .status-badge.kargoda {
+        background: #cce5ff;
+        color: #004085;
+    }
+
+    .status-badge.teslim_edildi {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .status-badge.iptal {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    .status-badge.iade {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    /* Modal */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-content {
+        background-color: white;
+        margin: 3% auto;
+        padding: 30px;
+        border-radius: 15px;
+        width: 90%;
+        max-width: 600px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #e9ecef;
+    }
+
+    .modal-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #333;
+        margin: 0;
+    }
+
+    .close {
+        font-size: 1.5rem;
+        font-weight: bold;
+        cursor: pointer;
+        color: #999;
+    }
+
+    .close:hover {
+        color: #333;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-label {
+        display: block;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 8px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 10px 12px;
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #007bff;
+        box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+    }
+
+    .form-textarea {
+        min-height: 100px;
+        resize: vertical;
+    }
+
+    .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 20px;
+        padding-top: 15px;
+        border-top: 2px solid #e9ecef;
+    }
+
+    .alert {
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+
+    .alert-success {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+
+    .alert-danger {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+
+    /* Sayfalama */
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 30px;
+    }
+
+    .pagination a {
+        padding: 8px 16px;
+        margin: 0 4px;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        color: #007bff;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .pagination a:hover {
+        background: #007bff;
+        color: white;
+    }
+
+    .pagination .current {
+        background: #007bff;
+        color: white;
+        padding: 8px 16px;
+        margin: 0 4px;
+        border: 1px solid #007bff;
+        border-radius: 8px;
+    }
+
+    @media (max-width: 768px) {
+        .filters-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .filter-actions {
+            flex-direction: column;
+        }
+        
+        .table {
+            font-size: 0.8rem;
+        }
+        
+        .table th, .table td {
+            padding: 8px;
+        }
+    }
+    </style>
+</head>
+<body>
+<div class="admin-container">
+    <div class="admin-header">
+        <h1>📦 Sipariş Yönetimi</h1>
+        <div style="display: flex; gap: 15px; margin-top: 20px;">
+            <a href="{% url 'shop:admin_kargo_yonet' %}" class="btn btn-secondary">
+                🚚 Kargo Yönetimi
+            </a>
+        </div>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-danger{% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- İstatistik Kartları -->
+    <div class="stats-grid">
+        <div class="stat-card bekliyor">
+            <div class="stat-icon">⏳</div>
+            <div class="stat-number">{{ bekleyen_siparis }}</div>
+            <div class="stat-label">Bekleyen Siparişler</div>
+        </div>
+        <div class="stat-card odendi">
+            <div class="stat-icon">💰</div>
+            <div class="stat-number">{{ odendi_siparis }}</div>
+            <div class="stat-label">Ödenen Siparişler</div>
+        </div>
+        <div class="stat-card kargoda">
+            <div class="stat-icon">🚚</div>
+            <div class="stat-number">{{ kargoda_siparis }}</div>
+            <div class="stat-label">Kargoda</div>
+        </div>
+        <div class="stat-card teslim">
+            <div class="stat-icon">✅</div>
+            <div class="stat-number">{{ teslim_edildi_siparis }}</div>
+            <div class="stat-label">Teslim Edildi</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">📊</div>
+            <div class="stat-number">₺{{ bugun_satis|floatformat:0 }}</div>
+            <div class="stat-label">Bugünkü Satış</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">📈</div>
+            <div class="stat-number">₺{{ haftalik_satis|floatformat:0 }}</div>
+            <div class="stat-label">Haftalık Satış</div>
+        </div>
+        
+        <!-- Yeni İstatistikler -->
+        <div class="stat-card pet-urun">
+            <div class="stat-icon">🐾</div>
+            <div class="stat-number">{{ pet_urun_siparisleri }}</div>
+            <div class="stat-label">Pet Ürün Siparişleri</div>
+        </div>
+        <div class="stat-card qr-urun">
+            <div class="stat-icon">🏷️</div>
+            <div class="stat-number">{{ qr_urun_siparisleri }}</div>
+            <div class="stat-label">QR Etiket Siparişleri</div>
+        </div>
+        <div class="stat-card coklu-siparis">
+            <div class="stat-icon">👥</div>
+            <div class="stat-number">{{ coklu_siparis_kullanicilar }}</div>
+            <div class="stat-label">Çoklu Sipariş Veren</div>
+        </div>
+    </div>
+
+    <!-- Filtreler -->
+    <div class="filters-section">
+        <form method="GET" id="filterForm">
+            <div class="filters-grid">
+                <div class="filter-group">
+                    <label class="filter-label">Durum</label>
+                    <select name="durum" class="filter-control">
+                        <option value="">Tüm Durumlar</option>
+                        <option value="bekliyor" {% if durum_filtre == 'bekliyor' %}selected{% endif %}>Bekliyor</option>
+                        <option value="odendi" {% if durum_filtre == 'odendi' %}selected{% endif %}>Ödendi</option>
+                        <option value="hazirlaniyor" {% if durum_filtre == 'hazirlaniyor' %}selected{% endif %}>Hazırlanıyor</option>
+                        <option value="kargoda" {% if durum_filtre == 'kargoda' %}selected{% endif %}>Kargoda</option>
+                        <option value="teslim_edildi" {% if durum_filtre == 'teslim_edildi' %}selected{% endif %}>Teslim Edildi</option>
+                        <option value="iptal" {% if durum_filtre == 'iptal' %}selected{% endif %}>İptal</option>
+                        <option value="iade" {% if durum_filtre == 'iade' %}selected{% endif %}>İade</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label class="filter-label">Tarih</label>
+                    <select name="tarih" class="filter-control">
+                        <option value="">Tüm Tarihler</option>
+                        <option value="bugun" {% if tarih_filtre == 'bugun' %}selected{% endif %}>Bugün</option>
+                        <option value="bu_hafta" {% if tarih_filtre == 'bu_hafta' %}selected{% endif %}>Bu Hafta</option>
+                        <option value="bu_ay" {% if tarih_filtre == 'bu_ay' %}selected{% endif %}>Bu Ay</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label class="filter-label">Kullanıcı Tipi</label>
+                    <select name="kullanici_tipi" class="filter-control">
+                        {% for value, label in kullanici_tipi_secenekleri %}
+                        <option value="{{ value }}" {% if kullanici_tipi_filtre == value %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label class="filter-label">Arama</label>
+                    <input type="text" name="arama" class="filter-control" placeholder="Sipariş no, müşteri adı..." value="{{ arama }}">
+                </div>
+                
+                <div class="filter-group">
+                    <label class="filter-label">Sıralama</label>
+                    <select name="siralama" class="filter-control">
+                        <option value="-olusturulma_tarihi" {% if siralama == '-olusturulma_tarihi' %}selected{% endif %}>En Yeni</option>
+                        <option value="olusturulma_tarihi" {% if siralama == 'olusturulma_tarihi' %}selected{% endif %}>En Eski</option>
+                        <option value="-toplam_fiyat" {% if siralama == '-toplam_fiyat' %}selected{% endif %}>En Yüksek Tutar</option>
+                        <option value="toplam_fiyat" {% if siralama == 'toplam_fiyat' %}selected{% endif %}>En Düşük Tutar</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="filter-actions">
+                <button type="submit" class="btn btn-primary">🔍 Filtrele</button>
+                <a href="{% url 'shop:admin_siparis_yonet' %}" class="btn btn-secondary">🔄 Temizle</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Toplu İşlemler -->
+    <div class="bulk-actions-section" style="background: white; padding: 20px; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <input type="checkbox" id="selectAll" class="form-check-input">
+                <label for="selectAll" class="form-check-label ms-2">Tümünü Seç</label>
+            </div>
+            <div class="bulk-actions">
+                <select id="bulkAction" class="form-select me-2" style="width: 200px;">
+                    <option value="">Toplu İşlem Seçin</option>
+                    <option value="odendi">Ödendi Olarak İşaretle</option>
+                    <option value="hazirlaniyor">Hazırlanıyor Olarak İşaretle</option>
+                    <option value="kargoda">Kargoda Olarak İşaretle</option>
+                    <option value="teslim_edildi">Teslim Edildi Olarak İşaretle</option>
+                    <option value="iptal">İptal Et</option>
+                </select>
+                <button type="button" id="applyBulkAction" class="btn btn-primary">Uygula</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Siparişler Tablosu -->
+    <div class="orders-table">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th><input type="checkbox" id="selectAllHeader" class="form-check-input"></th>
+                    <th>Sipariş No</th>
+                    <th>Müşteri</th>
+                    <th>Ürün Tipi</th>
+                    <th>Tarih</th>
+                    <th>Toplam</th>
+                    <th>Durum</th>
+                    <th>Kargo</th>
+                    <th>İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for siparis in siparisler %}
+                <tr {% if siparis.user_order_count > 1 %}class="coklu-siparis-row"{% endif %}>
+                    <td><input type="checkbox" class="form-check-input order-checkbox" value="{{ siparis.id }}"></td>
+                    <td><strong>#{{ siparis.id }}</strong></td>
+                    <td>
+                        {% if siparis.kullanici %}
+                            <div>
+                                <strong>{{ siparis.kullanici.get_full_name|default:siparis.kullanici.username }}</strong>
+                                <br><small class="text-muted">{{ siparis.kullanici.email }}</small>
+                                <br>
+                                {% if siparis.kullanici.sahip %}
+                                    <span class="badge bg-primary">QR Sahibi</span>
+                                {% elif siparis.kullanici.veteriner_profili %}
+                                    <span class="badge bg-success">Veteriner</span>
+                                {% elif siparis.kullanici.petshop_profili %}
+                                    <span class="badge bg-warning">Petshop</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Normal</span>
+                                {% endif %}
+                                {% if siparis.user_order_count > 1 %}
+                                    <br><span class="badge bg-danger">👥 {{ siparis.user_order_count }} Sipariş</span>
+                                {% endif %}
+                            </div>
+                        {% else %}
+                            <div>
+                                <strong>{{ siparis.misafir_ad_soyad }}</strong>
+                                <br><small class="text-muted">{{ siparis.misafir_email }}</small>
+                                <br><span class="badge bg-info">Misafir</span>
+                            </div>
+                        {% endif %}
+                    </td>
+                        <td>
+                            {% for kalem in siparis.kalemler.all %}
+                                {% if kalem.urun.urun_tipi == 'etiket' %}
+                                    <span class="badge bg-info">🏷️ QR Etiket</span>
+                                {% else %}
+                                    <span class="badge bg-warning">🐾 Pet Ürün</span>
+                                {% endif %}
+                            {% endfor %}
+                            {% if siparis.kalemler.filter.urun.urun_tipi == 'etiket' %}
+                                <br><small class="text-muted">Etiketler oluşturuldu</small>
+                                <br><div id="qr-preview-{{ siparis.id }}" style="width: 40px; height: 40px; border: 1px solid #ddd; border-radius: 3px; background: white; display: inline-block; margin-top: 5px;"></div>
+                            {% endif %}
+                        </td>
+                    <td>{{ siparis.olusturulma_tarihi|date:"d.m.Y H:i" }}</td>
+                    <td><strong>₺{{ siparis.toplam_fiyat|floatformat:2 }}</strong></td>
+                    <td>
+                        <span class="status-badge {{ siparis.durum }}">
+                            {% if siparis.durum == 'bekliyor' %}
+                                Bekliyor
+                            {% elif siparis.durum == 'odendi' %}
+                                Ödendi
+                            {% elif siparis.durum == 'hazirlaniyor' %}
+                                Hazırlanıyor
+                            {% elif siparis.durum == 'kargoda' %}
+                                Kargoda
+                            {% elif siparis.durum == 'teslim_edildi' %}
+                                Teslim Edildi
+                            {% elif siparis.durum == 'iptal' %}
+                                İptal
+                            {% elif siparis.durum == 'iade' %}
+                                İade
+                            {% endif %}
+                        </span>
+                    </td>
+                    <td>
+                        {% if siparis.kargo_firma %}
+                            <div>
+                                <strong>{{ siparis.kargo_firma.ad }}</strong>
+                                {% if siparis.kargo_takip_no %}
+                                    <br><small class="text-muted">{{ siparis.kargo_takip_no }}</small>
+                                {% endif %}
+                            </div>
+                        {% else %}
+                            <span class="text-muted">-</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div style="display: flex; gap: 5px; flex-wrap: wrap;">
+                            <a href="/shop/admin/siparis/{{ siparis.id }}/" class="btn btn-primary" style="font-size: 0.8rem; padding: 6px 10px;">
+                                📋
+                            </a>
+                            <button onclick="openStatusModal({{ siparis.id }}, '{{ siparis.durum }}')" class="btn btn-success" style="font-size: 0.8rem; padding: 6px 10px;">
+                                ✏️
+                            </button>
+                            {% if siparis.durum == 'kargoda' %}
+                                <a href="{% url 'shop:kargo_takip' siparis.id %}" class="btn btn-warning" style="font-size: 0.8rem; padding: 6px 10px;">
+                                    🚚
+                                </a>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" style="text-align: center; padding: 40px; color: #666;">
+                        <div style="font-size: 1.2rem; margin-bottom: 10px;">📦</div>
+                        Henüz sipariş bulunmuyor.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Sayfalama -->
+    {% if page_obj.has_other_pages %}
+    <div class="pagination">
+        {% if page_obj.has_previous %}
+            <a href="?page=1{% if durum_filtre %}&durum={{ durum_filtre }}{% endif %}{% if tarih_filtre %}&tarih={{ tarih_filtre }}{% endif %}{% if arama %}&arama={{ arama }}{% endif %}{% if siralama %}&siralama={{ siralama }}{% endif %}">« İlk</a>
+            <a href="?page={{ page_obj.previous_page_number }}{% if durum_filtre %}&durum={{ durum_filtre }}{% endif %}{% if tarih_filtre %}&tarih={{ tarih_filtre }}{% endif %}{% if arama %}&arama={{ arama }}{% endif %}{% if siralama %}&siralama={{ siralama }}{% endif %}">‹ Önceki</a>
+        {% endif %}
+
+        {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+                <span class="current">{{ num }}</span>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                <a href="?page={{ num }}{% if durum_filtre %}&durum={{ durum_filtre }}{% endif %}{% if tarih_filtre %}&tarih={{ tarih_filtre }}{% endif %}{% if arama %}&arama={{ arama }}{% endif %}{% if siralama %}&siralama={{ siralama }}{% endif %}">{{ num }}</a>
+            {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}{% if durum_filtre %}&durum={{ durum_filtre }}{% endif %}{% if tarih_filtre %}&tarih={{ tarih_filtre }}{% endif %}{% if arama %}&arama={{ arama }}{% endif %}{% if siralama %}&siralama={{ siralama }}{% endif %}">Sonraki ›</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}{% if durum_filtre %}&durum={{ durum_filtre }}{% endif %}{% if tarih_filtre %}&tarih={{ tarih_filtre }}{% endif %}{% if arama %}&arama={{ arama }}{% endif %}{% if siralama %}&siralama={{ siralama }}{% endif %}">Son »</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+
+<!-- Durum Değiştirme Modal -->
+<div id="statusModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">Sipariş Durumu Değiştir</h3>
+            <span class="close" onclick="closeStatusModal()">&times;</span>
+        </div>
+        
+        <form method="POST" id="statusForm">
+            {% csrf_token %}
+            <input type="hidden" id="siparis_id" name="siparis_id">
+            
+            <div class="form-group">
+                <label for="durum" class="form-label">Yeni Durum</label>
+                <select id="durum" name="durum" class="form-control" required>
+                    <option value="">Durum Seçiniz</option>
+                    {% for value, label in durum_secenekleri %}
+                        <option value="{{ value }}">{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="kargo_firma_id" class="form-label">Kargo Firması (Opsiyonel)</label>
+                <select id="kargo_firma_id" name="kargo_firma_id" class="form-control">
+                    <option value="">Kargo Firması Seçiniz</option>
+                    {% for firma in kargo_firmalari %}
+                        <option value="{{ firma.id }}">{{ firma.ad }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="kargo_takip_no" class="form-label">Kargo Takip No (Opsiyonel)</label>
+                <input type="text" id="kargo_takip_no" name="kargo_takip_no" class="form-control" 
+                       placeholder="Kargo takip numarasını giriniz...">
+            </div>
+            
+            <div class="form-group">
+                <label for="aciklama" class="form-label">Açıklama (Opsiyonel)</label>
+                <textarea id="aciklama" name="aciklama" class="form-control form-textarea" 
+                          placeholder="Durum değişikliği hakkında açıklama yazabilirsiniz..."></textarea>
+            </div>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeStatusModal()">İptal</button>
+                <button type="submit" class="btn btn-success">Durumu Güncelle</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function openStatusModal(siparisId, currentStatus) {
+    document.getElementById('siparis_id').value = siparisId;
+    document.getElementById('durum').value = currentStatus;
+    document.getElementById('statusModal').style.display = 'block';
+}
+
+function closeStatusModal() {
+    document.getElementById('statusModal').style.display = 'none';
+}
+
+// Modal dışına tıklandığında kapat
+window.onclick = function(event) {
+    const modal = document.getElementById('statusModal');
+    if (event.target == modal) {
+        closeStatusModal();
+    }
+}
+
+// Durum değiştiğinde kargo alanlarını göster/gizle
+document.getElementById('durum').addEventListener('change', function() {
+    const kargoFields = document.querySelectorAll('#kargo_firma_id, #kargo_takip_no');
+    const kargoDurumlar = ['kargoda', 'teslim_edildi'];
+    
+    if (kargoDurumlar.includes(this.value)) {
+        kargoFields.forEach(field => {
+            field.parentElement.style.display = 'block';
+            field.required = true;
+        });
+    } else {
+        kargoFields.forEach(field => {
+            field.parentElement.style.display = 'none';
+            field.required = false;
+        });
+    }
+});
+
+// Toplu işlemler için JavaScript
+document.addEventListener('DOMContentLoaded', function() {
+    // Tümünü seç/seçme
+    const selectAllCheckbox = document.getElementById('selectAll');
+    const selectAllHeaderCheckbox = document.getElementById('selectAllHeader');
+    const orderCheckboxes = document.querySelectorAll('.order-checkbox');
+    
+    function updateSelectAllState() {
+        const checkedCount = document.querySelectorAll('.order-checkbox:checked').length;
+        const totalCount = orderCheckboxes.length;
+        
+        selectAllCheckbox.checked = checkedCount === totalCount;
+        selectAllHeaderCheckbox.checked = checkedCount === totalCount;
+        selectAllCheckbox.indeterminate = checkedCount > 0 && checkedCount < totalCount;
+        selectAllHeaderCheckbox.indeterminate = checkedCount > 0 && checkedCount < totalCount;
+    }
+    
+    if (selectAllCheckbox) {
+        selectAllCheckbox.addEventListener('change', function() {
+            orderCheckboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+            updateSelectAllState();
+        });
+    }
+    
+    if (selectAllHeaderCheckbox) {
+        selectAllHeaderCheckbox.addEventListener('change', function() {
+            orderCheckboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+            updateSelectAllState();
+        });
+    }
+    
+    orderCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', updateSelectAllState);
+    });
+    
+    // Toplu işlem uygula
+    const applyBulkActionBtn = document.getElementById('applyBulkAction');
+    if (applyBulkActionBtn) {
+        applyBulkActionBtn.addEventListener('click', function() {
+            const selectedOrders = Array.from(document.querySelectorAll('.order-checkbox:checked')).map(cb => cb.value);
+            const action = document.getElementById('bulkAction').value;
+            
+            if (selectedOrders.length === 0) {
+                alert('Lütfen en az bir sipariş seçin!');
+                return;
+            }
+            
+            if (!action) {
+                alert('Lütfen bir işlem seçin!');
+                return;
+            }
+            
+            if (confirm(`${selectedOrders.length} siparişi "${action}" olarak işaretlemek istediğinizden emin misiniz?`)) {
+                // Form oluştur ve gönder
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = window.location.href;
+                
+                const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
+                if (csrfToken) {
+                    form.appendChild(csrfToken.cloneNode());
+                }
+                
+                const bulkActionInput = document.createElement('input');
+                bulkActionInput.type = 'hidden';
+                bulkActionInput.name = 'bulk_action';
+                bulkActionInput.value = action;
+                form.appendChild(bulkActionInput);
+                
+                const selectedOrdersInput = document.createElement('input');
+                selectedOrdersInput.type = 'hidden';
+                selectedOrdersInput.name = 'selected_orders';
+                selectedOrdersInput.value = selectedOrders.join(',');
+                form.appendChild(selectedOrdersInput);
+                
+                document.body.appendChild(form);
+                form.submit();
+            }
+        });
+    }
+});
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<script>
+// QR kod kütüphanesi yüklendikten sonra çalıştır
+document.addEventListener('DOMContentLoaded', function() {
+    // Etiket ürünleri olan siparişler için QR kod oluştur
+    {% for siparis in siparisler %}
+        {% if siparis.kalemler.filter.urun.urun_tipi == 'etiket' %}
+        (function() {
+            const qrContainer = document.getElementById('qr-preview-{{ siparis.id }}');
+            if (qrContainer) {
+                // QR kod URL'ini oluştur (sipariş detay sayfası)
+                const qrUrl = window.location.origin + '/shop/admin/siparis/{{ siparis.id }}/';
+                console.log('Admin QR URL oluşturuluyor:', qrUrl);
+                
+                QRCode.toCanvas(qrContainer, qrUrl, {
+                    width: 40,
+                    height: 40,
+                    color: {
+                        dark: '#000000',
+                        light: '#FFFFFF'
+                    }
+                }, function (error) {
+                    if (error) {
+                        console.error('QR kod oluşturma hatası ({{ siparis.id }}):', error);
+                        qrContainer.innerHTML = '<div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #999; font-size: 8px;">QR</div>';
+                    } else {
+                        console.log('Admin QR kod başarıyla oluşturuldu ({{ siparis.id }})');
+                    }
+                });
+            }
+        })();
+        {% endif %}
+    {% endfor %}
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,134 @@
+{% extends "ana.html" %}
+{% load static %}
+
+{% block title %}Hesap Ayarları - PetShop - PetSafe Hub{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="fas fa-user-cog me-2"></i>Hesap Ayarları</h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <strong><i class="fas fa-info-circle me-1"></i> Bilgilendirme:</strong> Kullanıcı bilgilerinizi ve şifrenizi buradan güncelleyebilirsiniz. Şifre alanlarını boş bırakırsanız şifreniz değişmez.
+                    </div>
+
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <form method="post" id="hesapForm">
+                        {% csrf_token %}
+                        
+                        <h5 class="mt-4 mb-3"><i class="fas fa-user me-2 text-primary"></i>Kullanıcı Bilgileri</h5>
+                        <hr>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.username.id_for_label }}" class="form-label">
+                                    <strong>Kullanıcı Adı <span class="text-danger">*</span></strong>
+                                </label>
+                                {{ form.username }}
+                                {% if form.username.errors %}
+                                    <div class="text-danger small">{{ form.username.errors|first }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.email.id_for_label }}" class="form-label">
+                                    <strong>E-posta <span class="text-danger">*</span></strong>
+                                </label>
+                                {{ form.email }}
+                                {% if form.email.errors %}
+                                    <div class="text-danger small">{{ form.email.errors|first }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.first_name.id_for_label }}" class="form-label">
+                                    <strong>Ad</strong>
+                                </label>
+                                {{ form.first_name }}
+                                {% if form.first_name.errors %}
+                                    <div class="text-danger small">{{ form.first_name.errors|first }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.last_name.id_for_label }}" class="form-label">
+                                    <strong>Soyad</strong>
+                                </label>
+                                {{ form.last_name }}
+                                {% if form.last_name.errors %}
+                                    <div class="text-danger small">{{ form.last_name.errors|first }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <h5 class="mt-4 mb-3"><i class="fas fa-lock me-2 text-primary"></i>Şifre Değiştirme</h5>
+                        <hr>
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <strong>Not:</strong> Şifrenizi değiştirmek istemiyorsanız aşağıdaki alanları boş bırakın.
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.new_password1.id_for_label }}" class="form-label">
+                                    <strong>Yeni Şifre</strong>
+                                </label>
+                                {{ form.new_password1 }}
+                                {% if form.new_password1.errors %}
+                                    <div class="text-danger small">{{ form.new_password1.errors|first }}</div>
+                                {% endif %}
+                                {% if form.new_password1.help_text %}
+                                    <small class="text-muted">{{ form.new_password1.help_text }}</small>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.new_password2.id_for_label }}" class="form-label">
+                                    <strong>Yeni Şifre (Tekrar)</strong>
+                                </label>
+                                {{ form.new_password2 }}
+                                {% if form.new_password2.errors %}
+                                    <div class="text-danger small">{{ form.new_password2.errors|first }}</div>
+                                {% endif %}
+                                {% if form.new_password2.help_text %}
+                                    <small class="text-muted">{{ form.new_password2.help_text }}</small>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {{ form.non_field_errors }}
+                            </div>
+                        {% endif %}
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-between mt-4">
+                            <a href="{% url 'petshop:petshop_paneli' %}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-1"></i> Geri Dön
+                            </a>
+                            <button type="submit" class="btn btn-primary px-5">
+                                <i class="fas fa-save me-1"></i> Kaydet
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

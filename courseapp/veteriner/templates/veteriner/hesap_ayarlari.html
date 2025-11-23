@@ -1,0 +1,164 @@
+{% extends "ana.html" %}
+{% load static %}
+
+{% block title %}Hesap Ayarları - PetSafe Hub{% endblock %}
+
+{% block css_dosyalar %}
+<style>
+    :root {
+        --account-primary: #5B9BD5;
+        --account-secondary: #70C1B3;
+        --account-success: #6FCF97;
+    }
+
+    .account-container {
+        max-width: 700px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .account-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 28px;
+        box-shadow: 0 15px 45px rgba(91, 155, 213, 0.12);
+        overflow: hidden;
+    }
+
+    .account-header {
+        background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
+        color: white;
+        padding: 2rem;
+        text-align: center;
+    }
+
+    .account-header h5 {
+        font-weight: 800;
+        font-size: 1.75rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .section-title {
+        color: var(--account-primary);
+        font-weight: 700;
+        font-size: 1.1rem;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid rgba(91, 155, 213, 0.15);
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: var(--account-primary);
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control, .form-select {
+        border: 2px solid rgba(91, 155, 213, 0.15);
+        border-radius: 15px;
+        padding: 0.85rem 1.25rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: var(--account-primary);
+        box-shadow: 0 0 0 0.2rem rgba(91, 155, 213, 0.15);
+    }
+
+    .btn-save {
+        background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
+        border: none;
+        border-radius: 20px;
+        color: white;
+        padding: 1rem 3rem;
+        font-weight: 700;
+        transition: all 0.3s ease;
+        box-shadow: 0 10px 30px rgba(91, 155, 213, 0.3);
+        width: 100%;
+    }
+
+    .btn-save:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 40px rgba(91, 155, 213, 0.4);
+        color: white;
+    }
+
+    .alert {
+        border-radius: 15px;
+        border: none;
+        padding: 1rem 1.25rem;
+    }
+
+    @media (max-width: 768px) {
+        .account-container { margin: 1rem auto; }
+        .account-header h5 { font-size: 1.4rem; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="account-container">
+    <div class="account-card">
+        <div class="account-header">
+            <h5>{% if ilk_giris_mi %}<i class="fas fa-user-shield me-2"></i>Hesabınızı Tamamlayın{% else %}<i class="fas fa-cog me-2"></i>Hesap Ayarları{% endif %}</h5>
+            {% if ilk_giris_mi %}
+            <p class="opacity-95 mb-0">Güvenliğiniz için kullanıcı adı ve şifrenizi belirleyin</p>
+            {% endif %}
+        </div>
+        <div class="p-4">
+            {% if messages %}
+            <div class="mb-4">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    <i class="fas fa-check-circle me-2"></i>{{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+
+                <h6 class="section-title"><i class="fas fa-user me-2"></i>Kullanıcı Bilgileri</h6>
+                <div class="mb-4">
+                    <label for="id_username" class="form-label">{{ form.username.label }}</label>
+                    {{ form.username }}
+                    {% if form.username.errors %}<div class="text-danger small mt-1">{{ form.username.errors }}</div>{% endif %}
+                </div>
+                <div class="mb-4">
+                    <label for="id_new_password1" class="form-label">{{ form.new_password1.label }}</label>
+                    {{ form.new_password1 }}
+                    {% if form.new_password1.errors %}<div class="text-danger small mt-1">{{ form.new_password1.errors }}</div>{% endif %}
+                </div>
+                <div class="mb-4">
+                    <label for="id_new_password2" class="form-label">{{ form.new_password2.label }}</label>
+                    {{ form.new_password2 }}
+                    {% if form.new_password2.errors %}<div class="text-danger small mt-1">{{ form.new_password2.errors }}</div>{% endif %}
+                </div>
+
+                <hr style="margin: 2rem 0; border-top: 2px dashed rgba(91, 155, 213, 0.2);">
+
+                <h6 class="section-title"><i class="fas fa-id-card me-2"></i>Profil Bilgileri</h6>
+                {% for field in form %}
+                    {% if field.name not in "username,new_password1,new_password2" %}
+                        <div class="mb-4">
+                            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.errors %}<div class="text-danger small mt-1">{{ field.errors }}</div>{% endif %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+
+                <div class="d-grid gap-2 mt-5">
+                    <button type="submit" class="btn btn-save">
+                        <i class="fas fa-save me-2"></i>Kaydet ve Devam Et
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

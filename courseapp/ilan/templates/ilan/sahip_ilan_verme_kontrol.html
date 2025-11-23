@@ -1,0 +1,195 @@
+{% extends 'ana.html' %}
+{% load static %}
+
+{% block title %}İlan Verme Durumu{% endblock %}
+
+{% block css_dosyalar %}
+<style>
+.ilan-kontrol-container{min-height:60vh;padding:40px 0}
+.page-header{background:linear-gradient(135deg,#5B9BD5 0%,#70C1B3 100%);padding:40px;border-radius:20px;color:#fff;margin-bottom:40px;box-shadow:0 8px 24px rgba(91,155,213,.25)}
+.page-header h1{font-size:2.5rem;font-weight:700;margin:0;text-shadow:0 2px 8px rgba(0,0,0,.2)}
+.page-header p{font-size:1.1rem;margin:10px 0 0 0;opacity:.95}
+.info-card{background:rgba(255,255,255,.95);border-radius:20px;border:none;box-shadow:0 8px 24px rgba(91,155,213,.12);margin-bottom:30px;overflow:hidden}
+.info-card .card-header{background:linear-gradient(135deg,#5B9BD5 0%,#70C1B3 100%);padding:20px;color:#fff;border:none}
+.info-card .card-header h5{margin:0;font-weight:600;font-size:1.1rem}
+.info-card .card-body{padding:30px}
+.success-card{background:rgba(255,255,255,.95);border-radius:20px;border:none;box-shadow:0 8px 24px rgba(111,207,151,.12);margin-bottom:30px;overflow:hidden}
+.success-card .alert-success{background:linear-gradient(135deg,#6FCF97 0%,#52B788 100%);border:none;color:#fff;padding:30px;border-radius:20px 20px 0 0;margin:0}
+.success-card h4{font-size:1.5rem;font-weight:700;margin:0}
+.warning-card{background:rgba(255,255,255,.95);border-radius:20px;border:none;box-shadow:0 8px 24px rgba(242,201,76,.12);margin-bottom:30px;overflow:hidden}
+.warning-card .alert-warning{background:linear-gradient(135deg,#F2C94C 0%,#F2994A 100%);border:none;color:#fff;padding:30px;border-radius:20px 20px 0 0;margin:0}
+.warning-card h4{font-size:1.5rem;font-weight:700;margin:0}
+.stat-card{background:rgba(255,255,255,.95);border-radius:20px;border:none;box-shadow:0 8px 24px rgba(91,155,213,.12);transition:all .3s ease;overflow:hidden;height:100%;text-align:center}
+.stat-card:hover{transform:translateY(-8px);box-shadow:0 12px 32px rgba(91,155,213,.18)}
+.stat-card .card-body{padding:30px}
+.stat-card h3{font-size:2.5rem;font-weight:700;color:#5B9BD5;margin:15px 0}
+.stat-card small{color:#666;font-weight:500;font-size:.9rem}
+.feature-card{background:rgba(255,255,255,.95);border-radius:15px;border:none;box-shadow:0 4px 12px rgba(91,155,213,.08);transition:all .3s ease;height:100%}
+.feature-card:hover{transform:translateY(-4px);box-shadow:0 6px 16px rgba(91,155,213,.12)}
+.feature-card .card-body{padding:20px;text-align:center}
+.feature-card h6{font-weight:600;margin-bottom:10px}
+.badge{padding:8px 18px;border-radius:50px;font-weight:600;font-size:.9rem}
+.btn-primary{background:linear-gradient(135deg,#5B9BD5 0%,#70C1B3 100%);border:none;padding:14px 35px;border-radius:50px;font-weight:600;transition:all .3s ease;box-shadow:0 6px 20px rgba(91,155,213,.3)}
+.btn-primary:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(91,155,213,.4)}
+.btn-success{background:linear-gradient(135deg,#6FCF97 0%,#52B788 100%);border:none;padding:14px 35px;border-radius:50px;font-weight:600;transition:all .3s ease;box-shadow:0 6px 20px rgba(111,207,151,.3)}
+.btn-success:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(111,207,151,.4)}
+.btn-outline-primary,.btn-outline-success,.btn-outline-info{border-width:2px;border-radius:50px;font-weight:600;padding:12px 24px;transition:all .3s ease}
+.btn-outline-primary:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(91,155,213,.2)}
+.btn-outline-success:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(111,207,151,.2)}
+.btn-outline-info:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(86,204,242,.2)}
+@media(max-width:768px){.page-header{padding:30px 20px;text-align:center}.page-header h1{font-size:1.8rem}}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="ilan-kontrol-container">
+    <div class="container">
+        <div class="page-header">
+            <h1><i class="fas fa-bullhorn me-3"></i>İlan Verme Durumu</h1>
+            <p>{{ sahip.ad }} {{ sahip.soyad }}</p>
+        </div>
+
+    {% if kullanici_bakiye >= ilan_ucreti %}
+        <!-- Yeterli Kredi Var -->
+        <div class="success-card">
+            <div class="alert alert-success">
+                <h4><i class="fas fa-check-circle me-2"></i>İlan Verebilirsiniz!</h4>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="card info-card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-coins me-2"></i>Kredi Bilgileri</h5>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Mevcut Bakiye:</strong> <span class="badge bg-success">{{ kullanici_bakiye }} kredi</span></p>
+                        <p><strong>İlan Ücreti:</strong> {{ ilan_ucreti }} kredi</p>
+                        <p><strong>Öne Çıkarma:</strong> +{{ onemli_ilan_ucreti }} kredi</p>
+                        <p><strong>Verilebilir İlan:</strong> <span class="badge bg-info">{{ kredi_ile_verilebilir_ilan }} ilan</span></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="card info-card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-chart-line me-2"></i>İlan Durumu</h5>
+                    </div>
+                    <div class="card-body text-center">
+                        <h2>{{ kullanilan_ilan_sayisi }}</h2>
+                        <p>Toplam İlan</p>
+                        <p>Mevcut kredinizle <strong>{{ kredi_ile_verilebilir_ilan }}</strong> ilan daha verebilirsiniz.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center">
+            <a href="{% url 'ilan:sahip_hayvan_secimi' %}" class="btn btn-success">
+                İlan Ver
+            </a>
+        </div>
+    {% else %}
+        <!-- Yetersiz Kredi -->
+        <div class="warning-card">
+            <div class="alert alert-warning">
+                <h4><i class="fas fa-exclamation-triangle me-2"></i>Yetersiz Kredi</h4>
+                <p class="mb-2">İlan vermek için kredi gereklidir</p>
+                <p class="mb-2">Mevcut bakiyeniz: <strong>{{ kullanici_bakiye }} kredi</strong></p>
+                <p class="mb-0">İlan vermek için gereken: <strong>{{ ilan_ucreti }} kredi</strong></p>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-md-4 mb-3">
+                <div class="card feature-card">
+                    <div class="card-body text-center">
+                        <h6>İlan Verme</h6>
+                        <small>{{ ilan_ucreti }} kredi ile ilan verin</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card feature-card">
+                    <div class="card-body text-center">
+                        <h6>Öne Çıkarma</h6>
+                        <small>+{{ onemli_ilan_ucreti }} kredi ile öne çıkarın</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card feature-card">
+                    <div class="card-body text-center">
+                        <h6>İstatistikler</h6>
+                        <small>Tüm kullanıcılar için aynı sistem</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center">
+            <a href="{% url 'ilan:kredi_satin_al' %}" class="btn btn-primary">
+                Kredi Satın Al
+            </a>
+        </div>
+    {% endif %}
+
+    <!-- Özet Bilgiler -->
+    <div class="row mt-5 mb-4">
+        <div class="col-12 mb-3">
+            <h2 style="color:#5B9BD5;font-weight:700"><i class="fas fa-chart-bar me-2"></i>Genel Durum</h2>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card stat-card">
+                <div class="card-body">
+                    <i class="fas fa-bullhorn" style="font-size:2rem;color:#5B9BD5;margin-bottom:10px"></i>
+                    <h3>{{ kullanilan_ilan_sayisi }}</h3>
+                    <small>Toplam İlan</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card stat-card">
+                <div class="card-body">
+                    <i class="fas fa-coins" style="font-size:2rem;color:#6FCF97;margin-bottom:10px"></i>
+                    <h3 style="color:#6FCF97">{{ kullanici_bakiye }}</h3>
+                    <small>Mevcut Kredi</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card stat-card">
+                <div class="card-body">
+                    <i class="fas fa-plus-circle" style="font-size:2rem;color:#56CCF2;margin-bottom:10px"></i>
+                    <h3 style="color:#56CCF2">{{ kredi_ile_verilebilir_ilan }}</h3>
+                    <small>Verilebilir İlan</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hızlı Erişim Butonları -->
+    <div class="row mt-4">
+        <div class="col-12 mb-3">
+            <h2 style="color:#5B9BD5;font-weight:700"><i class="fas fa-bolt me-2"></i>Hızlı Erişim</h2>
+        </div>
+        <div class="col-md-4 mb-3">
+            <a href="{% url 'anahtarlik:sahip_profilim' %}" class="btn btn-outline-primary w-100">
+                <i class="fas fa-user me-2"></i>Profilim
+            </a>
+        </div>
+        <div class="col-md-4 mb-3">
+            <a href="{% url 'ilan:kullanici_ilanlari' %}" class="btn btn-outline-success w-100">
+                <i class="fas fa-list me-2"></i>İlanlarım
+            </a>
+        </div>
+        <div class="col-md-4 mb-3">
+            <a href="{% url 'anahtarlik:evcil_hayvanlarim' %}" class="btn btn-outline-info w-100">
+                <i class="fas fa-paw me-2"></i>Evcil Hayvanlarım
+            </a>
+        </div>
+    </div>
+    </div>
+</div>
+{% endblock %}

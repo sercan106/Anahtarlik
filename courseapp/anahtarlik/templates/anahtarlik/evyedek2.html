@@ -1,0 +1,408 @@
+{% extends 'ana.html' %}
+{% load static %}
+{% block baslik %}<title>PatiQuard - Evcil Hayvan Güvenliği</title>{% endblock baslik %}
+{% block css_dosyalar %}
+<style>
+    /* Basit ve temiz CSS */
+    .hero-section {
+        background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+        color: white;
+        text-align: center;
+    }
+    
+    .hero-section h1 {
+        font-size: 3rem;
+        font-weight: bold;
+        margin-bottom: 1rem;
+    }
+    
+    .hero-section p {
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+        opacity: 0.9;
+    }
+    
+    .btn-primary {
+        background: #70C1B3;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 25px;
+        color: white;
+        text-decoration: none;
+        display: inline-block;
+        margin: 5px;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+        background: #5B9BD5;
+        transform: translateY(-2px);
+        color: white;
+        text-decoration: none;
+    }
+    
+    .section {
+        padding: 80px 0;
+    }
+    
+    .section h2 {
+        text-align: center;
+        margin-bottom: 3rem;
+        font-size: 2.5rem;
+        font-weight: bold;
+    }
+    
+    .card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease;
+        height: 100%;
+    }
+    
+    .card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .card-body {
+        padding: 2rem;
+        text-align: center;
+    }
+    
+    .card-body i {
+        font-size: 3rem;
+        color: #5B9BD5;
+        margin-bottom: 1rem;
+    }
+    
+    .card-body h4 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        color: #333;
+    }
+    
+    .card-body p {
+        color: #666;
+        margin-bottom: 1.5rem;
+    }
+    
+    .about-section {
+        background: #f8f9fa;
+    }
+    
+    .about-section img {
+        width: 100%;
+        height: 400px;
+        object-fit: cover;
+        border-radius: 15px;
+    }
+    
+    .reviews-section {
+        background: linear-gradient(135deg, #FF8C42 0%, #6FCF97 100%);
+        color: white;
+    }
+    
+    .review-card {
+        background: white;
+        color: #333;
+        border-radius: 15px;
+        padding: 2rem;
+        text-align: center;
+    }
+    
+    .stars {
+        color: #ffd700;
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+    }
+    
+    .contact-section {
+        background: #f8f9fa;
+    }
+    
+    .contact-form {
+        background: white;
+        padding: 2rem;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .form-control {
+        border-radius: 10px;
+        border: 2px solid #e9ecef;
+        padding: 12px 15px;
+        margin-bottom: 1rem;
+    }
+    
+    .form-control:focus {
+        border-color: #5B9BD5;
+        box-shadow: 0 0 0 0.2rem rgba(91, 155, 213, 0.25);
+    }
+    
+    .back-to-top {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 50px;
+        height: 50px;
+        background: #5B9BD5;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        text-decoration: none;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+    }
+    
+    .back-to-top.show {
+        opacity: 1;
+        visibility: visible;
+    }
+    
+    .back-to-top:hover {
+        background: #70C1B3;
+        color: white;
+        text-decoration: none;
+    }
+    
+    @media (max-width: 768px) {
+        .hero-section h1 {
+            font-size: 2rem;
+        }
+        
+        .hero-section p {
+            font-size: 1rem;
+        }
+        
+        .section h2 {
+            font-size: 2rem;
+        }
+        
+        .section {
+            padding: 60px 0;
+        }
+    }
+</style>
+{% endblock css_dosyalar %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <h1>PatiQuard'a Hoş Geldiniz</h1>
+        <p>Evcil hayvanlarınızı yenilikçi kimlik çözümleri ile koruyun</p>
+        <div>
+            <a href="{% url 'etiket:lookup' %}" class="btn-primary">
+                <i class="fas fa-search"></i> Hayvan Bulundu
+            </a>
+            <a href="{% url 'user_register' %}" class="btn-primary">
+                <i class="fas fa-tag"></i> Etiket Aktive Et
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Services Section -->
+<section id="hizmetler" class="section">
+    <div class="container">
+        <h2>Hizmetlerimiz</h2>
+        <p class="text-center mb-5">Evcil dostlarınız için en iyi dijital kimlik ve sağlık takip çözümleri</p>
+        <div class="row g-4">
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card">
+                    <div class="card-body">
+                        <i class="fas fa-qrcode"></i>
+                        <h4>QR Künye Sistemi</h4>
+                        <p>Kayıp evcil hayvanınızı bulmak için teknolojik çözüm. QR kod ile hızlı erişim.</p>
+                        <a href="{% url 'shop:etiket_list' %}" class="btn btn-primary">Keşfet</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card">
+                    <div class="card-body">
+                        <i class="fas fa-calendar-check"></i>
+                        <h4>Veteriner Randevu</h4>
+                        <p>Evcil hayvanınız için veteriner randevusu alın. Online takip ve kayıt sistemi.</p>
+                        <a href="{% url 'veteriner:veteriner_paneli' %}" class="btn btn-primary">Randevu Al</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card">
+                    <div class="card-body">
+                        <i class="fas fa-shopping-cart"></i>
+                        <h4>Pet Mağaza</h4>
+                        <p>Köpek, kedi, kuş ve daha fazlası için kaliteli ürünler. Hızlı teslimat.</p>
+                        <a href="{% url 'shop:petshop_list' %}" class="btn btn-primary">Alışverişe Başla</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card">
+                    <div class="card-body">
+                        <i class="fas fa-paw"></i>
+                        <h4>İlan ve Sahiplendirme</h4>
+                        <p>Evcil hayvanınızı sahiplendirin veya yeni bir dost edinin. Güvenli platform.</p>
+                        <a href="{% url 'ilan:ilan_listesi' %}" class="btn btn-primary">İlanlar</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card">
+                    <div class="card-body">
+                        <i class="fas fa-heartbeat"></i>
+                        <h4>Sağlık Takibi</h4>
+                        <p>Aşı takvimi, kilo grafikleri, ilaç ve ameliyat kayıtları. Dijital sağlık dosyası.</p>
+                        <a href="{% url 'anahtarlik:sahip_profilim' %}" class="btn btn-primary">Takip Et</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card">
+                    <div class="card-body">
+                        <i class="fas fa-id-card"></i>
+                        <h4>Pet Profile Yönetimi</h4>
+                        <p>Evcil hayvanınızın tüm bilgilerini tek yerden yönetin. Fotoğraf ve belgeler.</p>
+                        <a href="{% url 'anahtarlik:sahip_profilim' %}" class="btn btn-primary">Profilim</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- About Section -->
+<section id="hakkimizda" class="section about-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-12 col-lg-6 mb-4 mb-lg-0">
+                <img src="{% static 'images/abc.png' %}" alt="Hakkımızda" class="img-fluid">
+            </div>
+            <div class="col-12 col-lg-6">
+                <h2>Hakkımızda</h2>
+                <p class="lead">Evcil hayvanlarınızın güvenliği bizim önceliğimizdir.</p>
+                <p>PetSafe Hub, evcil hayvan sahiplerine en iyi koruma ve kimlik çözümleri sunmak için 2010 yılında kurulmuştur. Misyonumuz, her evcil hayvanın güvenli ve mutlu bir yaşam sürmesini sağlamaktır.</p>
+                <p>Uzman ekibimiz ve yenilikçi teknolojilerimizle, evcil hayvanınızın kaybolması durumunda hızlı ve etkili çözümler sunuyoruz.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Reviews Section -->
+<section id="yorumlar" class="section reviews-section">
+    <div class="container">
+        <h2>Müşteri Yorumları</h2>
+        <div class="row g-4">
+            <div class="col-12 col-md-4">
+                <div class="review-card">
+                    <div class="stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p>"PetSafe Hub sayesinde köpeğim kaybolduğunda hemen bulundu! QR etiket sistemi harika!"</p>
+                    <p class="fw-bold">Ayşe K. - İstanbul</p>
+                </div>
+            </div>
+            <div class="col-12 col-md-4">
+                <div class="review-card">
+                    <div class="stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p>"Mikroçip hizmeti çok güvenilir. Ekibin 7/24 desteği inanılmaz!"</p>
+                    <p class="fw-bold">Mehmet Y. - Ankara</p>
+                </div>
+            </div>
+            <div class="col-12 col-md-4">
+                <div class="review-card">
+                    <div class="stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p>"Kedim için aldığım etiket hem şık hem de çok kullanışlı. Kesinlikle tavsiye ederim!"</p>
+                    <p class="fw-bold">Zeynep A. - İzmir</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Purchase Section -->
+<section id="satin-al" class="section" style="background: linear-gradient(135deg, #2C5F8D 0%, #34495e 100%); color: white; text-align: center;">
+    <div class="container">
+        <h2>Evcil Hayvanınızı Şimdi Koruyun!</h2>
+        <p class="mb-4">Yenilikçi QR etiketlerimiz ve mikroçip hizmetlerimizle evcil hayvanınızın güvenliğini garantileyin.</p>
+        <a href="{% url 'shop:shop_home' %}" class="btn btn-primary btn-lg">Hemen Satın Al</a>
+    </div>
+</section>
+
+<!-- Back to Top Button -->
+<a href="#" class="back-to-top">
+    <i class="fas fa-arrow-up"></i>
+</a>
+
+{% endblock %}
+
+{% block js_dosyalar %}
+<script>
+    // Back to top button
+    const backToTopButton = document.querySelector('.back-to-top');
+
+    window.addEventListener('scroll', function() {
+        if (window.pageYOffset > 300) {
+            backToTopButton.classList.add('show');
+        } else {
+            backToTopButton.classList.remove('show');
+        }
+    });
+
+    backToTopButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    });
+    
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href*="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            const href = this.getAttribute('href');
+            
+            if (href === '#' || href.indexOf('#') === -1) return;
+            
+            const targetId = href.substring(href.indexOf('#') + 1);
+            const targetElement = document.getElementById(targetId);
+            
+            if (targetElement) {
+                e.preventDefault();
+                
+                const headerOffset = 80;
+                const elementPosition = targetElement.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+</script>
+{% endblock js_dosyalar %}

@@ -1,0 +1,647 @@
+{% extends 'ana.html' %}
+{% load static %}
+
+{% block title %}Mağaza - PetSafe Hub{% endblock %}
+
+{% block css_dosyalar %}
+<!-- Swiper CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
+
+<style>
+    body {
+        background: #f5f5f5 !important;
+    }
+
+    /* Hero Bölümü - Kalite & Premium */
+    .shop-hero {
+        background: linear-gradient(135deg, #2C5F8D 0%, #5B9BD5 50%, #70C1B3 100%);
+        padding: 80px 0 100px;
+        text-align: center;
+        color: white;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .shop-hero::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 50px;
+        background: #f5f5f5;
+        clip-path: polygon(0 50%, 100% 0, 100% 100%, 0 100%);
+    }
+
+    .shop-hero h1 {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 15px;
+        z-index: 2;
+        position: relative;
+    }
+
+    .shop-hero p {
+        font-size: 1.2rem;
+        opacity: 0.9;
+        z-index: 2;
+        position: relative;
+    }
+
+    /* Main Content */
+    .main-content {
+        max-width: 1400px;
+        margin: -60px auto 60px;
+        padding: 0 20px;
+        position: relative;
+        z-index: 10;
+    }
+
+    /* Mağaza Kartları Grid */
+    .shop-cards-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 40px;
+        margin-bottom: 60px;
+    }
+
+    /* Mağaza Kartı */
+    .shop-card {
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    .shop-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+    }
+    
+    /* Slide Image Zoom Effect */
+    .slide-product-image {
+        transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .swiper-slide:hover .slide-product-image {
+        transform: scale(1.1);
+    }
+    
+    /* Hover Overlay */
+    .swiper-slide {
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .slide-hover-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.4s ease;
+        z-index: 10;
+        pointer-events: none; /* Overlay tıklamayı engellemesin */
+    }
+    
+    .shop-card .swiper-slide:hover .slide-hover-overlay {
+        opacity: 1;
+    }
+    
+    .slide-hover-btn {
+        background: linear-gradient(135deg, #2C5F8D 0%, #5B9BD5 100%);
+        color: white;
+        padding: 15px 40px;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1.1rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        transition: all 0.3s ease;
+        transform: translateY(20px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    }
+    
+    .swiper-slide:hover .slide-hover-btn {
+        transform: translateY(0);
+    }
+    
+    .slide-hover-btn:hover {
+        transform: scale(1.05);
+        color: white;
+        text-decoration: none;
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Mağaza Swiper - Kart İçinde Slider */
+    .shop-card .swiper {
+        height: 500px;
+        border-radius: 20px 20px 0 0;
+    }
+
+    .shop-card .swiper-slide {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .shop-card .swiper-slide > a {
+        position: relative;
+        display: block;
+        width: 100%;
+        height: 100%;
+        text-decoration: none;
+        color: inherit;
+    }
+
+    /* Slide İçindeki Ürün Görseli */
+    .slide-product-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    /* Slide Overlay - Ürün Bilgisi */
+    .slide-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%);
+        padding: 60px 40px 40px;
+        color: white;
+    }
+
+    .slide-product-name {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+        text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+    }
+
+    .slide-product-price {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #10b981;
+        margin-bottom: 20px;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    }
+
+    .slide-product-actions {
+        display: flex;
+        gap: 15px;
+    }
+
+    .slide-btn {
+        padding: 12px 30px;
+        border-radius: 25px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .slide-btn-detail {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: 2px solid white;
+    }
+
+    .slide-btn-detail:hover {
+        background: white;
+        color: #333;
+    }
+
+    .slide-btn-cart {
+        background: #10b981;
+        color: white;
+    }
+
+    .slide-btn-cart:hover {
+        background: #059669;
+        color: white;
+        transform: scale(1.05);
+    }
+
+    /* Swiper Navigation - Kartın İçinde */
+    .shop-card .swiper-button-next,
+    .shop-card .swiper-button-prev {
+        width: 50px;
+        height: 50px;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 50%;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        color: #667eea;
+        transition: all 0.3s ease;
+    }
+
+    .shop-card .swiper-button-next:hover,
+    .shop-card .swiper-button-prev:hover {
+        background: #667eea;
+        color: white;
+        transform: scale(1.1);
+    }
+
+    .shop-card .swiper-button-next:after,
+    .shop-card .swiper-button-prev:after {
+        font-size: 22px;
+        font-weight: 700;
+    }
+
+    /* Swiper Pagination - Kartın İçinde */
+    .shop-card .swiper-pagination {
+        bottom: 20px;
+    }
+
+    .shop-card .swiper-pagination-bullet {
+        background: white;
+        opacity: 0.5;
+        width: 12px;
+        height: 12px;
+    }
+
+    .shop-card .swiper-pagination-bullet-active {
+        opacity: 1;
+        background: white;
+        width: 35px;
+        border-radius: 6px;
+    }
+
+    /* Card Footer - Mağaza Bilgisi */
+    .card-footer-info {
+        padding: 25px 30px;
+        background: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-top: 3px solid #f0f0f0;
+    }
+
+    .shop-info-left {
+        flex: 1;
+    }
+
+    .shop-info-left h3 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 0 0 5px 0;
+        color: #333;
+    }
+
+    .shop-info-left p {
+        margin: 0;
+        color: #666;
+        font-size: 0.95rem;
+    }
+
+    .shop-info-right {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .product-count-badge {
+        background: linear-gradient(135deg, #2C5F8D 0%, #5B9BD5 100%);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 0.95rem;
+    }
+
+    .view-all-btn {
+        background: linear-gradient(135deg, #2C5F8D 0%, #5B9BD5 100%);
+        color: white;
+        padding: 12px 30px;
+        border-radius: 25px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .view-all-btn:hover {
+        transform: translateX(5px);
+        color: white;
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    /* Empty State */
+    .empty-state {
+        height: 500px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: #9ca3af;
+        background: #f9fafb;
+    }
+
+    .empty-state i {
+        font-size: 4rem;
+        margin-bottom: 20px;
+        opacity: 0.3;
+    }
+
+    /* Stats */
+    .shop-stats {
+        text-align: center;
+        margin-top: 40px;
+        padding: 30px;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    }
+
+    .shop-stats p {
+        font-size: 1.1rem;
+        color: #666;
+        margin: 0;
+    }
+
+    .shop-stats strong {
+        color: #667eea;
+        font-size: 1.4rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+        .shop-cards-grid {
+            grid-template-columns: 1fr;
+            gap: 30px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .shop-hero h1 {
+            font-size: 2.2rem;
+        }
+
+        .shop-card .swiper {
+            height: 400px;
+        }
+
+        .slide-overlay {
+            padding: 40px 25px 25px;
+        }
+
+        .slide-product-name {
+            font-size: 1.4rem;
+        }
+
+        .slide-product-price {
+            font-size: 1.6rem;
+        }
+
+        .slide-product-actions {
+            flex-direction: column;
+        }
+
+        .card-footer-info {
+            flex-direction: column;
+            gap: 15px;
+            text-align: center;
+        }
+
+        .shop-info-right {
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .view-all-btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .shop-card .swiper-button-next,
+        .shop-card .swiper-button-prev {
+            width: 40px;
+            height: 40px;
+        }
+
+        .shop-card .swiper-button-next:after,
+        .shop-card .swiper-button-prev:after {
+            font-size: 18px;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .shop-hero {
+            padding: 50px 0 70px;
+        }
+
+        .shop-hero h1 {
+            font-size: 1.75rem;
+        }
+
+        .shop-hero p {
+            font-size: 1rem;
+        }
+
+        .main-content {
+            margin: -40px auto 40px;
+            padding: 0 15px;
+        }
+
+        .shop-cards-grid {
+            gap: 25px;
+        }
+
+        .shop-card .swiper {
+            height: 350px;
+        }
+
+        .slide-overlay {
+            padding: 30px 20px 20px;
+        }
+
+        .slide-product-name {
+            font-size: 1.2rem;
+        }
+
+        .slide-product-price {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+        }
+
+        .slide-btn {
+            padding: 10px 20px;
+            font-size: 0.9rem;
+        }
+
+        .card-footer-info {
+            padding: 20px 20px;
+        }
+
+        .shop-info-left h3 {
+            font-size: 1.25rem;
+        }
+
+        .shop-info-left p {
+            font-size: 0.85rem;
+        }
+
+        .view-all-btn {
+            padding: 10px 25px;
+            font-size: 0.9rem;
+        }
+
+        .product-count-badge {
+            font-size: 0.85rem;
+            padding: 8px 15px;
+        }
+
+        .slide-hover-btn {
+            padding: 12px 30px;
+            font-size: 1rem;
+        }
+    }
+
+    @media (max-width: 400px) {
+        .shop-hero h1 {
+            font-size: 1.5rem;
+        }
+
+        .shop-card .swiper {
+            height: 300px;
+        }
+
+        .slide-product-name {
+            font-size: 1.1rem;
+        }
+
+        .slide-product-price {
+            font-size: 1.2rem;
+        }
+
+        .card-footer-info {
+            padding: 15px;
+        }
+
+        .shop-info-left h3 {
+            font-size: 1.1rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="shop-hero">
+    <div class="container">
+        <h1>🛍️ Mağaza</h1>
+        <p>Evcil Dostlarınız İçin Her Şey Burada</p>
+    </div>
+</section>
+
+<!-- Main Content -->
+<div class="main-content">
+    <!-- Mağaza Kartları -->
+    {% if magaza_kartlari %}
+    <div class="shop-cards-grid">
+        {% for kart in magaza_kartlari %}
+        <div class="shop-card">
+            <!-- Ürün Fotoğrafları Slider - Kartın İçinde -->
+            {% with aktif_resimler=kart.aktif_resimler %}
+            {% if aktif_resimler %}
+                <!-- Mağaza Kartı Resimleri Slider -->
+                <div class="swiper shop-card-swiper-{{ forloop.counter }}">
+                    <div class="swiper-wrapper">
+                        {% for resim in aktif_resimler %}
+                        {% if resim.resim %}
+                        <div class="swiper-slide" data-link="{% if kart.link_url %}{{ kart.link_url }}{% else %}#{% endif %}" style="cursor: pointer;">
+                            <a href="{% if kart.link_url %}{{ kart.link_url }}{% else %}#{% endif %}" style="display: block; width: 100%; height: 100%; text-decoration: none; color: inherit;">
+                                <img src="{{ resim.resim.url }}" alt="{{ resim.alt_metin|default:kart.baslik }}" class="slide-product-image">
+                                <!-- Slide Overlay - Ürün Bilgisi -->
+                                {% if resim.alt_metin %}
+                                <div class="slide-overlay">
+                                    <h3 class="slide-product-name">{{ resim.alt_metin }}</h3>
+                                </div>
+                                {% endif %}
+                                <!-- Hover Overlay -->
+                                <div class="slide-hover-overlay">
+                                    <span class="slide-hover-btn">
+                                        <i class="fas fa-shopping-bag"></i>
+                                        Ürünleri Gör
+                                    </span>
+                                </div>
+                            </a>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                    <div class="swiper-pagination"></div>
+                </div>
+            {% else %}
+                <!-- Empty State - Aktif resim yoksa placeholder göster -->
+                <div class="empty-state">
+                    <i class="fas fa-box-open"></i>
+                    <p>Henüz öne çıkan ürün bulunmuyor</p>
+                </div>
+            {% endif %}
+            {% endwith %}
+
+            <!-- Card Footer - Mağaza Bilgisi -->
+            <div class="card-footer-info">
+                <div class="shop-info-left">
+                    <h3>{{ kart.icon }} {{ kart.baslik }}</h3>
+                    <p>{{ kart.alt_baslik }}</p>
+                </div>
+                <div class="shop-info-right">
+                    <a href="{% if kart.link_url %}{{ kart.link_url }}{% else %}#{% endif %}" class="view-all-btn">
+                        {{ kart.buton_metni }} <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-5">
+        <p class="text-muted">Henüz mağaza kartı eklenmemiş. Admin panelinden ekleyebilirsiniz.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block js_dosyalar %}
+<!-- Swiper JS -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+<script>
+// Tüm mağaza kartı swiper'larını dinamik olarak initialize et
+document.querySelectorAll('[class*="shop-card-swiper-"]').forEach(function(swiperElement) {
+    const swiper = new Swiper(swiperElement, {
+        slidesPerView: 1,
+        spaceBetween: 0,
+        loop: swiperElement.querySelectorAll('.swiper-slide').length > 1, // Sadece birden fazla slide varsa loop aktif
+        autoplay: {
+            delay: 4000,
+            disableOnInteraction: false,
+        },
+        effect: 'fade',
+        fadeEffect: {
+            crossFade: true
+        },
+        speed: 1000,
+        pagination: {
+            el: swiperElement.querySelector('.swiper-pagination'),
+            clickable: true,
+        },
+    });
+});
+</script>
+{% endblock %}

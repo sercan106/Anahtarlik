@@ -1,0 +1,408 @@
+{% extends "ana.html" %}
+{% load static %}
+
+{% block title %}Profil Düzenle - PetTag{% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="glass-card" data-aos="fade-up">
+                <div class="card-header border-0">
+                    <h4 class="mb-0 text-gradient"><i class="fas fa-user-edit me-2"></i>Profil Bilgilerini Düzenle</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.ad.id_for_label }}" class="form-label">
+                                    <strong>Ad <span class="text-danger">*</span></strong>
+                                </label>
+                                {{ form.ad }}
+                                {% if form.ad.errors %}
+                                    <div class="text-danger small">{{ form.ad.errors|first }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.soyad.id_for_label }}" class="form-label">
+                                    <strong>Soyad <span class="text-danger">*</span></strong>
+                                </label>
+                                {{ form.soyad }}
+                                {% if form.soyad.errors %}
+                                    <div class="text-danger small">{{ form.soyad.errors|first }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.telefon.id_for_label }}" class="form-label">
+                                    <strong>Telefon <span class="text-danger">*</span></strong>
+                                </label>
+                                {{ form.telefon }}
+                                {% if form.telefon.errors %}
+                                    <div class="text-danger small">{{ form.telefon.errors|first }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.yedek_telefon.id_for_label }}" class="form-label">
+                                    <strong>Yedek Telefon</strong>
+                                </label>
+                                {{ form.yedek_telefon }}
+                                {% if form.yedek_telefon.errors %}
+                                    <div class="text-danger small">{{ form.yedek_telefon.errors|first }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.acil_durum_kontagi.id_for_label }}" class="form-label">
+                                <strong>Acil Durum Kontağı</strong>
+                            </label>
+                            {{ form.acil_durum_kontagi }}
+                            {% if form.acil_durum_kontagi.errors %}
+                                <div class="text-danger small">{{ form.acil_durum_kontagi.errors|first }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="id_il" class="form-label">
+                                    <strong>İl <span class="text-danger">*</span></strong>
+                                </label>
+                                <select class="form-control" id="id_il" name="il" required>
+                                    <option value="">İl Seçiniz</option>
+                                    {% for il in iller %}
+                                        <option value="{{ il.id }}" {% if sahip.il and sahip.il.id == il.id %}selected{% endif %}>
+                                            {{ il.ad }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                                {% if form.il.errors %}
+                                    <div class="text-danger small">{{ form.il.errors|first }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="id_ilce" class="form-label">
+                                    <strong>İlçe <span class="text-danger">*</span></strong>
+                                </label>
+                                <select class="form-control" id="id_ilce" name="ilce" required>
+                                    <option value="">İlçe Seçiniz</option>
+                                    {% for ilce in ilceler %}
+                                        <option value="{{ ilce.id }}" {% if sahip.ilce and sahip.ilce.id == ilce.id %}selected{% endif %}>
+                                            {{ ilce.ad }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                                {% if form.ilce.errors %}
+                                    <div class="text-danger small">{{ form.ilce.errors|first }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.adres.id_for_label }}" class="form-label">
+                                <strong>Adres <span class="text-danger">*</span></strong>
+                            </label>
+                            {{ form.adres }}
+                            {% if form.adres.errors %}
+                                <div class="text-danger small">{{ form.adres.errors|first }}</div>
+                            {% endif %}
+                        </div>
+
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {{ form.non_field_errors }}
+                            </div>
+                        {% endif %}
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-between mt-4">
+                            <a href="{% url 'anahtarlik:sahip_profilim' %}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-1"></i> Geri Dön
+                            </a>
+                            <button type="submit" class="btn btn-success px-5">
+                                <i class="fas fa-save me-1"></i> Kaydet
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_css %}
+<style>
+/* Cam Efekti ve Modern Kart Tasarımı */
+.glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-soft);
+    transition: var(--transition-gentle);
+    padding: 2rem;
+}
+
+.glass-card:hover {
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-2px);
+}
+
+.text-gradient {
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 600;
+}
+
+/* Form Elemanları */
+.form-control, .form-select {
+    border-radius: var(--border-radius-sm);
+    border: 1px solid var(--glass-border);
+    background: rgba(255, 255, 255, 0.8);
+    padding: 0.75rem 1rem;
+    transition: var(--transition-gentle);
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.25rem rgba(91, 155, 213, 0.25);
+    background: rgba(255, 255, 255, 0.95);
+}
+
+.form-label {
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+/* Butonlar */
+.btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--border-radius-sm);
+    font-weight: 500;
+    transition: var(--transition-gentle);
+}
+
+.btn-success {
+    background: var(--primary-gradient);
+    border: none;
+}
+
+.btn-success:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+}
+
+.btn-secondary {
+    background: var(--surface-soft);
+    border: 1px solid var(--text-muted);
+    color: var(--text-secondary);
+}
+
+.btn-secondary:hover {
+    background: var(--surface-primary);
+    border-color: var(--text-secondary);
+    color: var(--text-primary);
+    transform: translateY(-2px);
+}
+
+/* Form Grupları Arası Boşluk */
+.row > [class*="col-"] {
+    margin-bottom: 1.5rem;
+}
+
+/* Hata Mesajları */
+.text-danger {
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+/* Zorunlu Alan İşareti */
+.text-danger span {
+    font-weight: bold;
+}
+
+/* Responsive Düzenlemeler */
+@media (max-width: 768px) {
+    .glass-card {
+        padding: 1.5rem;
+    }
+    
+    .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    
+    .d-md-flex {
+        flex-direction: column-reverse;
+    }
+    
+    .justify-content-md-between > * {
+        margin-bottom: 1rem;
+    }
+}
+
+/* Animasyonlar */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.form-control, .form-select, .btn {
+    animation: fadeIn 0.5s ease-out;
+}
+</style>
+{% endblock %}
+
+<script>
+// İl-İlçe dinamik yükleme (Admin panelinden uyarlandı)
+(function() {
+    'use strict';
+    
+    // Sayfa yüklendiğinde çalıştır
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+    
+    function init() {
+        console.log('🔧 Sahip profil düzenleme - İl-İlçe dinamik yükleme başlatılıyor...');
+        
+        const ilField = document.getElementById('id_il');
+        const ilceField = document.getElementById('id_ilce');
+        
+        if (!ilField || !ilceField) {
+            console.warn('⚠️ İl veya İlçe field bulunamadı');
+            return;
+        }
+        
+        console.log('✅ İl ve İlçe field bulundu');
+        
+        // Seçili ilçeyi sakla (edit modunda)
+        const initialIlceId = ilceField.value;
+        console.log('📝 Başlangıç ilçe ID:', initialIlceId);
+        
+        // İl değiştiğinde ilçe listesini güncelle
+        ilField.addEventListener('change', function() {
+            const ilId = this.value;
+            console.log('🔄 İl değişti:', ilId);
+            
+            // İlçe alanını temizle
+            ilceField.innerHTML = '<option value="">İlçe Seçiniz</option>';
+            
+            if (!ilId) {
+                console.log('❌ İl seçilmedi');
+                return;
+            }
+            
+            // Loading göster
+            ilceField.disabled = true;
+            const loadingOption = document.createElement('option');
+            loadingOption.value = '';
+            loadingOption.textContent = 'Yükleniyor...';
+            ilceField.appendChild(loadingOption);
+            
+            console.log('📡 API isteği gönderiliyor:', '/api/districts/?il_id=' + ilId);
+            
+            // Fetch API ile ilçe listesini getir
+            fetch('/api/districts/?il_id=' + ilId)
+                .then(function(response) {
+                    if (!response.ok) {
+                        throw new Error('HTTP error! status: ' + response.status);
+                    }
+                    return response.json();
+                })
+                .then(function(data) {
+                    console.log('✅ API yanıtı:', data);
+                    
+                    // İlçe alanını temizle
+                    ilceField.innerHTML = '<option value="">İlçe Seçiniz</option>';
+                    
+                    // İlçeleri ekle
+                    if (Array.isArray(data) && data.length > 0) {
+                        data.forEach(function(district) {
+                            const option = document.createElement('option');
+                            option.value = district.id;
+                            option.textContent = district.ad;
+                            
+                            // Edit modunda önceden seçili olan ilçeyi seç
+                            if (initialIlceId && district.id == initialIlceId) {
+                                option.selected = true;
+                            }
+                            
+                            ilceField.appendChild(option);
+                        });
+                        console.log('✅ ' + data.length + ' ilçe yüklendi');
+                    } else {
+                        console.warn('⚠️ İlçe bulunamadı');
+                        const noDataOption = document.createElement('option');
+                        noDataOption.value = '';
+                        noDataOption.textContent = 'İlçe bulunamadı';
+                        ilceField.appendChild(noDataOption);
+                    }
+                    
+                    // Enable field
+                    ilceField.disabled = false;
+                })
+                .catch(function(error) {
+                    console.error('❌ İlçe listesi yüklenirken hata:', error);
+                    
+                    ilceField.innerHTML = '<option value="">Hata: İlçeler yüklenemedi</option>';
+                    ilceField.disabled = false;
+                });
+        });
+        
+        // Sayfa ilk yüklendiğinde, eğer il seçili ise ilçe listesini yükle
+        if (ilField.value) {
+            console.log('🔄 İlk yükleme - İl seçili:', ilField.value);
+            // Küçük bir gecikme ile tetikle (DOM'un tamamen hazır olması için)
+            setTimeout(function() {
+                const event = new Event('change');
+                ilField.dispatchEvent(event);
+            }, 100);
+        }
+        
+        console.log('✅ Sahip profil düzenleme - İl-İlçe dinamik yükleme hazır');
+    }
+})();
+</script>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Performance-friendly helpers: respect reduced-motion and weak devices
+(function(){
+    try{
+        var prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        var cores = navigator.hardwareConcurrency || 4;
+        if (prefersReduced) document.documentElement.classList.add('reduced-motion');
+        if (cores && cores < 2) document.documentElement.classList.add('low-power');
+
+        // Conditionally init AOS if available and device is not low-power and user doesn't prefer reduced motion
+        if (window.AOS && !prefersReduced && cores >= 2) {
+            AOS.init({
+                once: true,
+                disable: function(){ return window.innerWidth < 520; }
+            });
+        }
+    }catch(e){ console.warn('Perf helper error', e); }
+})();
+</script>
+{% endblock %}
+
