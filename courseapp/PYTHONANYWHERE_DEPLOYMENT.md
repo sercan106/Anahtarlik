@@ -254,3 +254,6 @@ Sonra Web sekmesinden "Reload" butonuna tıklayın.
 - PythonAnywhere Dokümantasyonu: https://help.pythonanywhere.com/
 - Django Deployment: https://docs.djangoproject.com/en/stable/howto/deployment/
 
+
+
+
