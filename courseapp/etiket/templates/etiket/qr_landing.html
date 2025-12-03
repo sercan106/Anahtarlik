@@ -10,16 +10,21 @@
 
 <style>
     :root {
-        --primary-color: #4F46E5;
-        --success-color: #10B981;
-        --danger-color: #EF4444;
-        --warning-color: #F59E0B;
-        --bg-color: #F3F4F6;
+        --primary-color: #5B9BD5;
+        --secondary-color: #70C1B3;
+        --accent-color: #FF8C42;
+        --success-color: #6FCF97;
+        --danger-color: #EB5757;
+        --warning-color: #F2C94C;
+        --bg-color: linear-gradient(135deg, #f0f7ff 0%, #e8f4f8 50%, #f5f0ff 100%);
         --card-bg: rgba(255, 255, 255, 0.95);
+        --primary-gradient: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
+        --shadow-soft: 0 10px 40px rgba(91, 155, 213, 0.12);
+        --shadow-hover: 0 20px 60px rgba(91, 155, 213, 0.18);
     }
 
     body {
-        background-color: var(--bg-color);
+        background: var(--bg-color) !important;
         font-family: 'Inter', sans-serif;
         padding-bottom: 100px; /* Sticky footer payı */
     }
@@ -28,12 +33,16 @@
     .modern-card {
         background: var(--card-bg);
         backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.5);
+        border: 1px solid rgba(91, 155, 213, 0.1);
         border-radius: 24px;
-        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        box-shadow: var(--shadow-soft);
         overflow: hidden;
         margin-bottom: 24px;
-        transition: transform 0.2s;
+        transition: all 0.3s ease;
+    }
+    
+    .modern-card:hover {
+        box-shadow: var(--shadow-hover);
     }
 
     /* Kayıp Modu Animasyonu */
@@ -43,9 +52,9 @@
     }
 
     @keyframes pulse-red {
-        0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
-        70% { box-shadow: 0 0 0 20px rgba(239, 68, 68, 0); }
-        100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        0% { box-shadow: 0 0 0 0 rgba(235, 87, 87, 0.4); }
+        70% { box-shadow: 0 0 0 20px rgba(235, 87, 87, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(235, 87, 87, 0); }
     }
 
     /* Profil Resmi */
@@ -71,11 +80,11 @@
     /* Başlık Kartı Arkaplanı */
     .header-bg {
         height: 160px;
-        background: linear-gradient(135deg, var(--primary-color) 0%, #818CF8 100%);
+        background: var(--primary-gradient);
         border-radius: 24px 24px 0 0;
     }
     .header-bg.lost {
-        background: linear-gradient(135deg, var(--danger-color) 0%, #FCA5A5 100%);
+        background: linear-gradient(135deg, var(--danger-color) 0%, #ff6b6b 100%);
     }
 
     /* Bilgi Kutucukları */
@@ -126,10 +135,44 @@
     }
     .btn-xl:active { transform: scale(0.98); }
 
-    .btn-whatsapp { background-color: #25D366; color: white; border: none; }
-    .btn-phone { background-color: var(--primary-color); color: white; border: none; }
-    .btn-whatsapp:hover { background-color: #1ebc57; color: white; }
-    .btn-phone:hover { background-color: #4338ca; color: white; }
+    .btn-whatsapp { 
+        background: linear-gradient(135deg, #25D366 0%, #1ebc57 100%); 
+        color: white; 
+        border: none; 
+        box-shadow: 0 6px 20px rgba(37, 211, 102, 0.35);
+    }
+    .btn-phone { 
+        background: var(--primary-gradient); 
+        color: white; 
+        border: none; 
+        box-shadow: 0 6px 20px rgba(91, 155, 213, 0.35);
+    }
+    .btn-whatsapp:hover { 
+        box-shadow: 0 10px 30px rgba(37, 211, 102, 0.45); 
+        color: white; 
+        transform: translateY(-2px);
+    }
+    .btn-phone:hover { 
+        box-shadow: 0 10px 30px rgba(91, 155, 213, 0.45); 
+        color: white; 
+        transform: translateY(-2px);
+    }
+    
+    @media (prefers-reduced-motion: reduce) {
+        .btn-xl,
+        .modern-card {
+            transition: none;
+        }
+        
+        .btn-whatsapp:hover,
+        .btn-phone:hover {
+            transform: none;
+        }
+        
+        .emergency-mode {
+            animation: none;
+        }
+    }
 
 </style>
 {% endblock %}

@@ -3,86 +3,395 @@
 
 {% block title %}Hesap Ayarları - PetSafe Hub{% endblock %}
 
+{% block css_dosyalar %}
+<style>
+    /* ================================================
+       ⚙️ HESAP AYARLARI SAYFASI
+       Renk Paleti: #5B9BD5, #70C1B3, #FF8C42
+       ================================================ */
+    
+    .settings-page {
+        background: linear-gradient(135deg, #f0f7ff 0%, #e8f4f8 50%, #f5f0ff 100%);
+        min-height: 100vh;
+        padding: 40px 0 80px;
+    }
+    
+    .settings-container {
+        max-width: 700px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+    
+    /* ========== CARD ========== */
+    .settings-card {
+        background: white;
+        border-radius: 24px;
+        box-shadow: 0 10px 40px rgba(91, 155, 213, 0.12);
+        border: 1px solid rgba(91, 155, 213, 0.1);
+        overflow: hidden;
+    }
+    
+    .card-header-modern {
+        background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
+        color: white;
+        padding: 28px 32px;
+        text-align: center;
+    }
+    
+    .card-header-modern h5 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+    
+    .card-header-modern p {
+        margin: 0;
+        opacity: 0.95;
+        font-size: 0.95rem;
+    }
+    
+    .card-body-modern {
+        padding: 32px;
+    }
+    
+    /* ========== FORM ========== */
+    .form-section {
+        margin-bottom: 32px;
+    }
+    
+    .form-section:last-of-type {
+        margin-bottom: 0;
+    }
+    
+    .section-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #5B9BD5;
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid rgba(91, 155, 213, 0.2);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-label {
+        font-weight: 600;
+        color: #334155;
+        margin-bottom: 8px;
+        font-size: 0.9rem;
+        display: block;
+    }
+    
+    .form-control {
+        width: 100%;
+        padding: 14px 18px;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        font-size: 1rem;
+        transition: all 0.25s ease;
+        background: #f8fafc;
+    }
+    
+    .form-control:focus {
+        outline: none;
+        border-color: #5B9BD5;
+        background: white;
+        box-shadow: 0 0 0 4px rgba(91, 155, 213, 0.1);
+    }
+    
+    .form-text {
+        font-size: 0.8rem;
+        color: #94a3b8;
+        margin-top: 6px;
+    }
+    
+    .text-danger {
+        color: #EB5757;
+        font-size: 0.85rem;
+        margin-top: 6px;
+        display: block;
+    }
+    
+    /* ========== ALERT ========== */
+    .alert-modern {
+        border-radius: 12px;
+        padding: 16px 20px;
+        margin-bottom: 24px;
+        border: none;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .alert-success-modern {
+        background: linear-gradient(135deg, rgba(111, 207, 151, 0.1) 0%, rgba(112, 193, 179, 0.1) 100%);
+        border-left: 4px solid #6FCF97;
+        color: #065f46;
+    }
+    
+    .alert-error-modern {
+        background: linear-gradient(135deg, rgba(235, 87, 87, 0.1) 0%, rgba(255, 107, 107, 0.1) 100%);
+        border-left: 4px solid #EB5757;
+        color: #991b1b;
+    }
+    
+    .alert-warning-modern {
+        background: linear-gradient(135deg, rgba(242, 201, 76, 0.1) 0%, rgba(255, 184, 140, 0.1) 100%);
+        border-left: 4px solid #F2C94C;
+        color: #854d0e;
+    }
+    
+    .alert-info-modern {
+        background: linear-gradient(135deg, rgba(91, 155, 213, 0.1) 0%, rgba(112, 193, 179, 0.1) 100%);
+        border-left: 4px solid #5B9BD5;
+        color: #1e3a5f;
+    }
+    
+    /* ========== DIVIDER ========== */
+    .divider {
+        height: 2px;
+        background: linear-gradient(90deg, transparent 0%, rgba(91, 155, 213, 0.2) 50%, transparent 100%);
+        margin: 32px 0;
+        border: none;
+    }
+    
+    /* ========== BUTTONS ========== */
+    .form-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 32px;
+    }
+    
+    .btn-modern {
+        padding: 14px 28px;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 1rem;
+        border: none;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        text-decoration: none;
+        flex: 1;
+    }
+    
+    .btn-primary-modern {
+        background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
+        color: white;
+        box-shadow: 0 6px 20px rgba(91, 155, 213, 0.35);
+    }
+    
+    .btn-primary-modern:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(91, 155, 213, 0.45);
+        color: white;
+        text-decoration: none;
+    }
+    
+    .btn-secondary-modern {
+        background: white;
+        color: #64748b;
+        border: 2px solid #e2e8f0;
+    }
+    
+    .btn-secondary-modern:hover {
+        border-color: #5B9BD5;
+        color: #5B9BD5;
+        background: rgba(91, 155, 213, 0.05);
+        text-decoration: none;
+    }
+    
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 768px) {
+        .settings-page {
+            padding: 24px 0 60px;
+        }
+        
+        .settings-container {
+            padding: 0 16px;
+        }
+        
+        .card-header-modern {
+            padding: 24px 20px;
+        }
+        
+        .card-header-modern h5 {
+            font-size: 1.3rem;
+        }
+        
+        .card-body-modern {
+            padding: 24px 20px;
+        }
+        
+        .form-actions {
+            flex-direction: column;
+        }
+        
+        .btn-modern {
+            width: 100%;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .card-header-modern h5 {
+            font-size: 1.2rem;
+        }
+        
+        .card-body-modern {
+            padding: 20px 16px;
+        }
+        
+        .section-title {
+            font-size: 1rem;
+        }
+    }
+    
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+        .form-control,
+        .btn-modern {
+            transition: none;
+        }
+        
+        .btn-primary-modern:hover {
+            transform: none;
+        }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="container">
-    <div class="card shadow-sm mx-auto" style="max-width: 600px;">
-        <div class="card-header text-center">
-            <h5 class="mb-0">Hesap Ayarları</h5>
-            <p class="text-muted mb-0">Kullanıcı bilgilerinizi ve şifrenizi güncelleyin.</p>
-        </div>
-        <div class="card-body">
-            {% if messages %}
-            <div class="mb-3">
-                {% for message in messages %}
-                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
-                {% endfor %}
+<div class="settings-page">
+    <div class="settings-container">
+        <div class="settings-card">
+            <div class="card-header-modern">
+                <h5><i class="fas fa-cog me-2"></i>Hesap Ayarları</h5>
+                <p>Kullanıcı bilgilerinizi ve şifrenizi güncelleyin</p>
             </div>
-            {% endif %}
+            <div class="card-body-modern">
+                {% if messages %}
+                <div class="mb-3">
+                    {% for message in messages %}
+                    <div class="alert-modern 
+                        {% if message.tags == 'success' %}alert-success-modern
+                        {% elif message.tags == 'error' %}alert-error-modern
+                        {% elif message.tags == 'warning' %}alert-warning-modern
+                        {% else %}alert-info-modern{% endif %}">
+                        <i class="fas 
+                            {% if message.tags == 'success' %}fa-check-circle
+                            {% elif message.tags == 'error' %}fa-exclamation-circle
+                            {% elif message.tags == 'warning' %}fa-exclamation-triangle
+                            {% else %}fa-info-circle{% endif %}"></i>
+                        <span>{{ message }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
 
-            <form method="post">
-                {% csrf_token %}
-                {{ form.non_field_errors }}
-                
-                <h6 class="mb-3">Kullanıcı Bilgileri</h6>
-                <div class="mb-3">
-                    <label for="id_username" class="form-label">{{ form.username.label }}</label>
-                    {{ form.username }}
-                    {% if form.username.errors %}<div class="text-danger small mt-1">{{ form.username.errors }}</div>{% endif %}
-                </div>
-                
-                <div class="mb-3">
-                    <label for="id_first_name" class="form-label">{{ form.first_name.label }}</label>
-                    {{ form.first_name }}
-                    {% if form.first_name.errors %}<div class="text-danger small mt-1">{{ form.first_name.errors }}</div>{% endif %}
-                </div>
-                
-                <div class="mb-3">
-                    <label for="id_last_name" class="form-label">{{ form.last_name.label }}</label>
-                    {{ form.last_name }}
-                    {% if form.last_name.errors %}<div class="text-danger small mt-1">{{ form.last_name.errors }}</div>{% endif %}
-                </div>
-                
-                <div class="mb-3">
-                    <label for="id_email" class="form-label">{{ form.email.label }}</label>
-                    {{ form.email }}
-                    {% if form.email.errors %}<div class="text-danger small mt-1">{{ form.email.errors }}</div>{% endif %}
-                </div>
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.non_field_errors }}
+                    
+                    <!-- Kullanıcı Bilgileri -->
+                    <div class="form-section">
+                        <h6 class="section-title">
+                            <i class="fas fa-user"></i>Kullanıcı Bilgileri
+                        </h6>
+                        
+                        <div class="form-group">
+                            <label for="id_username" class="form-label">{{ form.username.label }}</label>
+                            {{ form.username }}
+                            {% if form.username.errors %}
+                            <span class="text-danger">{{ form.username.errors|first }}</span>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="id_first_name" class="form-label">{{ form.first_name.label }}</label>
+                            {{ form.first_name }}
+                            {% if form.first_name.errors %}
+                            <span class="text-danger">{{ form.first_name.errors|first }}</span>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="id_last_name" class="form-label">{{ form.last_name.label }}</label>
+                            {{ form.last_name }}
+                            {% if form.last_name.errors %}
+                            <span class="text-danger">{{ form.last_name.errors|first }}</span>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="id_email" class="form-label">{{ form.email.label }}</label>
+                            {{ form.email }}
+                            {% if form.email.errors %}
+                            <span class="text-danger">{{ form.email.errors|first }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
 
-                <hr>
-                
-                <h6 class="mb-3">Şifre Değiştirme</h6>
-                <div class="mb-3">
-                    <label for="id_current_password" class="form-label">{{ form.current_password.label }}</label>
-                    {{ form.current_password }}
-                    {% if form.current_password.errors %}<div class="text-danger small mt-1">{{ form.current_password.errors }}</div>{% endif %}
-                    <div class="form-text">{{ form.current_password.help_text }}</div>
-                </div>
-                
-                <div class="mb-3">
-                    <label for="id_new_password1" class="form-label">{{ form.new_password1.label }}</label>
-                    {{ form.new_password1 }}
-                    {% if form.new_password1.errors %}<div class="text-danger small mt-1">{{ form.new_password1.errors }}</div>{% endif %}
-                    <div class="form-text">{{ form.new_password1.help_text }}</div>
-                </div>
-                
-                <div class="mb-3">
-                    <label for="id_new_password2" class="form-label">{{ form.new_password2.label }}</label>
-                    {{ form.new_password2 }}
-                    {% if form.new_password2.errors %}<div class="text-danger small mt-1">{{ form.new_password2.errors }}</div>{% endif %}
-                    <div class="form-text">{{ form.new_password2.help_text }}</div>
-                </div>
+                    <hr class="divider">
+                    
+                    <!-- Şifre Değiştirme -->
+                    <div class="form-section">
+                        <h6 class="section-title">
+                            <i class="fas fa-lock"></i>Şifre Değiştirme
+                        </h6>
+                        
+                        <div class="form-group">
+                            <label for="id_current_password" class="form-label">{{ form.current_password.label }}</label>
+                            {{ form.current_password }}
+                            {% if form.current_password.errors %}
+                            <span class="text-danger">{{ form.current_password.errors|first }}</span>
+                            {% endif %}
+                            {% if form.current_password.help_text %}
+                            <p class="form-text">{{ form.current_password.help_text }}</p>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="id_new_password1" class="form-label">{{ form.new_password1.label }}</label>
+                            {{ form.new_password1 }}
+                            {% if form.new_password1.errors %}
+                            <span class="text-danger">{{ form.new_password1.errors|first }}</span>
+                            {% endif %}
+                            {% if form.new_password1.help_text %}
+                            <p class="form-text">{{ form.new_password1.help_text }}</p>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="id_new_password2" class="form-label">{{ form.new_password2.label }}</label>
+                            {{ form.new_password2 }}
+                            {% if form.new_password2.errors %}
+                            <span class="text-danger">{{ form.new_password2.errors|first }}</span>
+                            {% endif %}
+                            {% if form.new_password2.help_text %}
+                            <p class="form-text">{{ form.new_password2.help_text }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
 
-                <div class="d-grid gap-2 mt-4">
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save me-2"></i>Değişiklikleri Kaydet
-                    </button>
-                    <a href="{% url 'anahtarlik:kullanici_paneli' %}" class="btn btn-outline-secondary">
-                        <i class="fas fa-arrow-left me-2"></i>Panele Dön
-                    </a>
-                </div>
-            </form>
+                    <div class="form-actions">
+                        <a href="{% url 'anahtarlik:kullanici_paneli' %}" class="btn-modern btn-secondary-modern">
+                            <i class="fas fa-arrow-left"></i>Panele Dön
+                        </a>
+                        <button type="submit" class="btn-modern btn-primary-modern">
+                            <i class="fas fa-save"></i>Değişiklikleri Kaydet
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>
 {% endblock %}
-

@@ -1,20 +1,24 @@
-<!-- accaunt/templates/accaunt/register_success.html -->
 {% extends 'ana.html' %}
 {% load static %}
 
-{% block baslik %}
-<title>PatiGuard - Kayıt Başarılı</title>
-{% endblock baslik %}
+{% block title %}Kayıt Başarılı - PetSafe Hub{% endblock %}
 
 {% block css_dosyalar %}
 <style>
+    /* ================================================
+       ✅ KAYIT BAŞARILI SAYFASI
+       Renk Paleti: #5B9BD5, #70C1B3, #6FCF97
+       ================================================ */
+    
     :root {
-        --primary-color: #4361ee;
-        --secondary-color: #3f37c9;
-        --success-color: #4cc9f0;
-        --text-color: #2b2d42;
-        --light-color: #f8f9fa;
-        --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        --primary-color: #5B9BD5;
+        --secondary-color: #70C1B3;
+        --success-color: #6FCF97;
+        --primary-gradient: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
+        --success-gradient: linear-gradient(135deg, #6FCF97 0%, #70C1B3 100%);
+        --text-color: #1e293b;
+        --shadow-soft: 0 10px 40px rgba(91, 155, 213, 0.12);
+        --shadow-hover: 0 20px 60px rgba(91, 155, 213, 0.18);
         --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
     }
     
@@ -23,27 +27,21 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        background: linear-gradient(135deg, #f0f7ff 0%, #e8f4f8 50%, #f5f0ff 100%);
         padding: 2rem;
     }
     
     .success-card {
         background: white;
-        border-radius: 16px;
-        box-shadow: var(--shadow);
+        border-radius: 24px;
+        box-shadow: var(--shadow-soft);
         padding: 3rem;
         width: 100%;
         max-width: 500px;
         text-align: center;
-        transform: translateY(0);
-        transition: var(--transition);
         position: relative;
         overflow: hidden;
-    }
-    
-    .success-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        border: 1px solid rgba(91, 155, 213, 0.1);
     }
     
     .success-card::before {
@@ -53,16 +51,16 @@
         left: 0;
         width: 100%;
         height: 5px;
-        background: linear-gradient(90deg, #4361ee, #4cc9f0);
+        background: var(--success-gradient);
     }
     
     .success-icon {
         font-size: 5rem;
         margin-bottom: 1.5rem;
-        color: var(--success-color);
-        background: linear-gradient(135deg, #4cc9f0, #4361ee);
+        background: var(--success-gradient);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
+        background-clip: text;
         animation: bounce 1.5s infinite;
     }
     
@@ -73,23 +71,26 @@
     
     .success-title {
         font-size: 2rem;
-        font-weight: 700;
-        color: var(--text-color);
+        font-weight: 800;
+        background: var(--primary-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
         margin-bottom: 1rem;
     }
     
     .success-message {
         font-size: 1.1rem;
-        color: #6c757d;
+        color: #64748b;
         margin-bottom: 2rem;
         line-height: 1.6;
     }
     
     .btn-login {
-        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        background: var(--primary-gradient);
         color: white;
         border: none;
-        padding: 0.8rem 2.5rem;
+        padding: 14px 32px;
         border-radius: 50px;
         font-weight: 600;
         font-size: 1rem;
@@ -98,45 +99,19 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .btn-login::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-        transition: 0.5s;
-    }
-    
-    .btn-login:hover::before {
-        left: 100%;
+        gap: 10px;
+        box-shadow: 0 6px 20px rgba(91, 155, 213, 0.35);
+        text-decoration: none;
     }
     
     .btn-login:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(67, 97, 238, 0.4);
+        box-shadow: 0 10px 30px rgba(91, 155, 213, 0.45);
+        color: white;
+        text-decoration: none;
     }
     
-    .btn-login i {
-        margin-right: 0.6rem;
-        font-size: 1.1rem;
-    }
-    
-    .confetti {
-        position: absolute;
-        width: 10px;
-        height: 10px;
-        background-color: #f00;
-        opacity: 0;
-    }
-    
-    /* Responsive Design */
+    /* Responsive */
     @media (max-width: 768px) {
         .success-wrapper {
             padding: 1rem;
@@ -155,7 +130,7 @@
         }
     }
     
-    @media (max-width: 480px) {
+    @media (max-width: 576px) {
         .success-icon {
             font-size: 4rem;
         }
@@ -165,12 +140,26 @@
         }
         
         .btn-login {
-            padding: 0.7rem 2rem;
-            font-size: 0.9rem;
+            padding: 12px 28px;
+            font-size: 0.95rem;
+        }
+    }
+    
+    @media (prefers-reduced-motion: reduce) {
+        .success-icon {
+            animation: none;
+        }
+        
+        .btn-login {
+            transition: none;
+        }
+        
+        .btn-login:hover {
+            transform: none;
         }
     }
 </style>
-{% endblock css_dosyalar %}
+{% endblock %}
 
 {% block content %}
 <div class="success-wrapper">
@@ -178,7 +167,7 @@
         <i class="fas fa-check-circle success-icon"></i>
         <h1 class="success-title">Kayıt Başarılı!</h1>
         <p class="success-message">
-            Tebrikler! PatiGuard ailesine hoş geldiniz. 
+            Tebrikler! PetSafe Hub ailesine hoş geldiniz. 
             Evcil dostunuzun güvenliği için artık hazırız. 
             Hemen giriş yaparak sistemi kullanmaya başlayabilirsiniz.
         </p>
@@ -187,40 +176,4 @@
         </a>
     </div>
 </div>
-
-<script>
-    // Basit confetti efekti
-    document.addEventListener('DOMContentLoaded', function() {
-        const colors = ['#4361ee', '#3f37c9', '#4cc9f0', '#4895ef', '#560bad'];
-        const card = document.querySelector('.success-card');
-        
-        for (let i = 0; i < 50; i++) {
-            const confetti = document.createElement('div');
-            confetti.classList.add('confetti');
-            confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-            confetti.style.left = Math.random() * 100 + '%';
-            confetti.style.top = -10 + 'px';
-            confetti.style.width = Math.random() * 8 + 5 + 'px';
-            confetti.style.height = Math.random() * 8 + 5 + 'px';
-            card.appendChild(confetti);
-            
-            animateConfetti(confetti);
-        }
-        
-        function animateConfetti(element) {
-            const duration = Math.random() * 3 + 2;
-            const delay = Math.random() * 5;
-            
-            setTimeout(() => {
-                element.style.opacity = '1';
-                element.style.transform = `translateY(${window.innerHeight}px) rotate(${Math.random() * 360}deg)`;
-                element.style.transition = `all ${duration}s linear`;
-                
-                setTimeout(() => {
-                    element.remove();
-                }, duration * 1000);
-            }, delay * 1000);
-        }
-    });
-</script>
-{% endblock content %}
+{% endblock %}

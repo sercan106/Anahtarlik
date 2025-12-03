@@ -5,1403 +5,97 @@
 {% block baslik %}Kullanıcı Paneli - PetSafe Hub{% endblock %}
 
 {% block css_dosyalar %}
-<link href="https://unpkg.com/aos@next/dist/aos.css" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
-<style>
-/* 🎨 HERO SECTION - MODERN GLASSMORPHIC DASHBOARD */
-.dashboard-hero {
-    position: relative;
-    background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 50%, #FF8C42 100%);
-    padding: 80px 0 100px;
-    color: white;
-    overflow: hidden;
-    animation: heroGradient 15s ease infinite;
-    background-size: 200% 200%;
-    width: 100%;
-    max-width: 100vw;
-}
-
-@keyframes heroGradient {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-}
-
-.dashboard-hero::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background:
-        radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.12) 0%, transparent 50%),
-        radial-gradient(circle at 80% 70%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
-        radial-gradient(circle at 50% 50%, rgba(255, 140, 66, 0.08) 0%, transparent 60%);
-    animation: float 20s ease-in-out infinite;
-}
-
-@keyframes float {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-30px); }
-}
-
-.dashboard-hero .container {
-    position: relative;
-    z-index: 2;
-}
-
-.welcome-title {
-    font-size: clamp(2rem, 4.5vw, 3rem);
-    font-weight: 800;
-    margin-bottom: 0.8rem;
-    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-    background: linear-gradient(45deg, #ffffff, #f0f8ff, #e6f7ff);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    animation: titleShine 3s ease-in-out infinite;
-    background-size: 200% 200%;
-}
-
-@keyframes titleShine {
-    0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-}
-
-.welcome-subtitle {
-    font-size: clamp(1.1rem, 2.2vw, 1.4rem);
-    opacity: 0.95;
-    font-weight: 400;
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
-    line-height: 1.6;
-}
-
-/* 📊 STAT CARDS - ENHANCED GLASSMORPHISM */
-.stats-container {
-    margin-top: -60px;
-    position: relative;
-    z-index: 10;
-}
-
-.stat-card {
-    background: linear-gradient(145deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 0.92) 100%);
-    backdrop-filter: blur(25px);
-    -webkit-backdrop-filter: blur(25px);
-    border-radius: 25px;
-    padding: 30px;
-    border: 2px solid rgba(255, 255, 255, 0.6);
-    box-shadow: 0 10px 40px rgba(91, 155, 213, 0.12),
-                0 0 0 1px rgba(255, 255, 255, 0.5) inset;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    height: 100%;
-    position: relative;
-    overflow: hidden;
-}
-
-.stat-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 5px;
-    background: var(--primary-gradient, linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%));
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.4s ease;
-}
-
-.stat-card:hover::before {
-    transform: scaleX(1);
-}
-
-.stat-card:hover {
-    transform: translateY(-15px) scale(1.02);
-    box-shadow: 0 20px 60px rgba(91, 155, 213, 0.2),
-                0 0 0 1px rgba(255, 255, 255, 0.8) inset;
-    border-color: rgba(91, 155, 213, 0.4);
-}
-
-.stat-icon {
-    width: 70px;
-    height: 70px;
-    border-radius: 18px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2rem;
-    margin-bottom: 20px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.stat-card:hover .stat-icon {
-    transform: scale(1.15) rotateY(360deg);
-}
-
-.stat-icon-blue {
-    background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
-    color: white;
-    box-shadow: 0 8px 25px rgba(91, 155, 213, 0.4);
-}
-
-.stat-icon-green {
-    background: linear-gradient(135deg, #6FCF97 0%, #56CCF2 100%);
-    color: white;
-    box-shadow: 0 8px 25px rgba(111, 207, 151, 0.4);
-}
-
-.stat-icon-orange {
-    background: linear-gradient(135deg, #FF8C42 0%, #FFB88C 100%);
-    color: white;
-    box-shadow: 0 8px 25px rgba(255, 140, 66, 0.4);
-}
-
-.stat-icon-purple {
-    background: linear-gradient(135deg, #9B9ECE 0%, #B4A7D6 100%);
-    color: white;
-    box-shadow: 0 8px 25px rgba(155, 158, 206, 0.4);
-}
-
-.stat-value {
-    font-size: 2.5rem;
-    font-weight: 800;
-    background: linear-gradient(135deg, #2C3E50 0%, #5B9BD5 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    line-height: 1;
-    margin-bottom: 8px;
-}
-
-.stat-label {
-    font-size: 1rem;
-    color: #7F8C8D;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    font-size: 0.85rem;
-}
-
-/* 🚀 QUICK ACTIONS - ENHANCED */
-.quick-actions {
-    margin: 60px 0;
-}
-
-.action-btn {
-    background: linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 2px solid rgba(91, 155, 213, 0.2);
-    border-radius: 20px;
-    padding: 25px;
-    text-decoration: none;
-    color: #2C3E50;
-    display: flex;
-    align-items: center;
-    gap: 18px;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
-    position: relative;
-    overflow: hidden;
-}
-
-.action-btn::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, rgba(91, 155, 213, 0.05) 0%, rgba(112, 193, 179, 0.05) 100%);
-    opacity: 0;
-    transition: opacity 0.4s ease;
-}
-
-.action-btn:hover::before {
-    opacity: 1;
-}
-
-.action-btn:hover {
-    transform: translateY(-8px) scale(1.02);
-    box-shadow: 0 15px 40px rgba(91, 155, 213, 0.15);
-    border-color: rgba(91, 155, 213, 0.4);
-    color: #2C3E50;
-}
-
-.action-icon {
-    width: 60px;
-    height: 60px;
-    border-radius: 15px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.6rem;
-    flex-shrink: 0;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    z-index: 1;
-}
-
-.action-btn:hover .action-icon {
-    transform: scale(1.1) rotate(-5deg);
-}
-
-.action-content {
-    position: relative;
-    z-index: 1;
-}
-
-.action-content h5 {
-    margin: 0 0 5px 0;
-    font-weight: 700;
-    font-size: 1.15rem;
-    color: #2C3E50;
-}
-
-.action-content p {
-    margin: 0;
-    font-size: 0.9rem;
-    color: #7F8C8D;
-    font-weight: 500;
-}
-
-/* 🏥 VETERINER CARD - MODERN */
-.vet-card {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%);
-    backdrop-filter: blur(20px);
-    border-radius: 25px;
-    padding: 30px;
-    border: 2px solid rgba(91, 155, 213, 0.2);
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-    margin-bottom: 40px;
-    transition: all 0.4s ease;
-}
-
-.vet-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
-    border-color: rgba(91, 155, 213, 0.4);
-}
-
-.vet-avatar {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    border: 4px solid rgba(91, 155, 213, 0.3);
-    object-fit: cover;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-}
-
-.vet-avatar-placeholder {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2.5rem;
-    color: white;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-}
-
-.vet-badge {
-    background: linear-gradient(135deg, #6FCF97 0%, #56CCF2 100%);
-    color: white;
-    padding: 5px 15px;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-}
-
-.vet-contact-btn {
-    width: 45px;
-    height: 45px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.2rem;
-    text-decoration: none;
-    transition: all 0.3s ease;
-    border: 2px solid transparent;
-}
-
-.vet-contact-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-}
-
-.vet-contact-phone {
-    background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
-    color: white;
-}
-
-.vet-contact-whatsapp {
-    background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
-    color: white;
-}
-
-.vet-contact-email {
-    background: linear-gradient(135deg, #56CCF2 0%, #2F80ED 100%);
-    color: white;
-}
-
-.vet-contact-instagram {
-    background: linear-gradient(135deg, #F56040 0%, #833AB4 50%, #C13584 100%);
-    color: white;
-}
-
-/* 🐾 PET CARDS - PREMIUM DESIGN */
-.pet-card {
-    background: linear-gradient(145deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 0.92) 100%);
-    backdrop-filter: blur(25px);
-    -webkit-backdrop-filter: blur(25px);
-    border-radius: 25px;
-    overflow: hidden;
-    border: 2px solid rgba(255, 255, 255, 0.6);
-    box-shadow: 0 10px 40px rgba(91, 155, 213, 0.12),
-                0 0 0 1px rgba(255, 255, 255, 0.5) inset;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    height: 100%;
-    position: relative;
-}
-
-.pet-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 5px;
-    background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 50%, #FF8C42 100%);
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.4s ease;
-    z-index: 1;
-}
-
-.pet-card:hover::before {
-    transform: scaleX(1);
-}
-
-.pet-card:hover {
-    transform: translateY(-15px) scale(1.03);
-    box-shadow: 0 20px 60px rgba(91, 155, 213, 0.2),
-                0 0 0 1px rgba(255, 255, 255, 0.8) inset;
-    border-color: rgba(91, 155, 213, 0.4);
-}
-
-.pet-image-container {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 4 / 3;
-    overflow: hidden;
-    background: linear-gradient(135deg, #EBF4FA 0%, #E8F5F2 100%);
-}
-
-.pet-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.pet-card:hover .pet-image {
-    transform: scale(1.15) rotate(2deg);
-}
-
-.pet-status-badge {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    padding: 10px 20px;
-    border-radius: 25px;
-    font-size: 0.85rem;
-    font-weight: 700;
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    animation: pulse 2s ease infinite;
-    z-index: 2;
-}
-
-@keyframes pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-}
-
-.status-safe {
-    background: linear-gradient(135deg, rgba(111, 207, 151, 0.98) 0%, rgba(86, 204, 242, 0.98) 100%);
-    color: white;
-    box-shadow: 0 8px 25px rgba(111, 207, 151, 0.4);
-}
-
-.status-lost {
-    background: linear-gradient(135deg, rgba(239, 68, 68, 0.98) 0%, rgba(220, 38, 38, 0.98) 100%);
-    color: white;
-    box-shadow: 0 8px 25px rgba(239, 68, 68, 0.5);
-    animation: pulse 1.5s ease infinite;
-}
-
-.pet-card-body {
-    padding: 30px;
-    background: linear-gradient(to bottom, transparent 0%, rgba(255, 255, 255, 0.5) 100%);
-}
-
-.pet-name {
-    font-size: 1.5rem;
-    font-weight: 800;
-    background: linear-gradient(135deg, #2C3E50 0%, #5B9BD5 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin-bottom: 20px;
-    line-height: 1.2;
-}
-
-.pet-info-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 0;
-    border-bottom: 1px solid rgba(127, 140, 141, 0.15);
-    transition: all 0.3s ease;
-}
-
-.pet-info-row:last-of-type {
-    border-bottom: none;
-}
-
-.pet-info-row:hover {
-    padding-left: 5px;
-    background: linear-gradient(90deg, rgba(91, 155, 213, 0.05) 0%, transparent 100%);
-}
-
-.pet-info-label {
-    color: #7F8C8D;
-    font-weight: 600;
-    font-size: 0.9rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.pet-info-value {
-    color: #2C3E50;
-    font-weight: 700;
-    font-size: 1rem;
-}
-
-.pet-actions {
-    display: flex;
-    gap: 10px;
-    margin-top: 25px;
-}
-
-.pet-btn {
-    flex: 1;
-    padding: 12px 8px;
-    border-radius: 15px;
-    font-size: 0.85rem;
-    font-weight: 700;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    border: 2px solid transparent;
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
-}
-
-.pet-btn i {
-    font-size: 1rem;
-    transition: transform 0.3s ease;
-}
-
-.pet-btn:hover i {
-    transform: scale(1.2);
-}
-
-.pet-btn-primary {
-    background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
-    color: white;
-    box-shadow: 0 4px 15px rgba(91, 155, 213, 0.3);
-}
-
-.pet-btn-primary:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(91, 155, 213, 0.4);
-    color: white;
-}
-
-.pet-btn-secondary {
-    background: linear-gradient(135deg, rgba(127, 140, 141, 0.1) 0%, rgba(127, 140, 141, 0.05) 100%);
-    color: #7F8C8D;
-    border-color: rgba(127, 140, 141, 0.3);
-}
-
-.pet-btn-secondary:hover {
-    background: linear-gradient(135deg, rgba(127, 140, 141, 0.2) 0%, rgba(127, 140, 141, 0.1) 100%);
-    border-color: rgba(127, 140, 141, 0.4);
-    transform: translateY(-3px);
-    color: #7F8C8D;
-    box-shadow: 0 5px 15px rgba(127, 140, 141, 0.2);
-}
-
-.pet-btn-danger {
-    background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(239, 68, 68, 0.05) 100%);
-    color: #ef4444;
-    border-color: rgba(239, 68, 68, 0.3);
-}
-
-.pet-btn-danger:hover {
-    background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(239, 68, 68, 0.1) 100%);
-    border-color: rgba(239, 68, 68, 0.5);
-    transform: translateY(-3px);
-    color: #ef4444;
-    box-shadow: 0 5px 15px rgba(239, 68, 68, 0.3);
-}
-
-/* 🔍 SEARCH BOX - ENHANCED */
-.search-box {
-    background: linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 2px solid rgba(91, 155, 213, 0.2);
-    border-radius: 20px;
-    padding: 18px 25px;
-    margin-bottom: 35px;
-    box-shadow: 0 8px 25px rgba(91, 155, 213, 0.1);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-}
-
-.search-box::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 20px;
-    padding: 2px;
-    background: linear-gradient(135deg, #5B9BD5, #70C1B3, #FF8C42);
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    opacity: 0;
-    transition: opacity 0.4s ease;
-}
-
-.search-box:focus-within::before {
-    opacity: 1;
-}
-
-.search-box:focus-within {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 35px rgba(91, 155, 213, 0.2);
-}
-
-.search-box input {
-    border: none;
-    background: transparent;
-    outline: none;
-    font-size: 1.05rem;
-    color: #2C3E50;
-    width: 100%;
-    font-weight: 500;
-}
-
-.search-box input::placeholder {
-    color: #95A5A6;
-    font-weight: 400;
-}
-
-/* 🚫 EMPTY STATE - PREMIUM DESIGN */
-.empty-state {
-    text-align: center;
-    padding: 100px 40px;
-    background: linear-gradient(145deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 0.92) 100%);
-    backdrop-filter: blur(25px);
-    -webkit-backdrop-filter: blur(25px);
-    border-radius: 30px;
-    border: 3px dashed rgba(91, 155, 213, 0.3);
-    margin: 50px 0;
-    box-shadow: 0 10px 40px rgba(91, 155, 213, 0.08);
-    transition: all 0.4s ease;
-    position: relative;
-    overflow: hidden;
-}
-
-.empty-state::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background:
-        radial-gradient(circle at 30% 40%, rgba(91, 155, 213, 0.05) 0%, transparent 50%),
-        radial-gradient(circle at 70% 60%, rgba(112, 193, 179, 0.05) 0%, transparent 50%);
-    animation: float 15s ease-in-out infinite;
-}
-
-.empty-state:hover {
-    border-color: rgba(91, 155, 213, 0.5);
-    transform: translateY(-5px);
-    box-shadow: 0 15px 50px rgba(91, 155, 213, 0.15);
-}
-
-.empty-state-icon {
-    font-size: 6rem;
-    background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 50%, #FF8C42 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin-bottom: 25px;
-    animation: float 3s ease-in-out infinite;
-    display: inline-block;
-}
-
-.empty-state h4 {
-    font-weight: 800;
-    font-size: 1.8rem;
-    background: linear-gradient(135deg, #2C3E50 0%, #5B9BD5 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin-bottom: 15px;
-}
-
-.empty-state p {
-    color: #7F8C8D;
-    font-size: 1.1rem;
-    margin-bottom: 35px;
-    font-weight: 500;
-}
-
-.empty-state-btn {
-    background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
-    color: white;
-    padding: 18px 45px;
-    border-radius: 50px;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 12px;
-    font-weight: 700;
-    font-size: 1.05rem;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 8px 25px rgba(91, 155, 213, 0.3);
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    position: relative;
-    overflow: hidden;
-}
-
-.empty-state-btn::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.3);
-    transform: translate(-50%, -50%);
-    transition: width 0.6s, height 0.6s;
-}
-
-.empty-state-btn:hover::before {
-    width: 400px;
-    height: 400px;
-}
-
-.empty-state-btn:hover {
-    transform: translateY(-5px) scale(1.05);
-    box-shadow: 0 15px 40px rgba(91, 155, 213, 0.4);
-    color: white;
-}
-
-/* 📄 PAGINATION - MODERN */
-.pagination {
-    margin-top: 60px;
-    gap: 10px;
-    justify-content: center;
-}
-
-.page-item .page-link {
-    border: 2px solid rgba(91, 155, 213, 0.2);
-    border-radius: 15px;
-    color: #5B9BD5;
-    font-weight: 700;
-    padding: 12px 20px;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    background: linear-gradient(145deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%);
-    backdrop-filter: blur(15px);
-    margin: 0 5px;
-}
-
-.page-item .page-link:hover {
-    background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
-    color: white;
-    border-color: #5B9BD5;
-    transform: translateY(-3px) scale(1.05);
-    box-shadow: 0 8px 25px rgba(91, 155, 213, 0.3);
-}
-
-.page-item.active .page-link {
-    background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
-    border-color: #5B9BD5;
-    color: white;
-    box-shadow: 0 8px 25px rgba(91, 155, 213, 0.3);
-}
-
-.page-item.disabled .page-link {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-/* 📱 MOBILE RESPONSIVE - ENHANCED */
-@media (max-width: 991px) {
-    .dashboard-hero {
-        padding: 60px 0 80px;
-    }
-
-    .stats-container {
-        margin-top: -40px;
-    }
-
-    .action-btn {
-        flex-direction: column;
-        text-align: center;
-        padding: 20px;
-    }
-}
-
-@media (max-width: 768px) {
-    .dashboard-hero {
-        padding: 50px 0 70px;
-    }
-
-    .welcome-title {
-        font-size: clamp(1.6rem, 4vw, 2rem);
-    }
-
-    .welcome-subtitle {
-        font-size: clamp(0.95rem, 2vw, 1.1rem);
-    }
-
-    .stats-container {
-        margin-top: -35px;
-    }
-
-    .stat-card {
-        padding: 25px;
-        margin-bottom: 15px;
-    }
-
-    .stat-icon {
-        width: 60px;
-        height: 60px;
-        font-size: 1.7rem;
-    }
-
-    .stat-value {
-        font-size: 2rem;
-    }
-
-    .quick-actions {
-        margin: 50px 0;
-    }
-
-    .vet-card {
-        padding: 25px;
-    }
-
-    .action-btn {
-        padding: 20px 18px;
-    }
-
-    .action-icon {
-        width: 55px;
-        height: 55px;
-        font-size: 1.5rem;
-    }
-
-    .pet-card-body {
-        padding: 25px;
-    }
-
-    .pet-name {
-        font-size: 1.3rem;
-    }
-
-    .pet-actions {
-        flex-direction: column;
-        gap: 12px;
-    }
-
-    .pet-btn {
-        width: 100%;
-        padding: 14px;
-    }
-
-    .search-box {
-        padding: 16px 20px;
-    }
-
-    .empty-state {
-        padding: 80px 30px;
-    }
-
-    .empty-state-icon {
-        font-size: 5rem;
-    }
-
-    .section-title {
-        font-size: clamp(1.5rem, 3vw, 1.8rem);
-    }
-
-    .section-title i {
-        font-size: 1.8rem;
-    }
-}
-
-@media (max-width: 576px) {
-    .dashboard-hero {
-        padding: 40px 0 60px;
-    }
-
-    .stat-card {
-        padding: 20px;
-    }
-
-    .stat-icon {
-        width: 55px;
-        height: 55px;
-        font-size: 1.5rem;
-        margin-bottom: 15px;
-    }
-
-    .stat-value {
-        font-size: 1.8rem;
-    }
-
-    .stat-label {
-        font-size: 0.8rem;
-    }
-
-    .quick-actions {
-        margin: 40px 0;
-    }
-
-    .action-btn {
-        padding: 18px 15px;
-    }
-
-    .action-icon {
-        width: 50px;
-        height: 50px;
-        font-size: 1.3rem;
-    }
-
-    .action-content h5 {
-        font-size: 1rem;
-    }
-
-    .action-content p {
-        font-size: 0.85rem;
-    }
-
-    .pet-card-body {
-        padding: 20px;
-    }
-
-    .pet-name {
-        font-size: 1.2rem;
-    }
-
-    .pet-status-badge {
-        top: 15px;
-        right: 15px;
-        padding: 8px 15px;
-        font-size: 0.75rem;
-    }
-
-    .empty-state {
-        padding: 60px 20px;
-    }
-
-    .empty-state-icon {
-        font-size: 4rem;
-    }
-
-    .empty-state h4 {
-        font-size: 1.5rem;
-    }
-
-    .empty-state p {
-        font-size: 1rem;
-    }
-
-    .empty-state-btn {
-        padding: 15px 35px;
-        font-size: 0.95rem;
-    }
-
-    .page-item .page-link {
-        padding: 10px 16px;
-        font-size: 0.9rem;
-    }
-}
-
-/* 🎭 ANIMATIONS */
-@keyframes slideInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.animate-slide-up {
-    animation: slideInUp 0.6s ease-out;
-}
-
-/* 🎨 SECTION TITLE - ENHANCED */
-.section-title {
-    font-size: clamp(1.8rem, 3.5vw, 2.5rem);
-    font-weight: 800;
-    background: linear-gradient(135deg, #2C3E50 0%, #5B9BD5 50%, #70C1B3 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin-bottom: 12px;
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    position: relative;
-}
-
-.section-title i {
-    background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    font-size: 2.2rem;
-    animation: float 3s ease-in-out infinite;
-}
-
-.section-subtitle {
-    color: #7F8C8D;
-    font-size: 1.1rem;
-    margin-bottom: 35px;
-    font-weight: 500;
-    line-height: 1.6;
-}
-</style>
+<link href="{% static 'css/panel.css' %}" rel="stylesheet">
 {% endblock %}
 
+{% block css_extra %}
+<style>
+    /* Evcil Hayvanlar Sayfası Layout Düzeltmeleri */
+    /* Pet Cards Section */
+    section.my-4 {
+        margin-top: 2rem;
+        margin-bottom: 3rem;
+        position: relative;
+        z-index: 1;
+    }
+    
+    /* Stats Container - Üstteki kartlara geçmemesi için */
+    .stats-container {
+        margin-top: 4rem;
+        margin-bottom: 3rem;
+        padding: 2rem 0;
+        position: relative;
+        z-index: 0;
+        clear: both;
+    }
+    
+    @media (min-width: 768px) {
+        section.my-4 {
+            margin-bottom: 4rem;
+        }
+        
+        .stats-container {
+            margin-top: 5rem;
+        }
+    }
+</style>
+{% endblock css_extra %}
+
 {% block content %}
-<!-- 🎨 DASHBOARD HERO -->
+{% if is_pets_page %}
+<!-- 🐾 EVCİL HAYVANLAR SAYFASI - Özel Düzen -->
+<!-- 🎨 PAGE HEADER -->
 <section class="dashboard-hero">
     <div class="container">
-        <div class="text-center">
-            <h1 class="welcome-title animate__animated animate__fadeInDown">
-                <i class="fas fa-paw me-2"></i>Hoş Geldin, {{ user.sahip.ad|default:user.first_name|default:user.username|title }}!
-            </h1>
-            <p class="welcome-subtitle animate__animated animate__fadeIn animate__delay-1s">
-                Evcil dostlarını yönet, sağlıklarını takip et ve onların mutluluğunu sağla 🐾
-            </p>
-        </div>
-    </div>
-</section>
-
-<!-- 📊 STATISTICS CARDS -->
-<section class="stats-container">
-    <div class="container">
-        <div class="row g-4" data-aos="fade-up">
-            <div class="col-lg-3 col-md-6">
-                <div class="stat-card">
-                    <div class="stat-icon stat-icon-blue">
-                        <i class="fas fa-paw"></i>
-                    </div>
-                    <div class="stat-value">{{ evcil_hayvanlar.paginator.count|default:0 }}</div>
-                    <div class="stat-label">Evcil Hayvan</div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6">
-                <div class="stat-card">
-                    <div class="stat-icon stat-icon-green">
-                        <i class="fas fa-qrcode"></i>
-                    </div>
-                    <div class="stat-value">{{ kunye_sayisi|default:0 }}</div>
-                    <div class="stat-label">Künye</div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6">
-                <div class="stat-card">
-                    <div class="stat-icon stat-icon-orange">
-                        <i class="fas fa-clipboard-list"></i>
-                    </div>
-                    <div class="stat-value">{{ sahip_ilan_sayisi|default:0 }}</div>
-                    <div class="stat-label">İlan</div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6">
-                <div class="stat-card">
-                    <div class="stat-icon stat-icon-purple">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                    <div class="stat-value">Güvende</div>
-                    <div class="stat-label">Tüm Dostlar</div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- 🚀 QUICK ACTIONS -->
-<section class="quick-actions">
-    <div class="container" data-aos="fade-up">
-        <div class="row g-3">
-            <div class="col-lg-3 col-md-6">
-                <a href="{% url 'anahtarlik:add_pet' %}" class="action-btn">
-                    <div class="action-icon stat-icon-blue">
-                        <i class="fas fa-plus"></i>
-                    </div>
-                    <div class="action-content">
-                        <h5>Hayvan Ekle</h5>
-                        <p>Yeni dost ekle</p>
-                    </div>
-                </a>
-            </div>
-            <div class="col-lg-3 col-md-6">
-                <a href="{% url 'anahtarlik:kunyelerim' %}" class="action-btn">
-                    <div class="action-icon stat-icon-green">
-                        <i class="fas fa-qrcode"></i>
-                    </div>
-                    <div class="action-content">
-                        <h5>Künyeler</h5>
-                        <p>QR künyelerini gör</p>
-                    </div>
-                </a>
-            </div>
-            <div class="col-lg-3 col-md-6">
-                <a href="{% url 'ilan:ilan_olustur' %}" class="action-btn">
-                    <div class="action-icon stat-icon-orange">
-                        <i class="fas fa-bullhorn"></i>
-                    </div>
-                    <div class="action-content">
-                        <h5>İlan Ver</h5>
-                        <p>Yeni ilan oluştur</p>
-                    </div>
-                </a>
-            </div>
-            <div class="col-lg-3 col-md-6">
-                <a href="{% url 'shop:shop_home' %}" class="action-btn">
-                    <div class="action-icon stat-icon-purple">
-                        <i class="fas fa-shopping-bag"></i>
-                    </div>
-                    <div class="action-content">
-                        <h5>Mağaza</h5>
-                        <p>Ürünlere göz at</p>
-                    </div>
-                </a>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- 🏥 VETERINER CARD -->
-{% if danisman_veteriner %}
-<section class="container my-5" data-aos="fade-up">
-    <div class="vet-card">
         <div class="row align-items-center">
-            <div class="col-md-auto text-center mb-3 mb-md-0">
-                {% if danisman_veteriner.logo %}
-                    <img src="{{ danisman_veteriner.logo.url }}" class="vet-avatar" alt="Veteriner">
-                {% else %}
-                    <div class="vet-avatar-placeholder">
-                        <i class="fas fa-user-md"></i>
-                    </div>
-                {% endif %}
+            <div class="col-md-8">
+                <h1 class="welcome-title">
+                    <i class="fas fa-paw me-2"></i>Evcil Hayvanlarım
+                </h1>
+                <p class="welcome-subtitle">
+                    Kayıtlı evcil hayvanlarını yönet, detayları görüntüle ve yeni dost ekle 🐾
+                </p>
             </div>
-            <div class="col-md">
-                <div class="d-flex align-items-center gap-2 mb-2">
-                    <h3 class="mb-0" style="font-weight: 700; color: #2C3E50;">{{ danisman_veteriner.web_baslik|default:danisman_veteriner.ad }}</h3>
-                    <span class="vet-badge">
-                        <i class="fas fa-check-circle"></i>
-                        Danışman
-                    </span>
-                </div>
-                <p class="text-muted mb-2">{{ danisman_veteriner.web_slogan|default:danisman_veteriner.uzmanlik_alanlari }}</p>
-                <div class="d-flex align-items-center text-muted mb-3">
-                    <i class="fas fa-map-marker-alt me-2"></i>
-                    <span>{{ danisman_veteriner.adres_detay|default:'' }}{% if danisman_veteriner.ilce and danisman_veteriner.il %}, {{ danisman_veteriner.ilce.ad }} / {{ danisman_veteriner.il.ad }}{% endif %}</span>
-                </div>
-                <div class="d-flex gap-2 flex-wrap">
-                    {% if danisman_veteriner.telefon %}
-                        <a href="tel:{{ danisman_veteriner.telefon }}" class="vet-contact-btn vet-contact-phone" title="Telefon">
-                            <i class="fas fa-phone"></i>
-                        </a>
-                    {% endif %}
-                    {% if danisman_veteriner.whatsapp %}
-                        <a href="https://wa.me/{{ danisman_veteriner.whatsapp }}" target="_blank" class="vet-contact-btn vet-contact-whatsapp" title="WhatsApp">
-                            <i class="fab fa-whatsapp"></i>
-                        </a>
-                    {% endif %}
-                    {% if danisman_veteriner.email %}
-                        <a href="mailto:{{ danisman_veteriner.email }}" class="vet-contact-btn vet-contact-email" title="E-posta">
-                            <i class="fas fa-envelope"></i>
-                        </a>
-                    {% endif %}
-                    {% if danisman_veteriner.instagram %}
-                        <a href="https://instagram.com/{{ danisman_veteriner.instagram|cut:'@' }}" target="_blank" class="vet-contact-btn vet-contact-instagram" title="Instagram">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                    {% endif %}
-                    {% if danisman_veteriner.web_slug %}
-                        <a href="{% url 'veteriner:web_sayfasi_gorunum' danisman_veteriner.web_slug %}" target="_blank" class="btn btn-outline-primary" style="border-radius: 12px; padding: 10px 20px;">
-                            <i class="fas fa-globe me-2"></i>Web Sitesi
-                        </a>
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#randevuModal" style="border-radius: 12px; padding: 10px 20px;">
-                            <i class="fas fa-calendar-alt me-2"></i>Randevu Al
-                        </button>
-                    {% endif %}
-                </div>
+            <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                <a href="{% url 'anahtarlik:add_pet' %}" class="btn btn-primary" style="border-radius: 50px;">
+                    <i class="fas fa-plus me-2"></i>Yeni Hayvan Ekle
+                </a>
             </div>
         </div>
     </div>
-</div>
-
-<!-- Randevu Modal (eski kod korundu) -->
-<div class="modal fade" id="randevuModal" tabindex="-1" aria-labelledby="randevuModalLabel" aria-hidden="true" data-bs-backdrop="false" data-bs-keyboard="true">
-  <div class="modal-dialog modal-lg modal-dialog-centered">
-    <div class="modal-content" style="border-radius: 20px; overflow: hidden;">
-      <form id="randevuForm" method="post" action="{% url 'veteriner:public_randevu_olustur' danisman_veteriner.web_slug %}">
-        {% csrf_token %}
-        <div class="modal-header" style="background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%); color: white;">
-          <h5 class="modal-title" id="randevuModalLabel"><i class="fas fa-calendar-alt me-2"></i>Randevu Oluştur</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Kapat"></button>
-        </div>
-        <div class="modal-body">
-            <div class="row g-3">
-              <div class="col-md-6">
-                <label for="musteri_adi" class="form-label">Ad Soyad *</label>
-                <input type="text" class="form-control" id="musteri_adi" name="musteri_adi" required style="border-radius: 12px;">
-              </div>
-              <div class="col-md-6">
-                <label for="musteri_telefon" class="form-label">Telefon *</label>
-                <input type="tel" class="form-control" id="musteri_telefon" name="musteri_telefon" required style="border-radius: 12px;">
-              </div>
-              <div class="col-md-6">
-                <label for="tarih" class="form-label">Randevu Tarihi *</label>
-                <input type="date" class="form-control" id="tarih" name="tarih" required min="{% now 'Y-m-d' %}" style="border-radius: 12px;">
-              </div>
-              <div class="col-md-6">
-                <label for="saat" class="form-label">Saat *</label>
-                <select id="saat" name="saat" class="form-select" required style="border-radius: 12px;">
-                  <option value="">Önce tarih seçiniz</option>
-                </select>
-              </div>
-              <div class="col-md-6">
-                <label for="hayvan_adi" class="form-label">Evcil Hayvan Adı *</label>
-                <input type="text" class="form-control" id="hayvan_adi" name="hayvan_adi" required style="border-radius: 12px;">
-              </div>
-              <div class="col-md-6">
-                <label for="hayvan_turu" class="form-label">Hayvan Türü *</label>
-                <select id="hayvan_turu" name="hayvan_turu" class="form-select" required style="border-radius: 12px;">
-                  <option value="">Seçiniz</option>
-                  <option>Köpek</option>
-                  <option>Kedi</option>
-                  <option>Kuş</option>
-                  <option>Tavşan</option>
-                  <option>Diğer</option>
-                </select>
-              </div>
-              <div class="col-12">
-                <label for="sorun_aciklamasi" class="form-label">Sorun Açıklaması *</label>
-                <textarea id="sorun_aciklamasi" name="sorun_aciklamasi" class="form-control" required style="border-radius: 12px;" rows="3"></textarea>
-              </div>
-            </div>
-        </div>
-        <div class="modal-footer">
-          <button type="submit" class="btn btn-primary" style="border-radius: 12px; padding: 10px 25px;">
-            <i class="fas fa-calendar-check me-2"></i>Randevu Oluştur
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
-
-<script>
-// Randevu formu scriptleri (eski kod korundu)
-(function() {
-  const tarihInput = document.getElementById('tarih');
-  const saatSelect = document.getElementById('saat');
-  if (!tarihInput || !saatSelect) return;
-  function pad(n) { return n < 10 ? '0' + n : n; }
-  function generateTimeSlots(start, end) {
-    let slots = [];
-    for (let h = start; h < end; h++) {
-      slots.push(pad(h) + ':00'); slots.push(pad(h) + ':30');
-    }
-    return slots;
-  }
-  tarihInput.addEventListener('change', function(e) {
-    let dt = new Date(e.target.value);
-    let day = dt.getDay();
-    let kapali = (day === 0);
-    let sBas = 9, sBit = 18;
-    saatSelect.innerHTML = '';
-    if (kapali) {
-      saatSelect.innerHTML = '<option>Bugün çalışmıyor</option>';
-      return;
-    }
-    let options = generateTimeSlots(sBas, sBit);
-    saatSelect.innerHTML = '<option value="">Saat seçiniz</option>';
-    for (let o of options) {
-      let el = document.createElement('option');
-      el.value = o; el.textContent = o;
-      saatSelect.appendChild(el);
-    }
-  });
-})();
-
-(function(){
-  const form = document.getElementById('randevuForm');
-  if(!form) return;
-  function getCsrfToken(){
-    const el = form.querySelector('input[name="csrfmiddlewaretoken"]');
-    return el ? el.value : '';
-  }
-  function showToast(message, type){
-    const containerSel = '.toast-container';
-    let container = document.querySelector(containerSel);
-    if(!container){
-      container = document.createElement('div');
-      container.className = 'toast-container position-fixed top-0 end-0 p-3';
-      container.style.marginTop = '100px';
-      container.style.zIndex = '1100';
-      document.body.appendChild(container);
-    }
-    const toastEl = document.createElement('div');
-    toastEl.className = `toast show align-items-center text-white bg-${type||'success'}`;
-    toastEl.setAttribute('role','alert');
-    toastEl.innerHTML = `<div class="d-flex"><div class="toast-body">${message}</div><button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button></div>`;
-    container.appendChild(toastEl);
-    try{ new bootstrap.Toast(toastEl, {autohide:true, delay:5000}).show(); }catch(e){}
-  }
-  form.addEventListener('submit', function(e){
-    e.preventDefault();
-    const fd = new FormData(form);
-    fetch(form.action, {
-      method: 'POST',
-      headers: { 'X-Requested-With': 'XMLHttpRequest' },
-      body: fd
-    }).then(async res => {
-      const data = await res.json().catch(()=>({}));
-      if(res.ok && data && data.ok){
-        const modalEl = document.getElementById('randevuModal');
-        const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
-        modal.hide();
-        form.reset();
-        showToast(data.message || 'Randevunuz başarıyla oluşturuldu.', 'success');
-      } else {
-        const errors = (data && data.errors) ? data.errors : ['Randevu oluşturulamadı.'];
-        showToast(errors.join('<br>'), 'danger');
-      }
-    }).catch(() => {
-      showToast('Bağlantı hatası. Lütfen tekrar deneyin.', 'danger');
-    });
-  });
-})();
-</script>
-{% endif %}
 </section>
 
-<!-- 🐾 PET CARDS SECTION -->
-<section class="container my-5" data-aos="fade-up">
-    <div class="row mb-4 align-items-center">
-        <div class="col-md-8">
-            <h2 class="section-title">
-                <i class="fas fa-paw"></i>
-                Evcil Dostlarım
-            </h2>
-            <p class="section-subtitle">Kayıtlı evcil hayvanlarını yönet, detayları görüntüle</p>
-        </div>
-        <div class="col-md-4 text-md-end">
-            <a href="{% url 'anahtarlik:add_pet' %}" class="btn" style="
-                background: linear-gradient(135deg, #6FCF97 0%, #56CCF2 100%);
-                color: white;
-                border-radius: 50px;
-                padding: 14px 35px;
-                font-weight: 700;
-                border: 2px solid rgba(255, 255, 255, 0.3);
-                box-shadow: 0 8px 25px rgba(111, 207, 151, 0.3);
-                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
-                font-size: 0.95rem;
-            " onmouseover="this.style.transform='translateY(-3px) scale(1.05)'; this.style.boxShadow='0 12px 35px rgba(111, 207, 151, 0.4)';" onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 8px 25px rgba(111, 207, 151, 0.3)';">
-                <i class="fas fa-plus me-2"></i>Yeni Hayvan Ekle
-            </a>
-        </div>
-    </div>
-
-    <!-- 🔍 SEARCH BOX -->
+<!-- 🐾 PET CARDS SECTION - EN ÜSTTE -->
+<section class="my-4">
+    <div class="container">
     {% if evcil_hayvanlar.object_list %}
+    <!-- 🔍 SEARCH BOX -->
     <div class="search-box">
-        <div class="d-flex align-items-center gap-3">
-            <i class="fas fa-search" style="color: #7F8C8D; font-size: 1.2rem;"></i>
-            <input type="text" id="petSearch" placeholder="Hayvan adı, cinsi veya türü ara...">
-        </div>
+        <i class="fas fa-search"></i>
+        <input type="text" id="petSearch" placeholder="Hayvan adı, cinsi veya türü ara...">
     </div>
 
     <!-- PET CARDS GRID -->
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" id="petList">
         {% for hayvan in evcil_hayvanlar.object_list %}
-        <div class="col" data-aos="fade-up" data-aos-delay="{{ forloop.counter0|stringformat:'d' }}00">
+        <div class="col">
             <div class="pet-card">
-                <!-- Pet Image -->
                 <div class="pet-image-container">
                     {% if hayvan.resim %}
                         <img src="{{ hayvan.resim.url }}" class="pet-image" alt="{{ hayvan.ad }}">
                     {% else %}
-                        {% if hayvan.tur == 'kopek' %}
-                            <img src="{% static 'img/icons/dog-icon.jpg' %}" class="pet-image" alt="Köpek">
-                        {% elif hayvan.tur == 'kedi' %}
-                            <img src="{% static 'img/icons/cat-icon.jpg' %}" class="pet-image" alt="Kedi">
-                        {% else %}
-                            <img src="{% static 'img/icons/other-pet.jpg' %}" class="pet-image" alt="Evcil Hayvan">
-                        {% endif %}
+                        <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: var(--bg-light);">
+                            <i class="fas fa-paw" style="font-size: 3rem; color: var(--text-muted);"></i>
+                        </div>
                     {% endif %}
-
-                    <!-- Status Badge (Top Right - Sadece Kayıp Durumu) -->
                     {% if hayvan.kayip_durumu %}
-                    <span class="pet-status-badge status-lost" style="top: 10px; right: 10px; z-index: 10;">
-                        <i class="fas fa-exclamation-triangle me-1"></i>
-                        Kayıp
+                    <span class="pet-status-badge status-lost">
+                        <i class="fas fa-exclamation-triangle me-1"></i>Kayıp
                     </span>
                     {% endif %}
                 </div>
-
-                <!-- Pet Info -->
                 <div class="pet-card-body">
                     <h3 class="pet-name">{{ hayvan.ad }}</h3>
-
                     <div class="pet-info-row">
                         <span class="pet-info-label">Tür:</span>
                         <span class="pet-info-value">{{ hayvan.tur.ad }}</span>
@@ -1416,45 +110,33 @@
                         <span class="pet-info-value">{{ hayvan.dogum_tarihi|date:"d M Y" }}</span>
                     </div>
                     {% endif %}
-
-                    <!-- Etiket Durumu (Fotoğrafı Kapatmayan Yer) -->
-                    <div class="pet-info-row" style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #E5E7EB;">
+                    <div class="pet-info-row">
                         <span class="pet-info-label">Künye:</span>
                         <span class="pet-info-value">
                             {% if hayvan.etiket %}
                                 {% if hayvan.etiket.aktif %}
-                                    <span style="display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #10B981 0%, #059669 100%); color: white; padding: 6px 12px; border-radius: 12px; font-size: 0.85rem; font-weight: 600;">
-                                        <i class="fas fa-qrcode"></i>
-                                        Aktif
+                                    <span class="kunye-badge active">
+                                        <i class="fas fa-qrcode"></i> Aktif
                                     </span>
                                 {% else %}
-                                    <span style="display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); color: white; padding: 6px 12px; border-radius: 12px; font-size: 0.85rem; font-weight: 600;">
-                                        <i class="fas fa-qrcode"></i>
-                                        Pasif
+                                    <span class="kunye-badge passive">
+                                        <i class="fas fa-qrcode"></i> Pasif
                                     </span>
                                 {% endif %}
                             {% else %}
-                                <span style="display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #6B7280 0%, #4B5563 100%); color: white; padding: 6px 12px; border-radius: 12px; font-size: 0.85rem; font-weight: 600;">
-                                    <i class="fas fa-qrcode"></i>
-                                    Yok
+                                <span class="kunye-badge none">
+                                    <i class="fas fa-qrcode"></i> Yok
                                 </span>
                             {% endif %}
                         </span>
                     </div>
-
-                    <!-- Actions -->
                     <div class="pet-actions">
                         <a href="{% url 'anahtarlik:pet_detail' hayvan.id %}" class="pet-btn pet-btn-primary">
-                            <i class="fas fa-info-circle"></i>
-                            Detay
+                            <i class="fas fa-info-circle"></i> Detay
                         </a>
-                        <div class="d-flex gap-2">
-                        <a href="{% url 'petpanel:pet_edit' hayvan.id %}" class="pet-btn pet-btn-secondary flex-fill" style="flex: 1;">
-                            <i class="fas fa-edit"></i>
-                            Düzenle
+                        <a href="{% url 'petpanel:pet_edit' hayvan.id %}" class="pet-btn pet-btn-secondary">
+                            <i class="fas fa-edit"></i> Düzenle
                         </a>
-                        <!-- Silme butonu kaldırıldı - Künye tarihi geçince otomatik gizlenir -->
-                        </div>
                     </div>
                 </div>
             </div>
@@ -1465,7 +147,7 @@
     <!-- PAGINATION -->
     {% if evcil_hayvanlar.has_other_pages %}
     <nav class="mt-5">
-        <ul class="pagination justify-content-center">
+        <ul class="pagination">
             {% if evcil_hayvanlar.has_previous %}
             <li class="page-item"><a class="page-link" href="?page={{ evcil_hayvanlar.previous_page_number }}">« Önceki</a></li>
             {% endif %}
@@ -1482,108 +164,766 @@
     {% endif %}
     {% else %}
     <!-- EMPTY STATE -->
-    <div class="empty-state" data-aos="fade-up">
+    <div class="empty-state">
         <div class="empty-state-icon">
             <i class="fas fa-paw"></i>
         </div>
         <h4>Henüz Evcil Hayvanınız Yok</h4>
         <p>Hemen bir evcil dost ekleyerek başlayın!</p>
         <a href="{% url 'anahtarlik:add_pet' %}" class="empty-state-btn">
-            <i class="fas fa-plus"></i>
-            Evcil Hayvan Ekle
+            <i class="fas fa-plus"></i> Evcil Hayvan Ekle
+        </a>
+    </div>
+    {% endif %}
+    </div>
+</section>
+
+<!-- 📊 STATISTICS CARDS -->
+<section class="stats-container">
+    <div class="container">
+        <div class="row g-3">
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-card">
+                    <div class="stat-icon stat-icon-blue">
+                        <i class="fas fa-paw"></i>
+                    </div>
+                    <div class="stat-value">{{ toplam_evcil_hayvan_sayisi|default:evcil_hayvanlar.paginator.count|default:0 }}</div>
+                    <div class="stat-label">Evcil Hayvan</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-card">
+                    <div class="stat-icon stat-icon-green">
+                        <i class="fas fa-qrcode"></i>
+                    </div>
+                    <div class="stat-value">{{ kunye_sayisi|default:0 }}</div>
+                    <div class="stat-label">Aktif Künye</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-card">
+                    <div class="stat-icon stat-icon-orange">
+                        <i class="fas fa-clipboard-list"></i>
+                    </div>
+                    <div class="stat-value">{{ sahip_ilan_sayisi|default:0 }}</div>
+                    <div class="stat-label">Aktif İlan</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-card">
+                    <div class="stat-icon stat-icon-red">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="stat-value">{{ kayip_hayvan_sayisi|default:0 }}</div>
+                    <div class="stat-label">Kayıp Hayvan</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% else %}
+<!-- 🎨 DASHBOARD HERO - PANEL SAYFASI -->
+<section class="dashboard-hero">
+    <div class="container">
+        <div class="text-center">
+            <h1 class="welcome-title">
+                <i class="fas fa-paw me-2"></i>Hoş Geldin, {{ user.sahip.ad|default:user.first_name|default:user.username|title }}!
+            </h1>
+            <p class="welcome-subtitle">
+                Evcil dostlarını yönet, sağlıklarını takip et ve onların mutluluğunu sağla 🐾
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- 📊 STATISTICS CARDS -->
+<section class="stats-container">
+    <div class="container">
+        <div class="row g-3">
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-card">
+                    <div class="stat-icon stat-icon-blue">
+                        <i class="fas fa-paw"></i>
+                    </div>
+                    <div class="stat-value">{{ toplam_evcil_hayvan_sayisi|default:evcil_hayvanlar.paginator.count|default:0 }}</div>
+                    <div class="stat-label">Evcil Hayvan</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-card">
+                    <div class="stat-icon stat-icon-green">
+                        <i class="fas fa-qrcode"></i>
+                    </div>
+                    <div class="stat-value">{{ kunye_sayisi|default:0 }}</div>
+                    <div class="stat-label">Aktif Künye</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-card">
+                    <div class="stat-icon stat-icon-orange">
+                        <i class="fas fa-clipboard-list"></i>
+                    </div>
+                    <div class="stat-value">{{ sahip_ilan_sayisi|default:0 }}</div>
+                    <div class="stat-label">Aktif İlan</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-card">
+                    <div class="stat-icon stat-icon-red">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="stat-value">{{ kayip_hayvan_sayisi|default:0 }}</div>
+                    <div class="stat-label">Kayıp Hayvan</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 🏥 VETERINER CARD - ÖNE ÇIKARILDI -->
+{% if danisman_veteriner %}
+<section class="vet-section">
+    <div class="container">
+        <div class="vet-card-featured">
+            <!-- Parlayan Animasyonlu Kenarlık -->
+            <div class="vet-card-glow"></div>
+            
+            <!-- Üst Başlık Bandı -->
+            <div class="vet-header-band">
+                <div class="vet-header-content">
+                    <i class="fas fa-stethoscope"></i>
+                    <span>Danışman Veterineriniz</span>
+                    </div>
+                <div class="vet-header-badge">
+                    <i class="fas fa-star"></i> Önerilen
+                    </div>
+            </div>
+            
+            <div class="vet-card-body">
+                <div class="row align-items-center g-4">
+                    <!-- Sol: Avatar ve İletişim -->
+                    <div class="col-lg-4 col-md-5 text-center">
+                        <div class="vet-avatar-wrapper">
+                {% if danisman_veteriner.logo %}
+                                <img src="{{ danisman_veteriner.logo.url }}" class="vet-avatar-featured" alt="Veteriner">
+                {% else %}
+                                <div class="vet-avatar-placeholder-featured">
+                        <i class="fas fa-user-md"></i>
+                    </div>
+                {% endif %}
+                            <div class="vet-status-online">
+                                <i class="fas fa-circle"></i> Aktif
+            </div>
+                </div>
+                        
+                        <!-- İletişim Butonları -->
+                        <div class="vet-contact-buttons">
+                    {% if danisman_veteriner.telefon %}
+                                <a href="tel:{{ danisman_veteriner.telefon }}" class="vet-contact-btn-featured vet-btn-phone" title="Telefon">
+                            <i class="fas fa-phone"></i>
+                        </a>
+                    {% endif %}
+                    {% if danisman_veteriner.whatsapp %}
+                                <a href="https://wa.me/{{ danisman_veteriner.whatsapp }}" target="_blank" class="vet-contact-btn-featured vet-btn-whatsapp" title="WhatsApp">
+                            <i class="fab fa-whatsapp"></i>
+                        </a>
+                    {% endif %}
+                    {% if danisman_veteriner.email %}
+                                <a href="mailto:{{ danisman_veteriner.email }}" class="vet-contact-btn-featured vet-btn-email" title="E-posta">
+                            <i class="fas fa-envelope"></i>
+                        </a>
+                    {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- Sağ: Bilgiler -->
+                    <div class="col-lg-8 col-md-7">
+                        <div class="vet-info-section">
+                            <h3 class="vet-title-featured">
+                                {{ danisman_veteriner.web_baslik|default:danisman_veteriner.ad }}
+                            </h3>
+                            
+                            {% if danisman_veteriner.web_slogan or danisman_veteriner.uzmanlik_alanlari %}
+                            <p class="vet-slogan-featured">
+                                <i class="fas fa-quote-left"></i>
+                                {{ danisman_veteriner.web_slogan|default:danisman_veteriner.uzmanlik_alanlari }}
+                            </p>
+                    {% endif %}
+                            
+                            <div class="vet-details">
+                                <div class="vet-detail-item">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span>{{ danisman_veteriner.adres_detay|default:'' }}{% if danisman_veteriner.ilce and danisman_veteriner.il %}, {{ danisman_veteriner.ilce.ad }} / {{ danisman_veteriner.il.ad }}{% endif %}</span>
+                                </div>
+                                {% if danisman_veteriner.telefon %}
+                                <div class="vet-detail-item">
+                                    <i class="fas fa-phone"></i>
+                                    <span>{{ danisman_veteriner.telefon }}</span>
+                                </div>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Aksiyon Butonları -->
+                            <div class="vet-action-buttons">
+                    {% if danisman_veteriner.web_slug %}
+                                    <button type="button" class="vet-action-btn vet-action-primary" data-bs-toggle="modal" data-bs-target="#randevuModal">
+                                        <i class="fas fa-calendar-check"></i>
+                                        <span>Randevu Al</span>
+                        </button>
+                                    <a href="{% url 'veteriner:web_sayfasi_gorunum' danisman_veteriner.web_slug %}" target="_blank" class="vet-action-btn vet-action-secondary">
+                                        <i class="fas fa-globe"></i>
+                                        <span>Web Sitesi</span>
+                                    </a>
+                                {% endif %}
+                                {% if danisman_veteriner.konum_koordinat %}
+                                    <a href="https://www.google.com/maps?q={{ danisman_veteriner.konum_koordinat }}" target="_blank" class="vet-action-btn vet-action-map">
+                                        <i class="fas fa-directions"></i>
+                                        <span>Yol Tarifi</span>
+                                    </a>
+                    {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Randevu Modal -->
+<div class="modal fade" id="randevuModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 20px;">
+      <form id="randevuForm" method="post" action="{% url 'veteriner:public_randevu_olustur' danisman_veteriner.web_slug %}">
+        {% csrf_token %}
+                <div class="modal-header" style="background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%); color: #ffffff !important; border-radius: 20px 20px 0 0;">
+                    <h5 class="modal-title" style="color: #ffffff !important;"><i class="fas fa-calendar-alt me-2"></i>Randevu Oluştur</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Kapat"></button>
+        </div>
+        <div class="modal-body" style="padding: 24px; background: #ffffff !important; color: #212529 !important;">
+            <div class="row g-3">
+              <div class="col-md-6">
+                            <label class="form-label" style="color: #212529 !important; font-weight: 600;">Ad Soyad *</label>
+                            <input type="text" class="form-control" name="musteri_adi" required style="border-radius: 12px; color: #212529;">
+              </div>
+              <div class="col-md-6">
+                            <label class="form-label" style="color: #212529 !important; font-weight: 600;">Telefon *</label>
+                            <input type="tel" class="form-control" name="musteri_telefon" required style="border-radius: 12px; color: #212529;">
+              </div>
+              <div class="col-md-6">
+                            <label class="form-label" style="color: #212529 !important; font-weight: 600;">Randevu Tarihi *</label>
+                            <input type="date" class="form-control" id="tarih" name="tarih" required min="{% now 'Y-m-d' %}" style="border-radius: 12px; color: #212529;">
+              </div>
+              <div class="col-md-6">
+                            <label class="form-label" style="color: #212529 !important; font-weight: 600;">Saat *</label>
+                            <select id="saat" name="saat" class="form-select" required style="border-radius: 12px; color: #212529;">
+                  <option value="">Önce tarih seçiniz</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                            <label class="form-label" style="color: #212529 !important; font-weight: 600;">Evcil Hayvan Adı *</label>
+                            <input type="text" class="form-control" name="hayvan_adi" required style="border-radius: 12px; color: #212529;">
+              </div>
+              <div class="col-md-6">
+                            <label class="form-label" style="color: #212529 !important; font-weight: 600;">Hayvan Türü *</label>
+                            <select name="hayvan_turu" class="form-select" required style="border-radius: 12px; color: #212529;">
+                  <option value="">Seçiniz</option>
+                  <option>Köpek</option>
+                  <option>Kedi</option>
+                  <option>Kuş</option>
+                  <option>Tavşan</option>
+                  <option>Diğer</option>
+                </select>
+              </div>
+              <div class="col-12">
+                            <label class="form-label" style="color: #212529 !important; font-weight: 600;">Sorun Açıklaması *</label>
+                            <textarea name="sorun_aciklamasi" class="form-control" required rows="3" style="border-radius: 12px; color: #212529;"></textarea>
+              </div>
+            </div>
+        </div>
+        <div class="modal-footer" style="background: #f8f9fa; border-top: 1px solid #dee2e6; border-radius: 0 0 20px 20px;">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 50px;">İptal</button>
+                    <button type="submit" class="btn btn-primary" style="border-radius: 50px;">
+            <i class="fas fa-calendar-check me-2"></i>Randevu Oluştur
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<!-- ⚠️ ALERTS SECTION -->
+{% if kayip_hayvanlar or kunye_suresi_dolmak_uzere %}
+<section class="alert-section">
+    <div class="container">
+        {% if kayip_hayvanlar %}
+        <div class="alert-card danger">
+            <div class="alert-icon danger">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div class="alert-content">
+                <div class="alert-title">Kayıp Hayvan Uyarısı</div>
+                <p class="alert-text">
+                    {% for hayvan in kayip_hayvanlar %}
+                        <strong>{{ hayvan.ad }}</strong>{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                    kayıp olarak işaretlenmiş. Lütfen kontrol edin.
+                </p>
+            </div>
+        </div>
+        {% endif %}
+        
+        {% if kunye_suresi_dolmak_uzere %}
+        <div class="alert-card warning">
+            <div class="alert-icon warning">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="alert-content">
+                <div class="alert-title">Künye Süresi Dolmak Üzere</div>
+                <p class="alert-text">
+                    {% for item in kunye_suresi_dolmak_uzere %}
+                        <strong>{{ item.hayvan.ad }}</strong> künyesinin süresi {{ item.kalan_gun }} gün içinde dolacak.
+                        {% if not forloop.last %}<br>{% endif %}
+                    {% endfor %}
+                </p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endif %}
+
+<!-- 📋 WIDGETS SECTION -->
+<div class="container my-4">
+    <div class="row g-3">
+        <!-- Son Bildirimler -->
+        <div class="col-lg-6">
+            <div class="widget-card">
+                <div class="widget-header">
+                    <h5 class="widget-title">
+                        <i class="fas fa-bell"></i> Son Bildirimler
+                    </h5>
+                    {% if okunmamis_bildirim_sayisi > 0 %}
+                    <span class="widget-badge">{{ okunmamis_bildirim_sayisi }}</span>
+                    {% endif %}
+                </div>
+                {% if son_bildirimler %}
+                    {% for bildirim in son_bildirimler %}
+                    <div class="widget-item">
+                        <div class="widget-item-icon" style="background: {% if not bildirim.okundu %}var(--primary){% else %}#E5E7EB{% endif %}; color: {% if not bildirim.okundu %}white{% else %}var(--text-muted){% endif %};">
+                            <i class="fas fa-{% if bildirim.tur == 'QR_TARAMA' %}qrcode{% elif bildirim.tur == 'BULAN_BILGI' %}user{% else %}info-circle{% endif %}"></i>
+                        </div>
+                        <div class="widget-item-content">
+                            <div class="widget-item-title {% if not bildirim.okundu %}fw-bold{% endif %}">{{ bildirim.baslik }}</div>
+                            <p class="widget-item-text">{{ bildirim.mesaj|truncatewords:10 }}</p>
+                        </div>
+                        <div class="widget-item-time">{{ bildirim.olusturma_zamani|timesince }} önce</div>
+                    </div>
+                    {% endfor %}
+                    <div class="text-center mt-3">
+                        <a href="{% url 'anahtarlik:bildirimler' %}" class="btn btn-sm btn-outline-primary">Tümünü Gör</a>
+                    </div>
+                {% else %}
+                    <p class="text-muted text-center py-3 mb-0">Henüz bildirim yok</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Yaklaşan Aşılar -->
+        <div class="col-lg-6">
+            <div class="widget-card">
+                <div class="widget-header">
+                    <h5 class="widget-title">
+                        <i class="fas fa-syringe"></i> Yaklaşan Aşılar
+                    </h5>
+                </div>
+                {% if yaklasan_asilar %}
+                    {% for asi in yaklasan_asilar %}
+                    <div class="widget-item">
+                        <div class="widget-item-icon" style="background: var(--warning); color: white;">
+                            <i class="fas fa-syringe"></i>
+                        </div>
+                        <div class="widget-item-content">
+                            <div class="widget-item-title">{{ asi.evcil_hayvan.ad }}</div>
+                            <p class="widget-item-text">{{ asi.asi_turu }}</p>
+                        </div>
+                        <div class="widget-item-time">{{ asi.planlanan_tarih|date:"d M" }}</div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted text-center py-3 mb-0">Yaklaşan aşı yok</p>
+{% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 🚀 QUICK ACTIONS -->
+<section class="quick-actions">
+    <div class="container">
+        <div class="row g-3">
+            <div class="col-lg-3 col-md-6">
+                <a href="{% url 'anahtarlik:add_pet' %}" class="action-btn">
+                    <div class="action-icon stat-icon-blue">
+                        <i class="fas fa-plus"></i>
+                    </div>
+                    <div class="action-content">
+                        <h6>Hayvan Ekle</h6>
+                        <p>Yeni dost ekle</p>
+                    </div>
+                </a>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <a href="{% url 'anahtarlik:kunyelerim' %}" class="action-btn">
+                    <div class="action-icon stat-icon-green">
+                        <i class="fas fa-qrcode"></i>
+                    </div>
+                    <div class="action-content">
+                        <h6>Künyeler</h6>
+                        <p>QR künyelerini gör</p>
+                    </div>
+                </a>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <a href="{% url 'ilan:ilan_olustur' %}" class="action-btn">
+                    <div class="action-icon stat-icon-orange">
+                        <i class="fas fa-bullhorn"></i>
+                    </div>
+                    <div class="action-content">
+                        <h6>İlan Ver</h6>
+                        <p>Yeni ilan oluştur</p>
+                    </div>
+                </a>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <a href="{% url 'shop:shop_home' %}" class="action-btn">
+                    <div class="action-icon" style="background: linear-gradient(135deg, #9B9ECE, #B4A7D6);">
+                        <i class="fas fa-shopping-bag"></i>
+                    </div>
+                    <div class="action-content">
+                        <h6>Mağaza</h6>
+                        <p>Ürünlere göz at</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 🐾 PET CARDS SECTION -->
+<section class="container my-5">
+    <div class="row mb-4 align-items-center">
+        <div class="col-md-8">
+            <h2 class="section-title">
+                <i class="fas fa-paw"></i> Evcil Dostlarım
+            </h2>
+            <p class="section-subtitle">Kayıtlı evcil hayvanlarını yönet, detayları görüntüle</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <a href="{% url 'anahtarlik:add_pet' %}" class="btn btn-primary" style="border-radius: 50px;">
+                <i class="fas fa-plus me-2"></i>Yeni Hayvan Ekle
+            </a>
+        </div>
+    </div>
+
+    {% if evcil_hayvanlar.object_list %}
+    <!-- 🔍 SEARCH BOX -->
+    <div class="search-box">
+        <i class="fas fa-search"></i>
+            <input type="text" id="petSearch" placeholder="Hayvan adı, cinsi veya türü ara...">
+    </div>
+
+    <!-- PET CARDS GRID -->
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" id="petList">
+        {% for hayvan in evcil_hayvanlar.object_list %}
+        <div class="col">
+            <div class="pet-card">
+                <div class="pet-image-container">
+                    {% if hayvan.resim %}
+                        <img src="{{ hayvan.resim.url }}" class="pet-image" alt="{{ hayvan.ad }}">
+                    {% else %}
+                        <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: var(--bg-light);">
+                            <i class="fas fa-paw" style="font-size: 3rem; color: var(--text-muted);"></i>
+                        </div>
+                        {% endif %}
+                    {% if hayvan.kayip_durumu %}
+                    <span class="pet-status-badge status-lost">
+                        <i class="fas fa-exclamation-triangle me-1"></i>Kayıp
+                    </span>
+                    {% endif %}
+                </div>
+                <div class="pet-card-body">
+                    <h3 class="pet-name">{{ hayvan.ad }}</h3>
+                    <div class="pet-info-row">
+                        <span class="pet-info-label">Tür:</span>
+                        <span class="pet-info-value">{{ hayvan.tur.ad }}</span>
+                    </div>
+                    <div class="pet-info-row">
+                        <span class="pet-info-label">Cinsiyet:</span>
+                        <span class="pet-info-value">{{ hayvan.get_cinsiyet_display }}</span>
+                    </div>
+                    {% if hayvan.dogum_tarihi %}
+                    <div class="pet-info-row">
+                        <span class="pet-info-label">Doğum:</span>
+                        <span class="pet-info-value">{{ hayvan.dogum_tarihi|date:"d M Y" }}</span>
+                    </div>
+                    {% endif %}
+                    <div class="pet-info-row">
+                        <span class="pet-info-label">Künye:</span>
+                        <span class="pet-info-value">
+                            {% if hayvan.etiket %}
+                                {% if hayvan.etiket.aktif %}
+                                    <span class="kunye-badge active">
+                                        <i class="fas fa-qrcode"></i> Aktif
+                                    </span>
+                                {% else %}
+                                    <span class="kunye-badge passive">
+                                        <i class="fas fa-qrcode"></i> Pasif
+                                    </span>
+                                {% endif %}
+                            {% else %}
+                                <span class="kunye-badge none">
+                                    <i class="fas fa-qrcode"></i> Yok
+                                </span>
+                            {% endif %}
+                        </span>
+                    </div>
+                    <div class="pet-actions">
+                        <a href="{% url 'anahtarlik:pet_detail' hayvan.id %}" class="pet-btn pet-btn-primary">
+                            <i class="fas fa-info-circle"></i> Detay
+                        </a>
+                        <a href="{% url 'petpanel:pet_edit' hayvan.id %}" class="pet-btn pet-btn-secondary">
+                            <i class="fas fa-edit"></i> Düzenle
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- PAGINATION -->
+    {% if evcil_hayvanlar.has_other_pages %}
+    <nav class="mt-5">
+        <ul class="pagination">
+            {% if evcil_hayvanlar.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page={{ evcil_hayvanlar.previous_page_number }}">« Önceki</a></li>
+            {% endif %}
+            {% for i in evcil_hayvanlar.paginator.page_range %}
+            <li class="page-item {% if evcil_hayvanlar.number == i %}active{% endif %}">
+                <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+            </li>
+            {% endfor %}
+            {% if evcil_hayvanlar.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ evcil_hayvanlar.next_page_number }}">Sonraki »</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+    {% else %}
+    <!-- EMPTY STATE -->
+    <div class="empty-state">
+        <div class="empty-state-icon">
+            <i class="fas fa-paw"></i>
+        </div>
+        <h4>Henüz Evcil Hayvanınız Yok</h4>
+        <p>Hemen bir evcil dost ekleyerek başlayın!</p>
+        <a href="{% url 'anahtarlik:add_pet' %}" class="empty-state-btn">
+            <i class="fas fa-plus"></i> Evcil Hayvan Ekle
         </a>
     </div>
     {% endif %}
 </section>
+{% endif %}
 {% endblock %}
 
 {% block js_dosyalar %}
-<script src="https://unpkg.com/aos@next/dist/aos.js"></script>
 <script>
-// 🎨 Initialize AOS with enhanced settings
-AOS.init({
-    duration: 800,
-    easing: 'ease-out-cubic',
-    once: true,
-    offset: 100,
-    delay: 100
+// Randevu formu için saat seçimi
+(function() {
+    const tarihInput = document.getElementById('tarih');
+    const saatSelect = document.getElementById('saat');
+    if (!tarihInput || !saatSelect) return;
+    
+    function pad(n) { return n < 10 ? '0' + n : n; }
+    function generateTimeSlots(start, end) {
+        let slots = [];
+        for (let h = start; h < end; h++) {
+            slots.push(pad(h) + ':00');
+            slots.push(pad(h) + ':30');
+        }
+        return slots;
+    }
+    
+    tarihInput.addEventListener('change', function(e) {
+        let dt = new Date(e.target.value);
+        let day = dt.getDay();
+        let kapali = (day === 0);
+        let sBas = 9, sBit = 18;
+        saatSelect.innerHTML = '';
+        if (kapali) {
+            saatSelect.innerHTML = '<option>Bugün çalışmıyor</option>';
+            return;
+        }
+        let options = generateTimeSlots(sBas, sBit);
+        saatSelect.innerHTML = '<option value="">Saat seçiniz</option>';
+        for (let o of options) {
+            let el = document.createElement('option');
+            el.value = o;
+            el.textContent = o;
+            saatSelect.appendChild(el);
+        }
+    });
+})();
+
+// Randevu formu ve Modal Yönetimi (Sadeleştirilmiş ve Güvenli)
+document.addEventListener('DOMContentLoaded', function(){
+    'use strict';
+    
+    const form = document.getElementById('randevuForm');
+    const modalEl = document.getElementById('randevuModal');
+    
+    if(!form || !modalEl) {
+        console.warn('Randevu formu veya modal bulunamadı');
+        return;
+    }
+
+    // KRİTİK DÜZELTME: Modalı body'nin en sonuna taşıyarak backdrop/z-index sorununu çöz
+    document.body.appendChild(modalEl);
+    
+    const modal = new bootstrap.Modal(modalEl, {
+        backdrop: 'static',
+        keyboard: false
+    });
+
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const originalBtnText = submitBtn ? submitBtn.innerHTML : 'Randevu Oluştur';
+    
+    console.log('Randevu formu hazır, AJAX modu aktif');
+
+    function showToast(message, type = 'success'){
+        const container = document.querySelector('.toast-container') || createToastContainer();
+        const toastEl = document.createElement('div');
+        
+        // Renk kontrastını garanti altına al
+        const colorMap = {
+            'success': { bg: '#28a745', text: '#ffffff' },
+            'danger': { bg: '#dc3545', text: '#ffffff' },
+            'warning': { bg: '#ffc107', text: '#212529' },
+            'info': { bg: '#17a2b8', text: '#ffffff' },
+            'primary': { bg: '#007bff', text: '#ffffff' }
+        };
+        
+        const colors = colorMap[type] || colorMap['success'];
+        
+        toastEl.className = 'toast show align-items-center border-0';
+        toastEl.style.cssText = `background-color: ${colors.bg} !important; color: ${colors.text} !important;`;
+        toastEl.role = 'alert';
+        toastEl.innerHTML = `
+            <div class="d-flex" style="color: ${colors.text} !important;">
+                <div class="toast-body" style="color: ${colors.text} !important;">${message}</div>
+                <button type="button" class="btn-close ${colors.text === '#ffffff' ? 'btn-close-white' : ''} me-2 m-auto" data-bs-dismiss="toast" style="filter: ${colors.text === '#ffffff' ? 'invert(1)' : 'none'};"></button>
+            </div>`;
+        container.appendChild(toastEl);
+        new bootstrap.Toast(toastEl, {delay: 5000}).show();
+    }
+
+    function createToastContainer() {
+        const div = document.createElement('div');
+        div.className = 'toast-container position-fixed top-0 end-0 p-3';
+        div.style.cssText = 'margin-top: 100px; z-index: 2000;';
+        document.body.appendChild(div);
+        return div;
+    }
+
+    // Modal kapandığında formu temizle
+    modalEl.addEventListener('hidden.bs.modal', () => {
+        form.reset();
+        form.classList.remove('was-validated');
+        const saatSelect = document.getElementById('saat');
+        if(saatSelect) saatSelect.innerHTML = '<option value="">Önce tarih seçiniz</option>';
+    });
+
+    // Form submit event'ini kesinlikle yakala ve engelle
+    form.addEventListener('submit', function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        
+        console.log('Form submit yakalandı, AJAX ile gönderiliyor...');
+        
+        if(!form.checkValidity()){
+            form.classList.add('was-validated');
+            return false;
+        }
+
+        // Loading durumu
+        if(submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Gönderiliyor...';
+        }
+
+        const formData = new FormData(form);
+
+        fetch(form.action, {
+            method: 'POST',
+            headers: {'X-Requested-With': 'XMLHttpRequest'},
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if(data.ok){
+                modal.hide();
+                showToast(data.message || 'Randevunuz başarıyla oluşturuldu.', 'success');
+            } else {
+                const errorMsg = data.errors ? (Array.isArray(data.errors) ? data.errors.join('<br>') : data.errors) : 'Bir hata oluştu.';
+                showToast(errorMsg, 'danger');
+            }
+        })
+        .catch(err => {
+            console.error('Hata:', err);
+            showToast('Bağlantı hatası oluştu. Lütfen tekrar deneyin.', 'danger');
+        })
+        .finally(() => {
+            // Butonu eski haline getir
+            if(submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnText;
+            }
+        });
+        
+        return false; // Ekstra güvenlik
+    });
+    
+    // Form'un action'ını da kontrol et - normal submit'i engelle
+    form.onsubmit = function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+    };
 });
 
-// 🔍 Enhanced Pet Search with animation
+// Pet Search
 document.addEventListener("DOMContentLoaded", function () {
     const input = document.getElementById('petSearch');
     if (input) {
         const cards = document.querySelectorAll('#petList .col');
-
         input.addEventListener('input', function () {
             const search = this.value.toLowerCase().trim();
-            let visibleCount = 0;
-
-            cards.forEach((card, index) => {
+            cards.forEach((card) => {
                 const text = card.textContent.toLowerCase();
-                const isMatch = text.includes(search);
-
-                if (isMatch) {
-                    card.style.display = '';
-                    card.style.animation = `fadeInUp 0.5s ease ${index * 0.05}s both`;
-                    visibleCount++;
-                } else {
-                    card.style.display = 'none';
-                }
+                card.style.display = text.includes(search) ? '' : 'none';
             });
-
-            // Show no results message if needed
-            if (visibleCount === 0 && search !== '') {
-                console.log('No pets found matching:', search);
-            }
-        });
-
-        // Add focus animation to search box
-        input.addEventListener('focus', function() {
-            this.parentElement.parentElement.style.transform = 'scale(1.02)';
-        });
-
-        input.addEventListener('blur', function() {
-            this.parentElement.parentElement.style.transform = 'scale(1)';
         });
     }
 });
-
-// 🎭 Add smooth scroll behavior
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-            target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
-        }
-    });
-});
-
-// 💫 Add intersection observer for scroll animations
-const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -100px 0px'
-};
-
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
-        }
-    });
-}, observerOptions);
-
-// Observe all cards
-document.querySelectorAll('.pet-card, .stat-card, .action-btn').forEach(el => {
-    el.style.opacity = '0';
-    el.style.transform = 'translateY(20px)';
-    el.style.transition = 'all 0.6s ease';
-    observer.observe(el);
-});
 </script>
 {% endblock %}
+

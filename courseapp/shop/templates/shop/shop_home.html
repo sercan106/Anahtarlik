@@ -12,7 +12,7 @@
         background: #f5f5f5 !important;
     }
 
-    /* Hero Bölümü - Kalite & Premium */
+    /* Hero Bölümü */
     .shop-hero {
         background: linear-gradient(135deg, #2C5F8D 0%, #5B9BD5 50%, #70C1B3 100%);
         padding: 80px 0 100px;
@@ -65,6 +65,62 @@
         margin-bottom: 60px;
     }
 
+    /* ========== KART RENK TEMALARİ ========== */
+    
+    /* Tema 1: Mavi */
+    .shop-card.theme-blue {
+        --card-primary: #5B9BD5;
+        --card-secondary: #2C5F8D;
+        --card-gradient: linear-gradient(135deg, #5B9BD5 0%, #2C5F8D 100%);
+        --card-light: rgba(91, 155, 213, 0.1);
+        --card-shadow: rgba(91, 155, 213, 0.4);
+    }
+    
+    /* Tema 2: Turuncu */
+    .shop-card.theme-orange {
+        --card-primary: #FF8C42;
+        --card-secondary: #E67332;
+        --card-gradient: linear-gradient(135deg, #FF8C42 0%, #F2C94C 100%);
+        --card-light: rgba(255, 140, 66, 0.1);
+        --card-shadow: rgba(255, 140, 66, 0.4);
+    }
+    
+    /* Tema 3: Yeşil */
+    .shop-card.theme-green {
+        --card-primary: #6FCF97;
+        --card-secondary: #27AE60;
+        --card-gradient: linear-gradient(135deg, #6FCF97 0%, #70C1B3 100%);
+        --card-light: rgba(111, 207, 151, 0.1);
+        --card-shadow: rgba(111, 207, 151, 0.4);
+    }
+    
+    /* Tema 4: Mor */
+    .shop-card.theme-purple {
+        --card-primary: #9B59B6;
+        --card-secondary: #8E44AD;
+        --card-gradient: linear-gradient(135deg, #9B59B6 0%, #E91E63 100%);
+        --card-light: rgba(155, 89, 182, 0.1);
+        --card-shadow: rgba(155, 89, 182, 0.4);
+    }
+    
+    /* Tema 5: Kırmızı */
+    .shop-card.theme-red {
+        --card-primary: #EB5757;
+        --card-secondary: #C0392B;
+        --card-gradient: linear-gradient(135deg, #EB5757 0%, #FF8C42 100%);
+        --card-light: rgba(235, 87, 87, 0.1);
+        --card-shadow: rgba(235, 87, 87, 0.4);
+    }
+    
+    /* Tema 6: Cyan */
+    .shop-card.theme-cyan {
+        --card-primary: #70C1B3;
+        --card-secondary: #16A085;
+        --card-gradient: linear-gradient(135deg, #70C1B3 0%, #5B9BD5 100%);
+        --card-light: rgba(112, 193, 179, 0.1);
+        --card-shadow: rgba(112, 193, 179, 0.4);
+    }
+
     /* Mağaza Kartı */
     .shop-card {
         background: white;
@@ -73,11 +129,12 @@
         box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
         transition: all 0.3s ease;
         position: relative;
+        border-top: 5px solid var(--card-primary, #5B9BD5);
     }
 
     .shop-card:hover {
         transform: translateY(-10px);
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 20px 60px var(--card-shadow, rgba(0, 0, 0, 0.2));
     }
     
     /* Slide Image Zoom Effect */
@@ -101,34 +158,34 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background: rgba(0, 0, 0, 0.6);
+        background: linear-gradient(135deg, var(--card-primary, #5B9BD5) 0%, var(--card-secondary, #2C5F8D) 100%);
+        opacity: 0;
         display: flex;
         align-items: center;
         justify-content: center;
-        opacity: 0;
         transition: opacity 0.4s ease;
         z-index: 10;
-        pointer-events: none; /* Overlay tıklamayı engellemesin */
+        pointer-events: none;
     }
     
     .shop-card .swiper-slide:hover .slide-hover-overlay {
-        opacity: 1;
+        opacity: 0.9;
     }
     
     .slide-hover-btn {
-        background: linear-gradient(135deg, #2C5F8D 0%, #5B9BD5 100%);
-        color: white;
+        background: white;
+        color: var(--card-primary, #5B9BD5);
         padding: 15px 40px;
         border-radius: 50px;
         text-decoration: none;
-        font-weight: 600;
+        font-weight: 700;
         font-size: 1.1rem;
         display: inline-flex;
         align-items: center;
         gap: 10px;
         transition: all 0.3s ease;
         transform: translateY(20px);
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
     }
     
     .swiper-slide:hover .slide-hover-btn {
@@ -137,15 +194,14 @@
     
     .slide-hover-btn:hover {
         transform: scale(1.05);
-        color: white;
         text-decoration: none;
-        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
     }
 
     /* Mağaza Swiper - Kart İçinde Slider */
     .shop-card .swiper {
         height: 500px;
-        border-radius: 20px 20px 0 0;
+        border-radius: 15px 15px 0 0;
     }
 
     .shop-card .swiper-slide {
@@ -188,53 +244,7 @@
         text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
     }
 
-    .slide-product-price {
-        font-size: 2rem;
-        font-weight: 700;
-        color: #10b981;
-        margin-bottom: 20px;
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-    }
-
-    .slide-product-actions {
-        display: flex;
-        gap: 15px;
-    }
-
-    .slide-btn {
-        padding: 12px 30px;
-        border-radius: 25px;
-        font-weight: 600;
-        text-decoration: none;
-        transition: all 0.3s ease;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .slide-btn-detail {
-        background: rgba(255, 255, 255, 0.2);
-        color: white;
-        border: 2px solid white;
-    }
-
-    .slide-btn-detail:hover {
-        background: white;
-        color: #333;
-    }
-
-    .slide-btn-cart {
-        background: #10b981;
-        color: white;
-    }
-
-    .slide-btn-cart:hover {
-        background: #059669;
-        color: white;
-        transform: scale(1.05);
-    }
-
-    /* Swiper Navigation - Kartın İçinde */
+    /* Swiper Navigation */
     .shop-card .swiper-button-next,
     .shop-card .swiper-button-prev {
         width: 50px;
@@ -242,13 +252,13 @@
         background: rgba(255, 255, 255, 0.9);
         border-radius: 50%;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-        color: #667eea;
+        color: var(--card-primary, #5B9BD5);
         transition: all 0.3s ease;
     }
 
     .shop-card .swiper-button-next:hover,
     .shop-card .swiper-button-prev:hover {
-        background: #667eea;
+        background: var(--card-primary, #5B9BD5);
         color: white;
         transform: scale(1.1);
     }
@@ -259,33 +269,45 @@
         font-weight: 700;
     }
 
-    /* Swiper Pagination - Kartın İçinde */
-    .shop-card .swiper-pagination {
-        bottom: 20px;
+    /* Swiper Pagination - Footer'da */
+    .footer-pagination-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding: 12px 0;
+        border-top: 1px solid rgba(0,0,0,0.05);
+    }
+    
+    .footer-pagination-wrapper .swiper-pagination {
+        position: static;
+        width: auto;
+        display: flex;
+        gap: 6px;
     }
 
-    .shop-card .swiper-pagination-bullet {
-        background: white;
-        opacity: 0.5;
-        width: 12px;
-        height: 12px;
+    .footer-pagination-wrapper .swiper-pagination-bullet {
+        background: var(--card-primary, #5B9BD5);
+        opacity: 0.3;
+        width: 10px;
+        height: 10px;
+        margin: 0 !important;
+        transition: all 0.3s ease;
     }
 
-    .shop-card .swiper-pagination-bullet-active {
+    .footer-pagination-wrapper .swiper-pagination-bullet-active {
         opacity: 1;
-        background: white;
-        width: 35px;
-        border-radius: 6px;
+        width: 28px;
+        border-radius: 5px;
     }
 
     /* Card Footer - Mağaza Bilgisi */
     .card-footer-info {
-        padding: 25px 30px;
-        background: white;
+        padding: 20px 24px;
+        background: linear-gradient(135deg, var(--card-light, #f8f9fa) 0%, white 100%);
         display: flex;
         justify-content: space-between;
         align-items: center;
-        border-top: 3px solid #f0f0f0;
     }
 
     .shop-info-left {
@@ -296,13 +318,14 @@
         font-size: 1.5rem;
         font-weight: 700;
         margin: 0 0 5px 0;
-        color: #333;
+        color: var(--card-secondary, #333);
     }
 
     .shop-info-left p {
         margin: 0;
-        color: #666;
+        color: var(--card-primary, #666);
         font-size: 0.95rem;
+        font-weight: 500;
     }
 
     .shop-info-right {
@@ -311,17 +334,8 @@
         gap: 20px;
     }
 
-    .product-count-badge {
-        background: linear-gradient(135deg, #2C5F8D 0%, #5B9BD5 100%);
-        color: white;
-        padding: 10px 20px;
-        border-radius: 20px;
-        font-weight: 700;
-        font-size: 0.95rem;
-    }
-
     .view-all-btn {
-        background: linear-gradient(135deg, #2C5F8D 0%, #5B9BD5 100%);
+        background: var(--card-gradient, linear-gradient(135deg, #5B9BD5 0%, #2C5F8D 100%));
         color: white;
         padding: 12px 30px;
         border-radius: 25px;
@@ -331,12 +345,13 @@
         display: inline-flex;
         align-items: center;
         gap: 8px;
+        box-shadow: 0 4px 15px var(--card-shadow, rgba(91, 155, 213, 0.3));
     }
 
     .view-all-btn:hover {
-        transform: translateX(5px);
+        transform: translateY(-3px);
         color: white;
-        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        box-shadow: 0 8px 25px var(--card-shadow, rgba(91, 155, 213, 0.5));
     }
 
     /* Empty State */
@@ -347,34 +362,14 @@
         align-items: center;
         justify-content: center;
         color: #9ca3af;
-        background: #f9fafb;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
     }
 
     .empty-state i {
         font-size: 4rem;
         margin-bottom: 20px;
         opacity: 0.3;
-    }
-
-    /* Stats */
-    .shop-stats {
-        text-align: center;
-        margin-top: 40px;
-        padding: 30px;
-        background: white;
-        border-radius: 20px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-    }
-
-    .shop-stats p {
-        font-size: 1.1rem;
-        color: #666;
-        margin: 0;
-    }
-
-    .shop-stats strong {
-        color: #667eea;
-        font-size: 1.4rem;
+        color: var(--card-primary, #5B9BD5);
     }
 
     /* Responsive */
@@ -400,14 +395,6 @@
 
         .slide-product-name {
             font-size: 1.4rem;
-        }
-
-        .slide-product-price {
-            font-size: 1.6rem;
-        }
-
-        .slide-product-actions {
-            flex-direction: column;
         }
 
         .card-footer-info {
@@ -472,16 +459,6 @@
             font-size: 1.2rem;
         }
 
-        .slide-product-price {
-            font-size: 1.4rem;
-            margin-bottom: 15px;
-        }
-
-        .slide-btn {
-            padding: 10px 20px;
-            font-size: 0.9rem;
-        }
-
         .card-footer-info {
             padding: 20px 20px;
         }
@@ -497,11 +474,6 @@
         .view-all-btn {
             padding: 10px 25px;
             font-size: 0.9rem;
-        }
-
-        .product-count-badge {
-            font-size: 0.85rem;
-            padding: 8px 15px;
         }
 
         .slide-hover-btn {
@@ -523,16 +495,27 @@
             font-size: 1.1rem;
         }
 
-        .slide-product-price {
-            font-size: 1.2rem;
-        }
-
         .card-footer-info {
             padding: 15px;
         }
 
         .shop-info-left h3 {
             font-size: 1.1rem;
+        }
+    }
+    
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+        .shop-card,
+        .view-all-btn,
+        .slide-hover-btn,
+        .slide-product-image {
+            transition: none;
+        }
+        
+        .shop-card:hover,
+        .view-all-btn:hover {
+            transform: none;
         }
     }
 </style>
@@ -542,7 +525,7 @@
 <!-- Hero Section -->
 <section class="shop-hero">
     <div class="container">
-        <h1>🛍️ Mağaza</h1>
+        <h1><i class="fas fa-store"></i> Mağaza</h1>
         <p>Evcil Dostlarınız İçin Her Şey Burada</p>
     </div>
 </section>
@@ -553,25 +536,26 @@
     {% if magaza_kartlari %}
     <div class="shop-cards-grid">
         {% for kart in magaza_kartlari %}
-        <div class="shop-card">
-            <!-- Ürün Fotoğrafları Slider - Kartın İçinde -->
+        {% with card_themes="theme-blue theme-orange theme-green theme-purple theme-red theme-cyan" %}
+        {% with theme_list=card_themes|make_list %}
+        <div class="shop-card theme-{% cycle 'blue' 'orange' 'green' 'purple' 'red' 'cyan' %}">
+        {% endwith %}
+        {% endwith %}
+            <!-- Ürün Fotoğrafları Slider -->
             {% with aktif_resimler=kart.aktif_resimler %}
             {% if aktif_resimler %}
-                <!-- Mağaza Kartı Resimleri Slider -->
                 <div class="swiper shop-card-swiper-{{ forloop.counter }}">
                     <div class="swiper-wrapper">
                         {% for resim in aktif_resimler %}
                         {% if resim.resim %}
-                        <div class="swiper-slide" data-link="{% if kart.link_url %}{{ kart.link_url }}{% else %}#{% endif %}" style="cursor: pointer;">
-                            <a href="{% if kart.link_url %}{{ kart.link_url }}{% else %}#{% endif %}" style="display: block; width: 100%; height: 100%; text-decoration: none; color: inherit;">
-                                <img src="{{ resim.resim.url }}" alt="{{ resim.alt_metin|default:kart.baslik }}" class="slide-product-image">
-                                <!-- Slide Overlay - Ürün Bilgisi -->
+                        <div class="swiper-slide" style="cursor: pointer;">
+                            <a href="{% if kart.link_url %}{{ kart.link_url }}{% else %}#{% endif %}">
+                                <img src="{{ resim.resim.url }}" alt="{{ resim.alt_metin|default:kart.baslik }}" class="slide-product-image" loading="lazy">
                                 {% if resim.alt_metin %}
                                 <div class="slide-overlay">
                                     <h3 class="slide-product-name">{{ resim.alt_metin }}</h3>
                                 </div>
                                 {% endif %}
-                                <!-- Hover Overlay -->
                                 <div class="slide-hover-overlay">
                                     <span class="slide-hover-btn">
                                         <i class="fas fa-shopping-bag"></i>
@@ -583,10 +567,12 @@
                         {% endif %}
                         {% endfor %}
                     </div>
-                    <div class="swiper-pagination"></div>
+                </div>
+                <!-- Pagination Footer'da -->
+                <div class="footer-pagination-wrapper">
+                    <div class="swiper-pagination swiper-pagination-{{ forloop.counter }}"></div>
                 </div>
             {% else %}
-                <!-- Empty State - Aktif resim yoksa placeholder göster -->
                 <div class="empty-state">
                     <i class="fas fa-box-open"></i>
                     <p>Henüz öne çıkan ürün bulunmuyor</p>
@@ -594,7 +580,7 @@
             {% endif %}
             {% endwith %}
 
-            <!-- Card Footer - Mağaza Bilgisi -->
+            <!-- Card Footer -->
             <div class="card-footer-info">
                 <div class="shop-info-left">
                     <h3>{{ kart.icon }} {{ kart.baslik }}</h3>
@@ -611,7 +597,7 @@
     </div>
     {% else %}
     <div class="text-center py-5">
-        <p class="text-muted">Henüz mağaza kartı eklenmemiş. Admin panelinden ekleyebilirsiniz.</p>
+        <p class="text-muted">Henüz mağaza kartı eklenmemiş.</p>
     </div>
     {% endif %}
 </div>
@@ -622,23 +608,25 @@
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
 <script>
-// Tüm mağaza kartı swiper'larını dinamik olarak initialize et
-document.querySelectorAll('[class*="shop-card-swiper-"]').forEach(function(swiperElement) {
-    const swiper = new Swiper(swiperElement, {
+document.querySelectorAll('[class*="shop-card-swiper-"]').forEach(function(swiperElement, index) {
+    const slideCount = swiperElement.querySelectorAll('.swiper-slide').length;
+    const paginationEl = document.querySelector('.swiper-pagination-' + (index + 1));
+    
+    new Swiper(swiperElement, {
         slidesPerView: 1,
         spaceBetween: 0,
-        loop: swiperElement.querySelectorAll('.swiper-slide').length > 1, // Sadece birden fazla slide varsa loop aktif
-        autoplay: {
+        loop: slideCount > 1,
+        autoplay: slideCount > 1 ? {
             delay: 4000,
             disableOnInteraction: false,
-        },
+        } : false,
         effect: 'fade',
         fadeEffect: {
             crossFade: true
         },
         speed: 1000,
         pagination: {
-            el: swiperElement.querySelector('.swiper-pagination'),
+            el: paginationEl,
             clickable: true,
         },
     });

@@ -1,160 +1,655 @@
 {% extends 'ana.html' %}
 {% load static %}
 
-{% block title %}Sahip Pro Paketleri{% endblock %}
+{% block title %}Pro Paketler - PetSafe Hub{% endblock %}
+
+{% block css_dosyalar %}
+<style>
+    /* ================================================
+       🎖️ PRO PAKETLER SAYFASI
+       Renk Paleti: #5B9BD5, #70C1B3, #FF8C42
+       ================================================ */
+    
+    .pro-page {
+        background: linear-gradient(135deg, #f0f7ff 0%, #e8f4f8 50%, #f5f0ff 100%);
+        min-height: 100vh;
+        padding: 40px 0 80px;
+    }
+    
+    .pro-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+    
+    /* ========== HEADER ========== */
+    .pro-header {
+        text-align: center;
+        margin-bottom: 48px;
+    }
+    
+    .pro-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 20px;
+        background: linear-gradient(135deg, #FF8C42 0%, #F2C94C 100%);
+        color: white;
+        font-weight: 600;
+        font-size: 0.85rem;
+        border-radius: 50px;
+        margin-bottom: 16px;
+        box-shadow: 0 4px 15px rgba(255, 140, 66, 0.3);
+    }
+    
+    .pro-title {
+        font-size: 2.5rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 12px;
+    }
+    
+    .pro-subtitle {
+        color: #64748b;
+        font-size: 1.1rem;
+        max-width: 500px;
+        margin: 0 auto;
+    }
+    
+    /* ========== ACTIVE SUBSCRIPTION ========== */
+    .active-sub-card {
+        background: linear-gradient(135deg, #6FCF97 0%, #70C1B3 100%);
+        border-radius: 20px;
+        padding: 24px 32px;
+        margin-bottom: 40px;
+        box-shadow: 0 10px 40px rgba(111, 207, 151, 0.25);
+        color: white;
+    }
+    
+    .active-sub-card h5 {
+        font-weight: 700;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .active-sub-info {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 24px;
+        margin-bottom: 16px;
+    }
+    
+    .active-sub-info span {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.95rem;
+    }
+    
+    .btn-pro-panel {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 24px;
+        background: white;
+        color: #6FCF97;
+        border-radius: 12px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.25s ease;
+    }
+    
+    .btn-pro-panel:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        color: #6FCF97;
+        text-decoration: none;
+    }
+    
+    /* ========== PACKAGE CARDS ========== */
+    .packages-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 24px;
+        margin-bottom: 48px;
+    }
+    
+    .package-card {
+        background: white;
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: 0 10px 40px rgba(91, 155, 213, 0.12);
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .package-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 60px rgba(91, 155, 213, 0.2);
+    }
+    
+    .package-card.active {
+        border-color: #6FCF97;
+    }
+    
+    .package-header {
+        padding: 28px 24px;
+        text-align: center;
+        color: white;
+        position: relative;
+    }
+    
+    .package-name {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+    
+    .package-price {
+        font-size: 2.5rem;
+        font-weight: 800;
+    }
+    
+    .package-price small {
+        font-size: 1rem;
+        font-weight: 500;
+        opacity: 0.9;
+    }
+    
+    .package-body {
+        padding: 28px 24px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .package-desc {
+        color: #64748b;
+        font-size: 0.95rem;
+        margin-bottom: 20px;
+        line-height: 1.5;
+    }
+    
+    .package-section {
+        margin-bottom: 20px;
+    }
+    
+    .package-section-title {
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #5B9BD5;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .basic-rights {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+    
+    .basic-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 14px;
+        background: #f1f5f9;
+        border-radius: 10px;
+        font-size: 0.9rem;
+        color: #334155;
+    }
+    
+    .basic-item i {
+        color: #5B9BD5;
+    }
+    
+    .features-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+    
+    .feature-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 12px;
+        background: linear-gradient(135deg, #f0f7ff 0%, #f5f0ff 100%);
+        border-radius: 10px;
+        font-size: 0.85rem;
+        color: #334155;
+    }
+    
+    .feature-item i {
+        width: 20px;
+        text-align: center;
+    }
+    
+    .feature-item.disabled {
+        opacity: 0.4;
+        text-decoration: line-through;
+    }
+    
+    .package-footer {
+        padding: 0 24px 24px;
+        margin-top: auto;
+    }
+    
+    .btn-buy {
+        width: 100%;
+        padding: 14px 24px;
+        border: none;
+        border-radius: 14px;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        text-decoration: none;
+    }
+    
+    .btn-buy.primary {
+        background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
+        color: white;
+        box-shadow: 0 6px 20px rgba(91, 155, 213, 0.3);
+    }
+    
+    .btn-buy.primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(91, 155, 213, 0.4);
+        color: white;
+    }
+    
+    .btn-buy.active {
+        background: linear-gradient(135deg, #6FCF97 0%, #70C1B3 100%);
+        color: white;
+        cursor: default;
+    }
+    
+    .btn-buy.disabled {
+        background: #e2e8f0;
+        color: #94a3b8;
+        cursor: not-allowed;
+    }
+    
+    /* ========== EMPTY STATE ========== */
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        background: white;
+        border-radius: 24px;
+        box-shadow: 0 10px 40px rgba(91, 155, 213, 0.1);
+    }
+    
+    .empty-icon {
+        width: 100px;
+        height: 100px;
+        background: #f1f5f9;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 24px;
+    }
+    
+    .empty-icon i {
+        font-size: 2.5rem;
+        color: #cbd5e1;
+    }
+    
+    .empty-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #334155;
+        margin-bottom: 8px;
+    }
+    
+    .empty-desc {
+        color: #64748b;
+        font-size: 1rem;
+    }
+    
+    /* ========== BENEFITS SECTION ========== */
+    .benefits-section {
+        background: white;
+        border-radius: 24px;
+        padding: 40px;
+        box-shadow: 0 10px 40px rgba(91, 155, 213, 0.1);
+    }
+    
+    .benefits-title {
+        text-align: center;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #5B9BD5;
+        margin-bottom: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+    
+    .benefits-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 24px;
+    }
+    
+    .benefit-item {
+        text-align: center;
+        padding: 20px;
+    }
+    
+    .benefit-icon {
+        width: 64px;
+        height: 64px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 16px;
+    }
+    
+    .benefit-icon i {
+        font-size: 1.5rem;
+        color: white;
+    }
+    
+    .benefit-icon.green { background: linear-gradient(135deg, #6FCF97 0%, #70C1B3 100%); }
+    .benefit-icon.blue { background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%); }
+    .benefit-icon.cyan { background: linear-gradient(135deg, #70C1B3 0%, #5B9BD5 100%); }
+    .benefit-icon.orange { background: linear-gradient(135deg, #FF8C42 0%, #F2C94C 100%); }
+    
+    .benefit-name {
+        font-weight: 600;
+        color: #334155;
+        margin-bottom: 6px;
+    }
+    
+    .benefit-desc {
+        font-size: 0.85rem;
+        color: #94a3b8;
+    }
+    
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 992px) {
+        .benefits-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .pro-page {
+            padding: 24px 0 60px;
+        }
+        
+        .pro-title {
+            font-size: 2rem;
+        }
+        
+        .packages-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .active-sub-card {
+            padding: 20px;
+        }
+        
+        .active-sub-info {
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .benefits-section {
+            padding: 24px;
+        }
+        
+        .benefits-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+        
+        .benefit-item {
+            padding: 12px;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .pro-container {
+            padding: 0 16px;
+        }
+        
+        .pro-title {
+            font-size: 1.75rem;
+        }
+        
+        .pro-subtitle {
+            font-size: 1rem;
+        }
+        
+        .package-header {
+            padding: 20px;
+        }
+        
+        .package-body {
+            padding: 20px;
+        }
+        
+        .package-footer {
+            padding: 0 20px 20px;
+        }
+        
+        .features-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .benefits-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+    
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+        .package-card,
+        .btn-buy,
+        .btn-pro-panel {
+            transition: none;
+        }
+        
+        .package-card:hover,
+        .btn-buy:hover {
+            transform: none;
+        }
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <div class="row">
-        <div class="col-12">
-            <div class="text-center mb-5">
-                <h1 class="display-4 text-primary mb-3">🎖️ Sahip Pro Paketleri</h1>
-                <p class="lead">Evcil hayvanınız için en iyi bakım ve takip imkanları</p>
+<div class="pro-page">
+    <div class="pro-container">
+        <!-- Header -->
+        <div class="pro-header">
+            <span class="pro-badge">
+                <i class="fas fa-crown"></i>
+                PRO ÖZELLİKLER
+            </span>
+            <h1 class="pro-title">Sahip Pro Paketleri</h1>
+            <p class="pro-subtitle">Evcil hayvanınız için en iyi bakım ve takip imkanlarını keşfedin</p>
             </div>
 
+        <!-- Active Subscription -->
             {% if aktif_abonelik %}
-            <div class="alert alert-success mb-4">
-                <div class="row align-items-center">
-                    <div class="col-md-8">
-                        <h5 class="mb-2">✅ Aktif Pro Aboneliğiniz</h5>
-                        <p class="mb-1"><strong>Paket:</strong> {{ aktif_abonelik.paket.paket_adi }}</p>
-                        <p class="mb-1"><strong>Bitiş Tarihi:</strong> {{ aktif_abonelik.bitis_tarihi|date:"d.m.Y H:i" }}</p>
-                        <p class="mb-0"><strong>Kalan Süre:</strong> {{ aktif_abonelik.kalan_gun }} gün</p>
-                    </div>
-                    <div class="col-md-4 text-md-end">
-                        <a href="{% url 'anahtarlik:sahip_pro_panel' %}" class="btn btn-success">
-                            <i class="fas fa-tachometer-alt me-2"></i>Pro Panel
-                        </a>
-                    </div>
-                </div>
+        <div class="active-sub-card">
+            <h5>
+                <i class="fas fa-check-circle"></i>
+                Aktif Pro Aboneliğiniz
+            </h5>
+            <div class="active-sub-info">
+                <span><i class="fas fa-star"></i> <strong>{{ aktif_abonelik.paket.paket_adi }}</strong></span>
+                <span><i class="fas fa-calendar"></i> Bitiş: {{ aktif_abonelik.bitis_tarihi|date:"d.m.Y" }}</span>
+                <span><i class="fas fa-clock"></i> Kalan: {{ aktif_abonelik.kalan_gun }} gün</span>
             </div>
-            {% endif %}
+            <a href="{% url 'anahtarlik:sahip_pro_panel' %}" class="btn-pro-panel">
+                <i class="fas fa-tachometer-alt"></i>
+                Pro Panele Git
+            </a>
         </div>
-    </div>
+        {% endif %}
 
-    <div class="row">
+        <!-- Package Cards -->
+        {% if pro_paketler %}
+        <div class="packages-grid">
         {% for paket in pro_paketler %}
-        <div class="col-lg-4 col-md-6 mb-4">
-            <div class="card h-100 shadow-lg border-0 {% if aktif_abonelik and aktif_abonelik.paket.id == paket.id %}border-success bg-light{% endif %}" 
-                 style="border-left: 5px solid {{ paket.renk }} !important;">
-                <div class="card-header text-white text-center" style="background-color: {{ paket.renk }};">
-                    <h4 class="mb-0">{{ paket.paket_adi }}</h4>
-                    <div class="h2 mb-0">{{ paket.fiyat }} TL<small>/{{ paket.sure_gun }} gün</small></div>
+            <div class="package-card {% if aktif_abonelik and aktif_abonelik.paket.id == paket.id %}active{% endif %}">
+                <div class="package-header" style="background: linear-gradient(135deg, {{ paket.renk }} 0%, {{ paket.renk }}99 100%);">
+                    <div class="package-name">{{ paket.paket_adi }}</div>
+                    <div class="package-price">
+                        {{ paket.fiyat }} ₺
+                        <small>/ {{ paket.sure_gun }} gün</small>
+                    </div>
                 </div>
                 
-                <div class="card-body d-flex flex-column">
+                <div class="package-body">
                     {% if paket.aciklama %}
-                    <p class="card-text text-muted">{{ paket.aciklama }}</p>
+                    <p class="package-desc">{{ paket.aciklama }}</p>
                     {% endif %}
                     
-                    <div class="mb-3">
-                        <h6 class="text-primary">📊 Temel Haklar</h6>
-                        <ul class="list-unstyled">
-                            <li><i class="fas fa-calendar text-info me-2"></i>{{ paket.sure_gun }} Gün Geçerli</li>
-                            <li><i class="fas fa-images text-warning me-2"></i>{{ paket.foto_galeri_limit }} Fotoğraf</li>
-                        </ul>
+                    <div class="package-section">
+                        <div class="package-section-title">
+                            <i class="fas fa-gift"></i>
+                            Temel Haklar
                     </div>
-
-                    <div class="mb-4">
-                        <h6 class="text-primary">🎯 Pro Özellikler</h6>
-                        <div class="row">
-                            <div class="col-6">
-                                {% if paket.asi_hatirlatma %}
-                                    <small><i class="fas fa-syringe text-success me-1"></i>Aşı Hatırlatma</small><br>
-                                {% endif %}
-                                {% if paket.veteriner_randevu %}
-                                    <small><i class="fas fa-user-md text-primary me-1"></i>Vet. Randevu</small><br>
-                                {% endif %}
-                                {% if paket.ilac_takibi %}
-                                    <small><i class="fas fa-pills text-info me-1"></i>İlaç Takibi</small><br>
-                                {% endif %}
+                        <div class="basic-rights">
+                            <div class="basic-item">
+                                <i class="fas fa-calendar-alt"></i>
+                                {{ paket.sure_gun }} Gün
                             </div>
-                            <div class="col-6">
-                                {% if paket.beslenme_programi %}
-                                    <small><i class="fas fa-utensils text-warning me-1"></i>Beslenme</small><br>
-                                {% endif %}
-                                {% if paket.finansal_takip %}
-                                    <small><i class="fas fa-chart-line text-success me-1"></i>Finansal</small><br>
-                                {% endif %}
-                                {% if paket.egitim_programi %}
-                                    <small><i class="fas fa-graduation-cap text-danger me-1"></i>Eğitim</small><br>
-                                {% endif %}
+                            <div class="basic-item">
+                                <i class="fas fa-images"></i>
+                                {{ paket.foto_galeri_limit }} Fotoğraf
                             </div>
                         </div>
                     </div>
                     
-                    <div class="mt-auto">
+                    <div class="package-section">
+                        <div class="package-section-title">
+                            <i class="fas fa-star"></i>
+                            Pro Özellikler
+                        </div>
+                        <div class="features-grid">
+                            <div class="feature-item {% if not paket.asi_hatirlatma %}disabled{% endif %}">
+                                <i class="fas fa-syringe" style="color: #6FCF97;"></i>
+                                Aşı Hatırlatma
+                            </div>
+                            <div class="feature-item {% if not paket.veteriner_randevu %}disabled{% endif %}">
+                                <i class="fas fa-user-md" style="color: #5B9BD5;"></i>
+                                Vet. Randevu
+                            </div>
+                            <div class="feature-item {% if not paket.ilac_takibi %}disabled{% endif %}">
+                                <i class="fas fa-pills" style="color: #70C1B3;"></i>
+                                İlaç Takibi
+                            </div>
+                            <div class="feature-item {% if not paket.beslenme_programi %}disabled{% endif %}">
+                                <i class="fas fa-utensils" style="color: #FF8C42;"></i>
+                                Beslenme
+                            </div>
+                            <div class="feature-item {% if not paket.finansal_takip %}disabled{% endif %}">
+                                <i class="fas fa-chart-line" style="color: #6FCF97;"></i>
+                                Finansal Takip
+                            </div>
+                            <div class="feature-item {% if not paket.egitim_programi %}disabled{% endif %}">
+                                <i class="fas fa-graduation-cap" style="color: #EB5757;"></i>
+                                Eğitim
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="package-footer">
                         {% if aktif_abonelik and aktif_abonelik.paket.id == paket.id %}
-                            <button class="btn btn-success w-100" disabled>
-                                <i class="fas fa-check me-2"></i>Aktif Paket
+                    <button class="btn-buy active" disabled>
+                        <i class="fas fa-check"></i>
+                        Aktif Paket
                             </button>
                         {% elif aktif_abonelik %}
-                            <button class="btn btn-secondary w-100" disabled>
-                                <i class="fas fa-lock me-2"></i>Zaten Aktif Abonelik Var
+                    <button class="btn-buy disabled" disabled>
+                        <i class="fas fa-lock"></i>
+                        Zaten Aboneliğiniz Var
                             </button>
                         {% else %}
                             <a href="{% url 'anahtarlik:sahip_pro_abonelik_al' paket.id %}" 
-                               class="btn btn-primary w-100"
+                       class="btn-buy primary"
                                onclick="return confirm('{{ paket.paket_adi }} paketini almak istediğinize emin misiniz?')">
-                                <i class="fas fa-shopping-cart me-2"></i>Paketi Al
+                        <i class="fas fa-shopping-cart"></i>
+                        Paketi Al
                             </a>
                         {% endif %}
-                    </div>
                 </div>
             </div>
+            {% endfor %}
         </div>
-        {% endfor %}
+        {% else %}
+        <!-- Empty State -->
+        <div class="empty-state">
+            <div class="empty-icon">
+                <i class="fas fa-box-open"></i>
     </div>
-
-    {% if not pro_paketler %}
-    <div class="text-center py-5">
-        <div class="mb-4">
-            <i class="fas fa-box-open" style="font-size: 4rem; color: #ccc;"></i>
-        </div>
-        <h4 class="text-muted">Henüz Pro Paket Tanımlanmamış</h4>
-        <p class="text-muted">Yakında harika pro paketlerle karşınızda olacağız!</p>
+            <h3 class="empty-title">Henüz Pro Paket Tanımlanmamış</h3>
+            <p class="empty-desc">Yakında harika pro paketlerle karşınızda olacağız!</p>
     </div>
     {% endif %}
 
-    <div class="row mt-5">
-        <div class="col-12">
-            <div class="card bg-light border-0">
-                <div class="card-body text-center">
-                    <h5 class="text-primary">💡 Pro Paket Avantajları</h5>
-                    <div class="row mt-3">
-                        <div class="col-md-3">
-                            <i class="fas fa-syringe fa-2x text-success mb-2"></i>
-                            <h6>Aşı Takibi</h6>
-                            <small class="text-muted">Otomatik hatırlatmalar</small>
-                        </div>
-                        <div class="col-md-3">
-                            <i class="fas fa-calendar-check fa-2x text-primary mb-2"></i>
-                            <h6>Randevu Yönetimi</h6>
-                            <small class="text-muted">Veteriner randevuları</small>
-                        </div>
-                        <div class="col-md-3">
-                            <i class="fas fa-chart-bar fa-2x text-info mb-2"></i>
-                            <h6>Detaylı Raporlar</h6>
-                            <small class="text-muted">Sağlık ve maliyet</small>
-                        </div>
-                        <div class="col-md-3">
-                            <i class="fas fa-headset fa-2x text-warning mb-2"></i>
-                            <h6>Öncelikli Destek</h6>
-                            <small class="text-muted">7/24 yardım</small>
-                        </div>
+        <!-- Benefits Section -->
+        <div class="benefits-section">
+            <h3 class="benefits-title">
+                <i class="fas fa-lightbulb"></i>
+                Pro Paket Avantajları
+            </h3>
+            <div class="benefits-grid">
+                <div class="benefit-item">
+                    <div class="benefit-icon green">
+                        <i class="fas fa-syringe"></i>
                     </div>
+                    <div class="benefit-name">Aşı Takibi</div>
+                    <div class="benefit-desc">Otomatik hatırlatmalar</div>
+                </div>
+                <div class="benefit-item">
+                    <div class="benefit-icon blue">
+                        <i class="fas fa-calendar-check"></i>
+                        </div>
+                    <div class="benefit-name">Randevu Yönetimi</div>
+                    <div class="benefit-desc">Veteriner randevuları</div>
+                        </div>
+                <div class="benefit-item">
+                    <div class="benefit-icon cyan">
+                        <i class="fas fa-chart-bar"></i>
+                        </div>
+                    <div class="benefit-name">Detaylı Raporlar</div>
+                    <div class="benefit-desc">Sağlık ve maliyet</div>
+                        </div>
+                <div class="benefit-item">
+                    <div class="benefit-icon orange">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <div class="benefit-name">Öncelikli Destek</div>
+                    <div class="benefit-desc">7/24 yardım</div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-<style>
-.card {
-    transition: transform 0.2s;
-}
-.card:hover {
-    transform: translateY(-5px);
-}
-</style>
 {% endblock %}

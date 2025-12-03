@@ -1,9 +1,12 @@
 # veteriner/models.py
 
 from django.db import models
+from django.db import transaction
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator
 from django.utils import timezone
+from django.utils.text import slugify
+import time
 
 # Ödeme modeli (kurum)
 ODEME_PESIN = 'PESIN'
@@ -210,20 +213,59 @@ class Veteriner(models.Model):
     def __str__(self):
         return self.ad
     
+    def generate_unique_slug(self, base_text=None):
+        """
+        Benzersiz slug oluştur
+        Çakışmaları önlemek için counter veya timestamp kullanır
+        """
+        if not base_text:
+            base_text = self.ad
+        
+        if not base_text:
+            return None
+        
+        # Türkçe karakterleri İngilizce karşılıklarına çevir
+        tr_map = str.maketrans('çğıöşüÇĞIÖŞÜ', 'cgiosuCGIOSU')
+        temiz_ad = base_text.translate(tr_map)
+        base_slug = slugify(temiz_ad, allow_unicode=False)
+        
+        # Boş slug kontrolü (sadece özel karakterler varsa)
+        if not base_slug:
+            base_slug = f"veteriner-{self.pk or 'new'}"
+        
+        # Maksimum uzunluk kontrolü (200 karakter limiti için counter için yer bırak)
+        if len(base_slug) > 190:
+            base_slug = base_slug[:190]
+        
+        slug = base_slug
+        counter = 1
+        max_attempts = 1000  # Güvenlik için maksimum deneme limiti
+        
+        # Çakışma kontrolü - exclude ile mevcut kaydı hariç tut
+        while Veteriner.objects.filter(web_slug=slug).exclude(pk=self.pk).exists():
+            if counter > max_attempts:
+                # Son çare: timestamp ekle (çok nadir durumlar için)
+                timestamp_suffix = str(int(time.time()))[-6:]  # Son 6 hanesi
+                slug = f"{base_slug}-{timestamp_suffix}"
+                # Timestamp ile de çakışma olursa (çok nadir) bir daha dene
+                if Veteriner.objects.filter(web_slug=slug).exclude(pk=self.pk).exists():
+                    slug = f"{base_slug}-{int(time.time())}"
+                break
+            slug = f"{base_slug}-{counter}"
+            counter += 1
+        
+        return slug
+    
+    @transaction.atomic
     def save(self, *args, **kwargs):
+        """
+        Veteriner kaydını kaydet
+        Slug oluşturma ve SEO alanları otomatik doldurulur
+        Transaction.atomic ile race condition koruması sağlanır
+        """
         # Slug oluştur (eğer yoksa)
         if not self.web_slug and self.ad:
-            from django.utils.text import slugify
-            # Türkçe karakterleri İngilizce karşılıklarına çevir
-            tr_map = str.maketrans('çğıöşüÇĞIÖŞÜ', 'cgiosuCGIOSU')
-            temiz_ad = self.ad.translate(tr_map)
-            base_slug = slugify(temiz_ad, allow_unicode=False)
-            slug = base_slug
-            counter = 1
-            while Veteriner.objects.filter(web_slug=slug).exclude(pk=self.pk).exists():
-                slug = f"{base_slug}-{counter}"
-                counter += 1
-            self.web_slug = slug
+            self.web_slug = self.generate_unique_slug()
         
         # SEO başlık ve açıklama otomatik oluştur (eğer yoksa)
         if not self.web_seo_baslik and self.web_baslik:

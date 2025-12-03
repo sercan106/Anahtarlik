@@ -6,28 +6,31 @@
 {% block css_dosyalar %}
 <style>
     :root {
-        --primary-color: #4361ee;
-        --primary-light: #eef2ff;
-        --success-color: #10b981;
-        --success-light: #d1fae5;
-        --warning-color: #f59e0b;
-        --warning-light: #fef3c7;
-        --danger-color: #ef4444;
-        --danger-light: #fee2e2;
+        --primary-color: #5B9BD5;
+        --primary-light: rgba(91, 155, 213, 0.1);
+        --secondary-color: #70C1B3;
+        --accent-color: #FF8C42;
+        --success-color: #6FCF97;
+        --success-light: rgba(111, 207, 151, 0.1);
+        --warning-color: #F2C94C;
+        --warning-light: rgba(242, 201, 76, 0.1);
+        --danger-color: #EB5757;
+        --danger-light: rgba(235, 87, 87, 0.1);
         --text-dark: #1e293b;
         --text-medium: #64748b;
         --text-light: #94a3b8;
-        --bg-body: #f8fafc;
+        --bg-body: linear-gradient(135deg, #f0f7ff 0%, #e8f4f8 50%, #f5f0ff 100%);
         --bg-card: #ffffff;
-        --border-color: #e2e8f0;
+        --border-color: rgba(91, 155, 213, 0.1);
         --radius-xl: 20px;
         --radius-lg: 16px;
         --radius-md: 12px;
-        --shadow-soft: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        --shadow-soft: 0 10px 40px rgba(91, 155, 213, 0.12);
+        --shadow-hover: 0 20px 60px rgba(91, 155, 213, 0.18);
     }
 
     body {
-        background-color: var(--bg-body);
+        background: var(--bg-body) !important;
         color: var(--text-dark);
     }
 
@@ -39,7 +42,12 @@
         box-shadow: var(--shadow-soft);
         overflow: hidden;
         margin-bottom: 1.5rem;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        transition: all 0.3s ease;
+    }
+    
+    .pet-card:hover {
+        box-shadow: var(--shadow-hover);
+        transform: translateY(-4px);
     }
 
     /* Header ve Profil Resmi */
@@ -125,14 +133,38 @@
         gap: 0.5rem;
     }
 
-    .btn-primary-soft { background: var(--primary-light); color: var(--primary-color); }
-    .btn-primary-soft:hover { background: var(--primary-color); color: white; }
+    .btn-primary-soft { 
+        background: var(--primary-light); 
+        color: var(--primary-color); 
+        border: 2px solid var(--primary-color);
+    }
+    .btn-primary-soft:hover { 
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%); 
+        color: white; 
+        border-color: transparent;
+    }
     
-    .btn-danger-soft { background: var(--danger-light); color: var(--danger-color); }
-    .btn-danger-soft:hover { background: var(--danger-color); color: white; }
+    .btn-danger-soft { 
+        background: var(--danger-light); 
+        color: var(--danger-color); 
+        border: 2px solid var(--danger-color);
+    }
+    .btn-danger-soft:hover { 
+        background: var(--danger-color); 
+        color: white; 
+        border-color: transparent;
+    }
     
-    .btn-success-solid { background: var(--success-color); color: white; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2); }
-    .btn-success-solid:hover { background: #059669; transform: translateY(-2px); }
+    .btn-success-solid { 
+        background: linear-gradient(135deg, var(--success-color) 0%, var(--secondary-color) 100%); 
+        color: white; 
+        box-shadow: 0 6px 20px rgba(111, 207, 151, 0.35); 
+        border: none;
+    }
+    .btn-success-solid:hover { 
+        box-shadow: 0 10px 30px rgba(111, 207, 151, 0.45); 
+        transform: translateY(-2px); 
+    }
 
     /* Bilgi Listeleri (Sahip vb) */
     .info-list-item {
@@ -210,10 +242,32 @@
     }
 
     /* Responsive */
+    @media (max-width: 768px) {
+        .pet-card {
+            border-radius: 16px;
+        }
+        
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+    
     @media (min-width: 992px) {
         .sticky-sidebar {
             position: sticky;
             top: 2rem;
+        }
+    }
+    
+    @media (prefers-reduced-motion: reduce) {
+        .pet-card,
+        .btn-action {
+            transition: none;
+        }
+        
+        .pet-card:hover,
+        .btn-success-solid:hover {
+            transform: none;
         }
     }
 </style>
@@ -614,8 +668,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Modern Gradyan Dolgu
         let gradient = ctx.getContext('2d').createLinearGradient(0, 0, 0, 300);
-        gradient.addColorStop(0, 'rgba(67, 97, 238, 0.25)'); // Primary color (opacity)
-        gradient.addColorStop(1, 'rgba(67, 97, 238, 0.0)');
+        gradient.addColorStop(0, 'rgba(91, 155, 213, 0.25)'); // Primary color (opacity)
+        gradient.addColorStop(1, 'rgba(91, 155, 213, 0.0)');
 
         new Chart(ctx, {
             type: 'line',
@@ -624,11 +678,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 datasets: [{
                     label: 'Kilo (kg)',
                     data: data,
-                    borderColor: '#4361ee',
+                    borderColor: '#5B9BD5',
                     backgroundColor: gradient,
                     borderWidth: 3,
                     pointBackgroundColor: '#ffffff',
-                    pointBorderColor: '#4361ee',
+                    pointBorderColor: '#5B9BD5',
                     pointBorderWidth: 2,
                     pointRadius: 5,
                     pointHoverRadius: 7,

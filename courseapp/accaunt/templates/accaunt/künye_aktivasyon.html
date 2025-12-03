@@ -33,7 +33,7 @@
         font-size: 1rem;
     }
     .progress-bar {
-        background-color: #28a745;
+        background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
         transition: width 0.5s ease-in-out;
     }
     .form-group {
@@ -47,8 +47,8 @@
         transition: border-color 0.3s ease, box-shadow 0.3s ease;
     }
     .form-control:focus {
-        border-color: #28a745;
-        box-shadow: 0 0 8px rgba(40, 167, 69, 0.3);
+        border-color: #5B9BD5;
+        box-shadow: 0 0 8px rgba(91, 155, 213, 0.3);
     }
     .form-label {
         color: #1a252f;
@@ -56,18 +56,19 @@
         margin-bottom: 0.5rem;
     }
     .btn-submit {
-        background-color: #28a745;
+        background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
         color: #fff;
         border: none;
         padding: 0.75rem 2rem;
         border-radius: 25px;
         font-weight: bold;
-        transition: background-color 0.3s ease, transform 0.3s ease;
+        transition: all 0.3s ease;
         width: 100%;
+        box-shadow: 0 6px 20px rgba(91, 155, 213, 0.35);
     }
     .btn-submit:hover {
-        background-color: #218838;
-        transform: scale(1.05);
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(91, 155, 213, 0.45);
     }
     .alert {
         border-radius: 10px;
@@ -81,7 +82,7 @@
         to { opacity: 1; transform: translateY(0); }
     }
     .step-icon {
-        color: #28a745;
+        color: #5B9BD5;
         margin-right: 0.5rem;
     }
     .form-textarea {

@@ -23,9 +23,9 @@
     /* Hero Background with Parallax Effect */
     .hero-bg { 
       {% if veteriner.web_resim1 %}
-      background-image: linear-gradient(135deg, rgba(16, 185, 129, 0.9) 0%, rgba(59, 130, 246, 0.85) 100%), url('{{ veteriner.web_resim1.url }}');
+      background-image: linear-gradient(135deg, rgba(91, 155, 213, 0.9) 0%, rgba(112, 193, 179, 0.85) 100%), url('{{ veteriner.web_resim1.url }}');
       {% else %}
-      background-image: linear-gradient(135deg, rgba(16, 185, 129, 0.9) 0%, rgba(59, 130, 246, 0.85) 100%), url('https://images.unsplash.com/photo-1548681528-6a5c45b66b42?w=1600');
+      background-image: linear-gradient(135deg, rgba(91, 155, 213, 0.9) 0%, rgba(112, 193, 179, 0.85) 100%), url('https://images.unsplash.com/photo-1548681528-6a5c45b66b42?w=1600');
       {% endif %}
       background-size: cover;
       background-position: center;
@@ -84,7 +84,7 @@
     
     /* Gradient Text */
     .gradient-text {
-      background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+      background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -143,7 +143,7 @@
       position: relative;
       border: 2px solid transparent;
       background: linear-gradient(white, white) padding-box,
-                  linear-gradient(135deg, #10b981, #3b82f6) border-box;
+                  linear-gradient(135deg, #5B9BD5, #70C1B3) border-box;
     }
     
     /* Icon Animations */
@@ -325,6 +325,7 @@
   </section>
 
   <!-- Hizmetler Section -->
+  {% if veteriner.goster_hizmetler %}
   <section id="hizmetler" class="py-20 lg:py-32 bg-gradient-to-br from-gray-50 to-blue-50 reveal">
     <div class="container mx-auto px-4 lg:px-8">
       <div class="text-center mb-16">
@@ -338,7 +339,15 @@
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
          {% if veteriner.hizmet1_baslik %}
          <div class="bg-white p-8 rounded-2xl shadow-lg card-hover gradient-border">
-           <div class="text-4xl mb-4 text-blue-600"><i class="fas fa-stethoscope"></i></div>
+           {% if veteriner.hizmet1_icon %}
+             {% if 'fa-' in veteriner.hizmet1_icon or 'fas ' in veteriner.hizmet1_icon or 'fab ' in veteriner.hizmet1_icon %}
+               <div class="text-4xl mb-4 text-blue-600"><i class="{{ veteriner.hizmet1_icon }}"></i></div>
+             {% else %}
+               <div class="text-4xl mb-4 text-blue-600">{{ veteriner.hizmet1_icon }}</div>
+             {% endif %}
+           {% else %}
+             <div class="text-4xl mb-4 text-blue-600"><i class="fas fa-stethoscope"></i></div>
+           {% endif %}
            <h3 class="text-2xl font-bold mb-4 text-gray-800">{{ veteriner.hizmet1_baslik }}</h3>
            <p class="text-gray-600 leading-relaxed">{{ veteriner.hizmet1_aciklama }}</p>
          </div>
@@ -352,7 +361,15 @@
          
          {% if veteriner.hizmet2_baslik %}
          <div class="bg-white p-8 rounded-2xl shadow-lg card-hover gradient-border">
-           <div class="text-4xl mb-4 text-green-600"><i class="fas fa-syringe"></i></div>
+           {% if veteriner.hizmet2_icon %}
+             {% if 'fa-' in veteriner.hizmet2_icon or 'fas ' in veteriner.hizmet2_icon or 'fab ' in veteriner.hizmet2_icon %}
+               <div class="text-4xl mb-4 text-green-600"><i class="{{ veteriner.hizmet2_icon }}"></i></div>
+             {% else %}
+               <div class="text-4xl mb-4 text-green-600">{{ veteriner.hizmet2_icon }}</div>
+             {% endif %}
+           {% else %}
+             <div class="text-4xl mb-4 text-green-600"><i class="fas fa-syringe"></i></div>
+           {% endif %}
            <h3 class="text-2xl font-bold mb-4 text-gray-800">{{ veteriner.hizmet2_baslik }}</h3>
            <p class="text-gray-600 leading-relaxed">{{ veteriner.hizmet2_aciklama }}</p>
          </div>
@@ -366,7 +383,15 @@
          
          {% if veteriner.hizmet3_baslik %}
          <div class="bg-white p-8 rounded-2xl shadow-lg card-hover gradient-border">
-           <div class="text-4xl mb-4 text-red-600"><i class="fas fa-user-md"></i></div>
+           {% if veteriner.hizmet3_icon %}
+             {% if 'fa-' in veteriner.hizmet3_icon or 'fas ' in veteriner.hizmet3_icon or 'fab ' in veteriner.hizmet3_icon %}
+               <div class="text-4xl mb-4 text-red-600"><i class="{{ veteriner.hizmet3_icon }}"></i></div>
+             {% else %}
+               <div class="text-4xl mb-4 text-red-600">{{ veteriner.hizmet3_icon }}</div>
+             {% endif %}
+           {% else %}
+             <div class="text-4xl mb-4 text-red-600"><i class="fas fa-user-md"></i></div>
+           {% endif %}
            <h3 class="text-2xl font-bold mb-4 text-gray-800">{{ veteriner.hizmet3_baslik }}</h3>
            <p class="text-gray-600 leading-relaxed">{{ veteriner.hizmet3_aciklama }}</p>
          </div>
@@ -377,24 +402,6 @@
            <p class="text-gray-600 leading-relaxed">Modern ekipmanlarımızla güvenli cerrahi müdahale ve operasyonlar.</p>
          </div>
          {% endif %}
-         
-         <div class="bg-white p-8 rounded-2xl shadow-lg card-hover gradient-border">
-           <div class="text-4xl mb-4 text-purple-600"><i class="fas fa-microscope"></i></div>
-           <h3 class="text-2xl font-bold mb-4 text-gray-800">Laboratuvar</h3>
-           <p class="text-gray-600 leading-relaxed">Hızlı ve güvenilir laboratuvar test sonuçları ile kesin teşhis.</p>
-         </div>
-         
-         <div class="bg-white p-8 rounded-2xl shadow-lg card-hover gradient-border">
-           <div class="text-4xl mb-4 text-orange-600"><i class="fas fa-home"></i></div>
-           <h3 class="text-2xl font-bold mb-4 text-gray-800">Evde Bakım</h3>
-           <p class="text-gray-600 leading-relaxed">Evinizde profesyonel veteriner hizmeti alma imkanı.</p>
-         </div>
-         
-         <div class="bg-white p-8 rounded-2xl shadow-lg card-hover gradient-border">
-           <div class="text-4xl mb-4 text-cyan-600"><i class="fas fa-shower"></i></div>
-           <h3 class="text-2xl font-bold mb-4 text-gray-800">Bakım & Tımar</h3>
-           <p class="text-gray-600 leading-relaxed">Dostlarınızın temizlik ve bakım ihtiyaçları için özel hizmetler.</p>
-         </div>
       </div>
     </div>
   </section>
@@ -591,27 +598,34 @@
              </div>
            </div>
            
+           {% if veteriner.goster_calisma_saatleri %}
            <div class="bg-gradient-to-br from-orange-50 to-white p-8 rounded-2xl shadow-lg card-hover">
              <div class="flex items-start space-x-4">
                <div class="text-4xl text-orange-600"><i class="fas fa-clock"></i></div>
                <div>
                  <h3 class="text-xl font-bold mb-2 text-gray-800">Çalışma Saatleri</h3>
-                 <p class="text-gray-600">
-                   <strong>Pazartesi - Cumartesi:</strong><br>
-                   {% if veteriner.pazartesi_baslangic and veteriner.pazartesi_bitis %}
-                   {{ veteriner.pazartesi_baslangic|time:'H:i' }} - {{ veteriner.pazartesi_bitis|time:'H:i' }}
-                   {% else %}
-                   09:00 - 18:00
-                   {% endif %}
-                 </p>
-                 <p class="text-gray-600 mt-2">
-                   <strong>Pazar:</strong> Kapalı
-                 </p>
+                 {% if veteriner.calisma_saatleri %}
+                   <p class="text-gray-600">{{ veteriner.calisma_saatleri }}</p>
+                 {% else %}
+                   <p class="text-gray-600">
+                     <strong>Pazartesi - Cumartesi:</strong><br>
+                     {% if veteriner.pazartesi_baslangic and veteriner.pazartesi_bitis %}
+                     {{ veteriner.pazartesi_baslangic|time:'H:i' }} - {{ veteriner.pazartesi_bitis|time:'H:i' }}
+                     {% else %}
+                     09:00 - 18:00
+                     {% endif %}
+                   </p>
+                   <p class="text-gray-600 mt-2">
+                     <strong>Pazar:</strong> {% if veteriner.pazar_kapali %}Kapalı{% else %}{% if veteriner.pazar_baslangic and veteriner.pazar_bitis %}{{ veteriner.pazar_baslangic|time:'H:i' }} - {{ veteriner.pazar_bitis|time:'H:i' }}{% else %}Kapalı{% endif %}{% endif %}
+                   </p>
+                 {% endif %}
                </div>
              </div>
            </div>
+           {% endif %}
            
            <!-- Social Media -->
+           {% if veteriner.goster_sosyal %}
            <div class="flex space-x-6 justify-center lg:justify-start">
              {% if instagram_url %}
              <a href="{{ instagram_url }}" target="_blank" class="w-14 h-14 bg-gradient-to-br from-pink-500 to-orange-500 rounded-full flex items-center justify-center text-white text-2xl hover:scale-110 transform transition-all duration-300 shadow-lg">
@@ -629,14 +643,19 @@
              </a>
              {% endif %}
            </div>
+           {% endif %}
          </div>
         
         <!-- Map -->
         <div class="map-container">
-          {% if veteriner.il and veteriner.ilce %}
-          <iframe src="https://www.google.com/maps?q={{ veteriner.ilce.ad|urlencode }}+{{ veteriner.il.ad|urlencode }}&output=embed" width="100%" height="100%" style="border:0;" allowfullscreen loading="lazy"></iframe>
+          {% if veteriner.konum_koordinat %}
+            {% with koordinat=veteriner.konum_koordinat|stringformat:"s" %}
+              <iframe src="https://www.google.com/maps?q={{ koordinat|urlencode }}&output=embed" width="100%" height="100%" style="border:0;" allowfullscreen loading="lazy"></iframe>
+            {% endwith %}
+          {% elif veteriner.il and veteriner.ilce %}
+            <iframe src="https://www.google.com/maps?q={{ veteriner.ilce.ad|urlencode }}+{{ veteriner.il.ad|urlencode }}&output=embed" width="100%" height="100%" style="border:0;" allowfullscreen loading="lazy"></iframe>
           {% else %}
-          <iframe src="https://www.google.com/maps?q=Istanbul&output=embed" width="100%" height="100%" style="border:0;" allowfullscreen loading="lazy"></iframe>
+            <iframe src="https://www.google.com/maps?q=Istanbul&output=embed" width="100%" height="100%" style="border:0;" allowfullscreen loading="lazy"></iframe>
           {% endif %}
         </div>
       </div>

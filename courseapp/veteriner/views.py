@@ -391,6 +391,7 @@ def web_sayfasi_duzenle(request):
     if request.method == 'POST':
         form = VeterinerWebForm(request.POST, request.FILES, instance=veteriner)
         if form.is_valid():
+            # Form'un save metodu slug'ı zaten kaydediyor
             form.save()
             messages.success(request, "Web sayfanız başarıyla güncellendi!")
             return redirect('veteriner:web_sayfasi_duzenle')

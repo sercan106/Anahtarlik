@@ -202,6 +202,17 @@ class SiparisForm(forms.ModelForm):
 
 
 class VeterinerWebForm(forms.ModelForm):
+    # Slug düzenleme için özel alan
+    web_slug = forms.SlugField(
+        required=False,
+        max_length=200,
+        help_text="URL slug (boş bırakırsanız otomatik oluşturulur)",
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'pati-veteriner-klinigi'
+        })
+    )
+    
     class Meta:
         model = Veteriner
         fields = [
@@ -213,6 +224,9 @@ class VeterinerWebForm(forms.ModelForm):
             'hizmet3_baslik','hizmet3_aciklama','hizmet3_icon',
             'website','instagram','facebook','twitter','linkedin','youtube',
             'cta_metin','cta_link','whatsapp',
+            'uzmanlik_alanlari', 'calisma_saatleri',  # Yeni eklenenler
+            'konum_koordinat',  # Yeni eklenen
+            'goster_sosyal', 'goster_hizmetler', 'goster_calisma_saatleri', 'goster_galeri',  # Yeni eklenenler
             'pazartesi_baslangic','pazartesi_bitis','pazartesi_kapali',
             'sali_baslangic','sali_bitis','sali_kapali',
             'carsamba_baslangic','carsamba_bitis','carsamba_kapali',
@@ -231,7 +245,221 @@ class VeterinerWebForm(forms.ModelForm):
             'cta_metin': forms.TextInput(attrs={'class':'form-control','placeholder':'Randevu Al'}),
             'cta_link': forms.URLInput(attrs={'class':'form-control','placeholder':'https://...'}),
             'whatsapp': forms.TextInput(attrs={'class':'form-control','placeholder':'905551112233'}),
+            'uzmanlik_alanlari': forms.Textarea(attrs={'class':'form-control','rows':3,'placeholder':'Kedi, Köpek, Kuş, Tavşan (virgülle ayırın)'}),
+            'calisma_saatleri': forms.Textarea(attrs={'class':'form-control','rows':2,'placeholder':'Pazartesi-Cuma: 09:00-18:00, Cumartesi: 10:00-16:00'}),
+            'konum_koordinat': forms.TextInput(attrs={'class':'form-control','placeholder':'38.231952, 42.428070'}),
+            'hizmet1_icon': forms.TextInput(attrs={'class':'form-control','placeholder':'🩺 (emoji veya FontAwesome icon)'}),
+            'hizmet2_icon': forms.TextInput(attrs={'class':'form-control','placeholder':'💉 (emoji veya FontAwesome icon)'}),
+            'hizmet3_icon': forms.TextInput(attrs={'class':'form-control','placeholder':'🔬 (emoji veya FontAwesome icon)'}),
         }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Slug alanını instance'dan al
+        if self.instance and self.instance.pk and self.instance.web_slug:
+            self.fields['web_slug'].initial = self.instance.web_slug
+    
+    def clean_birincil_renk(self):
+        """HEX renk formatı kontrolü"""
+        renk = self.cleaned_data.get('birincil_renk')
+        if renk is None:
+            return ''
+        renk = str(renk).strip()
+        if renk:
+            # HEX format kontrolü (# ile başlamalı, 6 veya 3 karakter)
+            import re
+            hex_pattern = r'^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$'
+            if not re.match(hex_pattern, renk):
+                raise forms.ValidationError(
+                    "Renk formatı geçersiz. HEX formatında olmalı (örn: #4cc9f0 veya #4cf)"
+                )
+        return renk
+    
+    def clean_whatsapp(self):
+        """WhatsApp numarası format kontrolü"""
+        whatsapp = self.cleaned_data.get('whatsapp')
+        if whatsapp is None:
+            return ''
+        whatsapp = str(whatsapp).strip()
+        if whatsapp:
+            # Sadece rakam olmalı
+            if not whatsapp.isdigit():
+                raise forms.ValidationError(
+                    "WhatsApp numarası sadece rakamlardan oluşmalı (örn: 905551112233)"
+                )
+            # Minimum 10, maksimum 15 karakter
+            if len(whatsapp) < 10 or len(whatsapp) > 15:
+                raise forms.ValidationError(
+                    "WhatsApp numarası 10-15 karakter arasında olmalı"
+                )
+        return whatsapp
+    
+    def clean_konum_koordinat(self):
+        """Koordinat formatı kontrolü"""
+        koordinat = self.cleaned_data.get('konum_koordinat')
+        if koordinat is None:
+            return ''
+        koordinat = str(koordinat).strip()
+        if koordinat:
+            # Format: "lat, lng" veya "lat,lng"
+            import re
+            coord_pattern = r'^-?\d+\.?\d*,\s*-?\d+\.?\d*$'
+            if not re.match(coord_pattern, koordinat):
+                raise forms.ValidationError(
+                    "Koordinat formatı geçersiz. Format: '38.231952, 42.428070' (enlem, boylam)"
+                )
+            # Değer aralığı kontrolü
+            try:
+                parts = koordinat.replace(' ', '').split(',')
+                lat = float(parts[0])
+                lng = float(parts[1])
+                if not (-90 <= lat <= 90) or not (-180 <= lng <= 180):
+                    raise forms.ValidationError(
+                        "Koordinat değerleri geçersiz. Enlem: -90 ile 90, Boylam: -180 ile 180 arasında olmalı"
+                    )
+            except (ValueError, IndexError):
+                raise forms.ValidationError(
+                    "Koordinat formatı geçersiz. Format: '38.231952, 42.428070'"
+                )
+        return koordinat
+    
+    def clean_web_slug(self):
+        """Slug çakışma kontrolü"""
+        slug = self.cleaned_data.get('web_slug')
+        if slug is None:
+            return ''
+        slug = str(slug).strip()
+        if slug:
+            # Mevcut slug'ı kontrol et
+            existing = Veteriner.objects.filter(web_slug=slug)
+            if self.instance and self.instance.pk:
+                existing = existing.exclude(pk=self.instance.pk)
+            if existing.exists():
+                raise forms.ValidationError(
+                    f"Bu slug zaten kullanılıyor: '{slug}'. Lütfen farklı bir slug seçin."
+                )
+        return slug
+    
+    def clean_cta_link(self):
+        """CTA link format kontrolü"""
+        cta_link = self.cleaned_data.get('cta_link')
+        if cta_link is None:
+            return ''
+        cta_link = str(cta_link).strip()
+        if cta_link:
+            # URL format kontrolü
+            if not (cta_link.startswith('http://') or cta_link.startswith('https://')):
+                raise forms.ValidationError(
+                    "Link 'http://' veya 'https://' ile başlamalı"
+                )
+        return cta_link
+    
+    def clean_website(self):
+        """Website URL format kontrolü"""
+        website = self.cleaned_data.get('website')
+        if website is None:
+            return ''
+        website = str(website).strip()
+        if website:
+            if not (website.startswith('http://') or website.startswith('https://')):
+                raise forms.ValidationError(
+                    "Website URL'si 'http://' veya 'https://' ile başlamalı"
+                )
+        return website
+    
+    def clean_instagram(self):
+        """Instagram format kontrolü"""
+        instagram = self.cleaned_data.get('instagram')
+        if instagram is None:
+            return ''
+        instagram = str(instagram).strip()
+        if instagram:
+            # @ işareti varsa kaldır
+            if instagram.startswith('@'):
+                instagram = instagram[1:]
+            # URL formatında değilse, sadece kullanıcı adı olmalı
+            if 'http' in instagram or 'instagram.com' in instagram:
+                if not (instagram.startswith('http://') or instagram.startswith('https://')):
+                    raise forms.ValidationError(
+                        "Instagram linki 'http://' veya 'https://' ile başlamalı"
+                    )
+        return instagram
+    
+    def clean_facebook(self):
+        """Facebook format kontrolü"""
+        facebook = self.cleaned_data.get('facebook')
+        if facebook is None:
+            return ''
+        facebook = str(facebook).strip()
+        if facebook:
+            # URL formatında değilse, sadece kullanıcı adı olabilir
+            if 'http' in facebook or 'facebook.com' in facebook:
+                if not (facebook.startswith('http://') or facebook.startswith('https://')):
+                    raise forms.ValidationError(
+                        "Facebook linki 'http://' veya 'https://' ile başlamalı"
+                    )
+        return facebook
+    
+    def clean_twitter(self):
+        """Twitter/X format kontrolü"""
+        twitter = self.cleaned_data.get('twitter')
+        if twitter is None:
+            return ''
+        twitter = str(twitter).strip()
+        if twitter:
+            # @ işareti varsa kaldır
+            if twitter.startswith('@'):
+                twitter = twitter[1:]
+            # URL formatında değilse, sadece kullanıcı adı olmalı
+            if 'http' in twitter or 'twitter.com' in twitter or 'x.com' in twitter:
+                if not (twitter.startswith('http://') or twitter.startswith('https://')):
+                    raise forms.ValidationError(
+                        "Twitter/X linki 'http://' veya 'https://' ile başlamalı"
+                    )
+        return twitter
+    
+    def clean_linkedin(self):
+        """LinkedIn format kontrolü"""
+        linkedin = self.cleaned_data.get('linkedin')
+        if linkedin is None:
+            return ''
+        linkedin = str(linkedin).strip()
+        if linkedin:
+            if 'http' in linkedin or 'linkedin.com' in linkedin:
+                if not (linkedin.startswith('http://') or linkedin.startswith('https://')):
+                    raise forms.ValidationError(
+                        "LinkedIn linki 'http://' veya 'https://' ile başlamalı"
+                    )
+        return linkedin
+    
+    def clean_youtube(self):
+        """YouTube format kontrolü"""
+        youtube = self.cleaned_data.get('youtube')
+        if youtube is None:
+            return ''
+        youtube = str(youtube).strip()
+        if youtube:
+            if 'http' in youtube or 'youtube.com' in youtube or 'youtu.be' in youtube:
+                if not (youtube.startswith('http://') or youtube.startswith('https://')):
+                    raise forms.ValidationError(
+                        "YouTube linki 'http://' veya 'https://' ile başlamalı"
+                    )
+        return youtube
+    
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        
+        # Slug'ı kaydet (eğer manuel girildiyse)
+        slug = self.cleaned_data.get('web_slug', '').strip()
+        if slug:
+            instance.web_slug = slug
+        elif not instance.web_slug and instance.ad:
+            # Slug yoksa otomatik oluştur (model'in save metodunda yapılacak)
+            pass
+        
+        if commit:
+            instance.save()
+        return instance
 
 
 class VeterinerHesapForm(forms.ModelForm):

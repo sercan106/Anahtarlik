@@ -1,77 +1,843 @@
 {% extends 'ana.html' %}
+{% load static %}
 
 {% block title %}Profilim - PetSafe Hub{% endblock %}
 
 {% block css_dosyalar %}
+<link href="{% static 'css/panel.css' %}" rel="stylesheet">
 <style>
-.profilim-container{min-height:60vh;padding:40px 0}
-.page-header{background:linear-gradient(135deg,#5B9BD5 0%,#70C1B3 100%);padding:40px;border-radius:20px;color:#fff;margin-bottom:40px;box-shadow:0 8px 24px rgba(91,155,213,.25)}
-.page-header h2{font-size:2.5rem;font-weight:700;margin:0;text-shadow:0 2px 8px rgba(0,0,0,.2)}
-.edit-profile-btn{background:rgba(255,255,255,.2);border:2px solid rgba(255,255,255,.4);color:#fff;padding:12px 30px;border-radius:50px;font-weight:600;transition:all .3s ease;text-decoration:none;display:inline-flex;align-items:center;gap:10px}
-.edit-profile-btn:hover{background:rgba(255,255,255,.3);border-color:rgba(255,255,255,.6);transform:translateY(-2px);color:#fff;text-decoration:none}
-.info-card{background:rgba(255,255,255,.95);border-radius:20px;border:1px solid rgba(255,255,255,.3);box-shadow:0 8px 24px rgba(91,155,213,.12);transition:all .3s ease;margin-bottom:30px}
-.info-card .card-header{background:linear-gradient(135deg,#5B9BD5 0%,#70C1B3 100%);padding:20px;color:#fff;border-radius:20px 20px 0 0;border:none}
-.info-card .card-header h5{margin:0;font-weight:600;font-size:1.1rem}
-.info-card .card-body{padding:30px}
-.stat-card{background:rgba(255,255,255,.95);border-radius:20px;border:none;box-shadow:0 8px 24px rgba(91,155,213,.12);transition:all .3s ease;overflow:hidden;height:100%}
-.stat-card:hover{transform:translateY(-8px);box-shadow:0 12px 32px rgba(91,155,213,.18)}
-.stat-card .card-body{padding:25px;text-align:center}
-.stat-card i{font-size:2.5rem;margin-bottom:15px}
-.stat-card h4{font-size:2rem;font-weight:700;margin-bottom:10px}
-.stat-card .btn{border-radius:50px;font-weight:600;padding:8px 20px;transition:all .3s ease}
-.stat-card .btn:hover{transform:translateY(-2px)}
-.stat-primary{border-left:4px solid #5B9BD5}
-.stat-primary i{color:#5B9BD5}
-.stat-primary h4{color:#5B9BD5}
-.stat-success{border-left:4px solid #6FCF97}
-.stat-success i{color:#6FCF97}
-.stat-success h4{color:#6FCF97}
-.stat-warning{border-left:4px solid #F2C94C}
-.stat-warning i{color:#F2C94C}
-.stat-warning h4{color:#F2C94C}
-.stat-info{border-left:4px solid #56CCF2}
-.stat-info i{color:#56CCF2}
-.stat-info h4{color:#56CCF2}
-.vet-card{background:rgba(255,255,255,.95);border-radius:20px;border:none;box-shadow:0 8px 24px rgba(91,155,213,.12);overflow:hidden;margin-bottom:30px}
-.vet-card .card-header{background:linear-gradient(135deg,#56CCF2 0%,#2D9CDB 100%);padding:20px;color:#fff;border:none}
-.vet-card .card-header h5{margin:0;font-weight:600}
-.vet-card .card-body{padding:30px}
-.vet-avatar{background:linear-gradient(135deg,#56CCF2 0%,#2D9CDB 100%);width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(86,204,242,.3)}
-.pet-card-modern{background:rgba(255,255,255,.95);border-radius:20px;border:none;box-shadow:0 8px 24px rgba(91,155,213,.12);transition:all .3s ease;overflow:hidden;height:100%}
-.pet-card-modern:hover{transform:translateY(-8px);box-shadow:0 12px 32px rgba(91,155,213,.18)}
-.pet-card-modern img{height:200px;object-fit:cover;width:100%}
-.pet-card-modern .card-body{padding:20px}
-.pet-card-modern .card-footer{background:rgba(247,249,252,.5);border:none;padding:15px 20px}
-.pet-card-modern .btn{border-radius:50px;font-weight:600;transition:all .3s ease}
-.pet-card-modern .btn:hover{transform:translateY(-2px)}
-.quick-actions-card{background:rgba(255,255,255,.95);border-radius:20px;border:none;box-shadow:0 8px 24px rgba(91,155,213,.12)}
-.quick-actions-card .card-header{background:linear-gradient(135deg,#5B9BD5 0%,#70C1B3 100%);padding:20px;color:#fff;border-radius:20px 20px 0 0;border:none}
-.quick-actions-card .card-header h5{margin:0;font-weight:600}
-.quick-actions-card .card-body{padding:30px}
-.quick-actions-card .btn{border-radius:50px;font-weight:600;padding:14px 20px;transition:all .3s ease}
-.quick-actions-card .btn:hover{transform:translateY(-3px);box-shadow:0 6px 20px rgba(0,0,0,.15)}
-.pro-card{background:linear-gradient(135deg,#56CCF2 0%,#2D9CDB 100%);border-radius:20px;border:none;box-shadow:0 8px 24px rgba(86,204,242,.25);color:#fff;margin-bottom:30px}
-.pro-card .card-header{background:rgba(255,255,255,.2);padding:20px;color:#fff;border-radius:20px 20px 0 0;border:none}
-.pro-card .card-header h5{margin:0;font-weight:600}
-.pro-card .card-body{padding:30px}
-.pro-card .btn{background:rgba(255,255,255,.95);color:#2D9CDB;border:none;border-radius:50px;font-weight:600;padding:12px 30px;transition:all .3s ease}
-.pro-card .btn:hover{background:#fff;transform:translateY(-3px);box-shadow:0 6px 20px rgba(0,0,0,.2)}
-.badge{padding:6px 16px;border-radius:50px;font-weight:600}
-@media(max-width:768px){.page-header{padding:30px 20px;text-align:center}.page-header h2{font-size:1.8rem;margin-bottom:15px}.edit-profile-btn{width:100%;justify-content:center}}
+    /* ========== SAHİP PROFİLİM PAGE STYLES ========== */
+    /* Ana tasarım sistemine uyumlu (ana.html/ev.html) */
+    
+    :root {
+        --profil-primary: #5B9BD5;
+        --profil-secondary: #70C1B3;
+        --profil-accent: #FF8C42;
+        --profil-success: #6FCF97;
+        --profil-warning: #F2C94C;
+        --profil-info: #56CCF2;
+        --profil-danger: #EB5757;
+        --profil-primary-gradient: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
+        --profil-secondary-gradient: linear-gradient(135deg, #70C1B3 0%, #6FCF97 100%);
+        --profil-accent-gradient: linear-gradient(135deg, #FF8C42 0%, #FFB88C 100%);
+        --profil-info-gradient: linear-gradient(135deg, #56CCF2 0%, #2D9CDB 100%);
+        --profil-warning-gradient: linear-gradient(135deg, #F2C94C 0%, #F2994A 100%);
+    }
+    
+    /* 📦 CONTAINER */
+    .profilim-container {
+        min-height: 60vh;
+        padding: 40px 0 80px;
+    }
+    
+    /* 🌟 PAGE HEADER */
+    .profil-page-header {
+        background: var(--profil-primary-gradient);
+        padding: 35px 30px;
+        border-radius: 20px;
+        color: #fff;
+        margin-bottom: 30px;
+        box-shadow: 0 8px 24px rgba(91, 155, 213, 0.25);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .profil-page-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: 
+            radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 80% 70%, rgba(255, 255, 255, 0.08) 0%, transparent 50%);
+        pointer-events: none;
+    }
+    
+    .profil-page-header h2 {
+        font-size: clamp(1.5rem, 4vw, 2.2rem);
+        font-weight: 700;
+        margin: 0;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        position: relative;
+        z-index: 1;
+    }
+    
+    .profil-page-header h2 i {
+        margin-right: 12px;
+    }
+    
+    /* 🔘 EDIT PROFILE BUTTON */
+    .profil-edit-btn {
+        background: rgba(255, 255, 255, 0.2);
+        border: 2px solid rgba(255, 255, 255, 0.4);
+        color: #fff;
+        padding: 12px 28px;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        min-height: 48px;
+        -webkit-tap-highlight-color: transparent;
+        touch-action: manipulation;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .profil-edit-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+        border-color: rgba(255, 255, 255, 0.6);
+        transform: translateY(-2px);
+        color: #fff;
+        text-decoration: none;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    .profil-edit-btn:active {
+        transform: translateY(0);
+    }
+    
+    /* 📋 INFO CARDS */
+    .profil-info-card {
+        background: rgba(255, 255, 255, 0.98);
+        border-radius: 20px;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        box-shadow: 0 8px 24px rgba(91, 155, 213, 0.12);
+        transition: all 0.3s ease;
+        margin-bottom: 24px;
+        overflow: hidden;
+    }
+    
+    .profil-info-card:hover {
+        box-shadow: 0 12px 32px rgba(91, 155, 213, 0.16);
+    }
+    
+    .profil-info-card .card-header {
+        background: var(--profil-primary-gradient);
+        padding: 18px 24px;
+        color: #fff;
+        border: none;
+    }
+    
+    .profil-info-card .card-header h5 {
+        margin: 0;
+        font-weight: 600;
+        font-size: 1.05rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .profil-info-card .card-body {
+        padding: 24px;
+    }
+    
+    .profil-info-card .card-body p {
+        margin-bottom: 0.75rem;
+        font-size: 0.95rem;
+        color: #555;
+        line-height: 1.6;
+    }
+    
+    .profil-info-card .card-body p:last-child {
+        margin-bottom: 0;
+    }
+    
+    .profil-info-card .card-body p strong {
+        color: #2c3e50;
+        font-weight: 600;
+    }
+    
+    /* 📊 STAT CARDS */
+    .profil-stat-card {
+        background: rgba(255, 255, 255, 0.98);
+        border-radius: 20px;
+        border: none;
+        box-shadow: 0 8px 24px rgba(91, 155, 213, 0.12);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        overflow: hidden;
+        height: 100%;
+        position: relative;
+    }
+    
+    .profil-stat-card::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 4px;
+        height: 100%;
+        border-radius: 20px 0 0 20px;
+    }
+    
+    .profil-stat-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 16px 40px rgba(91, 155, 213, 0.2);
+    }
+    
+    .profil-stat-card .card-body {
+        padding: 24px 20px;
+        text-align: center;
+    }
+    
+    .profil-stat-card .stat-icon {
+        font-size: 2.2rem;
+        margin-bottom: 12px;
+        display: block;
+    }
+    
+    .profil-stat-card .stat-value {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 8px;
+        display: block;
+    }
+    
+    .profil-stat-card .stat-label {
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 16px;
+        display: block;
+    }
+    
+    .profil-stat-card .btn {
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        padding: 10px 20px;
+        transition: all 0.3s ease;
+        min-height: 40px;
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    .profil-stat-card .btn:hover {
+        transform: translateY(-2px);
+    }
+    
+    /* Stat Card Colors */
+    .profil-stat-primary::before { background: var(--profil-primary); }
+    .profil-stat-primary .stat-icon,
+    .profil-stat-primary .stat-value { color: var(--profil-primary); }
+    
+    .profil-stat-success::before { background: var(--profil-success); }
+    .profil-stat-success .stat-icon,
+    .profil-stat-success .stat-value { color: var(--profil-success); }
+    
+    .profil-stat-warning::before { background: var(--profil-warning); }
+    .profil-stat-warning .stat-icon,
+    .profil-stat-warning .stat-value { color: var(--profil-warning); }
+    
+    .profil-stat-info::before { background: var(--profil-info); }
+    .profil-stat-info .stat-icon,
+    .profil-stat-info .stat-value { color: var(--profil-info); }
+    
+    /* 🏥 VET CARD */
+    .profil-vet-card {
+        background: rgba(255, 255, 255, 0.98);
+        border-radius: 20px;
+        border: none;
+        box-shadow: 0 8px 24px rgba(91, 155, 213, 0.12);
+        overflow: hidden;
+        margin-bottom: 24px;
+    }
+    
+    .profil-vet-card .card-header {
+        background: var(--profil-info-gradient);
+        padding: 18px 24px;
+        color: #fff;
+        border: none;
+    }
+    
+    .profil-vet-card .card-header h5 {
+        margin: 0;
+        font-weight: 600;
+        font-size: 1.05rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .profil-vet-card .card-body {
+        padding: 24px;
+    }
+    
+    .profil-vet-avatar {
+        background: var(--profil-info-gradient);
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 12px rgba(86, 204, 242, 0.3);
+        flex-shrink: 0;
+    }
+    
+    .profil-vet-avatar i {
+        color: white;
+        font-size: 1.8rem;
+    }
+    
+    .profil-vet-info-box {
+        background: #f8f9fa;
+        border-radius: 16px;
+        padding: 20px;
+    }
+    
+    .profil-vet-info-box h6 {
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 12px;
+        font-weight: 600;
+    }
+    
+    /* 🐾 PET CARDS */
+    .profil-pet-card {
+        background: rgba(255, 255, 255, 0.98);
+        border-radius: 20px;
+        border: none;
+        box-shadow: 0 8px 24px rgba(91, 155, 213, 0.12);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        overflow: hidden;
+        height: 100%;
+    }
+    
+    .profil-pet-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 16px 40px rgba(91, 155, 213, 0.2);
+    }
+    
+    .profil-pet-card img {
+        height: 180px;
+        object-fit: cover;
+        width: 100%;
+    }
+    
+    .profil-pet-card .pet-placeholder {
+        height: 180px;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .profil-pet-card .pet-placeholder i {
+        font-size: 3rem;
+        color: #ccc;
+    }
+    
+    .profil-pet-card .card-body {
+        padding: 18px;
+    }
+    
+    .profil-pet-card .card-title {
+        font-weight: 700;
+        font-size: 1.05rem;
+        margin-bottom: 8px;
+        color: #2c3e50;
+    }
+    
+    .profil-pet-card .card-text {
+        font-size: 0.85rem;
+        color: #666;
+        margin-bottom: 6px;
+    }
+    
+    .profil-pet-card .card-footer {
+        background: rgba(247, 249, 252, 0.5);
+        border: none;
+        padding: 14px 18px;
+    }
+    
+    .profil-pet-card .btn {
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        padding: 8px 18px;
+        transition: all 0.3s ease;
+        min-height: 38px;
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    .profil-pet-card .btn:hover {
+        transform: translateY(-2px);
+    }
+    
+    /* ⚡ QUICK ACTIONS */
+    .profil-quick-actions {
+        background: rgba(255, 255, 255, 0.98);
+        border-radius: 20px;
+        border: none;
+        box-shadow: 0 8px 24px rgba(91, 155, 213, 0.12);
+        overflow: hidden;
+    }
+    
+    .profil-quick-actions .card-header {
+        background: var(--profil-primary-gradient);
+        padding: 18px 24px;
+        color: #fff;
+        border: none;
+    }
+    
+    .profil-quick-actions .card-header h5 {
+        margin: 0;
+        font-weight: 600;
+        font-size: 1.05rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .profil-quick-actions .card-body {
+        padding: 24px;
+    }
+    
+    .profil-quick-actions .btn {
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        padding: 14px 20px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        min-height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        -webkit-tap-highlight-color: transparent;
+        touch-action: manipulation;
+    }
+    
+    .profil-quick-actions .btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    }
+    
+    .profil-quick-actions .btn:active {
+        transform: translateY(-1px);
+    }
+    
+    /* 👑 PRO CARD */
+    .profil-pro-card {
+        background: var(--profil-info-gradient);
+        border-radius: 20px;
+        border: none;
+        box-shadow: 0 8px 24px rgba(86, 204, 242, 0.25);
+        color: #fff;
+        margin-bottom: 24px;
+        overflow: hidden;
+    }
+    
+    .profil-pro-card .card-header {
+        background: rgba(255, 255, 255, 0.15);
+        padding: 18px 24px;
+        color: #fff;
+        border: none;
+    }
+    
+    .profil-pro-card .card-header h5 {
+        margin: 0;
+        font-weight: 600;
+        font-size: 1.05rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .profil-pro-card .card-body {
+        padding: 24px;
+    }
+    
+    .profil-pro-card .card-body p {
+        margin-bottom: 0.75rem;
+        font-size: 0.95rem;
+    }
+    
+    .profil-pro-card .btn {
+        background: rgba(255, 255, 255, 0.95);
+        color: #2D9CDB;
+        border: none;
+        border-radius: 50px;
+        font-weight: 600;
+        padding: 12px 28px;
+        transition: all 0.3s ease;
+        min-height: 48px;
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    .profil-pro-card .btn:hover {
+        background: #fff;
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        color: #2D9CDB;
+    }
+    
+    /* ⚠️ WARNING HEADER */
+    .profil-warning-header {
+        background: var(--profil-warning-gradient) !important;
+    }
+    
+    /* 🏷️ BADGES */
+    .profil-badge {
+        padding: 6px 14px;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 0.8rem;
+    }
+    
+    /* ========== 📱 RESPONSIVE DESIGN ========== */
+    
+    /* Large screens */
+    @media (min-width: 1400px) {
+        .profilim-container {
+            padding: 50px 0 100px;
+        }
+        
+        .profil-page-header {
+            padding: 45px 40px;
+        }
+    }
+    
+    /* Tablet (992px ve altı) */
+    @media (max-width: 992px) {
+        .profilim-container {
+            padding: 30px 0 60px;
+        }
+        
+        .profil-page-header {
+            padding: 30px 25px;
+            margin-bottom: 25px;
+        }
+        
+        .profil-info-card .card-body,
+        .profil-vet-card .card-body,
+        .profil-quick-actions .card-body,
+        .profil-pro-card .card-body {
+            padding: 20px;
+        }
+        
+        .profil-stat-card .card-body {
+            padding: 20px 16px;
+        }
+        
+        .profil-stat-card .stat-icon {
+            font-size: 2rem;
+        }
+        
+        .profil-stat-card .stat-value {
+            font-size: 1.75rem;
+        }
+    }
+    
+    /* Mobile (768px ve altı) */
+    @media (max-width: 768px) {
+        .profilim-container {
+            padding: 20px 0 50px;
+        }
+        
+        .profil-page-header {
+            padding: 25px 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .profil-page-header h2 {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+        }
+        
+        .profil-page-header h2 i {
+            display: block;
+            margin: 0 0 10px 0;
+            font-size: 2rem;
+        }
+        
+        .profil-edit-btn {
+            width: 100%;
+            padding: 14px 24px;
+        }
+        
+        .profil-info-card,
+        .profil-vet-card,
+        .profil-pro-card {
+            margin-bottom: 20px;
+        }
+        
+        .profil-info-card .card-header,
+        .profil-vet-card .card-header,
+        .profil-quick-actions .card-header,
+        .profil-pro-card .card-header {
+            padding: 16px 18px;
+        }
+        
+        .profil-info-card .card-header h5,
+        .profil-vet-card .card-header h5,
+        .profil-quick-actions .card-header h5,
+        .profil-pro-card .card-header h5 {
+            font-size: 1rem;
+        }
+        
+        .profil-info-card .card-body,
+        .profil-vet-card .card-body,
+        .profil-quick-actions .card-body,
+        .profil-pro-card .card-body {
+            padding: 18px;
+        }
+        
+        .profil-stat-card {
+            margin-bottom: 16px;
+        }
+        
+        .profil-stat-card .card-body {
+            padding: 20px 15px;
+        }
+        
+        .profil-stat-card .stat-icon {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+        
+        .profil-stat-card .stat-value {
+            font-size: 1.6rem;
+        }
+        
+        .profil-stat-card .stat-label {
+            font-size: 0.85rem;
+            margin-bottom: 14px;
+        }
+        
+        .profil-vet-avatar {
+            width: 60px;
+            height: 60px;
+        }
+        
+        .profil-vet-avatar i {
+            font-size: 1.5rem;
+        }
+        
+        .profil-pet-card img,
+        .profil-pet-card .pet-placeholder {
+            height: 160px;
+        }
+        
+        .profil-pet-card .card-body {
+            padding: 15px;
+        }
+        
+        .profil-pet-card .card-footer {
+            padding: 12px 15px;
+        }
+        
+        .profil-quick-actions .btn {
+            padding: 12px 16px;
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+        }
+        
+        /* Vet info responsive */
+        .profil-vet-info-box {
+            margin-top: 20px;
+            padding: 16px;
+        }
+    }
+    
+    /* Small Mobile (576px ve altı) */
+    @media (max-width: 576px) {
+        .profilim-container {
+            padding: 15px 0 40px;
+        }
+        
+        .profil-page-header {
+            padding: 20px 16px;
+            border-radius: 16px;
+        }
+        
+        .profil-page-header h2 {
+            font-size: 1.25rem;
+        }
+        
+        .profil-edit-btn {
+            padding: 12px 20px;
+            font-size: 0.9rem;
+        }
+        
+        .profil-info-card,
+        .profil-vet-card,
+        .profil-quick-actions,
+        .profil-pro-card,
+        .profil-stat-card,
+        .profil-pet-card {
+            border-radius: 16px;
+        }
+        
+        .profil-info-card .card-header,
+        .profil-vet-card .card-header,
+        .profil-quick-actions .card-header,
+        .profil-pro-card .card-header {
+            padding: 14px 16px;
+            border-radius: 16px 16px 0 0;
+        }
+        
+        .profil-info-card .card-body,
+        .profil-vet-card .card-body,
+        .profil-quick-actions .card-body,
+        .profil-pro-card .card-body {
+            padding: 16px;
+        }
+        
+        .profil-info-card .card-body p {
+            font-size: 0.9rem;
+        }
+        
+        .profil-stat-card .card-body {
+            padding: 18px 12px;
+        }
+        
+        .profil-stat-card .stat-icon {
+            font-size: 1.6rem;
+        }
+        
+        .profil-stat-card .stat-value {
+            font-size: 1.4rem;
+        }
+        
+        .profil-stat-card .stat-label {
+            font-size: 0.8rem;
+        }
+        
+        .profil-stat-card .btn {
+            padding: 8px 14px;
+            font-size: 0.8rem;
+        }
+        
+        .profil-pet-card img,
+        .profil-pet-card .pet-placeholder {
+            height: 140px;
+        }
+        
+        .profil-pet-card .card-body {
+            padding: 14px;
+        }
+        
+        .profil-pet-card .card-title {
+            font-size: 1rem;
+        }
+        
+        .profil-pet-card .card-text {
+            font-size: 0.8rem;
+        }
+        
+        .profil-quick-actions .btn {
+            padding: 12px 14px;
+            font-size: 0.8rem;
+            min-height: 46px;
+        }
+    }
+    
+    /* Extra Small (400px ve altı) */
+    @media (max-width: 400px) {
+        .profilim-container {
+            padding: 12px 0 35px;
+        }
+        
+        .profil-page-header {
+            padding: 18px 14px;
+        }
+        
+        .profil-page-header h2 {
+            font-size: 1.15rem;
+        }
+        
+        .profil-edit-btn {
+            padding: 11px 18px;
+            font-size: 0.85rem;
+        }
+        
+        .profil-info-card .card-header,
+        .profil-vet-card .card-header,
+        .profil-quick-actions .card-header,
+        .profil-pro-card .card-header {
+            padding: 12px 14px;
+        }
+        
+        .profil-info-card .card-header h5,
+        .profil-vet-card .card-header h5,
+        .profil-quick-actions .card-header h5,
+        .profil-pro-card .card-header h5 {
+            font-size: 0.95rem;
+        }
+        
+        .profil-info-card .card-body,
+        .profil-vet-card .card-body,
+        .profil-quick-actions .card-body,
+        .profil-pro-card .card-body {
+            padding: 14px;
+        }
+        
+        .profil-stat-card .stat-icon {
+            font-size: 1.4rem;
+        }
+        
+        .profil-stat-card .stat-value {
+            font-size: 1.25rem;
+        }
+        
+        .profil-stat-card .btn {
+            padding: 7px 12px;
+            font-size: 0.75rem;
+        }
+        
+        .profil-vet-avatar {
+            width: 50px;
+            height: 50px;
+        }
+        
+        .profil-vet-avatar i {
+            font-size: 1.3rem;
+        }
+        
+        .profil-quick-actions .btn {
+            padding: 10px 12px;
+            font-size: 0.75rem;
+            min-height: 44px;
+        }
+    }
+    
+    /* 🎭 REDUCED MOTION */
+    @media (prefers-reduced-motion: reduce) {
+        .profil-stat-card,
+        .profil-pet-card,
+        .profil-edit-btn,
+        .profil-quick-actions .btn {
+            transition: none;
+        }
+        
+        .profil-stat-card:hover,
+        .profil-pet-card:hover {
+            transform: none;
+        }
+    }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="profilim-container">
     <div class="container">
-        <div class="page-header">
+        <!-- Page Header -->
+        <div class="profil-page-header">
             <div class="row align-items-center">
                 <div class="col-md-8">
-                    <h2><i class="fas fa-user-circle me-3"></i>Profilim</h2>
+                    <h2><i class="fas fa-user-circle"></i>Profilim</h2>
                 </div>
                 <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                    <a href="{% url 'anahtarlik:profil_duzenle' %}" class="edit-profile-btn">
-                        <i class="fas fa-edit"></i>Profili Düzenle
+                    <a href="{% url 'anahtarlik:profil_duzenle' %}" class="profil-edit-btn">
+                        <i class="fas fa-edit"></i>
+                        <span>Profili Düzenle</span>
                     </a>
                 </div>
             </div>
@@ -80,296 +846,349 @@
         <!-- Kullanıcı Bilgileri -->
         <div class="row mb-4">
             <div class="col-12">
-                <div class="card info-card">
+                <div class="card profil-info-card">
                     <div class="card-header">
-                        <h5><i class="fas fa-id-card me-2"></i>Kişisel Bilgiler</h5>
+                        <h5><i class="fas fa-id-card"></i>Kişisel Bilgiler</h5>
                     </div>
                     <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    {% with ad=sahip.ad|default:sahip.kullanici.first_name soyad=sahip.soyad|default:sahip.kullanici.last_name %}
-                                        <p><strong>Ad Soyad:</strong> {{ ad|title }}{% if soyad %} {{ soyad|title }}{% endif %}</p>
-                                    {% endwith %}
-                                    <p><strong>E-posta:</strong> {{ sahip.kullanici.email }}</p>
-                                    <p><strong>Telefon:</strong> {{ sahip.telefon }}</p>
-                                </div>
-                                <div class="col-md-6">
-                                    <p><strong>Üyelik Tarihi:</strong> {{ sahip.kullanici.date_joined|date:"d.m.Y" }}</p>
-                                    <p><strong>Son Giriş:</strong> {{ sahip.kullanici.last_login|date:"d.m.Y H:i" }}</p>
-                                    <p><strong>Durum:</strong> 
-                                        {% if sahip.kullanici.is_active %}
-                                            <span class="badge bg-success">Aktif</span>
-                                        {% else %}
-                                            <span class="badge bg-danger">Pasif</span>
-                                        {% endif %}
-                                    </p>
-                                </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                {% with ad=sahip.ad|default:sahip.kullanici.first_name soyad=sahip.soyad|default:sahip.kullanici.last_name %}
+                                <p><strong>Ad Soyad:</strong> {{ ad|title }}{% if soyad %} {{ soyad|title }}{% endif %}</p>
+                                {% endwith %}
+                                <p><strong>E-posta:</strong> {{ sahip.kullanici.email }}</p>
+                                <p><strong>Telefon:</strong> {{ sahip.telefon }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Üyelik Tarihi:</strong> {{ sahip.kullanici.date_joined|date:"d.m.Y" }}</p>
+                                <p><strong>Son Giriş:</strong> {{ sahip.kullanici.last_login|date:"d.m.Y H:i" }}</p>
+                                <p><strong>Durum:</strong> 
+                                    {% if sahip.kullanici.is_active %}
+                                    <span class="badge bg-success profil-badge">Aktif</span>
+                                    {% else %}
+                                    <span class="badge bg-danger profil-badge">Pasif</span>
+                                    {% endif %}
+                                </p>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
 
         <!-- İstatistikler -->
         <div class="row mb-4">
-            <div class="col-md-3 mb-3">
-                <div class="card stat-card stat-primary">
+            <div class="col-6 col-lg-3 mb-3">
+                <div class="card profil-stat-card profil-stat-primary">
                     <div class="card-body">
-                        <i class="fas fa-paw"></i>
-                        <h4>{{ evcil_hayvan_sayisi }}</h4>
-                        <p class="card-text text-muted mb-3">Evcil Hayvan</p>
+                        <i class="fas fa-paw stat-icon"></i>
+                        <span class="stat-value">{{ evcil_hayvan_sayisi }}</span>
+                        <span class="stat-label">Evcil Hayvan</span>
                         <a href="{% url 'anahtarlik:evcil_hayvanlarim' %}" class="btn btn-primary btn-sm">Görüntüle</a>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 mb-3">
-                <div class="card stat-card stat-success">
+            <div class="col-6 col-lg-3 mb-3">
+                <div class="card profil-stat-card profil-stat-success">
                     <div class="card-body">
-                        <i class="fas fa-qrcode"></i>
-                        <h4>{{ aktif_etiket_sayisi }}</h4>
-                        <p class="card-text text-muted mb-3">Aktif Künye</p>
+                        <i class="fas fa-qrcode stat-icon"></i>
+                        <span class="stat-value">{{ aktif_etiket_sayisi }}</span>
+                        <span class="stat-label">Aktif Künye</span>
                         <a href="{% url 'anahtarlik:kunyelerim' %}" class="btn btn-success btn-sm">Görüntüle</a>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 mb-3">
-                <div class="card stat-card stat-warning">
+            <div class="col-6 col-lg-3 mb-3">
+                <div class="card profil-stat-card profil-stat-warning">
                     <div class="card-body">
-                        <i class="fas fa-clipboard-list"></i>
-                        <h4>{{ sahip_ilan_sayisi }}</h4>
-                        <p class="card-text text-muted mb-3">Aktif İlan</p>
+                        <i class="fas fa-clipboard-list stat-icon"></i>
+                        <span class="stat-value">{{ sahip_ilan_sayisi }}</span>
+                        <span class="stat-label">Aktif İlan</span>
                         <a href="{% url 'ilan:kullanici_ilanlari' %}" class="btn btn-warning btn-sm">Görüntüle</a>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 mb-3">
-                <div class="card stat-card stat-info">
+            <div class="col-6 col-lg-3 mb-3">
+                <div class="card profil-stat-card profil-stat-info">
                     <div class="card-body">
-                        <i class="fas fa-crown"></i>
-                        <h4>{% if aktif_pro_abonelik %}Pro{% else %}Free{% endif %}</h4>
-                        <p class="card-text text-muted mb-3">Abonelik</p>
+                        <i class="fas fa-crown stat-icon"></i>
+                        <span class="stat-value">{% if aktif_pro_abonelik %}Pro{% else %}Free{% endif %}</span>
+                        <span class="stat-label">Abonelik</span>
                         {% if aktif_pro_abonelik %}
-                            <a href="{% url 'anahtarlik:sahip_pro_panel' %}" class="btn btn-info btn-sm">Panel</a>
+                        <a href="{% url 'anahtarlik:sahip_pro_panel' %}" class="btn btn-info btn-sm">Panel</a>
                         {% else %}
-                            <a href="{% url 'anahtarlik:sahip_pro_paketler' %}" class="btn btn-secondary btn-sm">Yükselt</a>
+                        <a href="{% url 'anahtarlik:sahip_pro_paketler' %}" class="btn btn-secondary btn-sm">Yükselt</a>
                         {% endif %}
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Danışman Veteriner Bilgileri -->
+        <!-- Danışman Veteriner Bilgileri - Modern Featured Card -->
         {% if sahip.danisman_veteriner %}
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="card vet-card">
-                    <div class="card-header">
-                        <h5>
-                            <i class="fas fa-user-md me-2"></i>
-                            Danışman Veterineriniz
-                        </h5>
+        <section class="vet-section">
+            <div class="vet-card-featured">
+                <!-- Parlayan Animasyonlu Kenarlık -->
+                <div class="vet-card-glow"></div>
+                
+                <!-- Üst Başlık Bandı -->
+                <div class="vet-header-band">
+                    <div class="vet-header-content">
+                        <i class="fas fa-stethoscope"></i>
+                        <span>Danışman Veterineriniz</span>
                     </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-8">
-                                <div class="d-flex align-items-center mb-3">
-                                    <div class="me-3">
-                                        <div class="vet-avatar">
-                                            <i class="fas fa-user-md fa-2x text-white"></i>
-                                        </div>
-                                    </div>
-                                        <div>
-                                            <h5 class="mb-1 fw-bold">{{ sahip.danisman_veteriner.ad }}</h5>
-                                            <p class="text-muted mb-0">
-                                                <i class="fas fa-map-marker-alt me-1"></i>
-                                                {{ sahip.danisman_veteriner.il.ad }} / {{ sahip.danisman_veteriner.ilce.ad }}
-                                            </p>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <p class="mb-2">
-                                                <i class="fas fa-phone me-2 text-primary"></i>
-                                                <strong>Telefon:</strong> {{ sahip.danisman_veteriner.telefon }}
-                                            </p>
-                                            {% if sahip.danisman_veteriner.email %}
-                                            <p class="mb-2">
-                                                <i class="fas fa-envelope me-2 text-primary"></i>
-                                                <strong>E-posta:</strong> 
-                                                <a href="mailto:{{ sahip.danisman_veteriner.email }}" class="text-decoration-none">
-                                                    {{ sahip.danisman_veteriner.email }}
-                                                </a>
-                                            </p>
-                                            {% endif %}
-                                        </div>
-                                        <div class="col-md-6">
-                                            <p class="mb-2">
-                                                <i class="fas fa-calendar me-2 text-primary"></i>
-                                                <strong>Atanma Tarihi:</strong><br>
-                                                <small class="text-muted">{{ sahip.danisman_atanma_tarihi|date:"d.m.Y H:i" }}</small>
-                                            </p>
-                                            <p class="mb-2">
-                                                <i class="fas fa-info-circle me-2 text-primary"></i>
-                                                <strong>Atanma Sebebi:</strong><br>
-                                                {% if sahip.danisman_atanma_sebebi == 'KUNYE_ALIMI' %}
-                                                    <span class="badge bg-success">Künye Alımı</span>
-                                                {% elif sahip.danisman_atanma_sebebi == 'ILCE_ESLESME' %}
-                                                    <span class="badge bg-info">İlçe Eşleşmesi</span>
-                                                {% elif sahip.danisman_atanma_sebebi == 'IL_ESLESME' %}
-                                                    <span class="badge bg-warning">İl Eşleşmesi</span>
-                                                {% else %}
-                                                    <span class="badge bg-secondary">Bilinmiyor</span>
-                                                {% endif %}
-                                            </p>
-                                        </div>
-                                    </div>
+                    <div class="vet-header-badge">
+                        <i class="fas fa-star"></i> Önerilen
+                    </div>
+                </div>
+                
+                <div class="vet-card-body">
+                    <div class="row align-items-center g-4">
+                        <!-- Sol: Avatar ve İletişim -->
+                        <div class="col-lg-4 col-md-5 text-center">
+                            <div class="vet-avatar-wrapper">
+                                {% if sahip.danisman_veteriner.logo %}
+                                <img src="{{ sahip.danisman_veteriner.logo.url }}" class="vet-avatar-featured" alt="Veteriner">
+                                {% else %}
+                                <div class="vet-avatar-placeholder-featured">
+                                    <i class="fas fa-user-md"></i>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="text-center">
-                                        <div class="bg-light rounded p-3 mb-3">
-                                            <h6 class="text-muted mb-2">Veteriner Bilgileri</h6>
-                                            {% if sahip.danisman_veteriner.uzmanlik_alanlari %}
-                                            <p class="mb-2">
-                                                <small class="text-muted">
-                                                    <i class="fas fa-graduation-cap me-1"></i>
-                                                    {{ sahip.danisman_veteriner.uzmanlik_alanlari }}
-                                                </small>
-                                            </p>
-                                            {% endif %}
-                                            {% if sahip.danisman_veteriner.deneyim_yili %}
-                                            <p class="mb-2">
-                                                <small class="text-muted">
-                                                    <i class="fas fa-clock me-1"></i>
-                                                    {{ sahip.danisman_veteriner.deneyim_yili }} yıl deneyim
-                                                </small>
-                                            </p>
-                                            {% endif %}
-                                            <div class="border-top pt-2 mt-2">
-                                                <small class="text-success">
-                                                    <i class="fas fa-trophy me-1"></i>
-                                                    <strong>Başarılı Satış:</strong> {{ sahip.danisman_veteriner.satis_sayisi }} etiket satmış
-                                                </small>
-                                                <br>
-                                                <small class="text-warning">
-                                                    <strong>Seviye:</strong> {{ sahip.danisman_veteriner.satis_basari_seviyesi }}
-                                                </small>
-                                            </div>
-                                        </div>
-                                        <div class="d-grid gap-2">
-                                            <button class="btn btn-outline-info btn-sm" onclick="alert('Randevu sistemi yakında aktif olacak!')">
-                                                <i class="fas fa-calendar-plus me-1"></i>Randevu Al
-                                            </button>
-                                            <button class="btn btn-outline-primary btn-sm" onclick="alert('Mesaj sistemi yakında aktif olacak!')">
-                                                <i class="fas fa-comment me-1"></i>Mesaj Gönder
-                                            </button>
-                                        </div>
+                                {% endif %}
+                                <div class="vet-status-online">
+                                    <i class="fas fa-circle"></i> Aktif
+                                </div>
+                            </div>
+                            
+                            <!-- İletişim Butonları -->
+                            <div class="vet-contact-buttons">
+                                {% if sahip.danisman_veteriner.telefon %}
+                                <a href="tel:{{ sahip.danisman_veteriner.telefon }}" class="vet-contact-btn-featured vet-btn-phone" title="Telefon">
+                                    <i class="fas fa-phone"></i>
+                                </a>
+                                {% endif %}
+                                {% if sahip.danisman_veteriner.whatsapp %}
+                                <a href="https://wa.me/{{ sahip.danisman_veteriner.whatsapp }}" target="_blank" class="vet-contact-btn-featured vet-btn-whatsapp" title="WhatsApp">
+                                    <i class="fab fa-whatsapp"></i>
+                                </a>
+                                {% endif %}
+                                {% if sahip.danisman_veteriner.email %}
+                                <a href="mailto:{{ sahip.danisman_veteriner.email }}" class="vet-contact-btn-featured vet-btn-email" title="E-posta">
+                                    <i class="fas fa-envelope"></i>
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <!-- Sağ: Bilgiler -->
+                        <div class="col-lg-8 col-md-7">
+                            <div class="vet-info-section">
+                                <h3 class="vet-title-featured">
+                                    {{ sahip.danisman_veteriner.web_baslik|default:sahip.danisman_veteriner.ad }}
+                                </h3>
+                                
+                                {% if sahip.danisman_veteriner.web_slogan or sahip.danisman_veteriner.uzmanlik_alanlari %}
+                                <p class="vet-slogan-featured">
+                                    <i class="fas fa-quote-left"></i>
+                                    {{ sahip.danisman_veteriner.web_slogan|default:sahip.danisman_veteriner.uzmanlik_alanlari }}
+                                </p>
+                                {% endif %}
+                                
+                                <div class="vet-details">
+                                    <div class="vet-detail-item">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        <span>{{ sahip.danisman_veteriner.adres_detay|default:'' }}{% if sahip.danisman_veteriner.ilce and sahip.danisman_veteriner.il %}, {{ sahip.danisman_veteriner.ilce.ad }} / {{ sahip.danisman_veteriner.il.ad }}{% endif %}</span>
                                     </div>
+                                    {% if sahip.danisman_veteriner.telefon %}
+                                    <div class="vet-detail-item">
+                                        <i class="fas fa-phone"></i>
+                                        <span>{{ sahip.danisman_veteriner.telefon }}</span>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <!-- Aksiyon Butonları -->
+                                <div class="vet-action-buttons">
+                                    {% if sahip.danisman_veteriner.web_slug %}
+                                    <button type="button" class="vet-action-btn vet-action-primary" data-bs-toggle="modal" data-bs-target="#randevuModal">
+                                        <i class="fas fa-calendar-check"></i>
+                                        <span>Randevu Al</span>
+                                    </button>
+                                    <a href="{% url 'veteriner:web_sayfasi_gorunum' sahip.danisman_veteriner.web_slug %}" target="_blank" class="vet-action-btn vet-action-secondary">
+                                        <i class="fas fa-globe"></i>
+                                        <span>Web Sitesi</span>
+                                    </a>
+                                    {% endif %}
+                                    {% if sahip.danisman_veteriner.konum_koordinat %}
+                                    <a href="https://www.google.com/maps?q={{ sahip.danisman_veteriner.konum_koordinat }}" target="_blank" class="vet-action-btn vet-action-map">
+                                        <i class="fas fa-directions"></i>
+                                        <span>Yol Tarifi</span>
+                                    </a>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+        </section>
+
+        <!-- Randevu Modal -->
+        {% if sahip.danisman_veteriner.web_slug %}
+        <div class="modal fade" id="randevuModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content" style="border-radius: 20px;">
+                    <form id="randevuForm" method="post" action="{% url 'veteriner:public_randevu_olustur' sahip.danisman_veteriner.web_slug %}">
+                        {% csrf_token %}
+                        <div class="modal-header" style="background: var(--profil-primary-gradient); color: white; border-radius: 20px 20px 0 0;">
+                            <h5 class="modal-title"><i class="fas fa-calendar-alt me-2"></i>Randevu Oluştur</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Kapat"></button>
+                        </div>
+                        <div class="modal-body" style="padding: 24px; background: #fff; color: #212529;">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label" style="color: #212529; font-weight: 600;">Ad Soyad *</label>
+                                    <input type="text" class="form-control" name="musteri_adi" required style="border-radius: 12px;">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label" style="color: #212529; font-weight: 600;">Telefon *</label>
+                                    <input type="tel" class="form-control" name="musteri_telefon" required style="border-radius: 12px;">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label" style="color: #212529; font-weight: 600;">Randevu Tarihi *</label>
+                                    <input type="date" class="form-control" id="tarih" name="tarih" required min="{% now 'Y-m-d' %}" style="border-radius: 12px;">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label" style="color: #212529; font-weight: 600;">Saat *</label>
+                                    <select id="saat" name="saat" class="form-select" required style="border-radius: 12px;">
+                                        <option value="">Önce tarih seçiniz</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label" style="color: #212529; font-weight: 600;">Evcil Hayvan Adı *</label>
+                                    <input type="text" class="form-control" name="hayvan_adi" required style="border-radius: 12px;">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label" style="color: #212529; font-weight: 600;">Hayvan Türü *</label>
+                                    <select name="hayvan_turu" class="form-select" required style="border-radius: 12px;">
+                                        <option value="">Seçiniz</option>
+                                        <option>Köpek</option>
+                                        <option>Kedi</option>
+                                        <option>Kuş</option>
+                                        <option>Tavşan</option>
+                                        <option>Diğer</option>
+                                    </select>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label" style="color: #212529; font-weight: 600;">Sorun Açıklaması *</label>
+                                    <textarea name="sorun_aciklamasi" class="form-control" required rows="3" style="border-radius: 12px;"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 50px;">İptal</button>
+                            <button type="submit" class="btn btn-primary" style="border-radius: 50px;">
+                                <i class="fas fa-calendar-check me-2"></i>Randevu Oluştur
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endif %}
         {% else %}
         <div class="row mb-4">
             <div class="col-12">
-                <div class="card info-card">
-                    <div class="card-header" style="background:linear-gradient(135deg,#F2C94C 0%,#F2994A 100%)">
-                        <h5>
-                            <i class="fas fa-exclamation-triangle me-2"></i>
-                            Danışman Veteriner Atanmamış
-                        </h5>
+                <div class="card profil-info-card">
+                    <div class="card-header profil-warning-header">
+                        <h5><i class="fas fa-exclamation-triangle"></i>Danışman Veteriner Atanmamış</h5>
                     </div>
                     <div class="card-body">
-                            <div class="text-center py-3">
-                                <i class="fas fa-user-md fa-3x text-muted mb-3"></i>
-                                <p class="text-muted mb-3">Henüz danışman veterineriniz atanmamış.</p>
-                                <p class="text-muted small mb-3">
-                                    Danışman veteriner atanması için künye aktifleştirmeniz gerekmektedir.
-                                </p>
-                                <a href="{% url 'anahtarlik:add_pet' %}" class="btn btn-primary">
-                                    <i class="fas fa-plus me-2"></i>Künye Aktifleştir
-                                </a>
-                            </div>
+                        <div class="text-center py-3">
+                            <i class="fas fa-user-md fa-3x text-muted mb-3"></i>
+                            <p class="text-muted mb-3">Henüz danışman veterineriniz atanmamış.</p>
+                            <p class="text-muted small mb-3">
+                                Danışman veteriner atanması için künye aktifleştirmeniz gerekmektedir.
+                            </p>
+                            <a href="{% url 'anahtarlik:add_pet' %}" class="btn btn-primary">
+                                <i class="fas fa-plus me-2"></i>Künye Aktifleştir
+                            </a>
                         </div>
                     </div>
                 </div>
             </div>
-            {% endif %}
+        </div>
+        {% endif %}
 
         <!-- Pro Abonelik Durumu -->
         {% if aktif_pro_abonelik %}
         <div class="row mb-4">
             <div class="col-12">
-                <div class="card pro-card">
+                <div class="card profil-pro-card">
                     <div class="card-header">
-                        <h5><i class="fas fa-crown me-2"></i>Pro Abonelik Bilgileri</h5>
+                        <h5><i class="fas fa-crown"></i>Pro Abonelik Bilgileri</h5>
                     </div>
                     <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <p><strong>Paket:</strong> {{ aktif_pro_abonelik.paket.paket_adi }}</p>
-                                    <p><strong>Başlangıç:</strong> {{ aktif_pro_abonelik.baslangic_tarihi|date:"d.m.Y" }}</p>
-                                    <p><strong>Bitiş:</strong> {{ aktif_pro_abonelik.bitis_tarihi|date:"d.m.Y" }}</p>
-                                </div>
-                                <div class="col-md-6">
-                                    <p><strong>Kalan Gün:</strong> {{ aktif_pro_abonelik.kalan_gun }} gün</p>
-                                    <p><strong>Durum:</strong> 
-                                        {% if aktif_pro_abonelik.aktif_mi %}
-                                            <span class="badge bg-success">Aktif</span>
-                                        {% else %}
-                                            <span class="badge bg-warning">Süresi Dolmuş</span>
-                                        {% endif %}
-                                    </p>
-                                </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Paket:</strong> {{ aktif_pro_abonelik.paket.paket_adi }}</p>
+                                <p><strong>Başlangıç:</strong> {{ aktif_pro_abonelik.baslangic_tarihi|date:"d.m.Y" }}</p>
+                                <p><strong>Bitiş:</strong> {{ aktif_pro_abonelik.bitis_tarihi|date:"d.m.Y" }}</p>
                             </div>
-                            <div class="mt-3">
-                                <a href="{% url 'anahtarlik:sahip_pro_panel' %}" class="btn btn-info">
-                                    <i class="fas fa-star me-2"></i>Pro Panel
-                                </a>
+                            <div class="col-md-6">
+                                <p><strong>Kalan Gün:</strong> {{ aktif_pro_abonelik.kalan_gun }} gün</p>
+                                <p><strong>Durum:</strong> 
+                                    {% if aktif_pro_abonelik.aktif_mi %}
+                                    <span class="badge bg-success profil-badge">Aktif</span>
+                                    {% else %}
+                                    <span class="badge bg-warning profil-badge">Süresi Dolmuş</span>
+                                    {% endif %}
+                                </p>
                             </div>
+                        </div>
+                        <div class="mt-3">
+                            <a href="{% url 'anahtarlik:sahip_pro_panel' %}" class="btn">
+                                <i class="fas fa-star me-2"></i>Pro Panel
+                            </a>
                         </div>
                     </div>
                 </div>
             </div>
-            {% endif %}
+        </div>
+        {% endif %}
 
         <!-- Son Eklenen Evcil Hayvanlar -->
         {% if son_evcil_hayvanlar %}
         <div class="row mb-4">
             <div class="col-12">
-                <div class="card info-card">
+                <div class="card profil-info-card">
                     <div class="card-header">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0"><i class="fas fa-paw me-2"></i>Son Eklenen Evcil Hayvanlar</h5>
-                            <a href="{% url 'anahtarlik:evcil_hayvanlarim' %}" class="btn btn-sm edit-profile-btn" style="padding:8px 20px">Tümünü Gör</a>
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                            <h5 class="mb-0"><i class="fas fa-paw"></i>Son Eklenen Evcil Hayvanlar</h5>
+                            <a href="{% url 'anahtarlik:evcil_hayvanlarim' %}" class="profil-edit-btn" style="padding: 8px 18px; font-size: 0.85rem; min-height: 40px;">
+                                <span>Tümünü Gör</span>
+                            </a>
                         </div>
                     </div>
                     <div class="card-body">
                         <div class="row">
                             {% for hayvan in son_evcil_hayvanlar %}
-                            <div class="col-md-4 mb-3">
-                                <div class="pet-card-modern">
+                            <div class="col-sm-6 col-lg-4 mb-3">
+                                <div class="profil-pet-card">
                                     {% if hayvan.resim %}
-                                        <img src="{{ hayvan.resim.url }}" alt="{{ hayvan.ad }}">
+                                    <img src="{{ hayvan.resim.url }}" alt="{{ hayvan.ad }}" loading="lazy">
                                     {% else %}
-                                        <div class="bg-light d-flex align-items-center justify-content-center" style="height:200px">
-                                            <i class="fas fa-paw fa-3x text-muted"></i>
-                                        </div>
+                                    <div class="pet-placeholder">
+                                        <i class="fas fa-paw"></i>
+                                    </div>
                                     {% endif %}
                                     <div class="card-body">
-                                        <h6 class="card-title fw-bold">{{ hayvan.ad }}</h6>
-                                        <p class="card-text mb-2">
-                                            <small class="text-muted">
-                                                <i class="fas fa-paw me-1"></i>{{ hayvan.tur.ad }}
-                                                {% if hayvan.irk %} - {{ hayvan.irk.ad }}{% endif %}
-                                            </small>
+                                        <h6 class="card-title">{{ hayvan.ad }}</h6>
+                                        <p class="card-text">
+                                            <i class="fas fa-paw me-1"></i>{{ hayvan.tur.ad }}
+                                            {% if hayvan.irk %} - {{ hayvan.irk.ad }}{% endif %}
                                         </p>
-                                        <p class="card-text mb-0">
-                                            <small class="text-muted">
-                                                <i class="fas fa-calendar me-1"></i>{{ hayvan.olusturulma_tarihi|date:"d.m.Y" }}
-                                            </small>
+                                        <p class="card-text">
+                                            <i class="fas fa-calendar me-1"></i>{{ hayvan.olusturulma_tarihi|date:"d.m.Y" }}
                                         </p>
                                     </div>
                                     <div class="card-footer">
@@ -390,40 +1209,45 @@
         <!-- Hızlı İşlemler -->
         <div class="row">
             <div class="col-12">
-                <div class="card quick-actions-card">
+                <div class="card profil-quick-actions">
                     <div class="card-header">
-                        <h5><i class="fas fa-bolt me-2"></i>Hızlı İşlemler</h5>
+                        <h5><i class="fas fa-bolt"></i>Hızlı İşlemler</h5>
                     </div>
                     <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-3 mb-2">
-                                    <a href="{% url 'anahtarlik:add_pet' %}" class="btn btn-success w-100">
-                                        <i class="fas fa-plus me-2"></i>Yeni Evcil Hayvan
-                                    </a>
-                                </div>
-                                {% if user.sahip.pro_aktif_mi %}
-                                <div class="col-md-3 mb-2">
-                                    <a href="{% url 'ilan:sahip_hayvan_secimi' %}" class="btn btn-primary w-100">
-                                        <i class="fas fa-bullhorn me-2"></i>İlan Ver
-                                    </a>
-                                </div>
-                                {% else %}
-                                <div class="col-md-3 mb-2">
-                                    <a href="{% url 'anahtarlik:sahip_pro_paketler' %}" class="btn btn-warning w-100">
-                                        <i class="fas fa-crown me-2"></i>Pro Ol
-                                    </a>
-                                </div>
-                                {% endif %}
-                                <div class="col-md-3 mb-2">
-                                    <a href="{% url 'ilan:kullanici_ilanlari' %}" class="btn btn-info w-100">
-                                        <i class="fas fa-list me-2"></i>İlanlarım
-                                    </a>
-                                </div>
-                                <div class="col-md-3 mb-2">
-                                    <a href="{% url 'anahtarlik:profil_duzenle' %}" class="btn btn-outline-secondary w-100">
-                                        <i class="fas fa-cog me-2"></i>Ayarlar
-                                    </a>
-                                </div>
+                        <div class="row">
+                            <div class="col-6 col-lg-3 mb-2">
+                                <a href="{% url 'anahtarlik:add_pet' %}" class="btn btn-success w-100">
+                                    <i class="fas fa-plus"></i>
+                                    <span>Yeni Evcil Hayvan</span>
+                                </a>
+                            </div>
+                            {% if user.sahip.pro_aktif_mi %}
+                            <div class="col-6 col-lg-3 mb-2">
+                                <a href="{% url 'ilan:sahip_hayvan_secimi' %}" class="btn btn-primary w-100">
+                                    <i class="fas fa-bullhorn"></i>
+                                    <span>İlan Ver</span>
+                                </a>
+                            </div>
+                            {% else %}
+                            <div class="col-6 col-lg-3 mb-2">
+                                <a href="{% url 'anahtarlik:sahip_pro_paketler' %}" class="btn btn-warning w-100">
+                                    <i class="fas fa-crown"></i>
+                                    <span>Pro Ol</span>
+                                </a>
+                            </div>
+                            {% endif %}
+                            <div class="col-6 col-lg-3 mb-2">
+                                <a href="{% url 'ilan:kullanici_ilanlari' %}" class="btn btn-info w-100">
+                                    <i class="fas fa-list"></i>
+                                    <span>İlanlarım</span>
+                                </a>
+                            </div>
+                            <div class="col-6 col-lg-3 mb-2">
+                                <a href="{% url 'anahtarlik:profil_duzenle' %}" class="btn btn-outline-secondary w-100">
+                                    <i class="fas fa-cog"></i>
+                                    <span>Ayarlar</span>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -431,4 +1255,177 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block js_dosyalar %}
+<script>
+// Randevu formu için saat seçimi
+(function() {
+    const tarihInput = document.getElementById('tarih');
+    const saatSelect = document.getElementById('saat');
+    if (!tarihInput || !saatSelect) return;
+    
+    function pad(n) { return n < 10 ? '0' + n : n; }
+    function generateTimeSlots(start, end) {
+        let slots = [];
+        for (let h = start; h < end; h++) {
+            slots.push(pad(h) + ':00');
+            slots.push(pad(h) + ':30');
+        }
+        return slots;
+    }
+    
+    tarihInput.addEventListener('change', function(e) {
+        let dt = new Date(e.target.value);
+        let day = dt.getDay();
+        let kapali = (day === 0);
+        let sBas = 9, sBit = 18;
+        saatSelect.innerHTML = '';
+        if (kapali) {
+            saatSelect.innerHTML = '<option>Bugün çalışmıyor</option>';
+            return;
+        }
+        let options = generateTimeSlots(sBas, sBit);
+        saatSelect.innerHTML = '<option value="">Saat seçiniz</option>';
+        for (let o of options) {
+            let el = document.createElement('option');
+            el.value = o;
+            el.textContent = o;
+            saatSelect.appendChild(el);
+        }
+    });
+})();
+
+// Randevu formu ve Modal Yönetimi (Sadeleştirilmiş ve Güvenli)
+document.addEventListener('DOMContentLoaded', function(){
+    'use strict';
+    
+    const form = document.getElementById('randevuForm');
+    const modalEl = document.getElementById('randevuModal');
+    
+    if(!form || !modalEl) {
+        console.warn('Randevu formu veya modal bulunamadı');
+        return;
+    }
+
+    // KRİTİK DÜZELTME: Modalı body'nin en sonuna taşıyarak backdrop/z-index sorununu çöz
+    document.body.appendChild(modalEl);
+    
+    const modal = new bootstrap.Modal(modalEl, {
+        backdrop: 'static',
+        keyboard: false
+    });
+
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const originalBtnText = submitBtn ? submitBtn.innerHTML : 'Randevu Oluştur';
+    
+    console.log('Randevu formu hazır, AJAX modu aktif');
+
+    function showToast(message, type = 'success'){
+        const container = document.querySelector('.toast-container') || createToastContainer();
+        const toastEl = document.createElement('div');
+        
+        // Renk kontrastını garanti altına al
+        const colorMap = {
+            'success': { bg: '#28a745', text: '#ffffff' },
+            'danger': { bg: '#dc3545', text: '#ffffff' },
+            'warning': { bg: '#ffc107', text: '#212529' },
+            'info': { bg: '#17a2b8', text: '#ffffff' },
+            'primary': { bg: '#007bff', text: '#ffffff' }
+        };
+        
+        const colors = colorMap[type] || colorMap['success'];
+        
+        toastEl.className = 'toast show align-items-center border-0';
+        toastEl.style.cssText = `background-color: ${colors.bg} !important; color: ${colors.text} !important;`;
+        toastEl.role = 'alert';
+        toastEl.innerHTML = `
+            <div class="d-flex" style="color: ${colors.text} !important;">
+                <div class="toast-body" style="color: ${colors.text} !important;">${message}</div>
+                <button type="button" class="btn-close ${colors.text === '#ffffff' ? 'btn-close-white' : ''} me-2 m-auto" data-bs-dismiss="toast" style="filter: ${colors.text === '#ffffff' ? 'invert(1)' : 'none'};"></button>
+            </div>`;
+        container.appendChild(toastEl);
+        new bootstrap.Toast(toastEl, {delay: 5000}).show();
+    }
+
+    function createToastContainer() {
+        const div = document.createElement('div');
+        div.className = 'toast-container position-fixed top-0 end-0 p-3';
+        div.style.cssText = 'margin-top: 100px; z-index: 2000;'; // z-index yüksek tutuldu
+        document.body.appendChild(div);
+        return div;
+    }
+
+    // Modal kapandığında formu temizle
+    modalEl.addEventListener('hidden.bs.modal', () => {
+        form.reset();
+        form.classList.remove('was-validated');
+        const saatSelect = document.getElementById('saat');
+        if(saatSelect) saatSelect.innerHTML = '<option value="">Önce tarih seçiniz</option>';
+    });
+
+    // Form submit event'ini kesinlikle yakala ve engelle
+    form.addEventListener('submit', function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        
+        console.log('Form submit yakalandı, AJAX ile gönderiliyor...');
+        
+        if(!form.checkValidity()){
+            form.classList.add('was-validated');
+            return false;
+        }
+
+        // Loading durumu
+        if(submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Gönderiliyor...';
+        }
+
+        const formData = new FormData(form);
+
+        fetch(form.action, {
+            method: 'POST',
+            headers: {'X-Requested-With': 'XMLHttpRequest'},
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if(data.ok){
+                modal.hide();
+                showToast(data.message || 'Randevunuz başarıyla oluşturuldu.', 'success');
+            } else {
+                const errorMsg = data.errors ? (Array.isArray(data.errors) ? data.errors.join('<br>') : data.errors) : 'Bir hata oluştu.';
+                showToast(errorMsg, 'danger');
+            }
+        })
+        .catch(err => {
+            console.error('Hata:', err);
+            showToast('Bağlantı hatası oluştu. Lütfen tekrar deneyin.', 'danger');
+        })
+        .finally(() => {
+            // Butonu eski haline getir
+            if(submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnText;
+            }
+        });
+        
+        return false; // Ekstra güvenlik
+    });
+    
+    // Form'un action'ını da kontrol et - normal submit'i engelle
+    form.onsubmit = function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+    };
+});
+</script>
 {% endblock %}

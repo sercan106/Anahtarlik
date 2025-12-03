@@ -24,6 +24,14 @@
     .listings-wrapper {
         min-height: calc(100vh - 200px);
         padding: 40px 20px;
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+    
+    @media (max-width: 768px) {
+        .listings-wrapper {
+            padding: 20px 12px;
+        }
     }
 
     .listings-header {
@@ -35,6 +43,21 @@
         box-shadow: var(--shadow-soft);
         position: relative;
         overflow: hidden;
+        width: 100%;
+        max-width: 100%;
+    }
+    
+    .listings-header > div {
+        min-width: 0;
+        max-width: 100%;
+        overflow: hidden;
+    }
+    
+    .listings-header h1,
+    .listings-header p {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        max-width: 100%;
     }
 
     .listings-header::before {
@@ -107,6 +130,8 @@
         height: 100%;
         display: flex;
         flex-direction: column;
+        width: 100%;
+        max-width: 100%;
     }
 
     .listing-card:hover {
@@ -122,6 +147,8 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        width: 100%;
+        max-width: 100%;
     }
 
     .listing-card-image img {
@@ -131,6 +158,7 @@
         object-position: center;
         transition: var(--transition-smooth);
         will-change: transform;
+        max-width: 100%;
     }
 
     .listing-card:hover .listing-card-image img {
@@ -194,6 +222,9 @@
         flex: 1;
         display: flex;
         flex-direction: column;
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden;
     }
 
     .listing-card-title {
@@ -205,6 +236,11 @@
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        max-width: 100%;
+        overflow-wrap: break-word;
+        line-height: 1.4;
     }
 
     .listing-pet-name {
@@ -224,10 +260,17 @@
         background: linear-gradient(135deg, rgba(91, 155, 213, 0.05) 0%, rgba(112, 193, 179, 0.05) 100%);
         border-radius: 12px;
         margin-bottom: 16px;
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden;
+        min-width: 0;
+        min-width: 0;
     }
 
     .stat-item {
         text-align: center;
+        min-width: 0;
+        overflow: hidden;
     }
 
     .stat-label {
@@ -237,6 +280,8 @@
         text-transform: uppercase;
         letter-spacing: 0.5px;
         margin-bottom: 4px;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
     }
 
     .stat-value {
@@ -244,6 +289,11 @@
         font-size: 0.85rem;
         font-weight: 700;
         color: var(--text-primary);
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .listing-meta {
@@ -257,6 +307,18 @@
         display: flex;
         align-items: center;
         gap: 8px;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        min-width: 0;
+    }
+
+    .listing-meta-item span {
+        min-width: 0;
+        overflow: hidden;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        max-width: 100%;
+        text-overflow: ellipsis;
     }
 
     .listing-meta-item i {
@@ -274,6 +336,9 @@
         color: var(--text-secondary);
         line-height: 1.6;
         margin: 0;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        max-width: 100%;
     }
 
     .listing-actions {
@@ -281,24 +346,28 @@
         flex-direction: column;
         gap: 10px;
         margin-top: auto;
+        width: 100%;
+        max-width: 100%;
     }
 
     .btn-view {
         background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
         color: white;
         border: none;
-        padding: 10px 20px;
+        padding: 12px 24px;
         border-radius: 50px;
-        font-size: 0.85rem;
+        font-size: 0.9rem;
         font-weight: 600;
         text-decoration: none;
-        display: inline-flex;
+        display: flex;
         align-items: center;
         justify-content: center;
         gap: 8px;
         transition: var(--transition-smooth);
         position: relative;
         overflow: hidden;
+        width: 100%;
+        box-shadow: 0 4px 15px rgba(91, 155, 213, 0.2);
     }
 
     .btn-view::before {
@@ -319,53 +388,41 @@
     .btn-view:hover {
         color: white;
         transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(91, 155, 213, 0.3);
+        box-shadow: 0 8px 25px rgba(91, 155, 213, 0.4);
     }
 
-    .btn-group-custom {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 8px;
-    }
-
-    .btn-edit, .btn-delete {
-        padding: 8px 16px;
-        border-radius: 50px;
-        font-size: 0.8rem;
-        font-weight: 600;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-        transition: var(--transition-smooth);
-        border: 2px solid;
-    }
-
-    .btn-edit {
-        background: rgba(242, 201, 76, 0.1);
-        border-color: rgba(242, 201, 76, 0.3);
-        color: #F2C94C;
-    }
-
-    .btn-edit:hover {
-        background: rgba(242, 201, 76, 0.2);
-        border-color: #F2C94C;
-        color: #F2C94C;
-        transform: translateY(-2px);
+    .btn-view:active {
+        transform: translateY(0);
     }
 
     .btn-delete {
         background: rgba(235, 87, 87, 0.1);
-        border-color: rgba(235, 87, 87, 0.3);
+        border: 2px solid rgba(235, 87, 87, 0.3);
         color: #EB5757;
+        padding: 12px 24px;
+        border-radius: 50px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: var(--transition-smooth);
+        width: 100%;
+        box-shadow: 0 2px 8px rgba(235, 87, 87, 0.1);
     }
 
     .btn-delete:hover {
-        background: rgba(235, 87, 87, 0.2);
+        background: rgba(235, 87, 87, 0.15);
         border-color: #EB5757;
         color: #EB5757;
         transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(235, 87, 87, 0.2);
+    }
+
+    .btn-delete:active {
+        transform: translateY(0);
     }
 
     .empty-state {
@@ -458,12 +515,24 @@
     }
 
     @media (max-width: 768px) {
+        body {
+            overflow-x: hidden;
+        }
+        
+        .listings-wrapper {
+            padding: 20px 12px;
+        }
+        
         .listings-header {
-            padding: 25px 20px;
+            padding: 20px 15px;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
         }
 
         .listings-header h1 {
-            font-size: 1.4rem;
+            font-size: 1.3rem;
+            margin-bottom: 5px;
         }
 
         .listings-header p {
@@ -472,49 +541,210 @@
 
         .btn-new-listing {
             font-size: 0.85rem;
-            padding: 8px 20px;
+            padding: 10px 18px;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .listing-card {
+            max-width: 100%;
+            overflow: hidden;
         }
 
         .listing-card-image {
-            height: 320px;
+            height: 250px;
         }
 
         .listing-card-body {
-            padding: 18px;
+            padding: 15px;
         }
 
         .listing-card-title {
-            font-size: 1rem;
+            font-size: 0.95rem;
+            line-height: 1.4;
         }
-
-        .listing-stats {
-            gap: 8px;
-            padding: 12px;
-        }
-
-        .stat-label {
-            font-size: 0.65rem;
-        }
-
-        .stat-value {
+        
+        .listing-pet-name {
             font-size: 0.8rem;
         }
 
+        .listing-stats {
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+            padding: 10px;
+            min-width: 0;
+        }
+        
+        .stat-item {
+            min-width: 0;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 0.6rem;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .stat-value {
+            font-size: 0.75rem;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+        
+        .listing-meta-item {
+            font-size: 0.75rem;
+            flex-wrap: wrap;
+        }
+        
+        .listing-description p {
+            font-size: 0.8rem;
+        }
+        
+        .listing-actions {
+            gap: 10px;
+        }
+        
+        .btn-view {
+            width: 100%;
+            font-size: 0.85rem;
+            padding: 12px 20px;
+        }
+        
+        .btn-delete {
+            width: 100%;
+            font-size: 0.85rem;
+            padding: 12px 20px;
+        }
+
         .empty-state {
-            padding: 60px 20px;
+            padding: 50px 15px;
         }
 
         .empty-state-icon {
-            width: 70px;
-            height: 70px;
+            width: 60px;
+            height: 60px;
         }
 
         .empty-state-icon i {
-            font-size: 2rem;
+            font-size: 1.8rem;
         }
 
         .empty-state h3 {
+            font-size: 1.1rem;
+        }
+        
+        .empty-state p {
+            font-size: 0.9rem;
+        }
+        
+        .btn-create-first {
+            font-size: 0.9rem;
+            padding: 12px 24px;
+            width: 100%;
+        }
+        
+        .pagination {
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        
+        .page-item .page-link {
+            padding: 6px 10px;
+            font-size: 0.85rem;
+            margin: 0 2px;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .listings-wrapper {
+            padding: 15px 10px;
+        }
+        
+        .listings-header {
+            padding: 18px 12px;
+        }
+        
+        .listings-header h1 {
             font-size: 1.2rem;
+        }
+        
+        .listing-card-image {
+            height: 220px;
+        }
+        
+        .listing-card-body {
+            padding: 12px;
+        }
+        
+        .listing-stats {
+            gap: 4px;
+            padding: 8px;
+            min-width: 0;
+        }
+        
+        .stat-item {
+            min-width: 0;
+            overflow: hidden;
+        }
+        
+        .stat-label {
+            font-size: 0.55rem;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+        
+        .stat-value {
+            font-size: 0.7rem;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+        
+        .badge-overlay {
+            top: 8px;
+            right: 8px;
+            gap: 6px;
+        }
+        
+        .badge-custom {
+            padding: 4px 8px;
+            font-size: 0.65rem;
+        }
+        
+        .listing-actions {
+            gap: 8px;
+        }
+        
+        .btn-view {
+            font-size: 0.8rem;
+            padding: 11px 18px;
+        }
+        
+        .btn-delete {
+            font-size: 0.8rem;
+            padding: 11px 18px;
+        }
+    }
+    
+    /* Overflow koruması */
+    @media (max-width: 768px) {
+        .container,
+        .row,
+        .col-12,
+        .col-lg-4,
+        .col-md-6 {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+        
+        * {
+            max-width: 100%;
+        }
+        
+        img {
+            max-width: 100%;
+            height: auto;
         }
     }
 </style>
@@ -542,9 +772,9 @@
 
             <!-- İlan Listesi -->
             {% if ilanlar %}
-                <div class="row">
+                <div class="row g-3">
                     {% for ilan in ilanlar %}
-                    <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="col-12 col-md-6 col-lg-4 mb-4">
                         <div class="listing-card">
                             <!-- İlan Resmi -->
                             <div class="listing-card-image">
@@ -625,14 +855,9 @@
                                     <a href="{% url 'ilan:ilan_detay' ilan.id %}" class="btn-view">
                                         <i class="fas fa-eye"></i>Detayları Gör
                                     </a>
-                                    <div class="btn-group-custom">
-                                        <a href="{% url 'ilan:ilan_duzenle' ilan.id %}" class="btn-edit">
-                                            <i class="fas fa-edit"></i>Düzenle
-                                        </a>
-                                        <a href="{% url 'ilan:ilan_sil' ilan.id %}" class="btn-delete">
-                                            <i class="fas fa-trash"></i>Sil
-                                        </a>
-                                    </div>
+                                    <a href="{% url 'ilan:ilan_sil' ilan.id %}" class="btn-delete" onclick="return confirm('Bu ilanı silmek istediğinize emin misiniz?');">
+                                        <i class="fas fa-trash"></i>Sil
+                                    </a>
                                 </div>
                             </div>
                         </div>

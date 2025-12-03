@@ -5,8 +5,13 @@
 
 {% block css_dosyalar %}
 <style>
+    /* ================================================
+       💳 ÖDEME SAYFASI
+       Renk Paleti: #5B9BD5, #70C1B3, #FF8C42
+       ================================================ */
+    
     body {
-        background: #f5f5f5 !important;
+        background: linear-gradient(135deg, #f0f7ff 0%, #e8f4f8 50%, #f5f0ff 100%) !important;
     }
 
     .checkout-container {
@@ -18,16 +23,23 @@
     .checkout-header {
         background: white;
         padding: 30px;
-        border-radius: 15px;
+        border-radius: 20px;
         margin-bottom: 30px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 10px 40px rgba(91, 155, 213, 0.12);
+        border: 1px solid rgba(91, 155, 213, 0.1);
     }
 
     .checkout-header h1 {
         font-size: 2rem;
         font-weight: 700;
-        color: #333;
+        background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
         margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
     }
 
     .checkout-content {
@@ -38,38 +50,54 @@
 
     .checkout-section {
         background: white;
-        border-radius: 15px;
+        border-radius: 20px;
         padding: 30px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 10px 40px rgba(91, 155, 213, 0.12);
+        border: 1px solid rgba(91, 155, 213, 0.1);
         margin-bottom: 20px;
     }
 
     .section-title {
         font-size: 1.3rem;
         font-weight: 700;
-        color: #333;
+        color: #1e293b;
         margin-bottom: 20px;
         padding-bottom: 15px;
-        border-bottom: 2px solid #e5e7eb;
+        border-bottom: 2px solid #f1f5f9;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .section-title::before {
+        content: '';
+        width: 4px;
+        height: 20px;
+        background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
+        border-radius: 2px;
     }
 
     .address-card {
-        border: 2px solid #e5e7eb;
-        border-radius: 12px;
+        border: 2px solid #e2e8f0;
+        border-radius: 16px;
         padding: 20px;
         margin-bottom: 15px;
         cursor: pointer;
-        transition: all 0.3s ease;
+        transition: all 0.25s ease;
+        background: white;
     }
 
     .address-card:hover {
-        border-color: #2C5F8D;
-        background: #f9fafb;
+        border-color: #5B9BD5;
+        background: linear-gradient(135deg, #f0f7ff 0%, #e8f4f8 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(91, 155, 213, 0.15);
     }
 
     .address-card.selected {
-        border-color: #2C5F8D;
-        background: #EBF4FA;
+        border-color: #5B9BD5;
+        background: linear-gradient(135deg, #f0f7ff 0%, #e8f4f8 100%);
+        box-shadow: 0 8px 25px rgba(91, 155, 213, 0.2);
     }
 
     .address-card input[type="radio"] {
@@ -89,11 +117,12 @@
     }
 
     .address-type {
-        background: #2C5F8D;
+        background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
         color: white;
         padding: 4px 12px;
-        border-radius: 15px;
+        border-radius: 50px;
         font-size: 0.85rem;
+        font-weight: 600;
     }
 
     .address-details {
@@ -102,21 +131,24 @@
     }
 
     .add-address-btn {
-        background: #f9fafb;
-        border: 2px dashed #e5e7eb;
-        color: #2C5F8D;
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        border: 2px dashed #cbd5e1;
+        color: #5B9BD5;
         padding: 20px;
-        border-radius: 12px;
+        border-radius: 14px;
         text-align: center;
         cursor: pointer;
-        transition: all 0.3s ease;
+        transition: all 0.25s ease;
         text-decoration: none;
         display: block;
+        font-weight: 600;
     }
 
     .add-address-btn:hover {
-        border-color: #2C5F8D;
-        background: #EBF4FA;
+        border-color: #5B9BD5;
+        background: linear-gradient(135deg, #f0f7ff 0%, #e8f4f8 100%);
+        color: #5B9BD5;
+        text-decoration: none;
     }
 
     .order-summary {
@@ -145,33 +177,43 @@
         justify-content: space-between;
         margin-top: 20px;
         padding-top: 20px;
-        border-top: 2px solid #e5e7eb;
+        border-top: 2px solid #f1f5f9;
         font-size: 1.3rem;
         font-weight: 700;
     }
 
     .total-price {
-        color: #10b981;
+        background: linear-gradient(135deg, #6FCF97 0%, #70C1B3 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
         font-size: 1.5rem;
     }
 
     .checkout-btn {
         width: 100%;
-        background: linear-gradient(135deg, #2C5F8D 0%, #5B9BD5 100%);
+        background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
         color: white;
         border: none;
         padding: 18px;
-        border-radius: 12px;
+        border-radius: 14px;
         font-size: 1.2rem;
         font-weight: 600;
         cursor: pointer;
         margin-top: 25px;
-        transition: all 0.3s ease;
+        transition: all 0.25s ease;
+        box-shadow: 0 6px 20px rgba(91, 155, 213, 0.35);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
     }
 
     .checkout-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(91, 155, 213, 0.45);
+        color: white;
+        text-decoration: none;
     }
     
     /* Misafir checkout form stilleri */
@@ -203,8 +245,8 @@
     .form-group input:focus,
     .form-group textarea:focus {
         outline: none;
-        border-color: #667eea;
-        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        border-color: #5B9BD5;
+        box-shadow: 0 0 0 4px rgba(91, 155, 213, 0.1);
     }
     
     .form-row {
@@ -221,16 +263,19 @@
     
     /* Kargo Seçimi Stilleri */
     .kargo-option {
-        border: 2px solid #e5e7eb;
-        border-radius: 12px;
+        border: 2px solid #e2e8f0;
+        border-radius: 16px;
         margin-bottom: 15px;
         cursor: pointer;
-        transition: all 0.3s ease;
+        transition: all 0.25s ease;
+        background: white;
     }
     
     .kargo-option:hover {
-        border-color: #2C5F8D;
-        background: #f9fafb;
+        border-color: #5B9BD5;
+        background: linear-gradient(135deg, #f0f7ff 0%, #e8f4f8 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(91, 155, 213, 0.15);
     }
     
     .kargo-option input[type="radio"] {
@@ -238,12 +283,13 @@
     }
     
     .kargo-option input[type="radio"]:checked + .kargo-label {
-        background: #EBF4FA;
+        background: linear-gradient(135deg, #f0f7ff 0%, #e8f4f8 100%);
     }
     
     .kargo-option:has(input[type="radio"]:checked) {
-        border-color: #2C5F8D;
-        background: #EBF4FA;
+        border-color: #5B9BD5;
+        background: linear-gradient(135deg, #f0f7ff 0%, #e8f4f8 100%);
+        box-shadow: 0 8px 25px rgba(91, 155, 213, 0.2);
     }
     
     .kargo-label {
@@ -273,13 +319,13 @@
     }
     
     .kargo-fiyat.free {
-        background: #d4edda;
-        color: #155724;
+        background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+        color: #065f46;
     }
     
     .kargo-fiyat.paid {
-        background: #cce5ff;
-        color: #004085;
+        background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+        color: #1e40af;
     }
     
     .kargo-details {
@@ -294,7 +340,7 @@
     }
     
     .kargo-limit {
-        color: #28a745;
+        color: #6FCF97;
         font-size: 0.85rem;
         font-weight: 600;
     }
@@ -308,13 +354,77 @@
             position: static;
         }
     }
+    
+    @media (max-width: 768px) {
+        .checkout-container {
+            margin: 20px auto;
+            padding: 0 15px;
+        }
+        
+        .checkout-header {
+            padding: 20px;
+            border-radius: 16px;
+        }
+        
+        .checkout-header h1 {
+            font-size: 1.5rem;
+        }
+        
+        .checkout-section {
+            padding: 20px;
+            border-radius: 16px;
+        }
+        
+        .section-title {
+            font-size: 1.1rem;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .checkout-header {
+            padding: 16px;
+        }
+        
+        .checkout-header h1 {
+            font-size: 1.3rem;
+        }
+        
+        .checkout-section {
+            padding: 16px;
+        }
+        
+        .address-card {
+            padding: 16px;
+        }
+        
+        .checkout-btn {
+            padding: 14px;
+            font-size: 1rem;
+        }
+    }
+    
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+        .address-card,
+        .kargo-option,
+        .checkout-btn,
+        .add-address-btn {
+            transition: none;
+        }
+        
+        .address-card:hover,
+        .kargo-option:hover,
+        .checkout-btn:hover {
+            transform: none;
+        }
+    }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="checkout-container">
     <div class="checkout-header">
-        <h1>💳 Ödeme</h1>
+        <h1><i class="fas fa-credit-card"></i> Ödeme</h1>
     </div>
 
     {% if sepet_items %}
@@ -325,7 +435,7 @@
             <!-- Sol Taraf - Adres Bilgileri -->
             <div>
                 <div class="checkout-section">
-                    <h2 class="section-title">📍 Teslimat Adresi</h2>
+                    <h2 class="section-title"><i class="fas fa-map-marker-alt"></i> Teslimat Adresi</h2>
                     
                     {% if guest_checkout %}
                         <!-- Misafir kullanıcı için adres formu -->
@@ -426,11 +536,11 @@
                 <!-- Kargo Bilgisi (Sadece Bilgilendirme) -->
                 {% if secili_kargo_firmasi %}
                 <div class="checkout-section">
-                    <h2 class="section-title">🚚 Kargo Bilgisi</h2>
-                    <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #007bff;">
+                    <h2 class="section-title"><i class="fas fa-truck"></i> Kargo Bilgisi</h2>
+                    <div style="background: linear-gradient(135deg, #f0f7ff 0%, #e8f4f8 100%); padding: 15px; border-radius: 12px; border-left: 4px solid #5B9BD5;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                             <strong>{{ secili_kargo_firmasi.ad }}</strong>
-                            <span style="color: #28a745; font-weight: bold;">
+                            <span style="color: #6FCF97; font-weight: bold;">
                                 {% if kargo_ucreti == 0 %}
                                     Ücretsiz
                                 {% else %}
@@ -452,7 +562,7 @@
             <!-- Sağ Taraf - Sipariş Özeti -->
             <div class="order-summary">
                 <div class="checkout-section">
-                    <h2 class="section-title">📋 Sipariş Özeti</h2>
+                    <h2 class="section-title"><i class="fas fa-receipt"></i> Sipariş Özeti</h2>
                     
                     <div class="summary-row">
                         <span class="summary-label">Toplam Ürün:</span>
@@ -481,11 +591,12 @@
                     </div>
 
                     <button type="submit" class="checkout-btn" {% if user.is_authenticated and not adresler.exists %}disabled{% endif %}>
-                        💳 Siparişi Tamamla
+                        <i class="fas fa-check-circle"></i>
+                        Siparişi Tamamla
                     </button>
 
-                    <a href="{% url 'shop:sepet_goster' %}" style="display: block; text-align: center; margin-top: 15px; color: #2C5F8D;">
-                        ← Sepete Dön
+                    <a href="{% url 'shop:sepet_goster' %}" style="display: block; text-align: center; margin-top: 15px; color: #5B9BD5; font-weight: 600; transition: color 0.2s;">
+                        <i class="fas fa-arrow-left me-2"></i>Sepete Dön
                     </a>
                 </div>
             </div>

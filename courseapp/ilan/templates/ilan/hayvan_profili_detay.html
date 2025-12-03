@@ -1,231 +1,598 @@
 {% extends 'ana.html' %}
 {% load static %}
 
-{% block baslik %}Hayvan Profili Detay - PetSafe Hub{% endblock %}
+{% block title %}Hayvan Profili Detay - PetSafe Hub{% endblock %}
 
-{% block icerik %}
-<div class="container my-5">
-    <div class="row">
-        <div class="col-12">
-            <!-- Başlık -->
-            <div class="d-flex justify-content-between align-items-center mb-4">
+{% block css_dosyalar %}
+<style>
+    /* ================================================
+       🐾 HAYVAN PROFİLİ DETAY SAYFASI
+       Renk Paleti: #5B9BD5, #70C1B3, #FF8C42, #6FCF97
+       ================================================ */
+    
+    .profile-detail-page {
+        background: linear-gradient(135deg, #f0f7ff 0%, #e8f4f8 50%, #f5f0ff 100%);
+        min-height: 100vh;
+        padding: 40px 0 80px;
+    }
+    
+    .profile-detail-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+    
+    /* ========== HEADER ========== */
+    .profile-header {
+        background: white;
+        border-radius: 24px;
+        box-shadow: 0 10px 40px rgba(91, 155, 213, 0.12);
+        padding: 32px;
+        margin-bottom: 32px;
+        border: 1px solid rgba(91, 155, 213, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+    
+    .profile-header-left h1 {
+        font-size: 2rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 16px;
+    }
+    
+    .badge-modern {
+        padding: 8px 16px;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin-right: 8px;
+        margin-bottom: 8px;
+    }
+    
+    .badge-primary-modern {
+        background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
+        color: white;
+    }
+    
+    .badge-info-modern {
+        background: linear-gradient(135deg, #70C1B3 0%, #6FCF97 100%);
+        color: white;
+    }
+    
+    .badge-success-modern {
+        background: linear-gradient(135deg, #6FCF97 0%, #70C1B3 100%);
+        color: white;
+    }
+    
+    .btn-header-action {
+        background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
+        color: white;
+        border: none;
+        padding: 12px 28px;
+        border-radius: 50px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 6px 20px rgba(91, 155, 213, 0.35);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .btn-header-action:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(91, 155, 213, 0.45);
+        color: white;
+        text-decoration: none;
+    }
+    
+    /* ========== IMAGE SECTION ========== */
+    .image-section {
+        background: white;
+        border-radius: 24px;
+        box-shadow: 0 10px 40px rgba(91, 155, 213, 0.12);
+        padding: 24px;
+        margin-bottom: 32px;
+        border: 1px solid rgba(91, 155, 213, 0.1);
+    }
+    
+    .main-image {
+        width: 100%;
+        max-height: 500px;
+        object-fit: cover;
+        border-radius: 16px;
+        box-shadow: 0 8px 24px rgba(91, 155, 213, 0.15);
+    }
+    
+    .gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 16px;
+        margin-top: 24px;
+    }
+    
+    .gallery-item {
+        aspect-ratio: 1;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(91, 155, 213, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .gallery-item:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 20px rgba(91, 155, 213, 0.2);
+    }
+    
+    .gallery-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    /* ========== INFO CARDS ========== */
+    .info-card {
+        background: white;
+        border-radius: 24px;
+        box-shadow: 0 10px 40px rgba(91, 155, 213, 0.12);
+        padding: 28px;
+        margin-bottom: 24px;
+        border: 1px solid rgba(91, 155, 213, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .info-card:hover {
+        box-shadow: 0 15px 50px rgba(91, 155, 213, 0.18);
+    }
+    
+    .card-header-modern {
+        background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
+        color: white;
+        padding: 18px 24px;
+        border-radius: 16px;
+        margin: -28px -28px 24px -28px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .card-header-modern h5 {
+        margin: 0;
+        font-weight: 700;
+        font-size: 1.1rem;
+    }
+    
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+    
+    .info-item {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+    
+    .info-label {
+        font-size: 0.85rem;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 600;
+    }
+    
+    .info-value {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #334155;
+    }
+    
+    .badge-status {
+        padding: 6px 14px;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        display: inline-block;
+    }
+    
+    .badge-status.success {
+        background: linear-gradient(135deg, #6FCF97 0%, #70C1B3 100%);
+        color: white;
+    }
+    
+    .badge-status.warning {
+        background: linear-gradient(135deg, #F2C94C 0%, #FFB88C 100%);
+        color: #1e293b;
+    }
+    
+    .badge-status.secondary {
+        background: #e2e8f0;
+        color: #64748b;
+    }
+    
+    /* ========== ACTION CARD ========== */
+    .action-card {
+        background: white;
+        border-radius: 24px;
+        box-shadow: 0 10px 40px rgba(91, 155, 213, 0.12);
+        padding: 28px;
+        border: 1px solid rgba(91, 155, 213, 0.1);
+    }
+    
+    .action-card .card-header-modern {
+        margin-bottom: 20px;
+    }
+    
+    .action-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .btn-action {
+        padding: 14px 24px;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 1rem;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        text-decoration: none;
+    }
+    
+    .btn-primary-action {
+        background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
+        color: white;
+        box-shadow: 0 6px 20px rgba(91, 155, 213, 0.35);
+    }
+    
+    .btn-primary-action:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(91, 155, 213, 0.45);
+        color: white;
+        text-decoration: none;
+    }
+    
+    .btn-warning-action {
+        background: linear-gradient(135deg, #F2C94C 0%, #FFB88C 100%);
+        color: #1e293b;
+        box-shadow: 0 6px 20px rgba(242, 201, 76, 0.35);
+    }
+    
+    .btn-warning-action:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(242, 201, 76, 0.45);
+        color: #1e293b;
+        text-decoration: none;
+    }
+    
+    .btn-danger-action {
+        background: linear-gradient(135deg, #EB5757 0%, #ff6b6b 100%);
+        color: white;
+        box-shadow: 0 6px 20px rgba(235, 87, 87, 0.35);
+    }
+    
+    .btn-danger-action:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(235, 87, 87, 0.45);
+        color: white;
+        text-decoration: none;
+    }
+    
+    /* ========== DESCRIPTION ========== */
+    .description-card {
+        background: white;
+        border-radius: 24px;
+        box-shadow: 0 10px 40px rgba(91, 155, 213, 0.12);
+        padding: 28px;
+        margin-bottom: 24px;
+        border: 1px solid rgba(91, 155, 213, 0.1);
+    }
+    
+    .description-text {
+        color: #64748b;
+        line-height: 1.8;
+        font-size: 1rem;
+        margin: 0;
+    }
+    
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 992px) {
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .profile-detail-page {
+            padding: 24px 0 60px;
+        }
+        
+        .profile-detail-container {
+            padding: 0 16px;
+        }
+        
+        .profile-header {
+            flex-direction: column;
+            padding: 24px;
+        }
+        
+        .profile-header-left h1 {
+            font-size: 1.5rem;
+        }
+        
+        .btn-header-action {
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .image-section {
+            padding: 20px;
+        }
+        
+        .gallery-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .info-card {
+            padding: 20px;
+        }
+        
+        .card-header-modern {
+            margin: -20px -20px 20px -20px;
+            padding: 14px 18px;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .profile-header-left h1 {
+            font-size: 1.35rem;
+        }
+        
+        .gallery-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .info-card {
+            padding: 16px;
+        }
+        
+        .card-header-modern {
+            margin: -16px -16px 16px -16px;
+            padding: 12px 16px;
+        }
+    }
+    
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+        .info-card,
+        .gallery-item,
+        .btn-action {
+            transition: none;
+        }
+        
+        .info-card:hover,
+        .gallery-item:hover,
+        .btn-action:hover {
+            transform: none;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-detail-page">
+    <div class="profile-detail-container">
+        <!-- Header -->
+        <div class="profile-header">
+            <div class="profile-header-left">
+                <h1>{{ hayvan_profili.hayvan_adi }}</h1>
                 <div>
-                    <h1 class="mb-2">{{ hayvan_profili.hayvan_adi }}</h1>
-                    <div class="d-flex align-items-center gap-3">
-                        <span class="badge bg-primary fs-6">
-                            <i class="fas fa-paw me-1"></i>{{ hayvan_profili.tur.ad }}
-                        </span>
-                        <span class="badge bg-info fs-6">
-                            <i class="fas fa-dna me-1"></i>{{ hayvan_profili.irk.ad }}
-                        </span>
-                        <span class="badge bg-success fs-6">
-                            <i class="fas fa-venus-mars me-1"></i>{{ hayvan_profili.get_cinsiyet_display }}
-                        </span>
-                    </div>
-                </div>
-                <div>
-                    <a href="{% url 'ilan:ilan_olustur' %}" class="btn btn-primary">
-                        <i class="fas fa-plus me-2"></i>Bu Profil ile İlan Ver
-                    </a>
+                    <span class="badge-modern badge-primary-modern">
+                        <i class="fas fa-paw"></i>{{ hayvan_profili.tur.ad }}
+                    </span>
+                    <span class="badge-modern badge-info-modern">
+                        <i class="fas fa-dna"></i>{{ hayvan_profili.irk.ad }}
+                    </span>
+                    <span class="badge-modern badge-success-modern">
+                        <i class="fas fa-venus-mars"></i>{{ hayvan_profili.get_cinsiyet_display }}
+                    </span>
                 </div>
             </div>
-
-            <!-- Profil Resmi -->
+            <div>
+                <a href="{% url 'ilan:ilan_olustur' %}" class="btn-header-action">
+                    <i class="fas fa-plus"></i>Bu Profil ile İlan Ver
+                </a>
+            </div>
+        </div>
+        
+        <!-- Image Section -->
+        {% if hayvan_profili.profil_fotografi or hayvan_profili.resimler.all %}
+        <div class="image-section">
             {% if hayvan_profili.profil_fotografi %}
-            <div class="text-center mb-4">
-                <img src="{{ hayvan_profili.profil_fotografi.url }}" 
-                     alt="{{ hayvan_profili.hayvan_adi }}" 
-                     class="img-fluid rounded shadow" 
-                     style="max-height: 400px; object-fit: cover;">
-            </div>
+            <img src="{{ hayvan_profili.profil_fotografi.url }}" 
+                 alt="{{ hayvan_profili.hayvan_adi }}" 
+                 class="main-image" loading="lazy">
             {% endif %}
-
-            <!-- Ek Resimler -->
+            
             {% if hayvan_profili.resimler.all %}
-            <div class="row mb-4">
-                <div class="col-12">
-                    <h5 class="mb-3">Ek Resimler</h5>
-                    <div class="row">
-                        {% for resim in hayvan_profili.resimler.all %}
-                            {% if resim.resim %}
-                                <div class="col-md-4 mb-3">
-                                    <img src="{{ resim.resim.url }}" 
-                                         alt="{{ hayvan_profili.hayvan_adi }} - Resim {{ forloop.counter }}" 
-                                         class="img-fluid rounded shadow" 
-                                         style="height: 200px; object-fit: cover; width: 100%;">
-                                </div>
-                            {% endif %}
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-            {% endif %}
-
-            <!-- Bilgiler -->
-            <div class="row">
-                <div class="col-md-8">
-                    <!-- Temel Bilgiler -->
-                    <div class="card mb-4">
-                        <div class="card-header">
-                            <h5 class="mb-0">
-                                <i class="fas fa-info-circle me-2"></i>Temel Bilgiler
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <strong>Ad:</strong> {{ hayvan_profili.hayvan_adi }}
-                                    </div>
-                                    <div class="mb-3">
-                                        <strong>Tür:</strong> {{ hayvan_profili.tur.ad }}
-                                    </div>
-                                    <div class="mb-3">
-                                        <strong>Irk:</strong> {{ hayvan_profili.irk.ad }}
-                                    </div>
-                                    <div class="mb-3">
-                                        <strong>Yaş:</strong> {{ hayvan_profili.yas_hesapla }}
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <strong>Cinsiyet:</strong> {{ hayvan_profili.get_cinsiyet_display }}
-                                    </div>
-                                    <div class="mb-3">
-                                        <strong>Konum:</strong> {{ hayvan_profili.il.ad }}/{{ hayvan_profili.ilce.ad }}
-                                        {% if hayvan_profili.mahalle %}
-                                            /{{ hayvan_profili.mahalle }}
-                                        {% endif %}
-                                    </div>
-                                    <div class="mb-3">
-                                        <strong>Oluşturulma:</strong> {{ hayvan_profili.olusturulma_tarihi|date:"d.m.Y H:i" }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Sağlık Bilgileri -->
-                    <div class="card mb-4">
-                        <div class="card-header">
-                            <h5 class="mb-0">
-                                <i class="fas fa-heartbeat me-2"></i>Sağlık Bilgileri
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <strong>Aşı Durumu:</strong>
-                                        <span class="badge {% if hayvan_profili.asi_durumu %}bg-success{% else %}bg-warning{% endif %}">
-                                            {% if hayvan_profili.asi_durumu %}Aşılı{% else %}Aşısız{% endif %}
-                                        </span>
-                                    </div>
-                                    <div class="mb-3">
-                                        <strong>İç Parazit:</strong>
-                                        <span class="badge {% if hayvan_profili.ic_parazit %}bg-success{% else %}bg-warning{% endif %}">
-                                            {% if hayvan_profili.ic_parazit %}Temiz{% else %}Kontrol Gerekli{% endif %}
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <strong>Dış Parazit:</strong>
-                                        <span class="badge {% if hayvan_profili.dis_parazit %}bg-success{% else %}bg-warning{% endif %}">
-                                            {% if hayvan_profili.dis_parazit %}Temiz{% else %}Kontrol Gerekli{% endif %}
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Açıklama -->
-                    {% if hayvan_profili.aciklama %}
-                    <div class="card mb-4">
-                        <div class="card-header">
-                            <h5 class="mb-0">
-                                <i class="fas fa-file-alt me-2"></i>Açıklama
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <p class="mb-0">{{ hayvan_profili.aciklama|linebreaks }}</p>
-                        </div>
+            <div class="gallery-grid">
+                {% for resim in hayvan_profili.resimler.all %}
+                    {% if resim.resim %}
+                    <div class="gallery-item">
+                        <img src="{{ resim.resim.url }}" 
+                             alt="{{ hayvan_profili.hayvan_adi }} - Resim {{ forloop.counter }}" 
+                             loading="lazy">
                     </div>
                     {% endif %}
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+        
+        <div class="row">
+            <div class="col-lg-8">
+                <!-- Temel Bilgiler -->
+                <div class="info-card">
+                    <div class="card-header-modern">
+                        <i class="fas fa-info-circle"></i>
+                        <h5>Temel Bilgiler</h5>
+                    </div>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="info-label">Ad</span>
+                            <span class="info-value">{{ hayvan_profili.hayvan_adi }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Tür</span>
+                            <span class="info-value">{{ hayvan_profili.tur.ad }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Irk</span>
+                            <span class="info-value">{{ hayvan_profili.irk.ad }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Yaş</span>
+                            <span class="info-value">{{ hayvan_profili.yas_hesapla }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Cinsiyet</span>
+                            <span class="info-value">{{ hayvan_profili.get_cinsiyet_display }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Konum</span>
+                            <span class="info-value">
+                                {{ hayvan_profili.il.ad }}/{{ hayvan_profili.ilce.ad }}
+                                {% if hayvan_profili.mahalle %}/{{ hayvan_profili.mahalle }}{% endif %}
+                            </span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Oluşturulma</span>
+                            <span class="info-value">{{ hayvan_profili.olusturulma_tarihi|date:"d.m.Y H:i" }}</span>
+                        </div>
+                    </div>
                 </div>
-
-                <div class="col-md-4">
-                    <!-- Ödeme ve Gönderim -->
-                    <div class="card mb-4">
-                        <div class="card-header">
-                            <h5 class="mb-0">
-                                <i class="fas fa-credit-card me-2"></i>Ödeme ve Gönderim
-                            </h5>
+                
+                <!-- Sağlık Bilgileri -->
+                <div class="info-card">
+                    <div class="card-header-modern">
+                        <i class="fas fa-heartbeat"></i>
+                        <h5>Sağlık Bilgileri</h5>
+                    </div>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="info-label">Aşı Durumu</span>
+                            <span class="badge-status {% if hayvan_profili.asi_durumu %}success{% else %}warning{% endif %}">
+                                {% if hayvan_profili.asi_durumu %}Aşılı{% else %}Aşısız{% endif %}
+                            </span>
                         </div>
-                        <div class="card-body">
-                            <div class="mb-3">
-                                <strong>Kredi Kartına Ödeme:</strong>
-                                <span class="badge {% if hayvan_profili.kredi_karti_odeme %}bg-success{% else %}bg-secondary{% endif %}">
-                                    {% if hayvan_profili.kredi_karti_odeme %}Kabul Edilir{% else %}Kabul Edilmez{% endif %}
-                                </span>
-                            </div>
-                            <div class="mb-3">
-                                <strong>Şehir Dışına Gönderim:</strong>
-                                <span class="badge {% if hayvan_profili.sehir_disi_gonderim %}bg-success{% else %}bg-secondary{% endif %}">
-                                    {% if hayvan_profili.sehir_disi_gonderim %}Yapılır{% else %}Yapılmaz{% endif %}
-                                </span>
-                            </div>
+                        <div class="info-item">
+                            <span class="info-label">İç Parazit</span>
+                            <span class="badge-status {% if hayvan_profili.ic_parazit %}success{% else %}warning{% endif %}">
+                                {% if hayvan_profili.ic_parazit %}Temiz{% else %}Kontrol Gerekli{% endif %}
+                            </span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Dış Parazit</span>
+                            <span class="badge-status {% if hayvan_profili.dis_parazit %}success{% else %}warning{% endif %}">
+                                {% if hayvan_profili.dis_parazit %}Temiz{% else %}Kontrol Gerekli{% endif %}
+                            </span>
                         </div>
                     </div>
-
-                    <!-- İletişim -->
-                    <div class="card mb-4">
-                        <div class="card-header">
-                            <h5 class="mb-0">
-                                <i class="fas fa-user me-2"></i>Profil Sahibi
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="mb-3">
-                                <strong>Kullanıcı:</strong> {{ hayvan_profili.kullanici.get_full_name|default:hayvan_profili.kullanici.username }}
-                            </div>
-                            <div class="mb-3">
-                                <strong>Kullanıcı Türü:</strong>
-                                {% if hayvan_profili.kullanici.misafir_profili %}
-                                    <span class="badge bg-info">Misafir</span>
-                                {% elif hayvan_profili.kullanici.veteriner_profili %}
-                                    <span class="badge bg-primary">Veteriner</span>
-                                {% elif hayvan_profili.kullanici.petshop_profili %}
-                                    <span class="badge bg-success">Petshop</span>
-                                {% else %}
-                                    <span class="badge bg-secondary">Sahip</span>
-                                {% endif %}
-                            </div>
-                        </div>
+                </div>
+                
+                <!-- Açıklama -->
+                {% if hayvan_profili.aciklama %}
+                <div class="description-card">
+                    <div class="card-header-modern">
+                        <i class="fas fa-file-alt"></i>
+                        <h5>Açıklama</h5>
                     </div>
-
-                    <!-- İşlemler -->
-                    <div class="card">
-                        <div class="card-header">
-                            <h5 class="mb-0">
-                                <i class="fas fa-cogs me-2"></i>İşlemler
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="d-grid gap-2">
-                                <a href="{% url 'ilan:ilan_olustur' %}" class="btn btn-primary">
-                                    <i class="fas fa-plus me-2"></i>Bu Profil ile İlan Ver
-                                </a>
-                                <a href="{% url 'ilan:hayvan_profili_duzenle' hayvan_profili.id %}" class="btn btn-warning">
-                                    <i class="fas fa-edit me-2"></i>Profili Düzenle
-                                </a>
-                                <a href="{% url 'ilan:hayvan_profili_sil' hayvan_profili.id %}" class="btn btn-danger" 
-                                   onclick="return confirm('Bu profili silmek istediğinizden emin misiniz?')">
-                                    <i class="fas fa-trash me-2"></i>Profili Sil
-                                </a>
-                            </div>
-                        </div>
+                    <p class="description-text">{{ hayvan_profili.aciklama|linebreaks }}</p>
+                </div>
+                {% endif %}
+            </div>
+            
+            <div class="col-lg-4">
+                <!-- Ödeme ve Gönderim -->
+                <div class="info-card">
+                    <div class="card-header-modern">
+                        <i class="fas fa-credit-card"></i>
+                        <h5>Ödeme ve Gönderim</h5>
+                    </div>
+                    <div class="info-item" style="margin-bottom: 16px;">
+                        <span class="info-label">Kredi Kartına Ödeme</span>
+                        <span class="badge-status {% if hayvan_profili.kredi_karti_odeme %}success{% else %}secondary{% endif %}">
+                            {% if hayvan_profili.kredi_karti_odeme %}Kabul Edilir{% else %}Kabul Edilmez{% endif %}
+                        </span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Şehir Dışına Gönderim</span>
+                        <span class="badge-status {% if hayvan_profili.sehir_disi_gonderim %}success{% else %}secondary{% endif %}">
+                            {% if hayvan_profili.sehir_disi_gonderim %}Yapılır{% else %}Yapılmaz{% endif %}
+                        </span>
+                    </div>
+                </div>
+                
+                <!-- Profil Sahibi -->
+                <div class="info-card">
+                    <div class="card-header-modern">
+                        <i class="fas fa-user"></i>
+                        <h5>Profil Sahibi</h5>
+                    </div>
+                    <div class="info-item" style="margin-bottom: 16px;">
+                        <span class="info-label">Kullanıcı</span>
+                        <span class="info-value">{{ hayvan_profili.kullanici.get_full_name|default:hayvan_profili.kullanici.username }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Kullanıcı Türü</span>
+                        <span class="badge-modern 
+                            {% if hayvan_profili.kullanici.misafir_profili %}badge-info-modern
+                            {% elif hayvan_profili.kullanici.veteriner_profili %}badge-primary-modern
+                            {% elif hayvan_profili.kullanici.petshop_profili %}badge-success-modern
+                            {% else %}badge-secondary-modern{% endif %}">
+                            {% if hayvan_profili.kullanici.misafir_profili %}Misafir
+                            {% elif hayvan_profili.kullanici.veteriner_profili %}Veteriner
+                            {% elif hayvan_profili.kullanici.petshop_profili %}Petshop
+                            {% else %}Sahip{% endif %}
+                        </span>
+                    </div>
+                </div>
+                
+                <!-- İşlemler -->
+                <div class="action-card">
+                    <div class="card-header-modern">
+                        <i class="fas fa-cogs"></i>
+                        <h5>İşlemler</h5>
+                    </div>
+                    <div class="action-buttons">
+                        <a href="{% url 'ilan:ilan_olustur' %}" class="btn-action btn-primary-action">
+                            <i class="fas fa-plus"></i>Bu Profil ile İlan Ver
+                        </a>
+                        <a href="{% url 'ilan:hayvan_profili_duzenle' hayvan_profili.id %}" class="btn-action btn-warning-action">
+                            <i class="fas fa-edit"></i>Profili Düzenle
+                        </a>
+                        <a href="{% url 'ilan:hayvan_profili_sil' hayvan_profili.id %}" 
+                           class="btn-action btn-danger-action" 
+                           onclick="return confirm('Bu profili silmek istediğinizden emin misiniz?')">
+                            <i class="fas fa-trash"></i>Profili Sil
+                        </a>
                     </div>
                 </div>
             </div>

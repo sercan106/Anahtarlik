@@ -5,8 +5,13 @@
 
 {% block css_dosyalar %}
 <style>
+    /* ================================================
+       📦 SİPARİŞ DETAY SAYFASI
+       Renk Paleti: #5B9BD5, #70C1B3, #FF8C42
+       ================================================ */
+    
     body {
-        background: #f5f5f5 !important;
+        background: linear-gradient(135deg, #f0f7ff 0%, #e8f4f8 50%, #f5f0ff 100%) !important;
     }
 
     .order-container {
@@ -18,20 +23,27 @@
     .order-header {
         background: white;
         padding: 30px;
-        border-radius: 15px;
+        border-radius: 20px;
         margin-bottom: 30px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 10px 40px rgba(91, 155, 213, 0.12);
+        border: 1px solid rgba(91, 155, 213, 0.1);
     }
 
     .order-header h1 {
         font-size: 2rem;
         font-weight: 700;
-        color: #333;
+        background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
         margin: 0 0 10px 0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
     }
 
     .order-number {
-        color: #667eea;
+        color: #5B9BD5;
         font-weight: 600;
         font-size: 1.1rem;
     }
@@ -46,39 +58,39 @@
     }
 
     .order-status.bekliyor {
-        background: #fff3cd;
-        color: #856404;
+        background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+        color: #92400e;
     }
 
     .order-status.odendi {
-        background: #d1ecf1;
-        color: #0c5460;
+        background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+        color: #1e40af;
     }
 
     .order-status.gonderildi,
     .order-status.kargoda {
-        background: #d4edda;
-        color: #155724;
+        background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+        color: #065f46;
     }
 
     .order-status.hazirlaniyor {
-        background: #fff5d1;
-        color: #b7791f;
+        background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+        color: #92400e;
     }
 
     .order-status.teslim_edildi {
-        background: #bbf7d0;
-        color: #166534;
+        background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+        color: #065f46;
     }
 
     .order-status.iptal {
-        background: #fecaca;
-        color: #b91c1c;
+        background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+        color: #991b1b;
     }
 
     .order-status.iade {
-        background: #ede9fe;
-        color: #5b21b6;
+        background: linear-gradient(135deg, #e9d5ff 0%, #ddd6fe 100%);
+        color: #6b21a8;
     }
 
     .order-content {
@@ -89,19 +101,31 @@
 
     .order-section {
         background: white;
-        border-radius: 15px;
+        border-radius: 20px;
         padding: 30px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 10px 40px rgba(91, 155, 213, 0.12);
+        border: 1px solid rgba(91, 155, 213, 0.1);
         margin-bottom: 20px;
     }
 
     .section-title {
         font-size: 1.3rem;
         font-weight: 700;
-        color: #333;
+        color: #1e293b;
         margin-bottom: 20px;
-        padding-bottom: 10px;
-        border-bottom: 2px solid #f1f3f4;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #f1f5f9;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .section-title::before {
+        content: '';
+        width: 4px;
+        height: 20px;
+        background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
+        border-radius: 2px;
     }
 
     .order-items {
@@ -113,9 +137,16 @@
         grid-template-columns: 80px 1fr auto;
         gap: 20px;
         padding: 20px;
-        border: 1px solid #f1f3f4;
-        border-radius: 10px;
+        border: 2px solid #f1f5f9;
+        border-radius: 14px;
         margin-bottom: 15px;
+        background: white;
+        transition: all 0.25s ease;
+    }
+    
+    .order-item:hover {
+        border-color: #5B9BD5;
+        box-shadow: 0 4px 15px rgba(91, 155, 213, 0.1);
     }
 
     .item-image img {
@@ -140,15 +171,16 @@
     .item-price {
         text-align: right;
         font-weight: 600;
-        color: #10b981;
+        color: #6FCF97;
         font-size: 1.1rem;
     }
 
     .order-summary {
-        background: #f8f9fa;
-        border-radius: 10px;
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        border-radius: 14px;
         padding: 20px;
         margin-top: 20px;
+        border: 1px solid #e2e8f0;
     }
 
     .summary-row {
@@ -168,10 +200,11 @@
     }
 
     .order-info {
-        background: #f8f9fa;
-        border-radius: 10px;
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        border-radius: 14px;
         padding: 20px;
         margin-bottom: 20px;
+        border: 1px solid #e2e8f0;
     }
 
     .info-row {
@@ -187,20 +220,23 @@
     }
 
     .back-btn {
-        display: inline-block;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
         color: white;
         padding: 12px 24px;
-        border-radius: 8px;
+        border-radius: 12px;
         text-decoration: none;
         font-weight: 600;
-        transition: all 0.3s ease;
+        transition: all 0.25s ease;
         margin-top: 20px;
+        box-shadow: 0 4px 15px rgba(91, 155, 213, 0.3);
     }
 
     .back-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(91, 155, 213, 0.4);
         color: white;
         text-decoration: none;
     }
@@ -235,10 +271,45 @@
     }
 
     @media (max-width: 576px) {
-        .order-card { padding: 1rem; }
-        .order-number { font-size: 0.9rem !important; }
-        .order-total { font-size: 1.1rem !important; }
-        .order-actions .btn { width: 100%; margin-bottom: 8px; }
+        .order-container {
+            margin: 20px auto;
+            padding: 0 15px;
+        }
+        
+        .order-header {
+            padding: 20px;
+            border-radius: 16px;
+        }
+        
+        .order-header h1 {
+            font-size: 1.5rem;
+        }
+        
+        .order-section {
+            padding: 20px;
+            border-radius: 16px;
+        }
+        
+        .section-title {
+            font-size: 1.1rem;
+        }
+        
+        .order-item {
+            padding: 16px;
+        }
+    }
+    
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+        .order-item,
+        .back-btn {
+            transition: none;
+        }
+        
+        .order-item:hover,
+        .back-btn:hover {
+            transform: none;
+        }
     }
 </style>
 {% endblock %}
@@ -246,8 +317,8 @@
 {% block content %}
 <div class="order-container">
     <div class="order-header">
-        <h1>📦 Sipariş Detayı</h1>
-        <div class="order-number">Sipariş No: #{{ siparis.id }}</div>
+        <h1><i class="fas fa-box"></i> Sipariş Detayı</h1>
+        <div class="order-number"><i class="fas fa-hashtag me-2"></i>Sipariş No: #{{ siparis.id }}</div>
         <div class="order-status {{ siparis.durum }}">
             {% if siparis.durum == 'bekliyor' %}
                 Bekliyor
@@ -271,7 +342,7 @@
         <!-- Sol Taraf - Sipariş Kalemleri -->
         <div>
             <div class="order-section">
-                <h2 class="section-title">🛍️ Sipariş Kalemleri</h2>
+                <h2 class="section-title"><i class="fas fa-shopping-bag"></i> Sipariş Kalemleri</h2>
                 
                 <div class="order-items">
                     {% for item in siparis_items %}
@@ -332,7 +403,7 @@
         <!-- Sağ Taraf - Sipariş Bilgileri -->
         <div>
             <div class="order-section">
-                <h2 class="section-title">📋 Sipariş Bilgileri</h2>
+                <h2 class="section-title"><i class="fas fa-info-circle"></i> Sipariş Bilgileri</h2>
                 
                 <div class="order-info">
                     <div class="info-row">
@@ -403,7 +474,8 @@
             </div>
             
             <a href="{% url 'shop:shop_home' %}" class="back-btn">
-                ← Alışverişe Devam Et
+                <i class="fas fa-arrow-left"></i>
+                Alışverişe Devam Et
             </a>
         </div>
     </div>

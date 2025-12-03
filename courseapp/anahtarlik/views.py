@@ -468,14 +468,31 @@ def kullanici_paneli(request):
     
     # Künye tarihi geçmiş olanları filtrele (görünmesin)
     now = timezone.now()
+    from datetime import timedelta
     gecerli_hayvanlar = []
+    kayip_hayvanlar = []
+    kunye_suresi_dolmak_uzere = []
+    
     for hayvan in evcil_hayvanlar:
+        # Kayıp hayvan kontrolü
+        if hayvan.kayip_durumu:
+            kayip_hayvanlar.append(hayvan)
+        
         # Etiket yoksa göster
         if not hayvan.etiket:
             gecerli_hayvanlar.append(hayvan)
         # Etiket varsa ve son kullanma tarihi geçmemişse göster
         elif hayvan.etiket.son_kullanma_tarihi is None or hayvan.etiket.son_kullanma_tarihi > now:
             gecerli_hayvanlar.append(hayvan)
+            
+            # Künye süresi dolmak üzere kontrolü (30 gün içinde)
+            if hayvan.etiket.son_kullanma_tarihi:
+                kalan_gun = (hayvan.etiket.son_kullanma_tarihi - now).days
+                if 0 < kalan_gun <= 30:
+                    kunye_suresi_dolmak_uzere.append({
+                        'hayvan': hayvan,
+                        'kalan_gun': kalan_gun
+                    })
         # Etiket varsa ama son kullanma tarihi geçmişse gösterme
     
     # Liste sıralaması
@@ -492,6 +509,29 @@ def kullanici_paneli(request):
     from ilan.models import Ilan
     sahip_ilan_sayisi = Ilan.objects.filter(hayvan_profili__kullanici=user, aktif=True).count()
     
+    # Kayıp hayvan sayısı
+    kayip_hayvan_sayisi = len(kayip_hayvanlar)
+    
+    # Toplam evcil hayvan sayısı (tüm hayvanlar - kayıp dahil)
+    toplam_evcil_hayvan_sayisi = len(gecerli_hayvanlar)
+    
+    # Son bildirimler (5 adet)
+    son_bildirimler = Bildirim.objects.filter(
+        sahip=sahip
+    ).select_related('tarama').order_by('-olusturma_zamani')[:5]
+    
+    # Okunmamış bildirim sayısı
+    okunmamis_bildirim_sayisi = Bildirim.objects.filter(sahip=sahip, okundu=False).count()
+    
+    # Yaklaşan aşılar (30 gün içinde, tamamlanmamış)
+    yakin_tarih = now.date() + timedelta(days=30)
+    yaklasan_asilar = AsiTakvimi.objects.filter(
+        evcil_hayvan__sahip=sahip,
+        planlanan_tarih__lte=yakin_tarih,
+        planlanan_tarih__gte=now.date(),
+        tamamlandi=False
+    ).select_related('evcil_hayvan').order_by('planlanan_tarih')[:5]
+    
     # Danışman veteriner bilgileri
     danisman_veteriner = sahip.danisman_veteriner
     
@@ -500,7 +540,14 @@ def kullanici_paneli(request):
         'danisman_veteriner': danisman_veteriner,
         'sahip': sahip,
         'kunye_sayisi': kunye_sayisi,
-        'sahip_ilan_sayisi': sahip_ilan_sayisi
+        'sahip_ilan_sayisi': sahip_ilan_sayisi,
+        'kayip_hayvan_sayisi': kayip_hayvan_sayisi,
+        'toplam_evcil_hayvan_sayisi': toplam_evcil_hayvan_sayisi,
+        'kayip_hayvanlar': kayip_hayvanlar,
+        'kunye_suresi_dolmak_uzere': kunye_suresi_dolmak_uzere,
+        'son_bildirimler': son_bildirimler,
+        'okunmamis_bildirim_sayisi': okunmamis_bildirim_sayisi,
+        'yaklasan_asilar': yaklasan_asilar,
     })
 
 @login_required
@@ -530,7 +577,33 @@ def evcil_hayvanlarim(request):
     paginator = Paginator(gecerli_hayvanlar, 6)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    return render(request, 'anahtarlik/kullanici_paneli.html', {'evcil_hayvanlar': page_obj})
+    
+    # İstatistikler
+    from ilan.models import Ilan
+    from datetime import timedelta
+    
+    # Künye sayısı (aktif künyeler)
+    kunye_sayisi = len([h for h in gecerli_hayvanlar if h.etiket and h.etiket.aktif])
+    
+    # İlan sayısı
+    sahip_ilan_sayisi = Ilan.objects.filter(hayvan_profili__kullanici=request.user, aktif=True).count()
+    
+    # Kayıp hayvan sayısı
+    kayip_hayvanlar = [h for h in gecerli_hayvanlar if h.kayip_durumu]
+    kayip_hayvan_sayisi = len(kayip_hayvanlar)
+    
+    # Toplam evcil hayvan sayısı (tüm hayvanlar - kayıp dahil)
+    toplam_evcil_hayvan_sayisi = len(gecerli_hayvanlar)
+    
+    return render(request, 'anahtarlik/kullanici_paneli.html', {
+        'evcil_hayvanlar': page_obj,
+        'is_pets_page': True,
+        'sahip': sahip,
+        'toplam_evcil_hayvan_sayisi': toplam_evcil_hayvan_sayisi,
+        'kunye_sayisi': kunye_sayisi,
+        'sahip_ilan_sayisi': sahip_ilan_sayisi,
+        'kayip_hayvan_sayisi': kayip_hayvan_sayisi,
+    })
 
 @login_required
 def kunyelerim(request):

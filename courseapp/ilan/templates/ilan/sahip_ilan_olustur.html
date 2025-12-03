@@ -1,385 +1,808 @@
 {% extends 'ana.html' %}
 {% load static %}
 
-{% block baslik %}İlan Oluştur - {{ evcil_hayvan.ad }} - PetSafe Hub{% endblock %}
+{% block title %}İlan Oluştur - {{ evcil_hayvan.ad }} - PetSafe Hub{% endblock %}
 
-{% block icerik %}
-<div class="container my-5">
-    <div class="row">
-        <div class="col-12">
-            <!-- Başlık -->
-            <div class="text-center mb-4">
-                <h1 class="mb-2">
-                    <i class="fas fa-plus-circle me-2"></i>
-                    İlan Oluştur
-                </h1>
-                <p class="text-muted">Evcil hayvanınız için ilan oluşturun</p>
+{% block css_dosyalar %}
+<style>
+    /* ================================================
+       📝 İLAN OLUŞTURMA SAYFASI
+       Renk Paleti: #5B9BD5, #70C1B3, #FF8C42
+       ================================================ */
+    
+    .create-ad-page {
+        background: linear-gradient(135deg, #f0f7ff 0%, #e8f4f8 50%, #f5f0ff 100%);
+        min-height: 100vh;
+        padding: 40px 0 80px;
+    }
+    
+    .create-ad-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+    
+    /* ========== HEADER ========== */
+    .page-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+    
+    .page-icon {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+        box-shadow: 0 10px 30px rgba(91, 155, 213, 0.3);
+    }
+    
+    .page-icon i {
+        font-size: 2rem;
+        color: white;
+    }
+    
+    .page-title {
+        font-size: 2rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 8px;
+    }
+    
+    .page-subtitle {
+        color: #64748b;
+        font-size: 1rem;
+    }
+    
+    /* ========== CARDS ========== */
+    .info-card {
+        background: white;
+        border-radius: 24px;
+        box-shadow: 0 10px 40px rgba(91, 155, 213, 0.12);
+        padding: 28px;
+        margin-bottom: 24px;
+        border: 1px solid rgba(91, 155, 213, 0.1);
+    }
+    
+    .card-header-modern {
+        background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
+        color: white;
+        padding: 18px 24px;
+        border-radius: 16px;
+        margin: -28px -28px 24px -28px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .card-header-modern h5 {
+        margin: 0;
+        font-weight: 700;
+        font-size: 1.1rem;
+    }
+    
+    /* ========== PET INFO ========== */
+    .pet-info-grid {
+        display: grid;
+        grid-template-columns: 150px 1fr;
+        gap: 24px;
+        align-items: start;
+    }
+    
+    .pet-photo-wrapper {
+        position: relative;
+    }
+    
+    .pet-photo {
+        width: 100%;
+        aspect-ratio: 1;
+        object-fit: cover;
+        border-radius: 16px;
+        border: 3px solid rgba(91, 155, 213, 0.1);
+    }
+    
+    .pet-photo-placeholder {
+        width: 100%;
+        aspect-ratio: 1;
+        background: linear-gradient(135deg, #f0f7ff 0%, #e0f2fe 100%);
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 3px dashed rgba(91, 155, 213, 0.3);
+    }
+    
+    .pet-photo-placeholder i {
+        font-size: 3rem;
+        color: #5B9BD5;
+        opacity: 0.5;
+    }
+    
+    .pet-details {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+    
+    .detail-item {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+    
+    .detail-label {
+        font-size: 0.8rem;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 600;
+    }
+    
+    .detail-value {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #334155;
+    }
+    
+    /* ========== CREDIT INFO ========== */
+    .credit-info-box {
+        background: linear-gradient(135deg, #e0f2fe 0%, #e0e7ff 100%);
+        border: 1px solid rgba(91, 155, 213, 0.2);
+        border-radius: 16px;
+        padding: 20px 24px;
+        margin-bottom: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+    
+    .credit-info-left {
+        flex: 1;
+        min-width: 200px;
+    }
+    
+    .credit-info-left h6 {
+        font-weight: 700;
+        color: #334155;
+        margin-bottom: 6px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .credit-info-left h6 i {
+        color: #5B9BD5;
+    }
+    
+    .credit-info-left p {
+        color: #64748b;
+        font-size: 0.9rem;
+        margin: 0;
+    }
+    
+    .credit-info-right {
+        text-align: right;
+    }
+    
+    .credit-amount {
+        font-size: 1.75rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 4px;
+    }
+    
+    .credit-balance {
+        font-size: 0.85rem;
+        color: #64748b;
+    }
+    
+    .credit-balance strong {
+        color: #6FCF97;
+    }
+    
+    /* ========== FORM ========== */
+    .form-section {
+        margin-bottom: 28px;
+    }
+    
+    .form-section-title {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #5B9BD5;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-label {
+        display: block;
+        font-weight: 600;
+        color: #334155;
+        margin-bottom: 8px;
+        font-size: 0.9rem;
+    }
+    
+    .form-label i {
+        margin-right: 6px;
+        color: #5B9BD5;
+    }
+    
+    .form-control,
+    .form-select {
+        width: 100%;
+        padding: 14px 18px;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        font-size: 1rem;
+        transition: all 0.25s ease;
+        background: #f8fafc;
+    }
+    
+    .form-control:focus,
+    .form-select:focus {
+        outline: none;
+        border-color: #5B9BD5;
+        background: white;
+        box-shadow: 0 0 0 4px rgba(91, 155, 213, 0.1);
+    }
+    
+    textarea.form-control {
+        min-height: 120px;
+        resize: vertical;
+    }
+    
+    .form-hint {
+        font-size: 0.8rem;
+        color: #94a3b8;
+        margin-top: 6px;
+    }
+    
+    /* ========== CHECKBOXES ========== */
+    .checkbox-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+    
+    .form-check-modern {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 14px 16px;
+        background: #f8fafc;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.25s ease;
+    }
+    
+    .form-check-modern:hover {
+        background: rgba(91, 155, 213, 0.05);
+        border-color: #5B9BD5;
+    }
+    
+    .form-check-modern input[type="checkbox"] {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+        accent-color: #5B9BD5;
+    }
+    
+    .form-check-modern label {
+        cursor: pointer;
+        font-weight: 500;
+        color: #334155;
+        margin: 0;
+    }
+    
+    .form-switch-modern {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 18px 24px;
+        background: linear-gradient(135deg, #f0f7ff 0%, #e0f2fe 100%);
+        border: 2px solid rgba(91, 155, 213, 0.2);
+        border-radius: 16px;
+    }
+    
+    .form-switch-modern input[type="checkbox"] {
+        width: 48px;
+        height: 28px;
+        cursor: pointer;
+        accent-color: #5B9BD5;
+    }
+    
+    .form-switch-modern label {
+        cursor: pointer;
+        font-weight: 600;
+        color: #334155;
+        margin: 0;
+    }
+    
+    /* ========== PHOTO PREVIEW ========== */
+    .photo-preview {
+        margin-top: 12px;
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+    
+    .preview-item {
+        position: relative;
+    }
+    
+    .preview-item img {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 12px;
+        border: 2px solid rgba(91, 155, 213, 0.2);
+    }
+    
+    .preview-item .preview-label {
+        display: block;
+        text-align: center;
+        font-size: 0.75rem;
+        color: #64748b;
+        margin-top: 4px;
+    }
+    
+    /* ========== BUTTONS ========== */
+    .form-actions {
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+        margin-top: 32px;
+    }
+    
+    .btn-modern {
+        padding: 14px 28px;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 1rem;
+        border: none;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+    }
+    
+    .btn-secondary-modern {
+        background: white;
+        color: #64748b;
+        border: 2px solid #e2e8f0;
+    }
+    
+    .btn-secondary-modern:hover {
+        border-color: #5B9BD5;
+        color: #5B9BD5;
+        background: rgba(91, 155, 213, 0.05);
+        text-decoration: none;
+    }
+    
+    .btn-primary-modern {
+        background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
+        color: white;
+        box-shadow: 0 6px 20px rgba(91, 155, 213, 0.35);
+    }
+    
+    .btn-primary-modern:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(91, 155, 213, 0.45);
+        color: white;
+        text-decoration: none;
+    }
+    
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 768px) {
+        .create-ad-page {
+            padding: 24px 0 60px;
+        }
+        
+        .create-ad-container {
+            padding: 0 16px;
+        }
+        
+        .page-title {
+            font-size: 1.5rem;
+        }
+        
+        .page-icon {
+            width: 64px;
+            height: 64px;
+        }
+        
+        .page-icon i {
+            font-size: 1.5rem;
+        }
+        
+        .info-card {
+            padding: 20px;
+            border-radius: 20px;
+        }
+        
+        .card-header-modern {
+            margin: -20px -20px 20px -20px;
+            padding: 14px 18px;
+        }
+        
+        .pet-info-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .pet-details {
+            grid-template-columns: 1fr;
+        }
+        
+        .credit-info-box {
+            flex-direction: column;
+            text-align: center;
+        }
+        
+        .credit-info-right {
+            text-align: center;
+        }
+        
+        .checkbox-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .form-actions {
+            flex-direction: column-reverse;
+        }
+        
+        .btn-modern {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .page-title {
+            font-size: 1.35rem;
+        }
+        
+        .info-card {
+            padding: 16px;
+        }
+        
+        .card-header-modern {
+            margin: -16px -16px 16px -16px;
+            padding: 12px 16px;
+        }
+        
+        .form-control,
+        .form-select {
+            padding: 12px 14px;
+        }
+    }
+    
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+        .btn-modern,
+        .form-control,
+        .form-check-modern {
+            transition: none;
+        }
+        
+        .btn-primary-modern:hover {
+            transform: none;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="create-ad-page">
+    <div class="create-ad-container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="page-icon">
+                <i class="fas fa-plus-circle"></i>
             </div>
-
-            <!-- Evcil Hayvan Bilgileri -->
-            <div class="card mb-4">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">
-                        <i class="fas fa-paw me-2"></i>
-                        Seçilen Hayvan Bilgileri
-                    </h5>
+            <h1 class="page-title">İlan Oluştur</h1>
+            <p class="page-subtitle">Evcil hayvanınız için ilan oluşturun</p>
+        </div>
+        
+        <!-- Pet Info Card -->
+        <div class="info-card">
+            <div class="card-header-modern">
+                <i class="fas fa-paw"></i>
+                <h5>Seçilen Hayvan Bilgileri</h5>
+            </div>
+            <div class="pet-info-grid">
+                <div class="pet-photo-wrapper">
+                    {% if evcil_hayvan.resim %}
+                    <img src="{{ evcil_hayvan.resim.url }}" alt="{{ evcil_hayvan.ad }}" class="pet-photo" id="current-photo-preview" loading="lazy">
+                    {% else %}
+                    <div class="pet-photo-placeholder">
+                        <i class="fas fa-paw"></i>
+                    </div>
+                    {% endif %}
+                    <small class="text-muted d-block text-center mt-2">Mevcut Fotoğraf</small>
                 </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-3">
-                            {% if evcil_hayvan.resim %}
-                                <img src="{{ evcil_hayvan.resim.url }}" 
-                                     alt="{{ evcil_hayvan.ad }}" 
-                                     class="img-fluid rounded mb-2"
-                                     id="current-photo-preview">
-                            {% else %}
-                                <div class="bg-light rounded d-flex align-items-center justify-content-center mb-2" style="height: 150px;">
-                                    <i class="fas fa-paw fa-3x text-muted"></i>
-                                </div>
-                            {% endif %}
-                            <small class="text-muted d-block text-center">Mevcut Fotoğraf</small>
+                <div>
+                    <h5 style="color: #1e293b; margin-bottom: 16px;">{{ evcil_hayvan.ad }}</h5>
+                    <div class="pet-details">
+                        <div class="detail-item">
+                            <span class="detail-label">Tür</span>
+                            <span class="detail-value">{{ evcil_hayvan.tur.ad }}</span>
                         </div>
-                        <div class="col-md-9">
-                            <h5 class="card-title">{{ evcil_hayvan.ad }}</h5>
-                            <div class="row">
-                                <div class="col-6">
-                                    <small class="text-muted d-block">Tür</small>
-                                    <strong>{{ evcil_hayvan.tur.ad }}</strong>
-                                </div>
-                                <div class="col-6">
-                                    <small class="text-muted d-block">Irk</small>
-                                    <strong>{{ evcil_hayvan.irk.ad }}</strong>
-                                </div>
-                            </div>
-                            <div class="row mt-2">
-                                <div class="col-6">
-                                    <small class="text-muted d-block">Doğum Tarihi</small>
-                                    <strong>{{ evcil_hayvan.dogum_tarihi|date:"d.m.Y"|default:"Bilinmiyor" }}</strong>
-                                </div>
-                                <div class="col-6">
-                                    <small class="text-muted d-block">Cinsiyet</small>
-                                    <strong>{{ evcil_hayvan.get_cinsiyet_display }}</strong>
-                                </div>
-                            </div>
-                            {% if evcil_hayvan.genel_not %}
-                            <div class="mt-2">
-                                <small class="text-muted d-block">Not</small>
-                                <p class="mb-0">{{ evcil_hayvan.genel_not }}</p>
-                            </div>
-                            {% endif %}
+                        <div class="detail-item">
+                            <span class="detail-label">Irk</span>
+                            <span class="detail-value">{{ evcil_hayvan.irk.ad }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Doğum Tarihi</span>
+                            <span class="detail-value">{{ evcil_hayvan.dogum_tarihi|date:"d.m.Y"|default:"Bilinmiyor" }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Cinsiyet</span>
+                            <span class="detail-value">{{ evcil_hayvan.get_cinsiyet_display }}</span>
                         </div>
                     </div>
-                </div>
-            </div>
-
-            <!-- Kredi Bilgisi -->
-            <div class="alert alert-info mb-4">
-                <div class="row align-items-center">
-                    <div class="col-md-8">
-                        <h6 class="mb-1">
-                            <i class="fas fa-coins me-2"></i>
-                            Kredi Bilgisi
-                        </h6>
-                        <p class="mb-0">İlan oluşturmak için {{ ilan_ucreti }} kredi gerekli. Öne çıkarma için ek {{ onemli_ilan_ucreti }} kredi.</p>
+                    {% if evcil_hayvan.genel_not %}
+                    <div class="mt-3 p-3" style="background: #f8fafc; border-radius: 12px;">
+                        <span class="detail-label">Not</span>
+                        <p class="mb-0 mt-1" style="color: #64748b;">{{ evcil_hayvan.genel_not }}</p>
                     </div>
-                    <div class="col-md-4 text-end">
-                        <div class="kredi-miktar">{{ ilan_ucreti }} Kredi</div>
-                        <small>Mevcut bakiyeniz: <strong>{{ kullanici_bakiye }} kredi</strong></small>
-                    </div>
-                </div>
-            </div>
-
-            <!-- İlan Formu -->
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">
-                        <i class="fas fa-edit me-2"></i>
-                        İlan Bilgileri
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <form method="post" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        
-                        <!-- İlan Başlığı -->
-                        <div class="mb-3">
-                            <label for="baslik" class="form-label">
-                                <i class="fas fa-heading me-1"></i>İlan Başlığı *
-                            </label>
-                            <input type="text" 
-                                   class="form-control" 
-                                   id="baslik" 
-                                   name="baslik" 
-                                   value="Sevimli {{ evcil_hayvan.ad }} Sahiplendirme İlanı"
-                                   required>
-                            <small class="text-muted">Dikkat çekici bir başlık yazın</small>
-                        </div>
-
-                        <!-- Profil Fotoğrafı -->
-                        <div class="mb-3">
-                            <label for="profil_fotografi" class="form-label">
-                                <i class="fas fa-camera me-1"></i>Profil Fotoğrafı
-                            </label>
-                            <input type="file" 
-                                   class="form-control" 
-                                   id="profil_fotografi" 
-                                   name="profil_fotografi" 
-                                   accept="image/*"
-                                   onchange="previewPhoto(this)">
-                            <small class="text-muted">
-                                Yeni profil fotoğrafı yüklerseniz bu fotoğraf kullanılır. Yüklemezseniz mevcut fotoğraf kullanılır.
-                            </small>
-                            <div id="photo-preview" class="mt-2" style="display: none;">
-                                <img id="preview-img" src="" alt="Önizleme" class="img-thumbnail" style="max-width: 200px; max-height: 200px;">
-                            </div>
-                        </div>
-
-                        <!-- Ek Resimler (Maksimum 3) -->
-                        <div class="mb-3">
-                            <label for="resimler" class="form-label">
-                                <i class="fas fa-images me-1"></i>Ek Resimler (Maksimum 3)
-                            </label>
-                            <input type="file" 
-                                   class="form-control" 
-                                   id="resimler" 
-                                   name="resimler" 
-                                   accept="image/*"
-                                   multiple
-                                   onchange="previewMultiplePhotos(this)">
-                            <small class="text-muted">
-                                Maksimum 3 ek resim yükleyebilirsiniz. İlanınızda daha fazla fotoğraf görünecektir.
-                            </small>
-                            <div id="ek-resim-preview" class="mt-3"></div>
-                        </div>
-
-                        <!-- İletişim Bilgileri -->
-                        <div class="mb-4">
-                            <h6 class="mb-3">
-                                <i class="fas fa-phone me-2 text-primary"></i>İletişim Bilgileri
-                            </h6>
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="telefon" class="form-label">Telefon Numarası *</label>
-                                    <input type="tel" 
-                                           class="form-control" 
-                                           id="telefon" 
-                                           name="telefon" 
-                                           placeholder="05XX XXX XX XX"
-                                           pattern="^(\+90|0)?[5][0-9]{9}$"
-                                           value="{{ request.user.sahip.telefon|default:'' }}"
-                                           required>
-                                    <small class="text-muted">İlan için iletişim telefon numaranız</small>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Hayvan Profili Notu/Açıklaması -->
-                        <div class="mb-3">
-                            <label for="hayvan_profili_aciklama" class="form-label">
-                                <i class="fas fa-sticky-note me-1"></i>Hayvan Profili Notu/Açıklaması
-                            </label>
-                            <textarea class="form-control" 
-                                      id="hayvan_profili_aciklama" 
-                                      name="hayvan_profili_aciklama" 
-                                      rows="4" 
-                                      placeholder="Hayvan profili hakkında notlarınızı buraya yazabilirsiniz">{{ evcil_hayvan.genel_not|default:'' }}</textarea>
-                            <small class="text-muted">Hayvan profili hakkında ek bilgiler, notlar veya açıklamalar</small>
-                        </div>
-
-                        <!-- İlan Açıklaması -->
-                        <div class="mb-3">
-                            <label for="aciklama" class="form-label">
-                                <i class="fas fa-comment me-1"></i>İlan Açıklaması
-                            </label>
-                            <textarea class="form-control" 
-                                      id="aciklama" 
-                                      name="aciklama" 
-                                      rows="4" 
-                                      placeholder="İlan açıklamasını girin">{{ evcil_hayvan.ad }} için yeni bir yuva arıyoruz. {{ evcil_hayvan.tur.ad }} cinsi, {{ evcil_hayvan.irk.ad }} ırkı. {{ evcil_hayvan.get_cinsiyet_display }} cinsiyet. Sevgi dolu bir aile arıyoruz!</textarea>
-                            <small class="text-muted">İlanınız hakkında detaylı bilgi verin</small>
-                        </div>
-
-                        <!-- Konum Bilgileri -->
-                        <div class="mb-4">
-                            <h6 class="mb-3">
-                                <i class="fas fa-map-marker-alt me-2 text-primary"></i>Konum Bilgileri
-                            </h6>
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="il" class="form-label">İl *</label>
-                                    <select class="form-select" id="il" name="il" required>
-                                        <option value="">İl seçin</option>
-                                        {% for il_item in iller %}
-                                            <option value="{{ il_item.id }}" {% if il_item.id == request.user.sahip.il.id %}selected{% endif %}>
-                                                {{ il_item.ad }}
-                                            </option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="ilce" class="form-label">İlçe *</label>
-                                    <select class="form-select" id="ilce" name="ilce" required>
-                                        <option value="">İlçe seçin</option>
-                                        {% for ilce_item in ilceler %}
-                                            <option value="{{ ilce_item.id }}" {% if ilce_item.id == request.user.sahip.ilce.id %}selected{% endif %}>
-                                                {{ ilce_item.ad }}
-                                            </option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="mahalle" class="form-label">Mahalle</label>
-                                    <select class="form-select" id="mahalle" name="mahalle">
-                                        <option value="">Mahalle seçin</option>
-                                        {% for mahalle_item in mahalleler %}
-                                            <option value="{{ mahalle_item.id }}" {% if mahalle_item.id == request.user.sahip.mahalle.id %}selected{% endif %}>
-                                                {{ mahalle_item.ad }}
-                                            </option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="mahalle_diger" class="form-label">Mahalle (Manuel)</label>
-                                    <input type="text" 
-                                           class="form-control" 
-                                           id="mahalle_diger" 
-                                           name="mahalle_diger" 
-                                           placeholder="Mahalle listede yoksa buraya yazın"
-                                           value="{{ request.user.sahip.mahalle_diger|default:'' }}">
-                                    <small class="text-muted">Mahalle listede yoksa buraya yazabilirsiniz</small>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Sağlık Bilgileri -->
-                        <div class="mb-4">
-                            <h6 class="mb-3">
-                                <i class="fas fa-heartbeat me-2 text-primary"></i>Sağlık Bilgileri
-                            </h6>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-check mb-3">
-                                        <input class="form-check-input" 
-                                               type="checkbox" 
-                                               id="asi_durumu" 
-                                               name="asi_durumu">
-                                        <label class="form-check-label" for="asi_durumu">
-                                            <i class="fas fa-syringe me-1"></i>Aşı Durumu
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-check mb-3">
-                                        <input class="form-check-input" 
-                                               type="checkbox" 
-                                               id="ic_parazit" 
-                                               name="ic_parazit">
-                                        <label class="form-check-label" for="ic_parazit">
-                                            <i class="fas fa-bug me-1"></i>İç Parazit Tedavisi
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-check mb-3">
-                                        <input class="form-check-input" 
-                                               type="checkbox" 
-                                               id="dis_parazit" 
-                                               name="dis_parazit">
-                                        <label class="form-check-label" for="dis_parazit">
-                                            <i class="fas fa-shield-alt me-1"></i>Dış Parazit Tedavisi
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-check mb-3">
-                                        <input class="form-check-input" 
-                                               type="checkbox" 
-                                               id="sehir_disi_gonderim" 
-                                               name="sehir_disi_gonderim">
-                                        <label class="form-check-label" for="sehir_disi_gonderim">
-                                            <i class="fas fa-truck me-1"></i>Şehir Dışına Gönderim
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                            <small class="text-muted">Hayvanınızın sağlık durumunu belirtin</small>
-                        </div>
-
-                        <!-- Öne Çıkarma -->
-                        <div class="mb-4">
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" 
-                                       type="checkbox" 
-                                       id="onemli_mi" 
-                                       name="onemli_mi">
-                                <label class="form-check-label" for="onemli_mi">
-                                    <strong>Bu ilanı öne çıkar (+{{ onemli_ilan_ucreti }} kredi)</strong>
-                                </label>
-                            </div>
-                            <small class="text-muted">Öne çıkan ilanlar daha çok görünür ve dikkat çeker</small>
-                        </div>
-
-                        <!-- Butonlar -->
-                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                            <a href="{% url 'ilan:sahip_hayvan_secimi' %}" class="btn btn-secondary me-md-2">
-                                <i class="fas fa-arrow-left me-2"></i>Geri Dön
-                            </a>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save me-2"></i>İlanı Oluştur
-                            </button>
-                        </div>
-                    </form>
+                    {% endif %}
                 </div>
             </div>
         </div>
+        
+        <!-- Credit Info -->
+        <div class="credit-info-box">
+            <div class="credit-info-left">
+                <h6><i class="fas fa-coins"></i> Kredi Bilgisi</h6>
+                <p>İlan oluşturmak için {{ ilan_ucreti }} kredi gerekli. Öne çıkarma için ek {{ onemli_ilan_ucreti }} kredi.</p>
+            </div>
+            <div class="credit-info-right">
+                <div class="credit-amount">{{ ilan_ucreti }} Kredi</div>
+                <div class="credit-balance">Mevcut bakiyeniz: <strong>{{ kullanici_bakiye }} kredi</strong></div>
+            </div>
+        </div>
+        
+        <!-- Form Card -->
+        <div class="info-card">
+            <div class="card-header-modern">
+                <i class="fas fa-edit"></i>
+                <h5>İlan Bilgileri</h5>
+            </div>
+            
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <!-- İlan Başlığı -->
+                <div class="form-group">
+                    <label for="baslik" class="form-label">
+                        <i class="fas fa-heading"></i>İlan Başlığı *
+                    </label>
+                    <input type="text" 
+                           class="form-control" 
+                           id="baslik" 
+                           name="baslik" 
+                           value="Sevimli {{ evcil_hayvan.ad }} Sahiplendirme İlanı"
+                           required>
+                    <p class="form-hint">Dikkat çekici bir başlık yazın</p>
+                </div>
+                
+                <!-- Profil Fotoğrafı -->
+                <div class="form-group">
+                    <label for="profil_fotografi" class="form-label">
+                        <i class="fas fa-camera"></i>Profil Fotoğrafı
+                    </label>
+                    <input type="file" 
+                           class="form-control" 
+                           id="profil_fotografi" 
+                           name="profil_fotografi" 
+                           accept="image/*"
+                           onchange="previewPhoto(this)">
+                    <p class="form-hint">Yeni profil fotoğrafı yüklerseniz bu fotoğraf kullanılır. Yüklemezseniz mevcut fotoğraf kullanılır.</p>
+                    <div id="photo-preview" class="photo-preview" style="display: none;">
+                        <div class="preview-item">
+                            <img id="preview-img" src="" alt="Önizleme">
+                            <span class="preview-label">Önizleme</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Ek Resimler -->
+                <div class="form-group">
+                    <label for="resimler" class="form-label">
+                        <i class="fas fa-images"></i>Ek Resimler (Maksimum 3)
+                    </label>
+                    <input type="file" 
+                           class="form-control" 
+                           id="resimler" 
+                           name="resimler" 
+                           accept="image/*"
+                           multiple
+                           onchange="previewMultiplePhotos(this)">
+                    <p class="form-hint">Maksimum 3 ek resim yükleyebilirsiniz. İlanınızda daha fazla fotoğraf görünecektir.</p>
+                    <div id="ek-resim-preview" class="photo-preview"></div>
+                </div>
+                
+                <!-- İletişim Bilgileri -->
+                <div class="form-section">
+                    <h6 class="form-section-title">
+                        <i class="fas fa-phone"></i>İletişim Bilgileri
+                    </h6>
+                    <div class="form-group">
+                        <label for="telefon" class="form-label">Telefon Numarası *</label>
+                        <input type="tel" 
+                               class="form-control" 
+                               id="telefon" 
+                               name="telefon" 
+                               placeholder="05XX XXX XX XX"
+                               pattern="^(\+90|0)?[5][0-9]{9}$"
+                               value="{{ request.user.sahip.telefon|default:'' }}"
+                               required>
+                        <p class="form-hint">İlan için iletişim telefon numaranız</p>
+                    </div>
+                </div>
+                
+                <!-- Hayvan Profili Notu -->
+                <div class="form-group">
+                    <label for="hayvan_profili_aciklama" class="form-label">
+                        <i class="fas fa-sticky-note"></i>Hayvan Profili Notu/Açıklaması
+                    </label>
+                    <textarea class="form-control" 
+                              id="hayvan_profili_aciklama" 
+                              name="hayvan_profili_aciklama" 
+                              rows="4" 
+                              placeholder="Hayvan profili hakkında notlarınızı buraya yazabilirsiniz">{{ evcil_hayvan.genel_not|default:'' }}</textarea>
+                    <p class="form-hint">Hayvan profili hakkında ek bilgiler, notlar veya açıklamalar</p>
+                </div>
+                
+                <!-- İlan Açıklaması -->
+                <div class="form-group">
+                    <label for="aciklama" class="form-label">
+                        <i class="fas fa-comment"></i>İlan Açıklaması
+                    </label>
+                    <textarea class="form-control" 
+                              id="aciklama" 
+                              name="aciklama" 
+                              rows="4" 
+                              placeholder="İlan açıklamasını girin">{{ evcil_hayvan.ad }} için yeni bir yuva arıyoruz. {{ evcil_hayvan.tur.ad }} cinsi, {{ evcil_hayvan.irk.ad }} ırkı. {{ evcil_hayvan.get_cinsiyet_display }} cinsiyet. Sevgi dolu bir aile arıyoruz!</textarea>
+                    <p class="form-hint">İlanınız hakkında detaylı bilgi verin</p>
+                </div>
+                
+                <!-- Konum Bilgileri -->
+                <div class="form-section">
+                    <h6 class="form-section-title">
+                        <i class="fas fa-map-marker-alt"></i>Konum Bilgileri
+                    </h6>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="il" class="form-label">İl *</label>
+                                <select class="form-select" id="il" name="il" required>
+                                    <option value="">İl seçin</option>
+                                    {% for il_item in iller %}
+                                    <option value="{{ il_item.id }}" {% if il_item.id == request.user.sahip.il.id %}selected{% endif %}>
+                                        {{ il_item.ad }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="ilce" class="form-label">İlçe *</label>
+                                <select class="form-select" id="ilce" name="ilce" required>
+                                    <option value="">İlçe seçin</option>
+                                    {% for ilce_item in ilceler %}
+                                    <option value="{{ ilce_item.id }}" {% if ilce_item.id == request.user.sahip.ilce.id %}selected{% endif %}>
+                                        {{ ilce_item.ad }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="mahalle" class="form-label">Mahalle</label>
+                                <select class="form-select" id="mahalle" name="mahalle">
+                                    <option value="">Mahalle seçin</option>
+                                    {% for mahalle_item in mahalleler %}
+                                    <option value="{{ mahalle_item.id }}" {% if mahalle_item.id == request.user.sahip.mahalle.id %}selected{% endif %}>
+                                        {{ mahalle_item.ad }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="mahalle_diger" class="form-label">Mahalle (Manuel)</label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="mahalle_diger" 
+                                       name="mahalle_diger" 
+                                       placeholder="Mahalle listede yoksa buraya yazın"
+                                       value="{{ request.user.sahip.mahalle_diger|default:'' }}">
+                                <p class="form-hint">Mahalle listede yoksa buraya yazabilirsiniz</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Sağlık Bilgileri -->
+                <div class="form-section">
+                    <h6 class="form-section-title">
+                        <i class="fas fa-heartbeat"></i>Sağlık Bilgileri
+                    </h6>
+                    <div class="checkbox-grid">
+                        <div class="form-check-modern">
+                            <input class="form-check-input" type="checkbox" id="asi_durumu" name="asi_durumu">
+                            <label class="form-check-label" for="asi_durumu">
+                                <i class="fas fa-syringe me-1"></i>Aşı Durumu
+                            </label>
+                        </div>
+                        <div class="form-check-modern">
+                            <input class="form-check-input" type="checkbox" id="ic_parazit" name="ic_parazit">
+                            <label class="form-check-label" for="ic_parazit">
+                                <i class="fas fa-bug me-1"></i>İç Parazit Tedavisi
+                            </label>
+                        </div>
+                        <div class="form-check-modern">
+                            <input class="form-check-input" type="checkbox" id="dis_parazit" name="dis_parazit">
+                            <label class="form-check-label" for="dis_parazit">
+                                <i class="fas fa-shield-alt me-1"></i>Dış Parazit Tedavisi
+                            </label>
+                        </div>
+                        <div class="form-check-modern">
+                            <input class="form-check-input" type="checkbox" id="sehir_disi_gonderim" name="sehir_disi_gonderim">
+                            <label class="form-check-label" for="sehir_disi_gonderim">
+                                <i class="fas fa-truck me-1"></i>Şehir Dışına Gönderim
+                            </label>
+                        </div>
+                    </div>
+                    <p class="form-hint">Hayvanınızın sağlık durumunu belirtin</p>
+                </div>
+                
+                <!-- Öne Çıkarma -->
+                <div class="form-switch-modern">
+                    <input class="form-check-input" type="checkbox" id="onemli_mi" name="onemli_mi">
+                    <label class="form-check-label" for="onemli_mi">
+                        <strong>Bu ilanı öne çıkar (+{{ onemli_ilan_ucreti }} kredi)</strong>
+                        <br>
+                        <small style="font-weight: 400; color: #64748b;">Öne çıkan ilanlar daha çok görünür ve dikkat çeker</small>
+                    </label>
+                </div>
+                
+                <!-- Butonlar -->
+                <div class="form-actions">
+                    <a href="{% url 'ilan:sahip_hayvan_secimi' %}" class="btn-modern btn-secondary-modern">
+                        <i class="fas fa-arrow-left"></i>Geri Dön
+                    </a>
+                    <button type="submit" class="btn-modern btn-primary-modern">
+                        <i class="fas fa-save"></i>İlanı Oluştur
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
-
-<style>
-.kredi-miktar {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #0d6efd;
-}
-
-.card {
-    border: none;
-    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-}
-
-.card-header {
-    background-color: #f8f9fa;
-    border-bottom: 1px solid #dee2e6;
-    font-weight: 600;
-}
-
-.form-control, .form-select {
-    border-radius: 8px;
-    border: 1px solid #dee2e6;
-    padding: 10px 15px;
-    transition: all 0.3s ease;
-}
-
-.form-control:focus, .form-select:focus {
-    border-color: #0d6efd;
-    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
-}
-
-.form-check-input:checked {
-    background-color: #0d6efd;
-    border-color: #0d6efd;
-}
-
-.form-switch .form-check-input {
-    width: 3em;
-    height: 1.5em;
-}
-
-.img-thumbnail {
-    border: 2px solid #dee2e6;
-    border-radius: 8px;
-}
-</style>
 
 <script>
 function previewPhoto(input) {
@@ -387,7 +810,7 @@ function previewPhoto(input) {
         const reader = new FileReader();
         reader.onload = function(e) {
             document.getElementById('preview-img').src = e.target.result;
-            document.getElementById('photo-preview').style.display = 'block';
+            document.getElementById('photo-preview').style.display = 'flex';
         };
         reader.readAsDataURL(input.files[0]);
     } else {
@@ -401,7 +824,6 @@ function previewMultiplePhotos(input) {
     
     if (files.length > 3) {
         alert('Maksimum 3 resim seçebilirsiniz. İlk 3 resim gösterilecek.');
-        // İlk 3 resmi al
         const dataTransfer = new DataTransfer();
         for (let i = 0; i < 3; i++) {
             dataTransfer.items.add(files[i]);
@@ -416,24 +838,19 @@ function previewMultiplePhotos(input) {
     files.forEach((file, index) => {
         const reader = new FileReader();
         reader.onload = function(e) {
-            const imgDiv = document.createElement('div');
-            imgDiv.className = 'd-inline-block me-2 mb-2';
-            imgDiv.innerHTML = `
-                <div class="position-relative">
-                    <img src="${e.target.result}" class="img-thumbnail" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px;">
-                    <small class="d-block text-center mt-1">Resim ${index + 1}</small>
-                </div>
+            const previewItem = document.createElement('div');
+            previewItem.className = 'preview-item';
+            previewItem.innerHTML = `
+                <img src="${e.target.result}" alt="Önizleme ${index + 1}">
+                <span class="preview-label">Resim ${index + 1}</span>
             `;
-            preview.appendChild(imgDiv);
+            preview.appendChild(previewItem);
         };
         reader.readAsDataURL(file);
     });
 }
-</script>
 
-<script>
 document.addEventListener('DOMContentLoaded', function() {
-    // İl-İlçe bağımlılığı
     const ilSelect = document.getElementById('il');
     const ilceSelect = document.getElementById('ilce');
     const mahalleSelect = document.getElementById('mahalle');
@@ -442,62 +859,66 @@ document.addEventListener('DOMContentLoaded', function() {
         ilSelect.addEventListener('change', function() {
             const ilId = this.value;
             
-            // Mahalle dropdown'ını da sıfırla
             if (mahalleSelect) {
                 mahalleSelect.innerHTML = '<option value="">Önce ilçe seçiniz</option>';
             }
             
             if (ilId) {
                 ilceSelect.innerHTML = '<option value="">Yükleniyor...</option>';
+                ilceSelect.disabled = true;
                 
                 fetch(`{% url 'ilan:ilce_listesi' %}?il_id=${ilId}`)
                     .then(response => response.json())
                     .then(data => {
                         ilceSelect.innerHTML = '<option value="">İlçe seçin</option>';
-                        
                         data.forEach(ilce => {
                             const option = document.createElement('option');
                             option.value = ilce.id;
                             option.textContent = ilce.ad;
                             ilceSelect.appendChild(option);
                         });
+                        ilceSelect.disabled = false;
                     })
                     .catch(error => {
                         console.error('İlçe yükleme hatası:', error);
                         ilceSelect.innerHTML = '<option value="">Hata oluştu</option>';
+                        ilceSelect.disabled = false;
                     });
             } else {
                 ilceSelect.innerHTML = '<option value="">Önce il seçiniz</option>';
+                ilceSelect.disabled = false;
             }
         });
     }
     
-    // İlçe-Mahalle bağımlılığı
     if (ilceSelect && mahalleSelect) {
         ilceSelect.addEventListener('change', function() {
             const ilceId = this.value;
             
             if (ilceId) {
                 mahalleSelect.innerHTML = '<option value="">Yükleniyor...</option>';
+                mahalleSelect.disabled = true;
                 
                 fetch(`{% url 'ilan:mahalle_listesi' %}?ilce_id=${ilceId}`)
                     .then(response => response.json())
                     .then(data => {
                         mahalleSelect.innerHTML = '<option value="">Mahalle seçin</option>';
-                        
                         data.forEach(mahalle => {
                             const option = document.createElement('option');
                             option.value = mahalle.id;
                             option.textContent = mahalle.ad;
                             mahalleSelect.appendChild(option);
                         });
+                        mahalleSelect.disabled = false;
                     })
                     .catch(error => {
                         console.error('Mahalle yükleme hatası:', error);
                         mahalleSelect.innerHTML = '<option value="">Hata oluştu</option>';
+                        mahalleSelect.disabled = false;
                     });
             } else {
                 mahalleSelect.innerHTML = '<option value="">Önce ilçe seçiniz</option>';
+                mahalleSelect.disabled = false;
             }
         });
     }
