@@ -180,9 +180,20 @@ class SiparisForm(forms.ModelForm):
 
 
 class PetShopWebForm(forms.ModelForm):
+    web_slug = forms.SlugField(
+        required=False,
+        label="Web Sayfası URL Adresi",
+        help_text="Örnek: pati-petshop (sadece küçük harf, rakam ve tire kullanın. Türkçe karakterler otomatik dönüştürülür.)",
+        widget=forms.TextInput(attrs={
+            'class': 'w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all',
+            'placeholder': 'pati-petshop'
+        })
+    )
+    
     class Meta:
         model = PetShop
         fields = [
+            'web_slug',  # En başa eklendi
             'web_aktif', 'web_baslik', 'web_slogan', 'web_aciklama',
             'logo', 'birincil_renk',
             'web_resim1', 'web_resim2', 'web_resim3',
@@ -213,6 +224,95 @@ class PetShopWebForm(forms.ModelForm):
             'cta_link': forms.URLInput(attrs={'class':'form-control','placeholder':'https://...'}),
             'whatsapp': forms.TextInput(attrs={'class':'form-control','placeholder':'905551112233'}),
         }
+    
+    def clean_web_slug(self):
+        """Web slug validasyonu - benzersizlik kontrolü ve temizleme"""
+        web_slug = self.cleaned_data.get('web_slug', '').strip()
+        
+        # Boş bırakılabilir (otomatik oluşturulacak)
+        if not web_slug:
+            return None
+        
+        # Türkçe karakterleri temizle ve slugify
+        from django.utils.text import slugify
+        tr_map = str.maketrans('çğıöşüÇĞIÖŞÜ', 'cgiosuCGIOSU')
+        temiz_slug = web_slug.translate(tr_map)
+        web_slug = slugify(temiz_slug, allow_unicode=False)
+        
+        # Boş slug kontrolü (sadece özel karakterler girilmişse)
+        if not web_slug:
+            raise forms.ValidationError(
+                "Geçerli bir URL adresi giriniz. Sadece küçük harf, rakam ve tire (-) kullanabilirsiniz."
+            )
+        
+        # Minimum uzunluk kontrolü
+        if len(web_slug) < 3:
+            raise forms.ValidationError(
+                "URL adresi en az 3 karakter olmalıdır."
+            )
+        
+        # Maksimum uzunluk kontrolü (model'de 200, ama daha kısa tutalım)
+        if len(web_slug) > 100:
+            raise forms.ValidationError(
+                "URL adresi çok uzun. Maksimum 100 karakter olabilir."
+            )
+        
+        # Benzersizlik kontrolü
+        instance = self.instance
+        mevcut_petshop = PetShop.objects.filter(web_slug=web_slug).exclude(pk=instance.pk if instance.pk else None).first()
+        
+        if mevcut_petshop:
+            # Öneri oluştur
+            oneri_slug = f"{web_slug}-{instance.pk}" if instance.pk else f"{web_slug}-{PetShop.objects.count() + 1}"
+            raise forms.ValidationError(
+                f"Bu URL adresi zaten kullanılıyor. Lütfen farklı bir adres seçin. "
+                f"Öneri: '{oneri_slug}' veya '{web_slug}-{instance.ad[:10].lower().replace(' ', '-') if instance.ad else 'magaza'}'"
+            )
+        
+        return web_slug
+    
+    def clean(self):
+        """Form genel validasyonu"""
+        cleaned_data = super().clean()
+        web_aktif = cleaned_data.get('web_aktif', False)
+        web_slug = cleaned_data.get('web_slug', '').strip() if cleaned_data.get('web_slug') else None
+        web_baslik = cleaned_data.get('web_baslik', '').strip()
+        
+        # Web aktif seçilmişse ama slug yoksa ve başlık da yoksa uyarı ver
+        if web_aktif and not web_slug and not web_baslik:
+            raise forms.ValidationError({
+                'web_aktif': 'Web sayfanızı yayına almak için önce "Web Sayfası URL Adresi" veya "Başlık (Mağaza Adı)" alanını doldurmanız gerekiyor.'
+            })
+        
+        return cleaned_data
+    
+    def save(self, commit=True):
+        """Form kaydetme - web_slug yoksa otomatik oluştur"""
+        instance = super().save(commit=False)
+        
+        # Eğer web_slug boşsa ve web_baslik varsa, otomatik oluştur
+        if not instance.web_slug and instance.web_baslik:
+            from django.utils.text import slugify
+            tr_map = str.maketrans('çğıöşüÇĞIÖŞÜ', 'cgiosuCGIOSU')
+            temiz_ad = instance.web_baslik.translate(tr_map)
+            base_slug = slugify(temiz_ad, allow_unicode=False)
+            
+            if base_slug:  # Slug oluşturulabildiyse
+                slug = base_slug
+                counter = 1
+                # Benzersiz slug bul
+                while PetShop.objects.filter(web_slug=slug).exclude(pk=instance.pk).exists():
+                    slug = f"{base_slug}-{counter}"
+                    counter += 1
+                    # Sonsuz döngü önleme
+                    if counter > 1000:
+                        slug = f"{base_slug}-{instance.pk}" if instance.pk else f"{base_slug}-{PetShop.objects.count() + 1}"
+                        break
+                instance.web_slug = slug
+        
+        if commit:
+            instance.save()
+        return instance
 
 
 class PetShopHesapForm(forms.ModelForm):

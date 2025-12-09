@@ -925,7 +925,7 @@
         </div>
 
         <!-- Danışman Veteriner Bilgileri - Modern Featured Card -->
-        {% if sahip.danisman_veteriner %}
+        {% if sahip.danisman_veteriner and sahip.danisman_veteriner.web_aktif %}
         <section class="vet-section">
             <div class="vet-card-featured">
                 <!-- Parlayan Animasyonlu Kenarlık -->
@@ -1095,28 +1095,6 @@
             </div>
         </div>
         {% endif %}
-        {% else %}
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="card profil-info-card">
-                    <div class="card-header profil-warning-header">
-                        <h5><i class="fas fa-exclamation-triangle"></i>Danışman Veteriner Atanmamış</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="text-center py-3">
-                            <i class="fas fa-user-md fa-3x text-muted mb-3"></i>
-                            <p class="text-muted mb-3">Henüz danışman veterineriniz atanmamış.</p>
-                            <p class="text-muted small mb-3">
-                                Danışman veteriner atanması için künye aktifleştirmeniz gerekmektedir.
-                            </p>
-                            <a href="{% url 'anahtarlik:add_pet' %}" class="btn btn-primary">
-                                <i class="fas fa-plus me-2"></i>Künye Aktifleştir
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
         {% endif %}
 
         <!-- Pro Abonelik Durumu -->
@@ -1259,41 +1237,99 @@
 
 {% block js_dosyalar %}
 <script>
-// Randevu formu için saat seçimi
+// Randevu formu için dinamik saat seçimi (veteriner çalışma saatlerine göre)
 (function() {
     const tarihInput = document.getElementById('tarih');
     const saatSelect = document.getElementById('saat');
     if (!tarihInput || !saatSelect) return;
     
+    // Veteriner çalışma saatleri (dinamik - view'dan gelir)
+    {% if calisma_saatleri_json %}
+    const calismaSaatleri = {{ calisma_saatleri_json|safe }};
+    {% else %}
+    // Veteriner yoksa varsayılan saatler
+    const calismaSaatleri = {
+        0: {baslangic: '09:00', bitis: '18:00', kapali: false},
+        1: {baslangic: '09:00', bitis: '18:00', kapali: false},
+        2: {baslangic: '09:00', bitis: '18:00', kapali: false},
+        3: {baslangic: '09:00', bitis: '18:00', kapali: false},
+        4: {baslangic: '09:00', bitis: '18:00', kapali: false},
+        5: {baslangic: '09:00', bitis: '18:00', kapali: false},
+        6: {baslangic: '09:00', bitis: '18:00', kapali: true}
+    };
+    {% endif %}
+    
     function pad(n) { return n < 10 ? '0' + n : n; }
-    function generateTimeSlots(start, end) {
-        let slots = [];
+    
+    function generateTimeSlots(baslangic, bitis) {
+        if (!baslangic || !bitis) return [];
+        const slots = [];
+        const start = parseInt(baslangic.split(':')[0]);
+        const end = parseInt(bitis.split(':')[0]);
+        const startMin = parseInt(baslangic.split(':')[1]) || 0;
+        const endMin = parseInt(bitis.split(':')[1]) || 0;
+        
+        // Başlangıç saatinden bitiş saatine kadar 30 dakikalık slotlar oluştur
         for (let h = start; h < end; h++) {
             slots.push(pad(h) + ':00');
             slots.push(pad(h) + ':30');
         }
+        // Son saat için sadece :00 ekle (bitiş saati dahil değil)
+        if (endMin === 0 && start < end) {
+            // Bitiş saati tam saat ise son slot'u ekleme
+        }
         return slots;
     }
     
-    tarihInput.addEventListener('change', function(e) {
-        let dt = new Date(e.target.value);
-        let day = dt.getDay();
-        let kapali = (day === 0);
-        let sBas = 9, sBit = 18;
-        saatSelect.innerHTML = '';
-        if (kapali) {
-            saatSelect.innerHTML = '<option>Bugün çalışmıyor</option>';
+    function updateTimeSlots() {
+        const selectedDate = tarihInput.value;
+        if (!selectedDate) {
+            saatSelect.innerHTML = '<option value="">Önce tarih seçiniz</option>';
+            saatSelect.disabled = false;
             return;
         }
-        let options = generateTimeSlots(sBas, sBit);
-        saatSelect.innerHTML = '<option value="">Saat seçiniz</option>';
-        for (let o of options) {
-            let el = document.createElement('option');
-            el.value = o;
-            el.textContent = o;
-            saatSelect.appendChild(el);
+        
+        const date = new Date(selectedDate);
+        // JavaScript'te Pazar=0, Pazartesi=1... ama bizim sistemde Pazartesi=0
+        let dayOfWeek = date.getDay(); // 0=Pazar, 1=Pazartesi...
+        dayOfWeek = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // Pazartesi=0, Pazar=6
+        
+        const calisma = calismaSaatleri[dayOfWeek];
+        saatSelect.innerHTML = '';
+        
+        // Kapalı gün kontrolü
+        if (calisma.kapali) {
+            saatSelect.innerHTML = '<option value="">Bu gün çalışmıyor</option>';
+            saatSelect.disabled = true;
+            return;
         }
-    });
+        
+        // Çalışma saatleri belirtilmemişse
+        if (!calisma.baslangic || !calisma.bitis) {
+            saatSelect.innerHTML = '<option value="">Bu gün için çalışma saatleri belirtilmemiş</option>';
+            saatSelect.disabled = true;
+            return;
+        }
+        
+        // Çalışma saatleri varsa saat seçeneklerini oluştur
+        saatSelect.disabled = false;
+        const timeSlots = generateTimeSlots(calisma.baslangic, calisma.bitis);
+        saatSelect.innerHTML = '<option value="">Saat seçiniz</option>';
+        
+        timeSlots.forEach(slot => {
+            const option = document.createElement('option');
+            option.value = slot;
+            option.textContent = slot;
+            saatSelect.appendChild(option);
+        });
+    }
+    
+    tarihInput.addEventListener('change', updateTimeSlots);
+    
+    // Sayfa yüklendiğinde eğer tarih seçilmişse güncelle
+    if (tarihInput.value) {
+        updateTimeSlots();
+    }
 })();
 
 // Randevu formu ve Modal Yönetimi (Sadeleştirilmiş ve Güvenli)
@@ -1384,30 +1420,84 @@ document.addEventListener('DOMContentLoaded', function(){
         }
 
         const formData = new FormData(form);
+        
+        // Debug: Form verilerini kontrol et
+        console.log('Form action:', form.action);
+        console.log('Form data:', Object.fromEntries(formData));
 
         fetch(form.action, {
             method: 'POST',
-            headers: {'X-Requested-With': 'XMLHttpRequest'},
-            body: formData
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+            body: formData,
+            credentials: 'same-origin'
         })
-        .then(response => {
+        .then(async response => {
+            // Content-Type kontrolü
+            const contentType = response.headers.get('content-type');
+            console.log('Response status:', response.status);
+            console.log('Response content-type:', contentType);
+            
             if (!response.ok) {
-                throw new Error('Network response was not ok');
+                // Hata durumunda JSON olup olmadığını kontrol et
+                if (contentType && contentType.includes('application/json')) {
+                    const errorData = await response.json();
+                    console.error('JSON error response:', errorData);
+                    throw new Error(JSON.stringify(errorData));
+                } else {
+                    const errorText = await response.text();
+                    console.error('Non-JSON error response:', errorText.substring(0, 200));
+                    throw new Error(`HTTP ${response.status}: ${errorText.substring(0, 100)}`);
+                }
             }
-            return response.json();
+            
+            // JSON response kontrolü
+            if (contentType && contentType.includes('application/json')) {
+                const jsonData = await response.json();
+                console.log('JSON response:', jsonData);
+                return jsonData;
+            } else {
+                // JSON değilse (redirect vb.) başarılı say
+                console.warn('JSON response bekleniyordu ama HTML döndü. Muhtemelen redirect yapıldı.');
+                const text = await response.text();
+                console.log('Non-JSON response (first 200 chars):', text.substring(0, 200));
+                return {ok: true, message: 'Randevunuz başarıyla oluşturuldu.'};
+            }
         })
         .then(data => {
-            if(data.ok){
+            if(data && data.ok){
                 modal.hide();
                 showToast(data.message || 'Randevunuz başarıyla oluşturuldu.', 'success');
-            } else {
-                const errorMsg = data.errors ? (Array.isArray(data.errors) ? data.errors.join('<br>') : data.errors) : 'Bir hata oluştu.';
+                // Formu temizle
+                form.reset();
+            } else if(data && data.errors) {
+                const errorMsg = Array.isArray(data.errors) ? data.errors.join('<br>') : data.errors;
                 showToast(errorMsg, 'danger');
+            } else {
+                showToast('Bir hata oluştu. Lütfen tekrar deneyin.', 'danger');
             }
         })
         .catch(err => {
-            console.error('Hata:', err);
-            showToast('Bağlantı hatası oluştu. Lütfen tekrar deneyin.', 'danger');
+            console.error('Hata detayı:', err);
+            let errorMessage = 'Bağlantı hatası oluştu. Lütfen tekrar deneyin.';
+            
+            // Hata mesajını parse etmeye çalış
+            try {
+                const errorData = JSON.parse(err.message);
+                if (errorData.errors) {
+                    errorMessage = Array.isArray(errorData.errors) ? errorData.errors.join('<br>') : errorData.errors;
+                } else if (errorData.message) {
+                    errorMessage = errorData.message;
+                }
+            } catch (e) {
+                // JSON değilse orijinal mesajı kullan
+                if (err.message && err.message.length < 200) {
+                    errorMessage = err.message;
+                }
+            }
+            
+            showToast(errorMessage, 'danger');
         })
         .finally(() => {
             // Butonu eski haline getir

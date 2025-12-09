@@ -13,7 +13,6 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('petshop', '0001_initial'),
-        ('veteriner', '0007_siparisistemi_numune_mi_and_more'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
@@ -214,7 +213,7 @@ class Migration(migrations.Migration):
                 ('aktivasyon_sayisi', models.PositiveIntegerField(default=0)),
                 ('aktiflestiren', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='aktiflestirdigi_etiketler', to=settings.AUTH_USER_MODEL)),
                 ('satici_petshop', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='sattigi_etiketler', to='petshop.petshop')),
-                ('satici_veteriner', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='sattigi_etiketler', to='veteriner.veteriner')),
+                ('satici_veteriner', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='sattigi_etiketler', to='veteriner.veteriner', db_constraint=False)),
                 ('evcil_hayvan', models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='anahtarlik.evcilhayvan')),
             ],
             options={

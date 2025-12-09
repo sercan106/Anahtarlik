@@ -532,8 +532,53 @@ def kullanici_paneli(request):
         tamamlandi=False
     ).select_related('evcil_hayvan').order_by('planlanan_tarih')[:5]
     
-    # Danışman veteriner bilgileri
+    # Danışman veteriner bilgileri - eğer yoksa ve aktif künye varsa otomatik ata
     danisman_veteriner = sahip.danisman_veteriner
+    if not danisman_veteriner and kunye_sayisi > 0:
+        # Aktif künye varsa otomatik atama yap
+        danisman_veteriner = sahip.danisman_veteriner_ata()
+    
+    # Veteriner çalışma saatlerini JSON olarak hazırla (randevu formu için)
+    calisma_saatleri_json = None
+    if danisman_veteriner:
+        import json
+        calisma_saatleri_json = json.dumps({
+            0: {  # Pazartesi
+                "baslangic": danisman_veteriner.pazartesi_baslangic.strftime('%H:%M') if danisman_veteriner.pazartesi_baslangic else None,
+                "bitis": danisman_veteriner.pazartesi_bitis.strftime('%H:%M') if danisman_veteriner.pazartesi_bitis else None,
+                "kapali": danisman_veteriner.pazartesi_kapali
+            },
+            1: {  # Salı
+                "baslangic": danisman_veteriner.sali_baslangic.strftime('%H:%M') if danisman_veteriner.sali_baslangic else None,
+                "bitis": danisman_veteriner.sali_bitis.strftime('%H:%M') if danisman_veteriner.sali_bitis else None,
+                "kapali": danisman_veteriner.sali_kapali
+            },
+            2: {  # Çarşamba
+                "baslangic": danisman_veteriner.carsamba_baslangic.strftime('%H:%M') if danisman_veteriner.carsamba_baslangic else None,
+                "bitis": danisman_veteriner.carsamba_bitis.strftime('%H:%M') if danisman_veteriner.carsamba_bitis else None,
+                "kapali": danisman_veteriner.carsamba_kapali
+            },
+            3: {  # Perşembe
+                "baslangic": danisman_veteriner.persembe_baslangic.strftime('%H:%M') if danisman_veteriner.persembe_baslangic else None,
+                "bitis": danisman_veteriner.persembe_bitis.strftime('%H:%M') if danisman_veteriner.persembe_bitis else None,
+                "kapali": danisman_veteriner.persembe_kapali
+            },
+            4: {  # Cuma
+                "baslangic": danisman_veteriner.cuma_baslangic.strftime('%H:%M') if danisman_veteriner.cuma_baslangic else None,
+                "bitis": danisman_veteriner.cuma_bitis.strftime('%H:%M') if danisman_veteriner.cuma_bitis else None,
+                "kapali": danisman_veteriner.cuma_kapali
+            },
+            5: {  # Cumartesi
+                "baslangic": danisman_veteriner.cumartesi_baslangic.strftime('%H:%M') if danisman_veteriner.cumartesi_baslangic else None,
+                "bitis": danisman_veteriner.cumartesi_bitis.strftime('%H:%M') if danisman_veteriner.cumartesi_bitis else None,
+                "kapali": danisman_veteriner.cumartesi_kapali
+            },
+            6: {  # Pazar
+                "baslangic": danisman_veteriner.pazar_baslangic.strftime('%H:%M') if danisman_veteriner.pazar_baslangic else None,
+                "bitis": danisman_veteriner.pazar_bitis.strftime('%H:%M') if danisman_veteriner.pazar_bitis else None,
+                "kapali": danisman_veteriner.pazar_kapali
+            },
+        })
     
     return render(request, 'anahtarlik/kullanici_paneli.html', {
         'evcil_hayvanlar': page_obj,
@@ -548,6 +593,7 @@ def kullanici_paneli(request):
         'son_bildirimler': son_bildirimler,
         'okunmamis_bildirim_sayisi': okunmamis_bildirim_sayisi,
         'yaklasan_asilar': yaklasan_asilar,
+        'calisma_saatleri_json': calisma_saatleri_json,
     })
 
 @login_required
@@ -631,8 +677,53 @@ def sahip_profilim(request):
     # Son eklenen evcil hayvanlar (3 adet)
     son_evcil_hayvanlar = sahip.evcil_hayvanlar.all().order_by('-id')[:3]
     
-    # Danışman veteriner bilgileri
+    # Danışman veteriner bilgileri - eğer yoksa ve aktif künye varsa otomatik ata
     danisman_veteriner = sahip.danisman_veteriner
+    if not danisman_veteriner and aktif_etiket_sayisi > 0:
+        # Aktif künye varsa otomatik atama yap
+        danisman_veteriner = sahip.danisman_veteriner_ata()
+    
+    # Veteriner çalışma saatlerini JSON olarak hazırla (randevu formu için)
+    calisma_saatleri_json = None
+    if danisman_veteriner:
+        import json
+        calisma_saatleri_json = json.dumps({
+            0: {  # Pazartesi
+                "baslangic": danisman_veteriner.pazartesi_baslangic.strftime('%H:%M') if danisman_veteriner.pazartesi_baslangic else None,
+                "bitis": danisman_veteriner.pazartesi_bitis.strftime('%H:%M') if danisman_veteriner.pazartesi_bitis else None,
+                "kapali": danisman_veteriner.pazartesi_kapali
+            },
+            1: {  # Salı
+                "baslangic": danisman_veteriner.sali_baslangic.strftime('%H:%M') if danisman_veteriner.sali_baslangic else None,
+                "bitis": danisman_veteriner.sali_bitis.strftime('%H:%M') if danisman_veteriner.sali_bitis else None,
+                "kapali": danisman_veteriner.sali_kapali
+            },
+            2: {  # Çarşamba
+                "baslangic": danisman_veteriner.carsamba_baslangic.strftime('%H:%M') if danisman_veteriner.carsamba_baslangic else None,
+                "bitis": danisman_veteriner.carsamba_bitis.strftime('%H:%M') if danisman_veteriner.carsamba_bitis else None,
+                "kapali": danisman_veteriner.carsamba_kapali
+            },
+            3: {  # Perşembe
+                "baslangic": danisman_veteriner.persembe_baslangic.strftime('%H:%M') if danisman_veteriner.persembe_baslangic else None,
+                "bitis": danisman_veteriner.persembe_bitis.strftime('%H:%M') if danisman_veteriner.persembe_bitis else None,
+                "kapali": danisman_veteriner.persembe_kapali
+            },
+            4: {  # Cuma
+                "baslangic": danisman_veteriner.cuma_baslangic.strftime('%H:%M') if danisman_veteriner.cuma_baslangic else None,
+                "bitis": danisman_veteriner.cuma_bitis.strftime('%H:%M') if danisman_veteriner.cuma_bitis else None,
+                "kapali": danisman_veteriner.cuma_kapali
+            },
+            5: {  # Cumartesi
+                "baslangic": danisman_veteriner.cumartesi_baslangic.strftime('%H:%M') if danisman_veteriner.cumartesi_baslangic else None,
+                "bitis": danisman_veteriner.cumartesi_bitis.strftime('%H:%M') if danisman_veteriner.cumartesi_bitis else None,
+                "kapali": danisman_veteriner.cumartesi_kapali
+            },
+            6: {  # Pazar
+                "baslangic": danisman_veteriner.pazar_baslangic.strftime('%H:%M') if danisman_veteriner.pazar_baslangic else None,
+                "bitis": danisman_veteriner.pazar_bitis.strftime('%H:%M') if danisman_veteriner.pazar_bitis else None,
+                "kapali": danisman_veteriner.pazar_kapali
+            },
+        })
     
     context = {
         'sahip': sahip,
@@ -641,6 +732,7 @@ def sahip_profilim(request):
         'aktif_pro_abonelik': aktif_pro_abonelik,
         'son_evcil_hayvanlar': son_evcil_hayvanlar,
         'danisman_veteriner': danisman_veteriner,
+        'calisma_saatleri_json': calisma_saatleri_json,
     }
     
     return render(request, 'anahtarlik/sahip_profilim.html', context)

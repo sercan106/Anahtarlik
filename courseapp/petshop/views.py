@@ -345,19 +345,53 @@ def web_sayfasi_gorunum_legacy(request, petshop_id):
 
 @login_required
 def web_sayfasi_duzenle(request):
+    from .forms import PetShopWebForm
     petshop = getattr(request.user, 'petshop_profili', None)
     if not petshop:
         messages.error(request, "PetShop profili bulunamadı.")
         return redirect('petshop:petshop_paneli')
     
+    # Web slug yoksa bilgilendirme mesajı hazırla
+    slug_yok_mesaji = None
+    if not petshop.web_slug:
+        slug_yok_mesaji = (
+            "Web sayfanız için bir URL adresi oluşturmanız gerekiyor. "
+            "Aşağıdaki 'Web Sayfası URL Adresi' alanına istediğiniz adresi girebilirsiniz. "
+            "Boş bırakırsanız, başlığınızdan otomatik oluşturulacaktır."
+        )
+    
     if request.method == 'POST':
         form = PetShopWebForm(request.POST, request.FILES, instance=petshop)
         if form.is_valid():
-            form.save()
+            petshop = form.save()
             messages.success(request, "Web sayfanız başarıyla güncellendi!")
+            
+            # Slug oluşturulduysa bilgilendir
+            if petshop.web_slug:
+                from django.urls import reverse
+                web_url = request.build_absolute_uri(
+                    reverse('petshop:web_sayfasi_gorunum', kwargs={'slug': petshop.web_slug})
+                )
+                messages.info(
+                    request, 
+                    f"Web sayfanızın URL adresi: {petshop.web_slug}. "
+                    f"Sayfanızı görüntülemek için: {web_url}"
+                )
+            
             return redirect('petshop:web_sayfasi_duzenle')
         else:
-            messages.error(request, "Lütfen form hatalarını düzeltin.")
+            # Form hatalarını kullanıcı dostu şekilde göster
+            error_messages = []
+            for field, errors in form.errors.items():
+                for error in errors:
+                    error_messages.append(f"{form.fields[field].label if field in form.fields else field}: {error}")
+            
+            if error_messages:
+                messages.error(request, "Lütfen form hatalarını düzeltin:")
+                for msg in error_messages[:3]:  # İlk 3 hatayı göster
+                    messages.error(request, f"  • {msg}")
+            else:
+                messages.error(request, "Lütfen form hatalarını düzeltin.")
     else:
         form = PetShopWebForm(instance=petshop)
     
@@ -374,5 +408,6 @@ def web_sayfasi_duzenle(request):
     return render(request, 'petshop/web_form.html', {
         "petshop": petshop, 
         "form": form,
-        "gunler": gunler
+        "gunler": gunler,
+        "slug_yok_mesaji": slug_yok_mesaji
     })

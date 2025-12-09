@@ -204,19 +204,8 @@ class PetShop(models.Model):
         return self.ad
     
     def save(self, *args, **kwargs):
-        # Slug oluştur (eğer yoksa)
-        if not self.web_slug and self.ad:
-            from django.utils.text import slugify
-            # Türkçe karakterleri İngilizce karşılıklarına çevir
-            tr_map = str.maketrans('çğıöşüÇĞIÖŞÜ', 'cgiosuCGIOSU')
-            temiz_ad = self.ad.translate(tr_map)
-            base_slug = slugify(temiz_ad, allow_unicode=False)
-            slug = base_slug
-            counter = 1
-            while PetShop.objects.filter(web_slug=slug).exclude(pk=self.pk).exists():
-                slug = f"{base_slug}-{counter}"
-                counter += 1
-            self.web_slug = slug
+        # NOT: web_slug artık otomatik oluşturulmuyor
+        # Kullanıcı "Web Sayfamı Düzenle" sayfasından manuel oluşturur
         
         # SEO başlık ve açıklama otomatik oluştur (eğer yoksa)
         if not self.web_seo_baslik and self.web_baslik:

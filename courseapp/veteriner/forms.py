@@ -202,13 +202,12 @@ class SiparisForm(forms.ModelForm):
 
 
 class VeterinerWebForm(forms.ModelForm):
-    # Slug düzenleme için özel alan
     web_slug = forms.SlugField(
         required=False,
-        max_length=200,
-        help_text="URL slug (boş bırakırsanız otomatik oluşturulur)",
+        label="Web Sayfası URL Adresi",
+        help_text="Örnek: pati-veteriner-klinigi (sadece küçük harf, rakam ve tire kullanın. Türkçe karakterler otomatik dönüştürülür.)",
         widget=forms.TextInput(attrs={
-            'class': 'form-control',
+            'class': 'w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all',
             'placeholder': 'pati-veteriner-klinigi'
         })
     )
@@ -216,6 +215,7 @@ class VeterinerWebForm(forms.ModelForm):
     class Meta:
         model = Veteriner
         fields = [
+            'web_slug',  # En başa eklendi
             'web_aktif', 'web_baslik', 'web_slogan', 'web_aciklama',
             'logo', 'birincil_renk',
             'web_resim1', 'web_resim2', 'web_resim3',
@@ -224,9 +224,6 @@ class VeterinerWebForm(forms.ModelForm):
             'hizmet3_baslik','hizmet3_aciklama','hizmet3_icon',
             'website','instagram','facebook','twitter','linkedin','youtube',
             'cta_metin','cta_link','whatsapp',
-            'uzmanlik_alanlari', 'calisma_saatleri',  # Yeni eklenenler
-            'konum_koordinat',  # Yeni eklenen
-            'goster_sosyal', 'goster_hizmetler', 'goster_calisma_saatleri', 'goster_galeri',  # Yeni eklenenler
             'pazartesi_baslangic','pazartesi_bitis','pazartesi_kapali',
             'sali_baslangic','sali_bitis','sali_kapali',
             'carsamba_baslangic','carsamba_bitis','carsamba_kapali',
@@ -245,217 +242,157 @@ class VeterinerWebForm(forms.ModelForm):
             'cta_metin': forms.TextInput(attrs={'class':'form-control','placeholder':'Randevu Al'}),
             'cta_link': forms.URLInput(attrs={'class':'form-control','placeholder':'https://...'}),
             'whatsapp': forms.TextInput(attrs={'class':'form-control','placeholder':'905551112233'}),
-            'uzmanlik_alanlari': forms.Textarea(attrs={'class':'form-control','rows':3,'placeholder':'Kedi, Köpek, Kuş, Tavşan (virgülle ayırın)'}),
-            'calisma_saatleri': forms.Textarea(attrs={'class':'form-control','rows':2,'placeholder':'Pazartesi-Cuma: 09:00-18:00, Cumartesi: 10:00-16:00'}),
-            'konum_koordinat': forms.TextInput(attrs={'class':'form-control','placeholder':'38.231952, 42.428070'}),
-            'hizmet1_icon': forms.TextInput(attrs={'class':'form-control','placeholder':'🩺 (emoji veya FontAwesome icon)'}),
-            'hizmet2_icon': forms.TextInput(attrs={'class':'form-control','placeholder':'💉 (emoji veya FontAwesome icon)'}),
-            'hizmet3_icon': forms.TextInput(attrs={'class':'form-control','placeholder':'🔬 (emoji veya FontAwesome icon)'}),
         }
     
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # Slug alanını instance'dan al
-        if self.instance and self.instance.pk and self.instance.web_slug:
-            self.fields['web_slug'].initial = self.instance.web_slug
-    
-    def clean_birincil_renk(self):
-        """HEX renk formatı kontrolü"""
-        renk = self.cleaned_data.get('birincil_renk')
-        if renk is None:
-            return ''
-        renk = str(renk).strip()
-        if renk:
-            # HEX format kontrolü (# ile başlamalı, 6 veya 3 karakter)
-            import re
-            hex_pattern = r'^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$'
-            if not re.match(hex_pattern, renk):
-                raise forms.ValidationError(
-                    "Renk formatı geçersiz. HEX formatında olmalı (örn: #4cc9f0 veya #4cf)"
-                )
-        return renk
-    
-    def clean_whatsapp(self):
-        """WhatsApp numarası format kontrolü"""
-        whatsapp = self.cleaned_data.get('whatsapp')
-        if whatsapp is None:
-            return ''
-        whatsapp = str(whatsapp).strip()
-        if whatsapp:
-            # Sadece rakam olmalı
-            if not whatsapp.isdigit():
-                raise forms.ValidationError(
-                    "WhatsApp numarası sadece rakamlardan oluşmalı (örn: 905551112233)"
-                )
-            # Minimum 10, maksimum 15 karakter
-            if len(whatsapp) < 10 or len(whatsapp) > 15:
-                raise forms.ValidationError(
-                    "WhatsApp numarası 10-15 karakter arasında olmalı"
-                )
-        return whatsapp
-    
-    def clean_konum_koordinat(self):
-        """Koordinat formatı kontrolü"""
-        koordinat = self.cleaned_data.get('konum_koordinat')
-        if koordinat is None:
-            return ''
-        koordinat = str(koordinat).strip()
-        if koordinat:
-            # Format: "lat, lng" veya "lat,lng"
-            import re
-            coord_pattern = r'^-?\d+\.?\d*,\s*-?\d+\.?\d*$'
-            if not re.match(coord_pattern, koordinat):
-                raise forms.ValidationError(
-                    "Koordinat formatı geçersiz. Format: '38.231952, 42.428070' (enlem, boylam)"
-                )
-            # Değer aralığı kontrolü
-            try:
-                parts = koordinat.replace(' ', '').split(',')
-                lat = float(parts[0])
-                lng = float(parts[1])
-                if not (-90 <= lat <= 90) or not (-180 <= lng <= 180):
-                    raise forms.ValidationError(
-                        "Koordinat değerleri geçersiz. Enlem: -90 ile 90, Boylam: -180 ile 180 arasında olmalı"
-                    )
-            except (ValueError, IndexError):
-                raise forms.ValidationError(
-                    "Koordinat formatı geçersiz. Format: '38.231952, 42.428070'"
-                )
-        return koordinat
-    
     def clean_web_slug(self):
-        """Slug çakışma kontrolü"""
-        slug = self.cleaned_data.get('web_slug')
-        if slug is None:
-            return ''
-        slug = str(slug).strip()
-        if slug:
-            # Mevcut slug'ı kontrol et
-            existing = Veteriner.objects.filter(web_slug=slug)
-            if self.instance and self.instance.pk:
-                existing = existing.exclude(pk=self.instance.pk)
-            if existing.exists():
-                raise forms.ValidationError(
-                    f"Bu slug zaten kullanılıyor: '{slug}'. Lütfen farklı bir slug seçin."
-                )
-        return slug
+        """Web slug validasyonu - benzersizlik kontrolü ve temizleme"""
+        web_slug = self.cleaned_data.get('web_slug', '').strip()
+        
+        # Boş bırakılabilir (otomatik oluşturulacak)
+        if not web_slug:
+            return None
+        
+        # Türkçe karakterleri temizle ve slugify
+        from django.utils.text import slugify
+        tr_map = str.maketrans('çğıöşüÇĞIÖŞÜ', 'cgiosuCGIOSU')
+        temiz_slug = web_slug.translate(tr_map)
+        web_slug = slugify(temiz_slug, allow_unicode=False)
+        
+        # Boş slug kontrolü (sadece özel karakterler girilmişse)
+        if not web_slug:
+            raise forms.ValidationError(
+                "Geçerli bir URL adresi giriniz. Sadece küçük harf, rakam ve tire (-) kullanabilirsiniz."
+            )
+        
+        # Minimum uzunluk kontrolü
+        if len(web_slug) < 3:
+            raise forms.ValidationError(
+                "URL adresi en az 3 karakter olmalıdır."
+            )
+        
+        # Maksimum uzunluk kontrolü (model'de 200, ama daha kısa tutalım)
+        if len(web_slug) > 100:
+            raise forms.ValidationError(
+                "URL adresi çok uzun. Maksimum 100 karakter olabilir."
+            )
+        
+        # Benzersizlik kontrolü
+        instance = self.instance
+        mevcut_veteriner = Veteriner.objects.filter(web_slug=web_slug).exclude(pk=instance.pk if instance.pk else None).first()
+        
+        if mevcut_veteriner:
+            # Öneri oluştur
+            oneri_slug = f"{web_slug}-{instance.pk}" if instance.pk else f"{web_slug}-{Veteriner.objects.count() + 1}"
+            raise forms.ValidationError(
+                f"Bu URL adresi zaten kullanılıyor. Lütfen farklı bir adres seçin. "
+                f"Öneri: '{oneri_slug}' veya '{web_slug}-{instance.ad[:10].lower().replace(' ', '-') if instance.ad else 'klinik'}'"
+            )
+        
+        return web_slug
     
-    def clean_cta_link(self):
-        """CTA link format kontrolü"""
-        cta_link = self.cleaned_data.get('cta_link')
-        if cta_link is None:
-            return ''
-        cta_link = str(cta_link).strip()
-        if cta_link:
-            # URL format kontrolü
-            if not (cta_link.startswith('http://') or cta_link.startswith('https://')):
-                raise forms.ValidationError(
-                    "Link 'http://' veya 'https://' ile başlamalı"
-                )
-        return cta_link
-    
-    def clean_website(self):
-        """Website URL format kontrolü"""
-        website = self.cleaned_data.get('website')
-        if website is None:
-            return ''
-        website = str(website).strip()
-        if website:
-            if not (website.startswith('http://') or website.startswith('https://')):
-                raise forms.ValidationError(
-                    "Website URL'si 'http://' veya 'https://' ile başlamalı"
-                )
-        return website
-    
-    def clean_instagram(self):
-        """Instagram format kontrolü"""
-        instagram = self.cleaned_data.get('instagram')
-        if instagram is None:
-            return ''
-        instagram = str(instagram).strip()
-        if instagram:
-            # @ işareti varsa kaldır
-            if instagram.startswith('@'):
-                instagram = instagram[1:]
-            # URL formatında değilse, sadece kullanıcı adı olmalı
-            if 'http' in instagram or 'instagram.com' in instagram:
-                if not (instagram.startswith('http://') or instagram.startswith('https://')):
-                    raise forms.ValidationError(
-                        "Instagram linki 'http://' veya 'https://' ile başlamalı"
-                    )
-        return instagram
-    
-    def clean_facebook(self):
-        """Facebook format kontrolü"""
-        facebook = self.cleaned_data.get('facebook')
-        if facebook is None:
-            return ''
-        facebook = str(facebook).strip()
-        if facebook:
-            # URL formatında değilse, sadece kullanıcı adı olabilir
-            if 'http' in facebook or 'facebook.com' in facebook:
-                if not (facebook.startswith('http://') or facebook.startswith('https://')):
-                    raise forms.ValidationError(
-                        "Facebook linki 'http://' veya 'https://' ile başlamalı"
-                    )
-        return facebook
-    
-    def clean_twitter(self):
-        """Twitter/X format kontrolü"""
-        twitter = self.cleaned_data.get('twitter')
-        if twitter is None:
-            return ''
-        twitter = str(twitter).strip()
-        if twitter:
-            # @ işareti varsa kaldır
-            if twitter.startswith('@'):
-                twitter = twitter[1:]
-            # URL formatında değilse, sadece kullanıcı adı olmalı
-            if 'http' in twitter or 'twitter.com' in twitter or 'x.com' in twitter:
-                if not (twitter.startswith('http://') or twitter.startswith('https://')):
-                    raise forms.ValidationError(
-                        "Twitter/X linki 'http://' veya 'https://' ile başlamalı"
-                    )
-        return twitter
-    
-    def clean_linkedin(self):
-        """LinkedIn format kontrolü"""
-        linkedin = self.cleaned_data.get('linkedin')
-        if linkedin is None:
-            return ''
-        linkedin = str(linkedin).strip()
-        if linkedin:
-            if 'http' in linkedin or 'linkedin.com' in linkedin:
-                if not (linkedin.startswith('http://') or linkedin.startswith('https://')):
-                    raise forms.ValidationError(
-                        "LinkedIn linki 'http://' veya 'https://' ile başlamalı"
-                    )
-        return linkedin
-    
-    def clean_youtube(self):
-        """YouTube format kontrolü"""
-        youtube = self.cleaned_data.get('youtube')
-        if youtube is None:
-            return ''
-        youtube = str(youtube).strip()
-        if youtube:
-            if 'http' in youtube or 'youtube.com' in youtube or 'youtu.be' in youtube:
-                if not (youtube.startswith('http://') or youtube.startswith('https://')):
-                    raise forms.ValidationError(
-                        "YouTube linki 'http://' veya 'https://' ile başlamalı"
-                    )
-        return youtube
+    def clean(self):
+        """Form genel validasyonu"""
+        cleaned_data = super().clean()
+        web_aktif = cleaned_data.get('web_aktif', False)
+        web_slug = cleaned_data.get('web_slug', '').strip() if cleaned_data.get('web_slug') else None
+        web_baslik = cleaned_data.get('web_baslik', '').strip()
+        
+        # Web aktif seçilmişse ama slug yoksa ve başlık da yoksa uyarı ver
+        if web_aktif and not web_slug and not web_baslik:
+            raise forms.ValidationError({
+                'web_aktif': 'Web sayfanızı yayına almak için önce "Web Sayfası URL Adresi" veya "Başlık (Klinik Adı)" alanını doldurmanız gerekiyor.'
+            })
+        
+        # Çalışma saatleri validasyonu - Kapalı olmayan günler için başlangıç ve bitiş zorunlu
+        gunler = [
+            ('pazartesi', 'Pazartesi'),
+            ('sali', 'Salı'),
+            ('carsamba', 'Çarşamba'),
+            ('persembe', 'Perşembe'),
+            ('cuma', 'Cuma'),
+            ('cumartesi', 'Cumartesi'),
+            ('pazar', 'Pazar'),
+        ]
+        
+        for gun_adi, gun_label in gunler:
+            kapali = cleaned_data.get(f'{gun_adi}_kapali', False)
+            baslangic = cleaned_data.get(f'{gun_adi}_baslangic')
+            bitis = cleaned_data.get(f'{gun_adi}_bitis')
+            
+            # Eğer gün kapalı değilse, başlangıç ve bitiş saatleri zorunlu
+            if not kapali:
+                if not baslangic:
+                    self.add_error(f'{gun_adi}_baslangic', f'{gun_label} günü için başlangıç saati zorunludur.')
+                if not bitis:
+                    self.add_error(f'{gun_adi}_bitis', f'{gun_label} günü için bitiş saati zorunludur.')
+                
+                # Başlangıç ve bitiş saatleri varsa, bitiş başlangıçtan sonra olmalı
+                if baslangic and bitis and bitis <= baslangic:
+                    self.add_error(f'{gun_adi}_bitis', f'{gun_label} günü için bitiş saati, başlangıç saatinden sonra olmalıdır.')
+        
+        return cleaned_data
     
     def save(self, commit=True):
+        """Form kaydetme - web_slug yoksa otomatik oluştur, eski fotoğrafları sil"""
         instance = super().save(commit=False)
         
-        # Slug'ı kaydet (eğer manuel girildiyse)
-        slug = self.cleaned_data.get('web_slug', '').strip()
-        if slug:
-            instance.web_slug = slug
-        elif not instance.web_slug and instance.ad:
-            # Slug yoksa otomatik oluştur (model'in save metodunda yapılacak)
-            pass
+        # Eski fotoğrafları kontrol et ve sil
+        if instance.pk:
+            eski_veteriner = Veteriner.objects.get(pk=instance.pk)
+            
+            # Logo değiştiyse eski logo'yu sil
+            if 'logo' in self.changed_data and eski_veteriner.logo:
+                try:
+                    eski_veteriner.logo.delete(save=False)
+                except Exception:
+                    pass
+            
+            # Web resimleri değiştiyse eski resimleri sil
+            if 'web_resim1' in self.changed_data and eski_veteriner.web_resim1:
+                try:
+                    eski_veteriner.web_resim1.delete(save=False)
+                except Exception:
+                    pass
+            
+            if 'web_resim2' in self.changed_data and eski_veteriner.web_resim2:
+                try:
+                    eski_veteriner.web_resim2.delete(save=False)
+                except Exception:
+                    pass
+            
+            if 'web_resim3' in self.changed_data and eski_veteriner.web_resim3:
+                try:
+                    eski_veteriner.web_resim3.delete(save=False)
+                except Exception:
+                    pass
+        
+        # Eğer web_slug boşsa ve web_baslik varsa, otomatik oluştur
+        if not instance.web_slug and instance.web_baslik:
+            from django.utils.text import slugify
+            tr_map = str.maketrans('çğıöşüÇĞIÖŞÜ', 'cgiosuCGIOSU')
+            temiz_ad = instance.web_baslik.translate(tr_map)
+            base_slug = slugify(temiz_ad, allow_unicode=False)
+            
+            if base_slug:  # Slug oluşturulabildiyse
+                slug = base_slug
+                counter = 1
+                # Benzersiz slug bul
+                while Veteriner.objects.filter(web_slug=slug).exclude(pk=instance.pk).exists():
+                    slug = f"{base_slug}-{counter}"
+                    counter += 1
+                    # Sonsuz döngü önleme
+                    if counter > 1000:
+                        slug = f"{base_slug}-{instance.pk}" if instance.pk else f"{base_slug}-{Veteriner.objects.count() + 1}"
+                        break
+                instance.web_slug = slug
+        
+        # Web sayfası yayına alınınca aktif yap
+        web_aktif = self.cleaned_data.get('web_aktif', False)
+        if web_aktif and instance.web_slug:
+            # Web sayfası yayına alınıyor ve slug var → aktif yap
+            if not instance.aktif:
+                instance.aktif = True
+                # Aktif olunca atamalar yapılacak (save metodunda)
         
         if commit:
             instance.save()

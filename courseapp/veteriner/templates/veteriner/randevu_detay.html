@@ -198,7 +198,7 @@
                 </div>
                 <div class="card-body">
                     <div class="text-center mb-3">
-                        {% if randevu.durum == 'BEKLIYOR' %}
+                        {% if randevu.durum == 'BEKLENIYOR' %}
                             <div class="text-warning mb-2"><i class="fas fa-clock fa-3x"></i></div>
                             <h4 class="text-warning">Bekleyen</h4>
                         {% elif randevu.durum == 'ONAYLANDI' %}
@@ -241,7 +241,7 @@
                         <div class="mb-3">
                             <label for="durum" class="form-label">Yeni Durum</label>
                             <select name="durum" id="durum" class="form-select">
-                                <option value="BEKLIYOR" {% if randevu.durum == 'BEKLIYOR' %}selected{% endif %}>Bekleyen</option>
+                                <option value="BEKLENIYOR" {% if randevu.durum == 'BEKLENIYOR' %}selected{% endif %}>Bekleyen</option>
                                 <option value="ONAYLANDI" {% if randevu.durum == 'ONAYLANDI' %}selected{% endif %}>Onaylanan</option>
                                 <option value="TAMAMLANDI" {% if randevu.durum == 'TAMAMLANDI' %}selected{% endif %}>Tamamlanan</option>
                                 <option value="IPTAL" {% if randevu.durum == 'IPTAL' %}selected{% endif %}>İptal</option>

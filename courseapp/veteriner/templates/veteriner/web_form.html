@@ -12,7 +12,7 @@
     .preview-img { max-width: 200px; max-height: 150px; object-fit: cover; border-radius: 12px; margin-top: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
     .char-counter { font-size: 0.85rem; color: #6b7280; }
     .gradient-text {
-      background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
+      background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -49,6 +49,103 @@
   <main class="container mx-auto px-4 py-8 lg:py-12">
     <div class="max-w-6xl mx-auto">
       
+      <!-- Django Messages / Toast Bildirimleri -->
+      {% if messages %}
+      <div id="toast-container" class="fixed top-20 right-4 z-50 space-y-3 max-w-md">
+        {% for message in messages %}
+        <div class="toast-message {% if message.tags == 'error' %}bg-red-500{% elif message.tags == 'success' %}bg-green-500{% elif message.tags == 'warning' %}bg-yellow-500{% elif message.tags == 'info' %}bg-blue-500{% else %}bg-gray-500{% endif %} text-white px-6 py-4 rounded-lg shadow-2xl flex items-start space-x-3 transform transition-all duration-300 opacity-0 translate-x-full" role="alert">
+          <div class="flex-shrink-0 text-xl">
+            {% if message.tags == 'error' %}
+              <i class="fas fa-exclamation-circle"></i>
+            {% elif message.tags == 'success' %}
+              <i class="fas fa-check-circle"></i>
+            {% elif message.tags == 'warning' %}
+              <i class="fas fa-exclamation-triangle"></i>
+            {% elif message.tags == 'info' %}
+              <i class="fas fa-info-circle"></i>
+            {% else %}
+              <i class="fas fa-bell"></i>
+            {% endif %}
+          </div>
+          <div class="flex-1">
+            <p class="font-semibold">{{ message }}</p>
+          </div>
+          <button onclick="this.parentElement.remove()" class="flex-shrink-0 ml-2 text-white hover:text-gray-200 transition-colors">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        {% endfor %}
+      </div>
+      <script>
+        // Toast mesajlarını göster
+        document.addEventListener('DOMContentLoaded', function() {
+          const toasts = document.querySelectorAll('.toast-message');
+          toasts.forEach((toast, index) => {
+            setTimeout(() => {
+              toast.classList.remove('opacity-0', 'translate-x-full');
+              toast.classList.add('opacity-100', 'translate-x-0');
+            }, index * 100);
+            
+            // 5 saniye sonra otomatik kapat
+            setTimeout(() => {
+              toast.classList.add('opacity-0', 'translate-x-full');
+              setTimeout(() => toast.remove(), 300);
+            }, 5000);
+          });
+        });
+      </script>
+      {% endif %}
+      
+      <!-- Form Genel Hataları -->
+      {% if form.non_field_errors %}
+      <div class="bg-red-50 border-l-4 border-red-500 p-6 mb-8 rounded-xl shadow-md">
+        <div class="flex items-start space-x-4">
+          <div class="text-3xl text-red-600"><i class="fas fa-exclamation-triangle"></i></div>
+          <div class="flex-1">
+            <h3 class="text-lg font-bold text-red-800 mb-2">Form Hataları</h3>
+            <ul class="list-disc list-inside space-y-1 text-red-700">
+              {% for error in form.non_field_errors %}
+              <li>{{ error }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+      
+      <!-- Slug Yoksa Bilgilendirme Kartı -->
+      {% if slug_yok_mesaji %}
+      <div class="bg-gradient-to-r from-yellow-50 to-orange-50 border-l-4 border-yellow-600 p-6 mb-8 rounded-xl shadow-md">
+        <div class="flex items-start space-x-4">
+          <div class="text-3xl text-yellow-600"><i class="fas fa-exclamation-circle"></i></div>
+          <div class="flex-1">
+            <h3 class="text-lg font-bold text-yellow-800 mb-2">
+              <i class="fas fa-link mr-2"></i>Web Sayfası URL Adresi Oluştur
+            </h3>
+            <p class="text-sm lg:text-base leading-relaxed text-yellow-700 mb-3">
+              {{ slug_yok_mesaji }}
+            </p>
+            <div class="mt-3 p-4 bg-white rounded-lg border border-yellow-200">
+              <p class="text-xs font-semibold text-gray-700 mb-2">
+                <i class="fas fa-lightbulb mr-1 text-yellow-600"></i><strong>Örnek URL adresleri:</strong>
+              </p>
+              <ul class="text-xs text-gray-600 list-disc list-inside space-y-1 mb-3">
+                <li><code class="bg-gray-100 px-2 py-1 rounded">pati-veteriner-klinigi</code></li>
+                <li><code class="bg-gray-100 px-2 py-1 rounded">mehmet-veteriner</code></li>
+                <li><code class="bg-gray-100 px-2 py-1 rounded">istanbul-hayvan-sagligi</code></li>
+              </ul>
+              <p class="text-xs text-gray-500 mt-2">
+                <i class="fas fa-info-circle mr-1 text-blue-500"></i> 
+                <strong>Kurallar:</strong> Sadece küçük harf, rakam ve tire (-) kullanabilirsiniz. 
+                Türkçe karakterler (ç, ğ, ı, ö, ş, ü) otomatik olarak dönüştürülecektir. 
+                Boş bırakırsanız, başlığınızdan otomatik oluşturulacaktır.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
       <!-- Info Card -->
       <div class="bg-gradient-to-r from-blue-50 to-green-50 border-l-4 border-blue-600 p-6 mb-8 rounded-xl shadow-md">
         <div class="flex items-start space-x-4">
@@ -79,8 +176,64 @@
           <h2 class="text-2xl lg:text-3xl font-bold text-blue-600 mb-6 pb-4 border-b-2 border-blue-100 flex items-center">
             <i class="fas fa-cog mr-3"></i> Genel Ayarlar
           </h2>
-          <div class="space-y-4">
-            <div class="flex items-center gap-4 p-4 bg-gradient-to-r from-green-50 to-blue-50 rounded-xl">
+          <div class="space-y-6">
+            
+            <!-- Web Slug Alanı -->
+            <div>
+              <label for="id_web_slug" class="block text-sm font-semibold text-gray-700 mb-2">
+                <i class="fas fa-link mr-2 text-blue-500"></i> Web Sayfası URL Adresi
+                {% if not veteriner.web_slug %}
+                  <span class="text-red-500 ml-1" title="Zorunlu alan">*</span>
+                {% endif %}
+              </label>
+              <input type="text" 
+                     name="web_slug" 
+                     id="id_web_slug" 
+                     value="{{ form.web_slug.value|default:veteriner.web_slug|default:'' }}"
+                     placeholder="pati-veteriner-klinigi"
+                     class="w-full p-4 border-2 {% if form.web_slug.errors %}border-red-500{% else %}border-gray-200{% endif %} rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all">
+              
+              {% if form.web_slug.errors %}
+                <div class="mt-2 p-3 bg-red-50 border border-red-200 rounded-lg">
+                  {% for error in form.web_slug.errors %}
+                    <p class="text-sm text-red-600 flex items-start">
+                      <i class="fas fa-exclamation-triangle mr-2 mt-0.5"></i>{{ error }}
+                    </p>
+                  {% endfor %}
+                </div>
+              {% endif %}
+              
+              {% if form.web_slug.help_text %}
+                <p class="mt-2 text-xs text-gray-500">
+                  <i class="fas fa-info-circle mr-1"></i>{{ form.web_slug.help_text }}
+                </p>
+              {% endif %}
+              
+              {% if veteriner.web_slug %}
+                <div class="mt-3 p-3 bg-green-50 border border-green-200 rounded-lg">
+                  <p class="text-sm text-green-700 flex items-center">
+                    <i class="fas fa-check-circle mr-2"></i>
+                    <strong>Mevcut URL:</strong>
+                    <code class="ml-2 bg-white px-2 py-1 rounded text-xs font-mono">
+                      {{ request.scheme }}://{{ request.get_host }}{% url 'veteriner:web_sayfasi_gorunum' slug=veteriner.web_slug %}
+                    </code>
+                  </p>
+                  <p class="text-xs text-gray-600 mt-2">
+                    <i class="fas fa-lightbulb mr-1"></i>URL adresinizi değiştirmek isterseniz yukarıdaki alanı güncelleyebilirsiniz.
+                  </p>
+                </div>
+              {% else %}
+                <div class="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                  <p class="text-xs text-blue-700">
+                    <i class="fas fa-lightbulb mr-1"></i>
+                    <strong>İpucu:</strong> Boş bırakırsanız, "Başlık (Klinik Adı)" alanından otomatik oluşturulacaktır.
+                  </p>
+                </div>
+              {% endif %}
+            </div>
+            
+            <!-- Web Aktif Checkbox -->
+            <div class="flex items-center gap-4 p-4 {% if form.web_aktif.errors %}bg-red-50 border-2 border-red-200{% else %}bg-gradient-to-r from-green-50 to-blue-50{% endif %} rounded-xl">
               <input type="checkbox" name="web_aktif" id="id_web_aktif" 
                      {% if form.web_aktif.value %}checked{% endif %}
                      class="w-6 h-6 text-blue-600 rounded focus:ring-blue-500 cursor-pointer">
@@ -88,7 +241,22 @@
                 <i class="fas fa-globe mr-2 text-green-600"></i> Web sayfamı yayına al
               </label>
             </div>
-            <p class="text-sm text-gray-600 ml-10"><i class="fas fa-info-circle mr-1 text-blue-500"></i> Bu kutuyu işaretlediğinizde sayfanız herkese açık olur ve arama motorlarında görünür.</p>
+            {% if form.web_aktif.errors %}
+              <div class="mt-2 p-3 bg-red-50 border border-red-200 rounded-lg">
+                {% for error in form.web_aktif.errors %}
+                  <p class="text-sm text-red-600 flex items-start">
+                    <i class="fas fa-exclamation-triangle mr-2 mt-0.5"></i>{{ error }}
+                  </p>
+                {% endfor %}
+              </div>
+            {% endif %}
+            <p class="text-sm text-gray-600 ml-10">
+              <i class="fas fa-info-circle mr-1 text-blue-500"></i> 
+              Bu kutuyu işaretlediğinizde sayfanız herkese açık olur ve arama motorlarında görünür.
+              {% if not veteriner.web_slug %}
+                <span class="text-orange-600 font-semibold">(Önce URL adresi oluşturmanız gerekiyor)</span>
+              {% endif %}
+            </p>
           </div>
         </div>
 
@@ -164,10 +332,10 @@
                 <i class="fas fa-fill-drip mr-2 text-purple-500"></i> Ana Renk (Hex)
               </label>
               <input type="text" name="birincil_renk" id="id_birincil_renk"
-                     value="{{ form.birincil_renk.value|default:'#5B9BD5' }}"
-                     placeholder="#5B9BD5"
+                     value="{{ form.birincil_renk.value|default:'#2563eb' }}"
+                     placeholder="#2563eb"
                      class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all">
-              <p class="text-xs text-gray-500 mt-2"><i class="fas fa-info-circle mr-1"></i> Örn: #5B9BD5 (mavi), #70C1B3 (turkuaz), #FF8C42 (turuncu)</p>
+              <p class="text-xs text-gray-500 mt-2"><i class="fas fa-info-circle mr-1"></i> Örn: #2563eb (mavi), #10b981 (yeşil), #f59e0b (turuncu)</p>
             </div>
           </div>
         </div>
@@ -233,14 +401,6 @@
                   <textarea name="hizmet{{ i }}_aciklama" id="id_hizmet{{ i }}_aciklama" rows="3"
                             placeholder="Evcil hayvanlarınızın sağlığını korumak için..."
                             class="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 transition-all text-sm">{% if i == '1' %}{{ form.hizmet1_aciklama.value|default:'' }}{% elif i == '2' %}{{ form.hizmet2_aciklama.value|default:'' }}{% else %}{{ form.hizmet3_aciklama.value|default:'' }}{% endif %}</textarea>
-                </div>
-                <div>
-                  <label for="id_hizmet{{ i }}_icon" class="block text-xs font-semibold text-gray-600 mb-2">İkon (Emoji veya FontAwesome)</label>
-                  <input type="text" name="hizmet{{ i }}_icon" id="id_hizmet{{ i }}_icon"
-                         value="{% if i == '1' %}{{ form.hizmet1_icon.value|default:'' }}{% elif i == '2' %}{{ form.hizmet2_icon.value|default:'' }}{% else %}{{ form.hizmet3_icon.value|default:'' }}{% endif %}"
-                         placeholder="{% if i == '1' %}🩺{% elif i == '2' %}💉{% else %}🔬{% endif %}"
-                         class="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 transition-all text-sm">
-                  <p class="text-xs text-gray-500 mt-1"><i class="fas fa-info-circle mr-1"></i>Emoji (🩺) veya FontAwesome class (fas fa-stethoscope) kullanabilirsiniz</p>
                 </div>
               </div>
             </div>
@@ -359,22 +519,38 @@
               <div class="flex items-center justify-between mb-4">
                 <label class="font-bold text-gray-800"><i class="fas fa-calendar-day mr-2 text-blue-500"></i> Pazartesi</label>
                 <label class="inline-flex items-center cursor-pointer">
-                  <input type="checkbox" name="pazartesi_kapali" {% if veteriner.pazartesi_kapali %}checked{% endif %} class="mr-2 w-5 h-5 text-red-600 rounded"> 
+                  <input type="checkbox" name="pazartesi_kapali" id="id_pazartesi_kapali" {% if veteriner.pazartesi_kapali %}checked{% endif %} class="mr-2 w-5 h-5 text-red-600 rounded"> 
                   <span class="text-sm text-red-600 font-semibold">Kapalı</span>
                 </label>
               </div>
               <div class="grid grid-cols-2 gap-4">
                 <div>
-                  <label for="id_pazartesi_baslangic" class="block text-xs text-gray-600 mb-2 font-semibold">Başlangıç</label>
+                  <label for="id_pazartesi_baslangic" class="block text-xs text-gray-600 mb-2 font-semibold">
+                    Başlangıç <span class="text-red-500" id="pazartesi_baslangic_required">*</span>
+                  </label>
                   <input type="time" name="pazartesi_baslangic" id="id_pazartesi_baslangic"
                          value="{% if veteriner.pazartesi_baslangic %}{{ veteriner.pazartesi_baslangic|time:'H:i' }}{% endif %}"
-                         class="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 transition-all">
+                         {% if not veteriner.pazartesi_kapali %}required{% endif %}
+                         class="w-full p-3 border-2 {% if form.pazartesi_baslangic.errors %}border-red-500{% else %}border-gray-200{% endif %} rounded-lg focus:border-blue-500 transition-all">
+                  {% if form.pazartesi_baslangic.errors %}
+                  <div class="mt-1 text-xs text-red-600">
+                    {% for error in form.pazartesi_baslangic.errors %}{{ error }}{% endfor %}
+                  </div>
+                  {% endif %}
                 </div>
                 <div>
-                  <label for="id_pazartesi_bitis" class="block text-xs text-gray-600 mb-2 font-semibold">Bitiş</label>
+                  <label for="id_pazartesi_bitis" class="block text-xs text-gray-600 mb-2 font-semibold">
+                    Bitiş <span class="text-red-500" id="pazartesi_bitis_required">*</span>
+                  </label>
                   <input type="time" name="pazartesi_bitis" id="id_pazartesi_bitis"
                          value="{% if veteriner.pazartesi_bitis %}{{ veteriner.pazartesi_bitis|time:'H:i' }}{% endif %}"
-                         class="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 transition-all">
+                         {% if not veteriner.pazartesi_kapali %}required{% endif %}
+                         class="w-full p-3 border-2 {% if form.pazartesi_bitis.errors %}border-red-500{% else %}border-gray-200{% endif %} rounded-lg focus:border-blue-500 transition-all">
+                  {% if form.pazartesi_bitis.errors %}
+                  <div class="mt-1 text-xs text-red-600">
+                    {% for error in form.pazartesi_bitis.errors %}{{ error }}{% endfor %}
+                  </div>
+                  {% endif %}
                 </div>
               </div>
             </div>
@@ -384,22 +560,38 @@
               <div class="flex items-center justify-between mb-4">
                 <label class="font-bold text-gray-800"><i class="fas fa-calendar-day mr-2 text-blue-500"></i> Salı</label>
                 <label class="inline-flex items-center cursor-pointer">
-                  <input type="checkbox" name="sali_kapali" {% if veteriner.sali_kapali %}checked{% endif %} class="mr-2 w-5 h-5 text-red-600 rounded"> 
+                  <input type="checkbox" name="sali_kapali" id="id_sali_kapali" {% if veteriner.sali_kapali %}checked{% endif %} class="mr-2 w-5 h-5 text-red-600 rounded"> 
                   <span class="text-sm text-red-600 font-semibold">Kapalı</span>
                 </label>
               </div>
               <div class="grid grid-cols-2 gap-4">
                 <div>
-                  <label for="id_sali_baslangic" class="block text-xs text-gray-600 mb-2 font-semibold">Başlangıç</label>
+                  <label for="id_sali_baslangic" class="block text-xs text-gray-600 mb-2 font-semibold">
+                    Başlangıç <span class="text-red-500" id="sali_baslangic_required">*</span>
+                  </label>
                   <input type="time" name="sali_baslangic" id="id_sali_baslangic"
                          value="{% if veteriner.sali_baslangic %}{{ veteriner.sali_baslangic|time:'H:i' }}{% endif %}"
-                         class="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 transition-all">
+                         {% if not veteriner.sali_kapali %}required{% endif %}
+                         class="w-full p-3 border-2 {% if form.sali_baslangic.errors %}border-red-500{% else %}border-gray-200{% endif %} rounded-lg focus:border-blue-500 transition-all">
+                  {% if form.sali_baslangic.errors %}
+                  <div class="mt-1 text-xs text-red-600">
+                    {% for error in form.sali_baslangic.errors %}{{ error }}{% endfor %}
+                  </div>
+                  {% endif %}
                 </div>
                 <div>
-                  <label for="id_sali_bitis" class="block text-xs text-gray-600 mb-2 font-semibold">Bitiş</label>
+                  <label for="id_sali_bitis" class="block text-xs text-gray-600 mb-2 font-semibold">
+                    Bitiş <span class="text-red-500" id="sali_bitis_required">*</span>
+                  </label>
                   <input type="time" name="sali_bitis" id="id_sali_bitis"
                          value="{% if veteriner.sali_bitis %}{{ veteriner.sali_bitis|time:'H:i' }}{% endif %}"
-                         class="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 transition-all">
+                         {% if not veteriner.sali_kapali %}required{% endif %}
+                         class="w-full p-3 border-2 {% if form.sali_bitis.errors %}border-red-500{% else %}border-gray-200{% endif %} rounded-lg focus:border-blue-500 transition-all">
+                  {% if form.sali_bitis.errors %}
+                  <div class="mt-1 text-xs text-red-600">
+                    {% for error in form.sali_bitis.errors %}{{ error }}{% endfor %}
+                  </div>
+                  {% endif %}
                 </div>
               </div>
             </div>
@@ -409,22 +601,38 @@
               <div class="flex items-center justify-between mb-4">
                 <label class="font-bold text-gray-800"><i class="fas fa-calendar-day mr-2 text-blue-500"></i> Çarşamba</label>
                 <label class="inline-flex items-center cursor-pointer">
-                  <input type="checkbox" name="carsamba_kapali" {% if veteriner.carsamba_kapali %}checked{% endif %} class="mr-2 w-5 h-5 text-red-600 rounded"> 
+                  <input type="checkbox" name="carsamba_kapali" id="id_carsamba_kapali" {% if veteriner.carsamba_kapali %}checked{% endif %} class="mr-2 w-5 h-5 text-red-600 rounded"> 
                   <span class="text-sm text-red-600 font-semibold">Kapalı</span>
                 </label>
               </div>
               <div class="grid grid-cols-2 gap-4">
                 <div>
-                  <label for="id_carsamba_baslangic" class="block text-xs text-gray-600 mb-2 font-semibold">Başlangıç</label>
+                  <label for="id_carsamba_baslangic" class="block text-xs text-gray-600 mb-2 font-semibold">
+                    Başlangıç <span class="text-red-500" id="carsamba_baslangic_required">*</span>
+                  </label>
                   <input type="time" name="carsamba_baslangic" id="id_carsamba_baslangic"
                          value="{% if veteriner.carsamba_baslangic %}{{ veteriner.carsamba_baslangic|time:'H:i' }}{% endif %}"
-                         class="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 transition-all">
+                         {% if not veteriner.carsamba_kapali %}required{% endif %}
+                         class="w-full p-3 border-2 {% if form.carsamba_baslangic.errors %}border-red-500{% else %}border-gray-200{% endif %} rounded-lg focus:border-blue-500 transition-all">
+                  {% if form.carsamba_baslangic.errors %}
+                  <div class="mt-1 text-xs text-red-600">
+                    {% for error in form.carsamba_baslangic.errors %}{{ error }}{% endfor %}
+                  </div>
+                  {% endif %}
                 </div>
                 <div>
-                  <label for="id_carsamba_bitis" class="block text-xs text-gray-600 mb-2 font-semibold">Bitiş</label>
+                  <label for="id_carsamba_bitis" class="block text-xs text-gray-600 mb-2 font-semibold">
+                    Bitiş <span class="text-red-500" id="carsamba_bitis_required">*</span>
+                  </label>
                   <input type="time" name="carsamba_bitis" id="id_carsamba_bitis"
                          value="{% if veteriner.carsamba_bitis %}{{ veteriner.carsamba_bitis|time:'H:i' }}{% endif %}"
-                         class="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 transition-all">
+                         {% if not veteriner.carsamba_kapali %}required{% endif %}
+                         class="w-full p-3 border-2 {% if form.carsamba_bitis.errors %}border-red-500{% else %}border-gray-200{% endif %} rounded-lg focus:border-blue-500 transition-all">
+                  {% if form.carsamba_bitis.errors %}
+                  <div class="mt-1 text-xs text-red-600">
+                    {% for error in form.carsamba_bitis.errors %}{{ error }}{% endfor %}
+                  </div>
+                  {% endif %}
                 </div>
               </div>
             </div>
@@ -434,22 +642,38 @@
               <div class="flex items-center justify-between mb-4">
                 <label class="font-bold text-gray-800"><i class="fas fa-calendar-day mr-2 text-blue-500"></i> Perşembe</label>
                 <label class="inline-flex items-center cursor-pointer">
-                  <input type="checkbox" name="persembe_kapali" {% if veteriner.persembe_kapali %}checked{% endif %} class="mr-2 w-5 h-5 text-red-600 rounded"> 
+                  <input type="checkbox" name="persembe_kapali" id="id_persembe_kapali" {% if veteriner.persembe_kapali %}checked{% endif %} class="mr-2 w-5 h-5 text-red-600 rounded"> 
                   <span class="text-sm text-red-600 font-semibold">Kapalı</span>
                 </label>
               </div>
               <div class="grid grid-cols-2 gap-4">
                 <div>
-                  <label for="id_persembe_baslangic" class="block text-xs text-gray-600 mb-2 font-semibold">Başlangıç</label>
+                  <label for="id_persembe_baslangic" class="block text-xs text-gray-600 mb-2 font-semibold">
+                    Başlangıç <span class="text-red-500" id="persembe_baslangic_required">*</span>
+                  </label>
                   <input type="time" name="persembe_baslangic" id="id_persembe_baslangic"
                          value="{% if veteriner.persembe_baslangic %}{{ veteriner.persembe_baslangic|time:'H:i' }}{% endif %}"
-                         class="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 transition-all">
+                         {% if not veteriner.persembe_kapali %}required{% endif %}
+                         class="w-full p-3 border-2 {% if form.persembe_baslangic.errors %}border-red-500{% else %}border-gray-200{% endif %} rounded-lg focus:border-blue-500 transition-all">
+                  {% if form.persembe_baslangic.errors %}
+                  <div class="mt-1 text-xs text-red-600">
+                    {% for error in form.persembe_baslangic.errors %}{{ error }}{% endfor %}
+                  </div>
+                  {% endif %}
                 </div>
                 <div>
-                  <label for="id_persembe_bitis" class="block text-xs text-gray-600 mb-2 font-semibold">Bitiş</label>
+                  <label for="id_persembe_bitis" class="block text-xs text-gray-600 mb-2 font-semibold">
+                    Bitiş <span class="text-red-500" id="persembe_bitis_required">*</span>
+                  </label>
                   <input type="time" name="persembe_bitis" id="id_persembe_bitis"
                          value="{% if veteriner.persembe_bitis %}{{ veteriner.persembe_bitis|time:'H:i' }}{% endif %}"
-                         class="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 transition-all">
+                         {% if not veteriner.persembe_kapali %}required{% endif %}
+                         class="w-full p-3 border-2 {% if form.persembe_bitis.errors %}border-red-500{% else %}border-gray-200{% endif %} rounded-lg focus:border-blue-500 transition-all">
+                  {% if form.persembe_bitis.errors %}
+                  <div class="mt-1 text-xs text-red-600">
+                    {% for error in form.persembe_bitis.errors %}{{ error }}{% endfor %}
+                  </div>
+                  {% endif %}
                 </div>
               </div>
             </div>
@@ -459,22 +683,38 @@
               <div class="flex items-center justify-between mb-4">
                 <label class="font-bold text-gray-800"><i class="fas fa-calendar-day mr-2 text-blue-500"></i> Cuma</label>
                 <label class="inline-flex items-center cursor-pointer">
-                  <input type="checkbox" name="cuma_kapali" {% if veteriner.cuma_kapali %}checked{% endif %} class="mr-2 w-5 h-5 text-red-600 rounded"> 
+                  <input type="checkbox" name="cuma_kapali" id="id_cuma_kapali" {% if veteriner.cuma_kapali %}checked{% endif %} class="mr-2 w-5 h-5 text-red-600 rounded"> 
                   <span class="text-sm text-red-600 font-semibold">Kapalı</span>
                 </label>
               </div>
               <div class="grid grid-cols-2 gap-4">
                 <div>
-                  <label for="id_cuma_baslangic" class="block text-xs text-gray-600 mb-2 font-semibold">Başlangıç</label>
+                  <label for="id_cuma_baslangic" class="block text-xs text-gray-600 mb-2 font-semibold">
+                    Başlangıç <span class="text-red-500" id="cuma_baslangic_required">*</span>
+                  </label>
                   <input type="time" name="cuma_baslangic" id="id_cuma_baslangic"
                          value="{% if veteriner.cuma_baslangic %}{{ veteriner.cuma_baslangic|time:'H:i' }}{% endif %}"
-                         class="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 transition-all">
+                         {% if not veteriner.cuma_kapali %}required{% endif %}
+                         class="w-full p-3 border-2 {% if form.cuma_baslangic.errors %}border-red-500{% else %}border-gray-200{% endif %} rounded-lg focus:border-blue-500 transition-all">
+                  {% if form.cuma_baslangic.errors %}
+                  <div class="mt-1 text-xs text-red-600">
+                    {% for error in form.cuma_baslangic.errors %}{{ error }}{% endfor %}
+                  </div>
+                  {% endif %}
                 </div>
                 <div>
-                  <label for="id_cuma_bitis" class="block text-xs text-gray-600 mb-2 font-semibold">Bitiş</label>
+                  <label for="id_cuma_bitis" class="block text-xs text-gray-600 mb-2 font-semibold">
+                    Bitiş <span class="text-red-500" id="cuma_bitis_required">*</span>
+                  </label>
                   <input type="time" name="cuma_bitis" id="id_cuma_bitis"
                          value="{% if veteriner.cuma_bitis %}{{ veteriner.cuma_bitis|time:'H:i' }}{% endif %}"
-                         class="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 transition-all">
+                         {% if not veteriner.cuma_kapali %}required{% endif %}
+                         class="w-full p-3 border-2 {% if form.cuma_bitis.errors %}border-red-500{% else %}border-gray-200{% endif %} rounded-lg focus:border-blue-500 transition-all">
+                  {% if form.cuma_bitis.errors %}
+                  <div class="mt-1 text-xs text-red-600">
+                    {% for error in form.cuma_bitis.errors %}{{ error }}{% endfor %}
+                  </div>
+                  {% endif %}
                 </div>
               </div>
             </div>
@@ -484,22 +724,38 @@
               <div class="flex items-center justify-between mb-4">
                 <label class="font-bold text-gray-800"><i class="fas fa-calendar-day mr-2 text-blue-500"></i> Cumartesi</label>
                 <label class="inline-flex items-center cursor-pointer">
-                  <input type="checkbox" name="cumartesi_kapali" {% if veteriner.cumartesi_kapali %}checked{% endif %} class="mr-2 w-5 h-5 text-red-600 rounded"> 
+                  <input type="checkbox" name="cumartesi_kapali" id="id_cumartesi_kapali" {% if veteriner.cumartesi_kapali %}checked{% endif %} class="mr-2 w-5 h-5 text-red-600 rounded"> 
                   <span class="text-sm text-red-600 font-semibold">Kapalı</span>
                 </label>
               </div>
               <div class="grid grid-cols-2 gap-4">
                 <div>
-                  <label for="id_cumartesi_baslangic" class="block text-xs text-gray-600 mb-2 font-semibold">Başlangıç</label>
+                  <label for="id_cumartesi_baslangic" class="block text-xs text-gray-600 mb-2 font-semibold">
+                    Başlangıç <span class="text-red-500" id="cumartesi_baslangic_required">*</span>
+                  </label>
                   <input type="time" name="cumartesi_baslangic" id="id_cumartesi_baslangic"
                          value="{% if veteriner.cumartesi_baslangic %}{{ veteriner.cumartesi_baslangic|time:'H:i' }}{% endif %}"
-                         class="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 transition-all">
+                         {% if not veteriner.cumartesi_kapali %}required{% endif %}
+                         class="w-full p-3 border-2 {% if form.cumartesi_baslangic.errors %}border-red-500{% else %}border-gray-200{% endif %} rounded-lg focus:border-blue-500 transition-all">
+                  {% if form.cumartesi_baslangic.errors %}
+                  <div class="mt-1 text-xs text-red-600">
+                    {% for error in form.cumartesi_baslangic.errors %}{{ error }}{% endfor %}
+                  </div>
+                  {% endif %}
                 </div>
                 <div>
-                  <label for="id_cumartesi_bitis" class="block text-xs text-gray-600 mb-2 font-semibold">Bitiş</label>
+                  <label for="id_cumartesi_bitis" class="block text-xs text-gray-600 mb-2 font-semibold">
+                    Bitiş <span class="text-red-500" id="cumartesi_bitis_required">*</span>
+                  </label>
                   <input type="time" name="cumartesi_bitis" id="id_cumartesi_bitis"
                          value="{% if veteriner.cumartesi_bitis %}{{ veteriner.cumartesi_bitis|time:'H:i' }}{% endif %}"
-                         class="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 transition-all">
+                         {% if not veteriner.cumartesi_kapali %}required{% endif %}
+                         class="w-full p-3 border-2 {% if form.cumartesi_bitis.errors %}border-red-500{% else %}border-gray-200{% endif %} rounded-lg focus:border-blue-500 transition-all">
+                  {% if form.cumartesi_bitis.errors %}
+                  <div class="mt-1 text-xs text-red-600">
+                    {% for error in form.cumartesi_bitis.errors %}{{ error }}{% endfor %}
+                  </div>
+                  {% endif %}
                 </div>
               </div>
             </div>
@@ -509,113 +765,40 @@
               <div class="flex items-center justify-between mb-4">
                 <label class="font-bold text-gray-800"><i class="fas fa-calendar-day mr-2 text-blue-500"></i> Pazar</label>
                 <label class="inline-flex items-center cursor-pointer">
-                  <input type="checkbox" name="pazar_kapali" {% if veteriner.pazar_kapali %}checked{% endif %} class="mr-2 w-5 h-5 text-red-600 rounded"> 
+                  <input type="checkbox" name="pazar_kapali" id="id_pazar_kapali" {% if veteriner.pazar_kapali %}checked{% endif %} class="mr-2 w-5 h-5 text-red-600 rounded"> 
                   <span class="text-sm text-red-600 font-semibold">Kapalı</span>
                 </label>
               </div>
               <div class="grid grid-cols-2 gap-4">
                 <div>
-                  <label for="id_pazar_baslangic" class="block text-xs text-gray-600 mb-2 font-semibold">Başlangıç</label>
+                  <label for="id_pazar_baslangic" class="block text-xs text-gray-600 mb-2 font-semibold">
+                    Başlangıç <span class="text-red-500" id="pazar_baslangic_required">*</span>
+                  </label>
                   <input type="time" name="pazar_baslangic" id="id_pazar_baslangic"
                          value="{% if veteriner.pazar_baslangic %}{{ veteriner.pazar_baslangic|time:'H:i' }}{% endif %}"
-                         class="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 transition-all">
+                         {% if not veteriner.pazar_kapali %}required{% endif %}
+                         class="w-full p-3 border-2 {% if form.pazar_baslangic.errors %}border-red-500{% else %}border-gray-200{% endif %} rounded-lg focus:border-blue-500 transition-all">
+                  {% if form.pazar_baslangic.errors %}
+                  <div class="mt-1 text-xs text-red-600">
+                    {% for error in form.pazar_baslangic.errors %}{{ error }}{% endfor %}
+                  </div>
+                  {% endif %}
                 </div>
                 <div>
-                  <label for="id_pazar_bitis" class="block text-xs text-gray-600 mb-2 font-semibold">Bitiş</label>
+                  <label for="id_pazar_bitis" class="block text-xs text-gray-600 mb-2 font-semibold">
+                    Bitiş <span class="text-red-500" id="pazar_bitis_required">*</span>
+                  </label>
                   <input type="time" name="pazar_bitis" id="id_pazar_bitis"
                          value="{% if veteriner.pazar_bitis %}{{ veteriner.pazar_bitis|time:'H:i' }}{% endif %}"
-                         class="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 transition-all">
+                         {% if not veteriner.pazar_kapali %}required{% endif %}
+                         class="w-full p-3 border-2 {% if form.pazar_bitis.errors %}border-red-500{% else %}border-gray-200{% endif %} rounded-lg focus:border-blue-500 transition-all">
+                  {% if form.pazar_bitis.errors %}
+                  <div class="mt-1 text-xs text-red-600">
+                    {% for error in form.pazar_bitis.errors %}{{ error }}{% endfor %}
+                  </div>
+                  {% endif %}
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Bölüm Görünürlükleri -->
-        <div class="bg-white rounded-2xl shadow-lg p-6 lg:p-8 border border-gray-100">
-          <h2 class="text-2xl lg:text-3xl font-bold text-blue-600 mb-6 pb-4 border-b-2 border-blue-100 flex items-center">
-            <i class="fas fa-eye mr-3"></i> Bölüm Görünürlükleri
-          </h2>
-          <p class="text-sm text-gray-600 mb-6"><i class="fas fa-info-circle mr-1 text-blue-500"></i> Hangi bölümlerin web sayfanızda görüneceğini seçin</p>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="flex items-center gap-4 p-4 bg-gradient-to-r from-green-50 to-blue-50 rounded-xl">
-              <input type="checkbox" name="goster_sosyal" id="id_goster_sosyal" 
-                     {% if form.goster_sosyal.value %}checked{% endif %}
-                     class="w-6 h-6 text-blue-600 rounded focus:ring-blue-500 cursor-pointer">
-              <label for="id_goster_sosyal" class="text-lg font-semibold cursor-pointer flex-1">
-                <i class="fas fa-share-alt mr-2 text-green-600"></i> Sosyal Medya Bölümü
-              </label>
-            </div>
-            <div class="flex items-center gap-4 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl">
-              <input type="checkbox" name="goster_hizmetler" id="id_goster_hizmetler" 
-                     {% if form.goster_hizmetler.value %}checked{% endif %}
-                     class="w-6 h-6 text-blue-600 rounded focus:ring-blue-500 cursor-pointer">
-              <label for="id_goster_hizmetler" class="text-lg font-semibold cursor-pointer flex-1">
-                <i class="fas fa-stethoscope mr-2 text-blue-600"></i> Hizmetler Bölümü
-              </label>
-            </div>
-            <div class="flex items-center gap-4 p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl">
-              <input type="checkbox" name="goster_calisma_saatleri" id="id_goster_calisma_saatleri" 
-                     {% if form.goster_calisma_saatleri.value %}checked{% endif %}
-                     class="w-6 h-6 text-blue-600 rounded focus:ring-blue-500 cursor-pointer">
-              <label for="id_goster_calisma_saatleri" class="text-lg font-semibold cursor-pointer flex-1">
-                <i class="fas fa-clock mr-2 text-purple-600"></i> Çalışma Saatleri Bölümü
-              </label>
-            </div>
-            <div class="flex items-center gap-4 p-4 bg-gradient-to-r from-orange-50 to-red-50 rounded-xl">
-              <input type="checkbox" name="goster_galeri" id="id_goster_galeri" 
-                     {% if form.goster_galeri.value %}checked{% endif %}
-                     class="w-6 h-6 text-blue-600 rounded focus:ring-blue-500 cursor-pointer">
-              <label for="id_goster_galeri" class="text-lg font-semibold cursor-pointer flex-1">
-                <i class="fas fa-images mr-2 text-orange-600"></i> Galeri Bölümü
-              </label>
-            </div>
-          </div>
-        </div>
-
-        <!-- Ek Bilgiler -->
-        <div class="bg-white rounded-2xl shadow-lg p-6 lg:p-8 border border-gray-100">
-          <h2 class="text-2xl lg:text-3xl font-bold text-blue-600 mb-6 pb-4 border-b-2 border-blue-100 flex items-center">
-            <i class="fas fa-info-circle mr-3"></i> Ek Bilgiler
-          </h2>
-          <div class="space-y-6">
-            <div>
-              <label for="id_uzmanlik_alanlari" class="block text-sm font-semibold text-gray-700 mb-2">
-                <i class="fas fa-graduation-cap mr-2 text-blue-500"></i> Uzmanlık Alanları
-              </label>
-              <textarea name="uzmanlik_alanlari" id="id_uzmanlik_alanlari" rows="3"
-                        placeholder="Kedi, Köpek, Kuş, Tavşan (virgülle ayırın)"
-                        class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all">{{ form.uzmanlik_alanlari.value|default:'' }}</textarea>
-              <p class="text-xs text-gray-500 mt-2"><i class="fas fa-info-circle mr-1"></i>Uzmanlık alanlarınızı virgülle ayırarak yazın</p>
-            </div>
-            <div>
-              <label for="id_calisma_saatleri" class="block text-sm font-semibold text-gray-700 mb-2">
-                <i class="fas fa-clock mr-2 text-green-500"></i> Çalışma Saatleri (Metin)
-              </label>
-              <textarea name="calisma_saatleri" id="id_calisma_saatleri" rows="2"
-                        placeholder="Pazartesi-Cuma: 09:00-18:00, Cumartesi: 10:00-16:00"
-                        class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all">{{ form.calisma_saatleri.value|default:'' }}</textarea>
-              <p class="text-xs text-gray-500 mt-2"><i class="fas fa-info-circle mr-1"></i>Çalışma saatlerinizi metin olarak yazın (yukarıdaki detaylı saatlerden farklı olarak)</p>
-            </div>
-            <div>
-              <label for="id_konum_koordinat" class="block text-sm font-semibold text-gray-700 mb-2">
-                <i class="fas fa-map-marker-alt mr-2 text-red-500"></i> Konum Koordinatı (Google Maps)
-              </label>
-              <input type="text" name="konum_koordinat" id="id_konum_koordinat"
-                     value="{{ form.konum_koordinat.value|default:'' }}"
-                     placeholder="38.231952, 42.428070"
-                     class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all">
-              <p class="text-xs text-gray-500 mt-2"><i class="fas fa-info-circle mr-1"></i>Google Maps'te konumunuzu göstermek için enlem ve boylam değerlerini girin (örn: 38.231952, 42.428070)</p>
-            </div>
-            <div>
-              <label for="id_web_slug" class="block text-sm font-semibold text-gray-700 mb-2">
-                <i class="fas fa-link mr-2 text-purple-500"></i> URL Slug (Opsiyonel)
-              </label>
-              <input type="text" name="web_slug" id="id_web_slug"
-                     value="{{ form.web_slug.value|default:veteriner.web_slug|default:'' }}"
-                     placeholder="pati-veteriner-klinigi"
-                     class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all">
-              <p class="text-xs text-gray-500 mt-2"><i class="fas fa-info-circle mr-1"></i>Boş bırakırsanız otomatik oluşturulur. Sadece İngilizce karakterler, rakamlar ve tire (-) kullanın</p>
             </div>
           </div>
         </div>
@@ -723,6 +906,44 @@
           target.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
       });
+    });
+    
+    // Çalışma saatleri dinamik zorunluluk kontrolü
+    const gunler = ['pazartesi', 'sali', 'carsamba', 'persembe', 'cuma', 'cumartesi', 'pazar'];
+    
+    gunler.forEach(gun => {
+      const kapaliCheckbox = document.getElementById(`id_${gun}_kapali`);
+      const baslangicInput = document.getElementById(`id_${gun}_baslangic`);
+      const bitisInput = document.getElementById(`id_${gun}_bitis`);
+      const baslangicRequired = document.getElementById(`${gun}_baslangic_required`);
+      const bitisRequired = document.getElementById(`${gun}_bitis_required`);
+      
+      if (kapaliCheckbox && baslangicInput && bitisInput) {
+        function updateRequired() {
+          const kapali = kapaliCheckbox.checked;
+          if (kapali) {
+            // Kapalıysa zorunlu değil
+            baslangicInput.removeAttribute('required');
+            bitisInput.removeAttribute('required');
+            baslangicInput.value = '';
+            bitisInput.value = '';
+            if (baslangicRequired) baslangicRequired.style.display = 'none';
+            if (bitisRequired) bitisRequired.style.display = 'none';
+          } else {
+            // Açıksa zorunlu
+            baslangicInput.setAttribute('required', 'required');
+            bitisInput.setAttribute('required', 'required');
+            if (baslangicRequired) baslangicRequired.style.display = 'inline';
+            if (bitisRequired) bitisRequired.style.display = 'inline';
+          }
+        }
+        
+        // İlk yüklemede kontrol et
+        updateRequired();
+        
+        // Checkbox değiştiğinde güncelle
+        kapaliCheckbox.addEventListener('change', updateRequired);
+      }
     });
   </script>
 

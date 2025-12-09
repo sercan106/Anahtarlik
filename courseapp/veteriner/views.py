@@ -19,9 +19,10 @@ from anahtarlik.dictionaries import Ilce
 @login_required
 def veteriner_paneli(request):
     # Veteriner profili kontrolü - otomatik oluşturma kaldırıldı
-    if not hasattr(request.user, 'veteriner_profili'):
-        from django.contrib import messages
-        messages.error(request, 'Bu sayfaya erişim yetkiniz yok. Veteriner profili bulunamadı.')
+    try:
+        vet = request.user.veteriner_profili
+    except Veteriner.DoesNotExist:
+        messages.error(request, 'Veteriner profiliniz bulunamadı.')
         return redirect('anahtarlik:kullanici_paneli')
     
     vet = request.user.veteriner_profili
@@ -391,7 +392,6 @@ def web_sayfasi_duzenle(request):
     if request.method == 'POST':
         form = VeterinerWebForm(request.POST, request.FILES, instance=veteriner)
         if form.is_valid():
-            # Form'un save metodu slug'ı zaten kaydediyor
             form.save()
             messages.success(request, "Web sayfanız başarıyla güncellendi!")
             return redirect('veteriner:web_sayfasi_duzenle')

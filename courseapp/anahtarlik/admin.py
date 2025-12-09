@@ -175,6 +175,7 @@ class SahipAdmin(admin.ModelAdmin):
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         """
         İlçe alanını seçilen ile göre filtrele.
+        Danışman veteriner için sadece aktif veterinerleri göster.
         """
         if db_field.name == "ilce":
             il_id = None
@@ -198,6 +199,11 @@ class SahipAdmin(admin.ModelAdmin):
                 kwargs["queryset"] = Ilce.objects.filter(il_id=il_id).order_by('ad')
             else:
                 kwargs["queryset"] = Ilce.objects.none()
+        
+        # Danışman veteriner için sadece aktif veterinerleri göster
+        if db_field.name == "danisman_veteriner":
+            from veteriner.models import Veteriner
+            kwargs["queryset"] = Veteriner.objects.filter(aktif=True).order_by('ad')
         
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 

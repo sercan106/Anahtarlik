@@ -1,12 +1,9 @@
 # veteriner/models.py
 
 from django.db import models
-from django.db import transaction
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator
 from django.utils import timezone
-from django.utils.text import slugify
-import time
 
 # Ödeme modeli (kurum)
 ODEME_PESIN = 'PESIN'
@@ -94,7 +91,10 @@ class Veteriner(models.Model):
         on_delete=models.SET_NULL, related_name='veteriner_profili'
     )
 
-    aktif = models.BooleanField(default=True)
+    aktif = models.BooleanField(
+        default=False,
+        help_text="Veteriner aktif mi? (Web sayfası yayına alınınca otomatik aktif olur)"
+    )
     olusturulma = models.DateTimeField(auto_now_add=True)
     odeme_modeli = models.CharField(max_length=10, choices=ODEME_SECENEKLERI, default=ODEME_PESIN)
     
@@ -105,9 +105,8 @@ class Veteriner(models.Model):
         help_text="Admin tarafından oluşturulan kullanıcının ilk girişte şifresini değiştirdiğini belirtir."
     )
 
-    # sayaçlar
-    tahsis_sayisi = models.PositiveIntegerField(default=0)
-    satis_sayisi = models.PositiveIntegerField(default=0)
+    # NOT: tahsis_sayisi ve satis_sayisi artık property olarak hesaplanıyor
+    # Eski field'lar kaldırıldı - dinamik hesaplama için property kullanılıyor
 
     # Yeni alanlar - Hizmet bilgileri
     uzmanlik_alanlari = models.TextField(blank=True, help_text="Uzmanlık alanları (virgülle ayırın)")
@@ -213,59 +212,20 @@ class Veteriner(models.Model):
     def __str__(self):
         return self.ad
     
-    def generate_unique_slug(self, base_text=None):
-        """
-        Benzersiz slug oluştur
-        Çakışmaları önlemek için counter veya timestamp kullanır
-        """
-        if not base_text:
-            base_text = self.ad
-        
-        if not base_text:
-            return None
-        
-        # Türkçe karakterleri İngilizce karşılıklarına çevir
-        tr_map = str.maketrans('çğıöşüÇĞIÖŞÜ', 'cgiosuCGIOSU')
-        temiz_ad = base_text.translate(tr_map)
-        base_slug = slugify(temiz_ad, allow_unicode=False)
-        
-        # Boş slug kontrolü (sadece özel karakterler varsa)
-        if not base_slug:
-            base_slug = f"veteriner-{self.pk or 'new'}"
-        
-        # Maksimum uzunluk kontrolü (200 karakter limiti için counter için yer bırak)
-        if len(base_slug) > 190:
-            base_slug = base_slug[:190]
-        
-        slug = base_slug
-        counter = 1
-        max_attempts = 1000  # Güvenlik için maksimum deneme limiti
-        
-        # Çakışma kontrolü - exclude ile mevcut kaydı hariç tut
-        while Veteriner.objects.filter(web_slug=slug).exclude(pk=self.pk).exists():
-            if counter > max_attempts:
-                # Son çare: timestamp ekle (çok nadir durumlar için)
-                timestamp_suffix = str(int(time.time()))[-6:]  # Son 6 hanesi
-                slug = f"{base_slug}-{timestamp_suffix}"
-                # Timestamp ile de çakışma olursa (çok nadir) bir daha dene
-                if Veteriner.objects.filter(web_slug=slug).exclude(pk=self.pk).exists():
-                    slug = f"{base_slug}-{int(time.time())}"
-                break
-            slug = f"{base_slug}-{counter}"
-            counter += 1
-        
-        return slug
-    
-    @transaction.atomic
     def save(self, *args, **kwargs):
-        """
-        Veteriner kaydını kaydet
-        Slug oluşturma ve SEO alanları otomatik doldurulur
-        Transaction.atomic ile race condition koruması sağlanır
-        """
-        # Slug oluştur (eğer yoksa)
-        if not self.web_slug and self.ad:
-            self.web_slug = self.generate_unique_slug()
+        # NOT: web_slug artık otomatik oluşturulmuyor
+        # Kullanıcı "Web Sayfamı Düzenle" sayfasından manuel oluşturur
+        
+        # Aktif durumu değişti mi kontrol et
+        aktif_oldu = False
+        if self.pk:  # Mevcut kayıt
+            try:
+                eski_veteriner = Veteriner.objects.get(pk=self.pk)
+                aktif_oldu = not eski_veteriner.aktif and self.aktif
+            except Veteriner.DoesNotExist:
+                aktif_oldu = self.aktif
+        else:  # Yeni kayıt
+            aktif_oldu = self.aktif
         
         # SEO başlık ve açıklama otomatik oluştur (eğer yoksa)
         if not self.web_seo_baslik and self.web_baslik:
@@ -275,16 +235,52 @@ class Veteriner(models.Model):
             self.web_seo_aciklama = self.web_aciklama[:160]
         
         super().save(*args, **kwargs)
+        
+        # Aktif olunca ilgili sahiplere veteriner ata (mevcut algoritma kullanılır)
+        if aktif_oldu and self.il:
+            from anahtarlik.models import Sahip
+            
+            # Bu veterinerin il/ilçesindeki veterineri olmayan sahiplere ata
+            ilgili_sahipler = Sahip.objects.filter(
+                il=self.il,
+                danisman_veteriner__isnull=True
+            ).select_related('il', 'ilce')
+            
+            if self.ilce:
+                ilgili_sahipler = ilgili_sahipler.filter(ilce=self.ilce)
+            
+            # Her sahip için veteriner ata (mevcut algoritma kullanılır)
+            for sahip in ilgili_sahipler:
+                # danisman_veteriner_ata() metodu zaten aktif etiket kontrolü yapıyor
+                sahip.danisman_veteriner_ata()
 
     @property
     def kalan_envanter(self) -> int:
-        return max((self.tahsis_sayisi or 0) - (self.satis_sayisi or 0), 0)
-    
+        if not self.pk:
+            return 0
+        # Property'ler kullanılıyor (field değil)
+        return max(self.tahsis_sayisi - self.satis_sayisi, 0)
+
     @property
     def danisman_sahip_sayisi(self) -> int:
-        """Danışman olduğu sahip sayısı"""
+        """Danışman olduğu sahip sayısı - id yoksa 0 dön"""
+        if not self.pk:
+            return 0
         return self.danisman_oldugu_sahipler.count()
-    
+
+    @property
+    def tahsis_sayisi(self) -> int:
+        if not self.pk:
+            return 0
+        return self.sattigi_etiketler.count()
+
+    @property
+    def satis_sayisi(self) -> int:
+        if not self.pk:
+            return 0
+        return self.sattigi_etiketler.filter(aktif=True).count()
+
+        
     @property
     def dinamik_kapasite(self) -> int:
         """Dinamik kapasite hesapla - Sadece satış başarısına göre"""
@@ -292,7 +288,7 @@ class Veteriner(models.Model):
         base_capacity = 50
         
         # Satış başarısı bonusu (daha agresif)
-        satis_sayisi = self.satis_sayisi or 0
+        satis_sayisi = self.satis_sayisi  # Property kullanılıyor
         if satis_sayisi >= 100:
             satis_bonus = 80  # 100+ satış
         elif satis_sayisi >= 50:
@@ -357,7 +353,7 @@ class Veteriner(models.Model):
     @property
     def satis_basari_seviyesi(self) -> str:
         """Satış başarı seviyesi"""
-        satis = self.satis_sayisi or 0
+        satis = self.satis_sayisi  # Property kullanılıyor
         
         if satis >= 100:
             return "🏆 Ustası"

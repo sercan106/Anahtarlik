@@ -484,7 +484,7 @@
                 <label for="durum" class="form-label"><i class="fas fa-filter me-2"></i>Durum</label>
                 <select name="durum" id="durum" class="form-select">
                     <option value="">Tümü</option>
-                    <option value="BEKLIYOR" {% if durum == 'BEKLIYOR' %}selected{% endif %}>Bekleyen</option>
+                    <option value="BEKLENIYOR" {% if durum == 'BEKLENIYOR' %}selected{% endif %}>Bekleyen</option>
                     <option value="ONAYLANDI" {% if durum == 'ONAYLANDI' %}selected{% endif %}>Onaylanan</option>
                     <option value="TAMAMLANDI" {% if durum == 'TAMAMLANDI' %}selected{% endif %}>Tamamlanan</option>
                     <option value="IPTAL" {% if durum == 'IPTAL' %}selected{% endif %}>İptal</option>
@@ -521,12 +521,12 @@
                 <div class="randevu-header">
                     <div class="randevu-id">#{{ randevu.id }}</div>
                     <div class="randevu-badge
-                        {% if randevu.durum == 'BEKLIYOR' %}badge-bekliyor
+                        {% if randevu.durum == 'BEKLENIYOR' %}badge-bekliyor
                         {% elif randevu.durum == 'ONAYLANDI' %}badge-onaylandi
                         {% elif randevu.durum == 'TAMAMLANDI' %}badge-tamamlandi
                         {% elif randevu.durum == 'IPTAL' %}badge-iptal
                         {% endif %}">
-                        {% if randevu.durum == 'BEKLIYOR' %}Bekleyen
+                        {% if randevu.durum == 'BEKLENIYOR' %}Bekleyen
                         {% elif randevu.durum == 'ONAYLANDI' %}Onaylanan
                         {% elif randevu.durum == 'TAMAMLANDI' %}Tamamlanan
                         {% elif randevu.durum == 'IPTAL' %}İptal

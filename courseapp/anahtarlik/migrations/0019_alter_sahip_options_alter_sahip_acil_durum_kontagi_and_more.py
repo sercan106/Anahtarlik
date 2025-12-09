@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('anahtarlik', '0018_enforce_evcilhayvan_fk'),
-        ('veteriner', '0026_veteriner_ilk_giris_sifre_degistirildi'),
+        ('veteriner', '0001_initial'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 

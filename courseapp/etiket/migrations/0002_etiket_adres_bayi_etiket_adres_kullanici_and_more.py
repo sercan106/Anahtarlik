@@ -10,7 +10,7 @@ class Migration(migrations.Migration):
         ('anahtarlik', '0005_delete_etiket'),
         ('etiket', '0001_initial'),
         ('petshop', '0002_alter_petshop_il_alter_petshop_ilce'),
-        ('veteriner', '0014_remove_veteriner_deneyim_yili'),
+        ('veteriner', '0001_initial'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 

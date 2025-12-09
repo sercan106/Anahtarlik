@@ -23,9 +23,9 @@
     /* Hero Background with Parallax Effect */
     .hero-bg { 
       {% if veteriner.web_resim1 %}
-      background-image: linear-gradient(135deg, rgba(91, 155, 213, 0.9) 0%, rgba(112, 193, 179, 0.85) 100%), url('{{ veteriner.web_resim1.url }}');
+      background-image: linear-gradient(135deg, rgba(16, 185, 129, 0.9) 0%, rgba(59, 130, 246, 0.85) 100%), url('{{ veteriner.web_resim1.url }}');
       {% else %}
-      background-image: linear-gradient(135deg, rgba(91, 155, 213, 0.9) 0%, rgba(112, 193, 179, 0.85) 100%), url('https://images.unsplash.com/photo-1548681528-6a5c45b66b42?w=1600');
+      background-image: linear-gradient(135deg, rgba(16, 185, 129, 0.9) 0%, rgba(59, 130, 246, 0.85) 100%), url('https://images.unsplash.com/photo-1548681528-6a5c45b66b42?w=1600');
       {% endif %}
       background-size: cover;
       background-position: center;
@@ -84,7 +84,7 @@
     
     /* Gradient Text */
     .gradient-text {
-      background: linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%);
+      background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -143,7 +143,7 @@
       position: relative;
       border: 2px solid transparent;
       background: linear-gradient(white, white) padding-box,
-                  linear-gradient(135deg, #5B9BD5, #70C1B3) border-box;
+                  linear-gradient(135deg, #10b981, #3b82f6) border-box;
     }
     
     /* Icon Animations */
@@ -302,30 +302,15 @@
         <p class="text-lg lg:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">{{ veteriner.web_aciklama|default:'Uzman veteriner hekimlerimizle sağlıklı ve mutlu yaşamlar için çalışıyoruz. Her canlının sağlığı bizim için değerlidir.' }}</p>
       </div>
       
-       <div class="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12 max-w-6xl mx-auto">
-         <div class="text-center card-hover bg-gradient-to-br from-green-50 to-white p-8 rounded-2xl shadow-lg">
-           <div class="text-5xl mb-4 text-green-600"><i class="fas fa-heart"></i></div>
-           <h3 class="text-2xl font-bold mb-3 text-gray-800">Sevgi & Özen</h3>
-           <p class="text-gray-600">Tüm dostlarımıza sevgiyle yaklaşır, onların mutluluğu için çalışırız.</p>
-         </div>
-         
-         <div class="text-center card-hover bg-gradient-to-br from-blue-50 to-white p-8 rounded-2xl shadow-lg">
-           <div class="text-5xl mb-4 text-blue-600"><i class="fas fa-hospital"></i></div>
-           <h3 class="text-2xl font-bold mb-3 text-gray-800">Uzman Kadro</h3>
-           <p class="text-gray-600">Alanında deneyimli veteriner hekimlerimizle en iyi hizmeti sunuyoruz.</p>
-         </div>
-         
-         <div class="text-center card-hover bg-gradient-to-br from-purple-50 to-white p-8 rounded-2xl shadow-lg">
-           <div class="text-5xl mb-4 text-purple-600"><i class="fas fa-bolt"></i></div>
-           <h3 class="text-2xl font-bold mb-3 text-gray-800">7/24 Destek</h3>
-           <p class="text-gray-600">Acil durumlarınızda yanınızdayız, her zaman ulaşabilirsiniz.</p>
-         </div>
+       {% if veteriner.web_resim1 %}
+       <div class="max-w-4xl mx-auto mt-12">
+         <img src="{{ veteriner.web_resim1.url }}" alt="{{ veteriner.web_baslik|default:veteriner.ad }}" class="w-full rounded-2xl shadow-2xl">
        </div>
+       {% endif %}
     </div>
   </section>
 
   <!-- Hizmetler Section -->
-  {% if veteriner.goster_hizmetler %}
   <section id="hizmetler" class="py-20 lg:py-32 bg-gradient-to-br from-gray-50 to-blue-50 reveal">
     <div class="container mx-auto px-4 lg:px-8">
       <div class="text-center mb-16">
@@ -339,67 +324,25 @@
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
          {% if veteriner.hizmet1_baslik %}
          <div class="bg-white p-8 rounded-2xl shadow-lg card-hover gradient-border">
-           {% if veteriner.hizmet1_icon %}
-             {% if 'fa-' in veteriner.hizmet1_icon or 'fas ' in veteriner.hizmet1_icon or 'fab ' in veteriner.hizmet1_icon %}
-               <div class="text-4xl mb-4 text-blue-600"><i class="{{ veteriner.hizmet1_icon }}"></i></div>
-             {% else %}
-               <div class="text-4xl mb-4 text-blue-600">{{ veteriner.hizmet1_icon }}</div>
-             {% endif %}
-           {% else %}
-             <div class="text-4xl mb-4 text-blue-600"><i class="fas fa-stethoscope"></i></div>
-           {% endif %}
+           <div class="text-4xl mb-4 text-blue-600">{{ veteriner.hizmet1_icon|default:'<i class="fas fa-stethoscope"></i>'|safe }}</div>
            <h3 class="text-2xl font-bold mb-4 text-gray-800">{{ veteriner.hizmet1_baslik }}</h3>
            <p class="text-gray-600 leading-relaxed">{{ veteriner.hizmet1_aciklama }}</p>
-         </div>
-         {% else %}
-         <div class="bg-white p-8 rounded-2xl shadow-lg card-hover gradient-border">
-           <div class="text-4xl mb-4 text-blue-600"><i class="fas fa-stethoscope"></i></div>
-           <h3 class="text-2xl font-bold mb-4 text-gray-800">Genel Muayene</h3>
-           <p class="text-gray-600 leading-relaxed">Evcil dostlarınızın sağlık kontrolü ve kapsamlı muayene hizmetleri.</p>
          </div>
          {% endif %}
          
          {% if veteriner.hizmet2_baslik %}
          <div class="bg-white p-8 rounded-2xl shadow-lg card-hover gradient-border">
-           {% if veteriner.hizmet2_icon %}
-             {% if 'fa-' in veteriner.hizmet2_icon or 'fas ' in veteriner.hizmet2_icon or 'fab ' in veteriner.hizmet2_icon %}
-               <div class="text-4xl mb-4 text-green-600"><i class="{{ veteriner.hizmet2_icon }}"></i></div>
-             {% else %}
-               <div class="text-4xl mb-4 text-green-600">{{ veteriner.hizmet2_icon }}</div>
-             {% endif %}
-           {% else %}
-             <div class="text-4xl mb-4 text-green-600"><i class="fas fa-syringe"></i></div>
-           {% endif %}
+           <div class="text-4xl mb-4 text-green-600">{{ veteriner.hizmet2_icon|default:'<i class="fas fa-syringe"></i>'|safe }}</div>
            <h3 class="text-2xl font-bold mb-4 text-gray-800">{{ veteriner.hizmet2_baslik }}</h3>
            <p class="text-gray-600 leading-relaxed">{{ veteriner.hizmet2_aciklama }}</p>
-         </div>
-         {% else %}
-         <div class="bg-white p-8 rounded-2xl shadow-lg card-hover gradient-border">
-           <div class="text-4xl mb-4 text-green-600"><i class="fas fa-syringe"></i></div>
-           <h3 class="text-2xl font-bold mb-4 text-gray-800">Aşılama</h3>
-           <p class="text-gray-600 leading-relaxed">Tüm aşı türleri ve koruyucu sağlık programları ile dostlarınızı koruyun.</p>
          </div>
          {% endif %}
          
          {% if veteriner.hizmet3_baslik %}
          <div class="bg-white p-8 rounded-2xl shadow-lg card-hover gradient-border">
-           {% if veteriner.hizmet3_icon %}
-             {% if 'fa-' in veteriner.hizmet3_icon or 'fas ' in veteriner.hizmet3_icon or 'fab ' in veteriner.hizmet3_icon %}
-               <div class="text-4xl mb-4 text-red-600"><i class="{{ veteriner.hizmet3_icon }}"></i></div>
-             {% else %}
-               <div class="text-4xl mb-4 text-red-600">{{ veteriner.hizmet3_icon }}</div>
-             {% endif %}
-           {% else %}
-             <div class="text-4xl mb-4 text-red-600"><i class="fas fa-user-md"></i></div>
-           {% endif %}
+           <div class="text-4xl mb-4 text-red-600">{{ veteriner.hizmet3_icon|default:'<i class="fas fa-user-md"></i>'|safe }}</div>
            <h3 class="text-2xl font-bold mb-4 text-gray-800">{{ veteriner.hizmet3_baslik }}</h3>
            <p class="text-gray-600 leading-relaxed">{{ veteriner.hizmet3_aciklama }}</p>
-         </div>
-         {% else %}
-         <div class="bg-white p-8 rounded-2xl shadow-lg card-hover gradient-border">
-           <div class="text-4xl mb-4 text-red-600"><i class="fas fa-user-md"></i></div>
-           <h3 class="text-2xl font-bold mb-4 text-gray-800">Cerrahi İşlemler</h3>
-           <p class="text-gray-600 leading-relaxed">Modern ekipmanlarımızla güvenli cerrahi müdahale ve operasyonlar.</p>
          </div>
          {% endif %}
       </div>
@@ -598,34 +541,25 @@
              </div>
            </div>
            
-           {% if veteriner.goster_calisma_saatleri %}
            <div class="bg-gradient-to-br from-orange-50 to-white p-8 rounded-2xl shadow-lg card-hover">
              <div class="flex items-start space-x-4">
                <div class="text-4xl text-orange-600"><i class="fas fa-clock"></i></div>
                <div>
                  <h3 class="text-xl font-bold mb-2 text-gray-800">Çalışma Saatleri</h3>
-                 {% if veteriner.calisma_saatleri %}
-                   <p class="text-gray-600">{{ veteriner.calisma_saatleri }}</p>
-                 {% else %}
-                   <p class="text-gray-600">
-                     <strong>Pazartesi - Cumartesi:</strong><br>
-                     {% if veteriner.pazartesi_baslangic and veteriner.pazartesi_bitis %}
-                     {{ veteriner.pazartesi_baslangic|time:'H:i' }} - {{ veteriner.pazartesi_bitis|time:'H:i' }}
-                     {% else %}
-                     09:00 - 18:00
-                     {% endif %}
-                   </p>
-                   <p class="text-gray-600 mt-2">
-                     <strong>Pazar:</strong> {% if veteriner.pazar_kapali %}Kapalı{% else %}{% if veteriner.pazar_baslangic and veteriner.pazar_bitis %}{{ veteriner.pazar_baslangic|time:'H:i' }} - {{ veteriner.pazar_bitis|time:'H:i' }}{% else %}Kapalı{% endif %}{% endif %}
-                   </p>
-                 {% endif %}
+                 <div class="space-y-2 text-gray-600">
+                   <div><strong>Pazartesi:</strong> {% if veteriner.pazartesi_kapali %}Kapalı{% elif veteriner.pazartesi_baslangic and veteriner.pazartesi_bitis %}{{ veteriner.pazartesi_baslangic|time:'H:i' }} - {{ veteriner.pazartesi_bitis|time:'H:i' }}{% else %}Belirtilmemiş{% endif %}</div>
+                   <div><strong>Salı:</strong> {% if veteriner.sali_kapali %}Kapalı{% elif veteriner.sali_baslangic and veteriner.sali_bitis %}{{ veteriner.sali_baslangic|time:'H:i' }} - {{ veteriner.sali_bitis|time:'H:i' }}{% else %}Belirtilmemiş{% endif %}</div>
+                   <div><strong>Çarşamba:</strong> {% if veteriner.carsamba_kapali %}Kapalı{% elif veteriner.carsamba_baslangic and veteriner.carsamba_bitis %}{{ veteriner.carsamba_baslangic|time:'H:i' }} - {{ veteriner.carsamba_bitis|time:'H:i' }}{% else %}Belirtilmemiş{% endif %}</div>
+                   <div><strong>Perşembe:</strong> {% if veteriner.persembe_kapali %}Kapalı{% elif veteriner.persembe_baslangic and veteriner.persembe_bitis %}{{ veteriner.persembe_baslangic|time:'H:i' }} - {{ veteriner.persembe_bitis|time:'H:i' }}{% else %}Belirtilmemiş{% endif %}</div>
+                   <div><strong>Cuma:</strong> {% if veteriner.cuma_kapali %}Kapalı{% elif veteriner.cuma_baslangic and veteriner.cuma_bitis %}{{ veteriner.cuma_baslangic|time:'H:i' }} - {{ veteriner.cuma_bitis|time:'H:i' }}{% else %}Belirtilmemiş{% endif %}</div>
+                   <div><strong>Cumartesi:</strong> {% if veteriner.cumartesi_kapali %}Kapalı{% elif veteriner.cumartesi_baslangic and veteriner.cumartesi_bitis %}{{ veteriner.cumartesi_baslangic|time:'H:i' }} - {{ veteriner.cumartesi_bitis|time:'H:i' }}{% else %}Belirtilmemiş{% endif %}</div>
+                   <div><strong>Pazar:</strong> {% if veteriner.pazar_kapali %}Kapalı{% elif veteriner.pazar_baslangic and veteriner.pazar_bitis %}{{ veteriner.pazar_baslangic|time:'H:i' }} - {{ veteriner.pazar_bitis|time:'H:i' }}{% else %}Belirtilmemiş{% endif %}</div>
+                 </div>
                </div>
              </div>
            </div>
-           {% endif %}
            
            <!-- Social Media -->
-           {% if veteriner.goster_sosyal %}
            <div class="flex space-x-6 justify-center lg:justify-start">
              {% if instagram_url %}
              <a href="{{ instagram_url }}" target="_blank" class="w-14 h-14 bg-gradient-to-br from-pink-500 to-orange-500 rounded-full flex items-center justify-center text-white text-2xl hover:scale-110 transform transition-all duration-300 shadow-lg">
@@ -637,25 +571,45 @@
                <i class="fab fa-facebook-f"></i>
              </a>
              {% endif %}
+             {% if twitter_url %}
+             <a href="{{ twitter_url }}" target="_blank" class="w-14 h-14 bg-blue-400 rounded-full flex items-center justify-center text-white text-2xl hover:scale-110 transform transition-all duration-300 shadow-lg">
+               <i class="fab fa-twitter"></i>
+             </a>
+             {% endif %}
+             {% if linkedin_url %}
+             <a href="{{ linkedin_url }}" target="_blank" class="w-14 h-14 bg-blue-700 rounded-full flex items-center justify-center text-white text-2xl hover:scale-110 transform transition-all duration-300 shadow-lg">
+               <i class="fab fa-linkedin"></i>
+             </a>
+             {% endif %}
+             {% if youtube_url %}
+             <a href="{{ youtube_url }}" target="_blank" class="w-14 h-14 bg-red-600 rounded-full flex items-center justify-center text-white text-2xl hover:scale-110 transform transition-all duration-300 shadow-lg">
+               <i class="fab fa-youtube"></i>
+             </a>
+             {% endif %}
              {% if veteriner.whatsapp %}
              <a href="https://wa.me/{{ veteriner.whatsapp }}" target="_blank" class="w-14 h-14 bg-green-500 rounded-full flex items-center justify-center text-white text-2xl hover:scale-110 transform transition-all duration-300 shadow-lg">
                <i class="fab fa-whatsapp"></i>
              </a>
              {% endif %}
+             {% if veteriner.website %}
+             <a href="{{ veteriner.website }}" target="_blank" class="w-14 h-14 bg-gray-700 rounded-full flex items-center justify-center text-white text-2xl hover:scale-110 transform transition-all duration-300 shadow-lg">
+               <i class="fas fa-globe"></i>
+             </a>
+             {% endif %}
            </div>
-           {% endif %}
          </div>
         
         <!-- Map -->
         <div class="map-container">
           {% if veteriner.konum_koordinat %}
-            {% with koordinat=veteriner.konum_koordinat|stringformat:"s" %}
-              <iframe src="https://www.google.com/maps?q={{ koordinat|urlencode }}&output=embed" width="100%" height="100%" style="border:0;" allowfullscreen loading="lazy"></iframe>
-            {% endwith %}
+          <!-- Koordinat varsa koordinatı kullan -->
+          <iframe src="https://www.google.com/maps?q={{ veteriner.konum_koordinat|urlencode }}&output=embed" width="100%" height="100%" style="border:0;" allowfullscreen loading="lazy"></iframe>
           {% elif veteriner.il and veteriner.ilce %}
-            <iframe src="https://www.google.com/maps?q={{ veteriner.ilce.ad|urlencode }}+{{ veteriner.il.ad|urlencode }}&output=embed" width="100%" height="100%" style="border:0;" allowfullscreen loading="lazy"></iframe>
+          <!-- Koordinat yoksa il/ilçe bilgisini kullan -->
+          <iframe src="https://www.google.com/maps?q={{ veteriner.ilce.ad|urlencode }}+{{ veteriner.il.ad|urlencode }}&output=embed" width="100%" height="100%" style="border:0;" allowfullscreen loading="lazy"></iframe>
           {% else %}
-            <iframe src="https://www.google.com/maps?q=Istanbul&output=embed" width="100%" height="100%" style="border:0;" allowfullscreen loading="lazy"></iframe>
+          <!-- Hiçbiri yoksa varsayılan -->
+          <iframe src="https://www.google.com/maps?q=Istanbul&output=embed" width="100%" height="100%" style="border:0;" allowfullscreen loading="lazy"></iframe>
           {% endif %}
         </div>
       </div>
@@ -833,44 +787,8 @@
     const saatSelect = document.getElementById('saat');
     const saatUyari = document.getElementById('saat-uyari');
     
-    // Veteriner çalışma saatleri (varsayılan)
-    const calismaSaatleri = {
-      0: { // Pazartesi
-        baslangic: '09:00',
-        bitis: '18:00',
-        kapali: false
-      },
-      1: { // Salı
-        baslangic: '09:00',
-        bitis: '18:00',
-        kapali: false
-      },
-      2: { // Çarşamba
-        baslangic: '09:00',
-        bitis: '18:00',
-        kapali: false
-      },
-      3: { // Perşembe
-        baslangic: '09:00',
-        bitis: '18:00',
-        kapali: false
-      },
-      4: { // Cuma
-        baslangic: '09:00',
-        bitis: '18:00',
-        kapali: false
-      },
-      5: { // Cumartesi
-        baslangic: '09:00',
-        bitis: '18:00',
-        kapali: false
-      },
-      6: { // Pazar
-        baslangic: '09:00',
-        bitis: '18:00',
-        kapali: true
-      }
-    };
+    // Veteriner çalışma saatleri (dinamik - web formdan alınır)
+    const calismaSaatleri = {{ calisma_saatleri_json|safe }};
     
     function generateTimeSlots(baslangic, bitis) {
       const slots = [];
@@ -893,17 +811,37 @@
       }
       
       const date = new Date(selectedDate);
-      const dayOfWeek = date.getDay();
+      // JavaScript'te Pazar=0, Pazartesi=1... ama bizim sistemde Pazartesi=0
+      // Bu yüzden dönüşüm yapıyoruz
+      let dayOfWeek = date.getDay(); // 0=Pazar, 1=Pazartesi...
+      dayOfWeek = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // Pazartesi=0, Pazar=6
+      
       const calisma = calismaSaatleri[dayOfWeek];
       
       saatSelect.innerHTML = '';
       
+      // Kapalı gün kontrolü
       if (calisma.kapali) {
         saatSelect.innerHTML = '<option value="">Bu gün çalışmıyor</option>';
+        saatSelect.disabled = true;
         saatUyari.classList.remove('hidden');
+        saatUyari.textContent = 'Bu gün veteriner kapalıdır. Lütfen başka bir gün seçin.';
+        saatUyari.className = 'text-sm text-red-600 mt-2';
         return;
       }
       
+      // Çalışma saatleri belirtilmemişse
+      if (!calisma.baslangic || !calisma.bitis) {
+        saatSelect.innerHTML = '<option value="">Bu gün için çalışma saatleri belirtilmemiş</option>';
+        saatSelect.disabled = true;
+        saatUyari.classList.remove('hidden');
+        saatUyari.textContent = 'Bu gün için çalışma saatleri belirtilmemiş. Lütfen veteriner ile iletişime geçin veya başka bir gün seçin.';
+        saatUyari.className = 'text-sm text-orange-600 mt-2';
+        return;
+      }
+      
+      // Çalışma saatleri varsa saat seçeneklerini oluştur
+      saatSelect.disabled = false;
       const timeSlots = generateTimeSlots(calisma.baslangic, calisma.bitis);
       saatSelect.innerHTML = '<option value="">Saat seçiniz</option>';
       

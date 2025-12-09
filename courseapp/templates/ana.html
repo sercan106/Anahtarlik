@@ -324,7 +324,7 @@
                                 {% endif %}
                             </div>
                                 <div class="profile-card-name">{{
-                                    user.veteriner_profili.klinik_adi|default:user.username }}</div>
+                                    user.veteriner_profili.ad|default:user.username }}</div>
                             <div class="profile-card-role">
                                 <span class="badge role-badge-veteriner">Veteriner</span>
                                 {% if user.veteriner_profili.web_aktif %}
@@ -335,8 +335,7 @@
 
                         <li class="quick-stats">
                             <div class="quick-stat-item">
-                                <span class="quick-stat-value">{{ user.veteriner_profili.randevular.count|default:0
-                                    }}</span>
+                                <span class="quick-stat-value">{% if user.veteriner_profili.pk %}{{ user.veteriner_profili.randevular.count|default:0 }}{% else %}0{% endif %}</span>
                                 <span class="quick-stat-label">Randevu</span>
                             </div>
                             <div class="quick-stat-item">
@@ -344,8 +343,7 @@
                                 <span class="quick-stat-label">İlan</span>
                             </div>
                             <div class="quick-stat-item">
-                                <span class="quick-stat-value">{{
-                                    user.veteriner_profili.ortalama_puan|floatformat:1|default:"5.0" }}</span>
+                                <span class="quick-stat-value">{% if user.veteriner_profili.pk %}{{ user.veteriner_profili.ortalama_puan|floatformat:1|default:"5.0" }}{% else %}5.0{% endif %}</span>
                                 <span class="quick-stat-label">Puan</span>
                             </div>
                         </li>
@@ -706,7 +704,7 @@
                                     <i class="fas fa-user-md text-white"></i>
                                     {% endif %}
                                 </div>
-                        <div class="profile-card-name">{{ user.veteriner_profili.klinik_adi|default:user.username }}</div>
+                        <div class="profile-card-name">{{ user.veteriner_profili.ad|default:user.username }}</div>
                                 <div class="profile-card-role">
                                     <span class="badge role-badge-veteriner">Veteriner</span>
                                     {% if user.veteriner_profili.web_aktif %}
@@ -717,7 +715,7 @@
 
                     <div class="quick-stats mb-4">
                                 <div class="quick-stat-item">
-                            <span class="quick-stat-value">{{ user.veteriner_profili.randevular.count|default:0 }}</span>
+                            <span class="quick-stat-value">{% if user.veteriner_profili.pk %}{{ user.veteriner_profili.randevular.count|default:0 }}{% else %}0{% endif %}</span>
                                     <span class="quick-stat-label">Randevu</span>
                                 </div>
                                 <div class="quick-stat-item">
@@ -725,7 +723,7 @@
                                     <span class="quick-stat-label">İlan</span>
                                 </div>
                                 <div class="quick-stat-item">
-                            <span class="quick-stat-value">{{ user.veteriner_profili.ortalama_puan|floatformat:1|default:"5.0" }}</span>
+                            <span class="quick-stat-value">{% if user.veteriner_profili.pk %}{{ user.veteriner_profili.ortalama_puan|floatformat:1|default:"5.0" }}{% else %}5.0{% endif %}</span>
                                     <span class="quick-stat-label">Puan</span>
                                 </div>
                     </div>

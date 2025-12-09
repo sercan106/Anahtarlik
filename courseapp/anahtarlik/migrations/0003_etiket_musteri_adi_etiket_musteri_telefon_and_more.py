@@ -8,7 +8,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('anahtarlik', '0002_sahippropaket_sahipproabonelik'),
-        ('veteriner', '0011_remove_veterinermesaj_kullanici_and_more'),
+        ('veteriner', '0001_initial'),
     ]
 
     operations = [

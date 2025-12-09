@@ -49,6 +49,33 @@
   <main class="container mx-auto px-4 py-8 lg:py-12">
     <div class="max-w-6xl mx-auto">
       
+      <!-- Slug Yoksa Bilgilendirme -->
+      {% if slug_yok_mesaji %}
+      <div class="bg-gradient-to-r from-yellow-50 to-orange-50 border-l-4 border-yellow-600 p-6 mb-8 rounded-xl shadow-md">
+        <div class="flex items-start space-x-4">
+          <div class="text-3xl text-yellow-600"><i class="fas fa-exclamation-circle"></i></div>
+          <div class="flex-1">
+            <h3 class="text-lg font-bold text-yellow-800 mb-2">Web Sayfası URL Adresi Oluştur</h3>
+            <p class="text-sm lg:text-base leading-relaxed text-yellow-700">
+              {{ slug_yok_mesaji }}
+            </p>
+            <div class="mt-3 p-3 bg-white rounded-lg">
+              <p class="text-xs text-gray-600 mb-1"><strong>Örnek URL adresleri:</strong></p>
+              <ul class="text-xs text-gray-600 list-disc list-inside space-y-1">
+                <li>pati-petshop</li>
+                <li>mehmet-petshop</li>
+                <li>istanbul-hayvan-urunleri</li>
+              </ul>
+              <p class="text-xs text-gray-500 mt-2">
+                <i class="fas fa-info-circle"></i> Sadece küçük harf, rakam ve tire (-) kullanabilirsiniz. 
+                Türkçe karakterler otomatik olarak dönüştürülecektir.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
       <!-- Info Card -->
       <div class="bg-gradient-to-r from-blue-50 to-green-50 border-l-4 border-blue-600 p-6 mb-8 rounded-xl shadow-md">
         <div class="flex items-start space-x-4">
@@ -80,6 +107,40 @@
             <i class="fas fa-cog mr-3"></i> Genel Ayarlar
           </h2>
           <div class="space-y-4">
+            
+            <!-- Web Slug Alanı -->
+            <div>
+              <label for="id_web_slug" class="block text-sm font-semibold text-gray-700 mb-2">
+                <i class="fas fa-link mr-2 text-blue-500"></i> Web Sayfası URL Adresi
+                {% if not petshop.web_slug %}
+                  <span class="text-red-500">*</span>
+                {% endif %}
+              </label>
+              <input type="text" 
+                     name="web_slug" 
+                     id="id_web_slug" 
+                     value="{{ form.web_slug.value|default:petshop.web_slug|default:'' }}"
+                     placeholder="pati-petshop"
+                     class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all {% if form.web_slug.errors %}border-red-500{% endif %}">
+              {% if form.web_slug.errors %}
+                <div class="mt-2 text-sm text-red-600">
+                  {% for error in form.web_slug.errors %}
+                    <p><i class="fas fa-exclamation-triangle mr-1"></i>{{ error }}</p>
+                  {% endfor %}
+                </div>
+              {% endif %}
+              {% if form.web_slug.help_text %}
+                <p class="mt-2 text-xs text-gray-500">{{ form.web_slug.help_text }}</p>
+              {% endif %}
+              {% if petshop.web_slug %}
+                <p class="mt-2 text-sm text-green-600">
+                  <i class="fas fa-check-circle mr-1"></i> Mevcut URL: 
+                  <code class="bg-gray-100 px-2 py-1 rounded">{{ request.scheme }}://{{ request.get_host }}{% url 'petshop:web_sayfasi_gorunum' slug=petshop.web_slug %}</code>
+                </p>
+              {% endif %}
+            </div>
+            
+            <!-- Web Aktif checkbox -->
             <div class="flex items-center gap-4 p-4 bg-gradient-to-r from-green-50 to-blue-50 rounded-xl">
               <input type="checkbox" name="web_aktif" id="id_web_aktif" 
                      {% if form.web_aktif.value %}checked{% endif %}
@@ -88,6 +149,13 @@
                 <i class="fas fa-globe mr-2 text-green-600"></i> Web sayfamı yayına al
               </label>
             </div>
+            {% if form.web_aktif.errors %}
+              <div class="mt-2 text-sm text-red-600">
+                {% for error in form.web_aktif.errors %}
+                  <p><i class="fas fa-exclamation-triangle mr-1"></i>{{ error }}</p>
+                {% endfor %}
+              </div>
+            {% endif %}
             <p class="text-sm text-gray-600 ml-10"><i class="fas fa-info-circle mr-1 text-blue-500"></i> Bu kutuyu işaretlediğinizde sayfanız herkese açık olur ve arama motorlarında görünür.</p>
           </div>
         </div>
