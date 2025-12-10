@@ -24,5 +24,8 @@ urlpatterns = [
 ]
 
 # Medya ve statik dosyalar
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+# PythonAnywhere'de production'da (DEBUG=False) static ve media dosyaları
+# Web server tarafından serve edilir, Django'dan serve edilmemeli
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

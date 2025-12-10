@@ -12,14 +12,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY: Environment variables kullan
 SECRET_KEY = config('SECRET_KEY', default='django-insecure-$1!qju8gp_pq9!64se@y!n-h!=@f3%xgf(sx9*o43i$696k(4t-DEVELOPMENT-ONLY')
-DEBUG = config('DEBUG', default=True, cast=bool)
+
+# DEBUG ayarı - PythonAnywhere'de False olmalı
+DEBUG = config('DEBUG', default=False, cast=bool)
 
 # PythonAnywhere için ALLOWED_HOSTS
 # Ücretsiz hesap için: username.pythonanywhere.com
 # Örnek: ALLOWED_HOSTS = ['username.pythonanywhere.com']
+# Production'da mutlaka domain adınızı ekleyin!
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='127.0.0.1,localhost', cast=Csv())
 
 # Site URL (QR linkleri vb. için kullanılıyor)
+# PythonAnywhere'de: https://username.pythonanywhere.com
 SITE_URL = config('SITE_URL', default='http://127.0.0.1:8000')
 
 # Uygulamalar
@@ -118,16 +122,26 @@ USE_TZ = True
 USE_L10N = False
 
 # Statik ve medya dosyaları
+# PythonAnywhere'de static files /static/ altında otomatik serve edilir
 STATIC_ROOT = BASE_DIR / "staticfiles"
-STATIC_URL = '/static/'  # tavsiye edilen kullanım
+STATIC_URL = '/static/'  # PythonAnywhere'de bu path kullanılır
 STATICFILES_DIRS = [BASE_DIR / "static"]
 
+# PythonAnywhere için static files finders
+STATICFILES_FINDERS = [
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+]
+
+# Media dosyaları
+# PythonAnywhere'de Web app ayarlarında /media/ -> /home/username/courseapp/media/ mapping yapılmalı
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# PythonAnywhere için static ve media dosyaları
-# PythonAnywhere'de static files otomatik olarak /static/ altında serve edilir
-# Media files için Web app ayarlarında /media/ -> /home/username/courseapp/media/ mapping yapılmalı
+# PythonAnywhere için static ve media dosyaları notları:
+# 1. Static files: python manage.py collectstatic çalıştırılmalı
+# 2. Media files: Web app ayarlarında /media/ -> /home/username/courseapp/media/ mapping yapılmalı
+# 3. Production'da DEBUG=False olduğunda static/media serving Django'da kapatılmalı
 
 # Varsayılan PK tipi
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
@@ -200,18 +214,23 @@ LOGS_DIR.mkdir(exist_ok=True)
 
 # Production güvenlik ayarları
 if not DEBUG:
-    # HTTPS zorunlu
-    SECURE_SSL_REDIRECT = config('SECURE_SSL_REDIRECT', default=True, cast=bool)
+    # PythonAnywhere ücretsiz hesap HTTPS kullanır, bu ayarlar aktif olabilir
+    # Ancak bazı ayarlar PythonAnywhere'de sorun çıkarabilir, dikkatli kullanın
+    
+    # HTTPS zorunlu (PythonAnywhere'de genelde True olmalı)
+    SECURE_SSL_REDIRECT = config('SECURE_SSL_REDIRECT', default=False, cast=bool)  # PythonAnywhere'de False olabilir
+    
+    # HSTS ayarları (PythonAnywhere'de genelde sorun çıkarmaz)
     SECURE_HSTS_SECONDS = config('SECURE_HSTS_SECONDS', default=31536000, cast=int)  # 1 yıl
     SECURE_HSTS_INCLUDE_SUBDOMAINS = config('SECURE_HSTS_INCLUDE_SUBDOMAINS', default=True, cast=bool)
-    SECURE_HSTS_PRELOAD = config('SECURE_HSTS_PRELOAD', default=True, cast=bool)
+    SECURE_HSTS_PRELOAD = config('SECURE_HSTS_PRELOAD', default=False, cast=bool)  # PythonAnywhere'de False
     
-    # Cookie güvenliği
+    # Cookie güvenliği (PythonAnywhere HTTPS kullanır, True olabilir)
     SESSION_COOKIE_SECURE = config('SESSION_COOKIE_SECURE', default=True, cast=bool)
     CSRF_COOKIE_SECURE = config('CSRF_COOKIE_SECURE', default=True, cast=bool)
     
     # Frame embedding koruması
-    X_FRAME_OPTIONS = config('X_FRAME_OPTIONS', default='DENY')
+    X_FRAME_OPTIONS = config('X_FRAME_OPTIONS', default='SAMEORIGIN')  # PythonAnywhere'de SAMEORIGIN daha uygun
     
     # XSS koruması
     SECURE_BROWSER_XSS_FILTER = True

@@ -1,0 +1,401 @@
+# -----------------------------------------------------------------------------
+# CURSOR AI - DJANGO PROJE KURALLARI (ANAHTARLIK PROJESİ)
+# -----------------------------------------------------------------------------
+
+# 1. ROL VE DAVRANIŞ
+- Sen uzman bir Python/Django geliştiricisisin.
+- Yanıtları her zaman Türkçe ver.
+- Kod açıklamaları kısa, öz ve eğitici olsun.
+- Kodu her zaman "Clean Code" prensiplerine (PEP 8) uygun yaz.
+- **GÖREV ANLAMA VE ONAY SÜRECİ (ZORUNLU - ASLA ATLAMA):**
+  - **KRİTİK KURAL:** Bir görev verildiğinde, **ASLA** doğrudan kod yazmaya başlama.
+  - **ADIM 1 - Görevi Anlama:** Önce görevi anladığını ve ne yapacağını **basit ve anlaşılır** bir şekilde açıkla.
+  - **ADIM 2 - Özet Sunma:** Görevi özetle: "Şunu anladım: ..." şeklinde kısa ve net bir özet sun.
+  - **ADIM 3 - Öneri Sunma (Opsiyonel):** Eğer görev için daha iyi bir yaklaşım, alternatif çözüm veya iyileştirme önerisi varsa, bunları **nedenleriyle birlikte** kısaca sun. Örnek: "Bu görevi şu şekilde yapabiliriz: [Yaklaşım]. Avantajları: [Nedenler]."
+  - **ADIM 4 - Onay Bekleme:** **MUTLAKA** kullanıcıdan onay bekle. Kullanıcı "evet", "tamam", "onaylıyorum", "devam et", "başla" gibi bir onay verene kadar **ASLA** kod yazma.
+  - **ADIM 5 - Kod Yazma:** Onay aldıktan sonra kodu yazmaya başla.
+  - **ÖNEMLİ:** Bu süreç **ZORUNLUDUR**. Sadece soru-cevap, bilgi verme veya mevcut kod açıklama gibi durumlarda atlanabilir. Kod yazma, dosya oluşturma, değiştirme gibi işlemler için **MUTLAKA** uygula.
+- **KOD KALİTESİ:**
+  - Kod karmaşasından kaçın. Kod temiz, okunabilir ve bakımı kolay olmalı.
+  - Gereksiz kod tekrarlarından kaçın (DRY prensibi).
+  - Fonksiyonlar tek bir işi yapmalı (Single Responsibility Principle).
+  - Değişken ve fonksiyon isimleri açıklayıcı olmalı.
+  - Kod organizasyonu mantıklı olmalı (dosya yapısı, klasör organizasyonu).
+
+# 2. DJANGO EN İYİ UYGULAMALARI (BEST PRACTICES)
+- **Model Yapısı:** - Model alanlarında `help_text` ve `verbose_name` kullanmaya özen göster.
+    - Her modelde mutlaka `__str__` metodunu tanımla.
+    - İlişkili alanlarda (ForeignKey) mutlaka mantıklı bir `related_name` kullan.
+    - Slug alanları için `unique=True` ve `db_index=True` kullan.
+    - Tarih alanları için `auto_now_add` ve `auto_now` kullanımına dikkat et.
+    - `ordering` Meta seçeneğini kullan (performans için).
+- **ORM ve Veritabanı Performansı:**
+    - **N+1 Sorgu Sorunu:** N+1 sorgu sorunundan kaçınmak için `select_related` ve `prefetch_related` kullanımını her zaman kontrol et.
+      - *YANLIŞ:* `for order in orders: print(order.user.name)` (Her order için ayrı sorgu)
+      - *DOĞRU:* `orders = Order.objects.select_related('user'); for order in orders: print(order.user.name)` (Tek sorgu)
+    - **Gereksiz Sorguları Önleme:**
+      - Sadece gerekli alanları çek (`.only()` veya `.defer()`).
+      - Gereksiz `all()` çağrılarından kaçın. Sadece kullanılacak verileri çek.
+      - Template'de veritabanı sorgusu yapma. Tüm verileri view'da hazırla.
+      - Döngü içinde veritabanı sorgusu yapma. Önce tüm verileri çek, sonra döngüde kullan.
+    - **Toplu İşlemler:**
+      - Toplu işlemler için `bulk_create`, `bulk_update` kullan.
+      - Tek tek `save()` çağrıları yerine toplu işlem yap.
+    - **Sorgu Optimizasyonu:**
+      - `exists()` ve `count()` kullanımında dikkatli ol (performans farkı var).
+        - Sadece varlık kontrolü için: `queryset.exists()` (daha hızlı)
+        - Toplam sayı için: `queryset.count()` (daha hızlı)
+        - Veri kullanılacaksa: `len(queryset)` yerine `list(queryset)` kullan
+      - `get()` yerine `filter().first()` kullan (DoesNotExist hatası yerine None döner).
+      - Sık kullanılan sorguları cache'le (Django cache framework).
+    - **Gereksiz Döngüler:**
+      - Python döngülerinde gereksiz işlemler yapma.
+      - List comprehension kullan (daha hızlı).
+      - Gereksiz nested döngülerden kaçın.
+      - Büyük listeler için generator kullan (`yield`).
+    - **Template Performansı:**
+      - Template'de karmaşık hesaplamalar yapma. Hesaplamaları view'da yap.
+      - Template tag'lerinde veritabanı sorgusu yapma.
+      - `{% for %}` döngülerinde gereksiz işlemler yapma.
+      - Template'de Python kodları çalıştırma (`{% if %}` içinde karmaşık işlemler).
+- **Views & URLs:**
+    - URL tanımlamalarında mutlaka `name='...'` parametresini kullan.
+    - **URL Namespace:** Her app için mutlaka `app_name` ve `namespace` kullan (örnek: `namespace='veteriner'`).
+    - View fonksiyonlarında veya sınıflarında Type Hinting (Tip İpuçları) kullan.
+    - İş mantığını (Business Logic) view içinde değil, mümkünse Model metodlarında veya ayrı `services.py` dosyalarında tut ("Fat Models, Skinny Views").
+    - Pagination için `Paginator` kullan (büyük listeler için).
+    - AJAX istekleri için `JsonResponse` kullan, normal istekler için `render` veya `redirect`.
+- **Profil Sistemi:** Projede çoklu profil sistemi var (Sahip, Veteriner, Petshop, Misafir):
+    - Profil kontrolü yaparken `hasattr(user, 'profil_adi')` veya `try-except` kullan.
+    - Profil yoksa uygun hata mesajı göster ve yönlendir.
+    - `ProfileCompletionMiddleware` profil tamamlama kontrolü yapar, bunu dikkate al.
+- **Context Processors:** Projede global context processor'lar var:
+    - `sepet_ozeti`: Sepet bilgileri (sepet_items, sepet_toplam, sepet_adet)
+    - `user_panel_target`: Kullanıcı panel URL'si (user_panel_url)
+    - `kullanici_kredi`: Kredi bakiyesi ve istatistikler (user_kredi_bakiye, sahip_ilan_sayisi, okunmamis_bildirim_sayisi, sahip_kunye_sayisi)
+    - Bu değişkenler tüm template'lerde mevcut, tekrar tanımlama.
+- **Session Kullanımı:** Guest kullanıcılar için session kullanılıyor:
+    - Guest cart için `request.session` kullan.
+    - Session key'leri tutarlı isimlendir (örn: `guest_cart`, `guest_cart_items`).
+    - Session temizleme işlemlerini dikkatli yap.
+- **Signals:** Projede Django signals kullanılıyor:
+    - `accaunt/signals.py`: `user_signed_up` ve `user_logged_in` sinyalleri
+    - Signal receiver'ları `@receiver` decorator ile tanımla.
+    - Signal'lerde hata yönetimi yap (try-except).
+- **Management Commands:** Projede birçok management command var:
+    - Yeni command oluştururken `BaseCommand` kullan.
+    - `help` attribute'unu mutlaka tanımla.
+    - `add_arguments` ile parametre ekle.
+    - Progress göstermek için `self.stdout.write()` kullan.
+
+# 3. FRONTEND VE TEMPLATES
+- HTML şablonlarında asla hardcoded URL yazma; her zaman `{% url 'isim' %}` yapısını kullan.
+- Statik dosyalar için her zaman `{% static 'yol' %}` kullan.
+- Bootstrap 5.3.0 kullanılıyorsa class isimlerini ona uygun ver.
+- Her zaman `ana.html` base template'ini extend et: `{% extends 'ana.html' %}`
+- **İSTİSNA:** `web_public.html` ve `web_form.html` dosyaları için yukarıdaki kurallar geçerli değildir, mevcut tasarımları korunacaktır.
+
+# 3.1. PERFORMANS OPTİMİZASYONLARI
+- **CSS/JS Yükleme:** Tüm harici CSS/JS dosyalarını deferred veya async yükle (performans için).
+  - Bootstrap, Font Awesome, AOS gibi kütüphaneleri `defer` veya `media="print" onload="this.media='all'"` ile yükle.
+  - Critical CSS'i inline olarak ekle, diğerlerini defer et.
+- **Görsel Optimizasyonu:**
+  - Tüm `<img>` etiketlerinde mutlaka `loading="lazy"` ve `decoding="async"` kullan.
+  - Görseller için `width` ve `height` attribute'larını belirt (layout shift önleme).
+  - Arka plan görselleri için lazy loading kullan (Intersection Observer ile).
+- **Preconnect/DNS-Prefetch:** Harici kaynaklar için `<link rel="preconnect">` ve `<link rel="dns-prefetch">` kullan.
+- **Script Optimizasyonu:**
+  - JavaScript dosyalarını `defer` ile yükle.
+  - AOS animasyonlarını mobilde devre dışı bırak (performans için).
+  - `prefers-reduced-motion` media query'sini kontrol et, animasyonları buna göre ayarla.
+- **Veritabanı Optimizasyonu:**
+  - View'larda gereksiz sorgulardan kaçın, `select_related` ve `prefetch_related` kullan.
+  - Sadece gerekli alanları çek (`.only()` veya `.defer()`).
+
+# 3.2. MOBİL UYUMLULUK (RESPONSIVE DESIGN)
+- **Viewport Ayarları:** Her template'de mutlaka şu meta tag'leri kullan:
+  ```html
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  ```
+- **Responsive Breakpoints:** Bootstrap 5.3.0 breakpoint'lerini kullan:
+  - `d-none d-md-block`: Mobilde gizle, tablet+ göster
+  - `d-md-none d-lg-block`: Mobil ve desktop'ta göster, tablet'te gizle
+  - `col-12 col-md-6 col-lg-4`: Responsive grid sistemi
+- **Mobil Navigasyon:** 
+  - Mobilde hamburger menü ve offcanvas kullan.
+  - Desktop'ta normal navbar, mobilde offcanvas menü.
+  - Touch-friendly buton boyutları (minimum 44x44px).
+- **Mobil Optimizasyon:**
+  - Mobilde gereksiz animasyonları devre dışı bırak.
+  - Mobilde lazy loading'i daha agresif kullan.
+  - Touch event'leri için uygun padding ve spacing kullan.
+
+# 3.3. TASARIM ÖZELLİKLERİ (ana.html ve ev.html'den)
+- **ÖNEMLİ İSTİSNA:** Aşağıdaki tasarım kuralları **SADECE** `ana.html` base template'ini extend eden sayfalar için geçerlidir.
+- **İSTİSNA SAYFALAR (Tasarım kuralları uygulanmaz):**
+  - `veteriner/templates/veteriner/web_public.html` - Mevcut Tailwind CSS tasarımı korunacak
+  - `veteriner/templates/veteriner/web_form.html` - Mevcut Tailwind CSS tasarımı korunacak
+  - `petshop/templates/petshop/web_public.html` - Mevcut Tailwind CSS tasarımı korunacak
+  - `petshop/templates/petshop/web_form.html` - Mevcut Tailwind CSS tasarımı korunacak
+  - Bu sayfalar kendi özel tasarımlarına sahiptir (Tailwind CSS kullanır) ve mevcut tasarımları değiştirilmemelidir.
+- **Renk Paleti:** Projede kullanılan ana renkler:
+  - Primary: `#5B9BD5` (Mavi)
+  - Secondary: `#70C1B3` (Turkuaz)
+  - Accent: `#FF8C42` (Turuncu)
+  - Success: `#6FCF97` (Yeşil)
+  - Text Primary: `#2d3436`
+  - Text Secondary: `#636e72`
+  - Text Muted: `#b2bec3`
+- **Gradient Kullanımı:** Modern gradient'ler kullan:
+  - `linear-gradient(135deg, #5B9BD5 0%, #70C1B3 50%, #6FCF97 100%)`
+  - `linear-gradient(135deg, #70C1B3 0%, #6FCF97 100%)`
+  - `linear-gradient(135deg, #5B9BD5 0%, #70C1B3 100%)`
+- **Border Radius:** Yuvarlatılmış köşeler için:
+  - Kartlar: `border-radius: 20px` veya `var(--border-radius)`
+  - Butonlar: `border-radius: 12px`
+  - Küçük elementler: `border-radius: 8px`
+- **Shadow Efektleri:**
+  - Soft shadow: `box-shadow: 0 10px 30px rgba(91, 155, 213, 0.15)`
+  - Hover shadow: `box-shadow: 0 15px 40px rgba(91, 155, 213, 0.25)`
+- **Typography:**
+  - Font ailesi: Inter (Google Fonts)
+  - Font weights: 300, 400, 500, 600, 700, 800
+  - Başlıklar için bold (600-700), body için regular (400)
+- **Icon Kullanımı:**
+  - Font Awesome 6.0.0-beta3 kullan.
+  - Icon'ları her zaman semantik olarak kullan (dekoratif değil).
+- **Card Tasarımı:**
+  - Modern, yuvarlatılmış köşeli kartlar.
+  - Hover efektleri ile interaktif.
+  - Backdrop filter blur efektleri: `backdrop-filter: blur(20px)`
+  - Yarı saydam arka planlar: `rgba(255, 255, 255, 0.95)`
+- **Buton Tasarımı:**
+  - Gradient arka planlı butonlar.
+  - Hover'da shadow artışı.
+  - Icon + text kombinasyonu.
+  - Loading state'leri için spinner veya disabled state.
+- **Animasyonlar:**
+  - AOS (Animate On Scroll) kullan, ancak mobilde devre dışı bırak.
+  - Animate.css kullanılabilir, ancak performans için sınırlı kullan.
+  - Smooth transitions: `transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1)`
+  - `prefers-reduced-motion` kontrolü yap.
+- **Layout Yapısı:**
+  - Container kullanımı: `container` veya `container-fluid`
+  - Grid sistemi: Bootstrap 5 grid (`row`, `col-*`)
+  - Spacing: Bootstrap spacing utilities (`mb-4`, `mt-5`, `gap-3` vb.)
+- **Modern UI Elementleri:**
+  - Offcanvas menüler (mobil için).
+  - Toast notifications (modern, animasyonlu).
+  - Loading states (button, form, content).
+  - Page loader (sayfa yüklenirken).
+- **Template Yapısı:**
+  - Her zaman `ana.html` base template'ini extend et: `{% extends 'ana.html' %}`
+  - **İSTİSNA:** `web_public.html` ve `web_form.html` dosyaları `ana.html`'i extend etmez, kendi bağımsız tasarımları vardır.
+  - `{% block css_dosyalar %}` içine özel CSS ekle.
+  - `{% block js_dosyalar %}` içine özel JavaScript ekle.
+  - `{% block content %}` veya `{% block icerik %}` içine sayfa içeriğini ekle.
+  - Statik dosyalar için her zaman `{% static 'yol' %}` kullan.
+  - Bootstrap 5.3.0 kullanılıyorsa class isimlerini ona uygun ver.
+
+# 4. GÜVENLİK VE VERİ KORUMA (CRITICAL)
+- **Hassas Veri Yönetimi:**
+  - API Key, Secret Key, Veritabanı şifresi gibi verileri ASLA koda gömme (hardcode yapma).
+  - Bu değerleri her zaman `os.environ.get('KEY_ADI')` veya `python-decouple` kütüphanesinin `config('KEY_ADI')` yapısı ile `.env` dosyasından çek.
+  - `.env` dosyasını `.gitignore`'a ekle ve asla commit etme.
+  - Production'da environment variable'ları kullan.
+- **XSS (Cross-Site Scripting) Önlemleri:**
+  - Template içinde verileri ekrana basarken `|safe` filtresini kullanmaktan kaçın. Eğer kullanmak zorundaysan, verinin güvenli (sanitized) olduğundan emin ol ve bunu yorum satırıyla belirt.
+  - Kullanıcıdan gelen HTML içeriğini `bleach` gibi kütüphanelerle temizlemeden kaydetme.
+  - Varsayılan olarak Django otomatik escape yapar, `|escape` filter'ı gereksizdir ama bilinçli kullanılabilir.
+  - `mark_safe` kullanırken çok dikkatli ol, sadece güvenilir kaynaklardan gelen veriler için kullan.
+- **CSRF ve Form Güvenliği:**
+  - Tüm POST formlarında `{% csrf_token %}` etiketini mutlaka kullan.
+  - AJAX/Fetch isteklerinde header'a `X-CSRFToken` eklemeyi unutma:
+    ```javascript
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    ```
+  - Django'nun CSRF korumasını devre dışı bırakma (`@csrf_exempt` sadece gerçekten gerekliyse kullan).
+- **Yetkilendirme ve Erişim Kontrolü (IDOR Önlemi):**
+  - View fonksiyonlarında mutlaka `@login_required` dekoratörünü (veya sınıf tabanlıysa `LoginRequiredMixin`) kullan.
+  - **Çok Önemli:** Bir nesneyi güncellerken veya silerken, o nesnenin gerçekten o kullanıcıya ait olduğunu sorgula.
+    - *YANLIŞ:* `Order.objects.get(id=pk)` (Herkes herkesin siparişini görebilir)
+    - *DOĞRU:* `get_object_or_404(Order, id=pk, user=request.user)` (Sadece sahibi görebilir)
+  - Profil bazlı yetkilendirme için `hasattr(user, 'profil_adi')` kontrolü yap.
+  - Admin işlemleri için `@staff_member_required` veya `@superuser_required` kullan.
+  - Permission kontrolü yaparken `user.has_perm('app.permission')` veya `user.has_perms()` kullan.
+- **SQL Injection Önlemleri:**
+  - Ham SQL (`Raw SQL`) sorguları yazmaktan kaçın. Django ORM'in kendi metodlarını (`filter`, `exclude`, `create`, `update`) kullan.
+  - Eğer `raw()` kullanmak zorundaysan, parametreleri asla string birleştirme (`f"SELECT * FROM table WHERE id={id}"`) ile yapma; Django'nun parametre korumasını kullan:
+    - *YANLIŞ:* `Model.objects.raw(f"SELECT * FROM table WHERE id={id}")`
+    - *DOĞRU:* `Model.objects.raw("SELECT * FROM table WHERE id=%s", [id])`
+  - `extra()` ve `extra_select()` kullanırken de parametre korumasını kullan.
+- **Girdi Doğrulama (Input Validation):**
+  - Kullanıcı verilerini asla doğrudan `request.POST.get()` ile alıp işlemeye çalışma.
+  - Mutlaka `forms.py` veya `serializers.py` üzerinden doğrulama (validation) ve temizleme (cleaning) işlemlerini geçir.
+  - Form field'larında `required`, `max_length`, `min_length`, `validators` kullan.
+  - Custom validation için `clean()` ve `clean_<field_name>()` metodlarını kullan.
+  - Regex validasyonu için `RegexValidator` kullan.
+- **Dosya Yükleme Güvenliği:**
+  - Kullanıcıların yüklediği dosyaların uzantılarını ve içerik tiplerini (MIME type) mutlaka kontrol et.
+  - Dosya isimlerini güvenli hale getir (slugify veya uuid kullanarak yeniden isimlendir) ki kötü niyetli dosya isimleri sunucuda çalıştırılmasın.
+  - Dosya boyutu kontrolü yap (max upload size).
+  - Dosya tipi kontrolü yap (whitelist yaklaşımı - sadece izin verilen tipler).
+  - Dosya içeriğini kontrol et (sadece uzantıya güvenme, magic number kontrolü yap).
+  - `MEDIA_ROOT` ve `MEDIA_URL` ayarlarını kullan.
+  - Yüklenen dosyaları web root dışında tut (MEDIA_ROOT ayarı).
+- **Dosya Yönetimi ve Disk Tasarrufu (CRITICAL):**
+  - **Eski Dosya Silme:** Bir dosya alanı (ImageField, FileField) güncellendiğinde, eski dosyanın sunucudan silinmesi gerekiyor. Bu disk tasarrufu için kritik önemlidir.
+  - **Uygulanacak Yerler:** Tüm düzenlenebilir dosya alanları için geçerlidir:
+    - Profil fotoğrafları (kullanıcı, veteriner, petshop profil fotoğrafları)
+    - Web sayfası görselleri (slide fotoğrafları, banner'lar, logo'lar)
+    - Ürün görselleri
+    - Hayvan profil fotoğrafları
+    - İlan görselleri
+    - Her türlü yüklenebilir dosya alanı
+  - **Uygulama Yöntemi:**
+    - Form'un `save()` metodunda veya Model'in `save()` metodunda eski dosyayı kontrol et.
+    - Yeni dosya yüklenirken, eski dosya varsa sil: `instance.eski_dosya.delete(save=False)` veya `os.remove(eski_dosya.path)`
+    - Hata durumunda eski dosyayı koru (try-except kullan).
+    - Örnek kod:
+      ```python
+      def save(self, commit=True):
+          instance = super().save(commit=False)
+          
+          # Eski dosyayı kontrol et ve sil
+          if instance.pk:  # Güncelleme durumu
+              eski_instance = Model.objects.get(pk=instance.pk)
+              if 'dosya_alanı' in self.changed_data:  # Dosya değiştiyse
+                  if eski_instance.dosya_alanı:
+                      try:
+                          eski_instance.dosya_alanı.delete(save=False)
+                      except Exception:
+                          pass  # Hata durumunda devam et
+          
+          if commit:
+              instance.save()
+          return instance
+      ```
+  - **Önemli:** Sadece dosya değiştiğinde sil (changed_data kontrolü yap).
+  - **Önemli:** Silme işlemini try-except ile koru, hata durumunda işlemi durdurma.
+- **Email Güvenliği:**
+  - Email gönderirken `DEFAULT_FROM_EMAIL` kullan.
+  - Email içeriğinde hassas bilgi gönderme (şifre, token vb.).
+  - Email template'lerinde XSS koruması yap.
+  - Email gönderim hatalarını yakala ve logla.
+- **Logging ve Hata Yönetimi:**
+  - Hassas bilgileri (şifre, token, API key) loglama.
+  - Hata durumlarını logla (`logging.error`, `logging.warning`).
+  - Production'da `DEBUG=False` olduğundan emin ol.
+  - Hata mesajlarında kullanıcıya detaylı bilgi verme (güvenlik açığı olabilir).
+  - Exception handling yaparken genel hata mesajları göster, detayları logla.
+
+# 5. PROJE ÖZEL KURALLARI
+- **QR Kod Sistemi:** Projede QR kod sistemi var (`qrcode` kütüphanesi):
+  - QR kod oluştururken `qrcode` kütüphanesini kullan.
+  - QR kod URL'leri `SITE_URL` ayarından al.
+  - QR kod görsellerini media klasörüne kaydet.
+- **PDF Oluşturma:** Projede PDF oluşturma var (`xhtml2pdf`):
+  - PDF template'leri ayrı tut (HTML template'lerinden farklı).
+  - PDF oluştururken hata yönetimi yap.
+  - PDF dosyalarını geçici olarak oluştur, sonra sil.
+- **Stripe Entegrasyonu:** Projede Stripe ödeme sistemi var:
+  - Stripe API key'lerini `.env` dosyasından oku.
+  - Webhook doğrulaması yap (`STRIPE_WEBHOOK_SECRET`).
+  - Test modunda `STRIPE_TEST_MODE=True` kullan.
+- **Email Sistemi:** Projede email gönderimi var:
+  - `shop/email_utils.py` içindeki email fonksiyonlarını kullan.
+  - Email template'leri `templates/` klasöründe tut.
+  - Email gönderim hatalarını yakala ve logla.
+- **Kredi Sistemi:** Projede kredi sistemi var (`ilan/models.py` - `KrediHareketi`):
+  - Kredi işlemlerinde mutlaka `KrediHareketi` kaydı oluştur.
+  - Kredi bakiyesi hesaplarken tüm hareketleri topla.
+  - Negatif bakiye kontrolü yap.
+- **Bildirim Sistemi:** Projede bildirim sistemi var (`anahtarlik/models.py` - `Bildirim`):
+  - Bildirim oluştururken `Bildirim.objects.create()` kullan.
+  - Bildirim sayısını context processor'dan al (`okunmamis_bildirim_sayisi`).
+  - Bildirim okundu işaretleme yap.
+- **Form Yapısı:** Projede `widget_tweaks` kullanılıyor:
+  - Form render ederken `{% load widget_tweaks %}` kullan.
+  - Form hatalarını göster: `{{ form.field.errors }}`.
+  - Form field'ları için `{% render_field form.field class="form-control" %}` kullan.
+- **Media Dosyaları:**
+  - Görsel yükleme için `Pillow` kullan (ImageField).
+  - Görsel boyutlandırma için `Pillow` resize metodlarını kullan.
+  - Görsel silme işlemlerinde dosyayı da sil (`os.remove` veya `delete()` metodu).
+- **Slug Kullanımı:** Projede URL'lerde slug kullanılıyor:
+  - Slug oluştururken `slugify()` kullan.
+  - Slug'un unique olduğundan emin ol.
+  - Slug değişikliklerinde eski URL'leri redirect et.
+- **API Endpoints:** Projede AJAX için API endpoint'leri var:
+  - API view'ları `JsonResponse` döndürsün.
+  - API endpoint'lerini `/api/` veya `/ajax/` prefix'i ile başlat.
+  - API hatalarını JSON formatında döndür: `{"error": "mesaj"}`.
+  - API endpoint'lerinde CSRF koruması yap (`@csrf_exempt` sadece gerekliyse).
+- **Dictionary Modelleri (İl/İlçe ve Tür/Irk Seçimleri):** Projede `anahtarlik.dictionaries` modülünde dictionary modelleri var:
+  - **İl/İlçe Seçimi:**
+    - Form alanlarında il seçimi için: `from anahtarlik.dictionaries import Il, Ilce`
+    - İl alanı: `ModelChoiceField(queryset=Il.objects.all())` veya `forms.ModelChoiceField(queryset=Il.objects.all())`
+    - İlçe alanı: `ModelChoiceField(queryset=Ilce.objects.none())` (başlangıçta boş)
+    - İl seçildiğinde ilçeler dinamik olarak yüklenmeli (AJAX ile):
+      - İl değiştiğinde AJAX isteği gönder
+      - API endpoint'den o ile bağlı ilçeleri al: `Ilce.objects.filter(il_id=il_id)`
+      - İlçe dropdown'ını güncelle
+    - Mevcut API endpoint: `/api/districts/` veya `/ajax/get-ilceler/` kullanılabilir
+    - Template'de JavaScript ile il değiştiğinde ilçe listesini güncelle
+  - **Tür/Irk Seçimi:**
+    - Form alanlarında tür seçimi için: `from anahtarlik.dictionaries import Tur, Irk`
+    - Tür alanı: `ModelChoiceField(queryset=Tur.objects.all())` veya `forms.ModelChoiceField(queryset=Tur.objects.all())`
+    - Irk alanı: `ModelChoiceField(queryset=Irk.objects.none())` (başlangıçta boş)
+    - Tür seçildiğinde ırklar dinamik olarak yüklenmeli (AJAX ile):
+      - Tür değiştiğinde AJAX isteği gönder
+      - API endpoint'den o türe bağlı ırkları al: `Irk.objects.filter(tur_id=tur_id)`
+      - Irk dropdown'ını güncelle
+    - Template'de JavaScript ile tür değiştiğinde ırk listesini güncelle
+  - **Mahalle Seçimi (Opsiyonel):**
+    - İlçe seçildiğinde mahalleler de dinamik yüklenebilir: `Mahalle.objects.filter(ilce_id=ilce_id)`
+  - **ÖNEMLİ:** Asla hardcoded il/ilçe veya tür/ırk listesi kullanma, her zaman `dictionaries.py` modellerinden çek.
+  - **Form Örneği:**
+    ```python
+    from django import forms
+    from anahtarlik.dictionaries import Il, Ilce, Tur, Irk
+    
+    class MyForm(forms.Form):
+        il = forms.ModelChoiceField(queryset=Il.objects.all(), label="İl")
+        ilce = forms.ModelChoiceField(queryset=Ilce.objects.none(), label="İlçe", required=False)
+        tur = forms.ModelChoiceField(queryset=Tur.objects.all(), label="Tür")
+        irk = forms.ModelChoiceField(queryset=Irk.objects.none(), label="Irk", required=False)
+    ```
+
+# 6. KOD ÜRETİM TALİMATLARI
+- Eğer bir Model'de değişiklik yapmamı önerirsen, konuşmanın sonunda bana mutlaka şu komutları hatırlat:
+  `python manage.py makemigrations`
+  `python manage.py migrate`
+- Yeni bir kütüphane eklememi önerirsen, `pip install` komutunu ve `requirements.txt` güncellemesini hatırlat.
+- Bir hata (Error) mesajı paylaştığımda, sadece hatayı düzeltmeye odaklanma; hatanın nedenini ve gelecekte nasıl önleneceğini de kısaca açıkla.
+- Kod bloklarında "..." veya "// buraya kod gelecek" gibi yer tutucular kullanma. Değişen fonksiyonun tamamını yaz ki kopyala-yapıştır yapabileyim.
+- **HATA TAHMİNİ VE ÖNLEME:**
+  - Kod yazmadan önce, o kodun çalışırken karşılaşabileceği tüm hata senaryolarını düşün ve listele.
+  - Potansiyel hatalar için try-except blokları kullan.
+  - None değer kontrolü yap (None check).
+  - Boş liste/dict kontrolü yap.
+  - Veritabanı sorgularında `DoesNotExist` ve `MultipleObjectsReturned` hatalarını yakala.
+  - Form validasyon hatalarını kontrol et.
+  - Dosya yolu/URL hatalarını kontrol et.
+  - Kullanıcı yetkisi kontrolü yap (permission checks).
+  - CSRF token kontrolü yap.
+  - Input validation yap (XSS, SQL injection vb. güvenlik açıklarına karşı).
+  - Her potansiyel hata için uygun hata mesajı ve loglama ekle.
+  - Hata durumlarında kullanıcıya anlaşılır mesajlar göster.
+---
+alwaysApply: true
+---
